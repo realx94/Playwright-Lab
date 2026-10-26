@@ -220,6 +220,15 @@ Vai trò Admin/Manager/Staff/Guest; ma trận quyền; thử IDOR (đổi id tro
 - BR-05 xuất theo RFC 4180 (CRLF, bao nháy kép, nhân đôi dấu nháy).
 - Bug: BUG-01 xuất không escape; BUG-02 nhận email trùng; BUG-03 số dòng lỗi lệch một.
 
+### LAB-25 Upload file (bản đã làm)
+`/lab/upload`: kho lưu trữ giả (không gửi tệp đi đâu), kiểm tra phía trình duyệt.
+- BR-01 PNG/JPG/JPEG/PDF, phần mở rộng không phân biệt hoa thường, MIME phải khớp.
+- BR-02 tối đa đúng 2 MB (2.097.152 byte), 2 MB + 1 byte và tệp rỗng bị từ chối.
+- BR-03 tiến trình ~1,5 giây có nút Huỷ (huỷ thì không thêm tệp).
+- BR-04 hiển thị tên, kích thước, URL CDN, ảnh xem trước; tên trùng thêm hậu tố (1).
+- BR-05 tối đa 5 tệp; nhiều tệp xử lý riêng từng tệp; BR-06 giữ khi tải lại, xoá được.
+- Bug: BUG-01 loại cả tệp đúng 2 MB; BUG-02 đuôi viết hoa bị từ chối; BUG-03 huỷ không có tác dụng.
+
 ## Độ phủ kỹ năng theo lab (rà soát)
 | Kỹ năng | Lab |
 |---------|-----|
@@ -257,7 +266,8 @@ Vai trò Admin/Manager/Staff/Guest; ma trận quyền; thử IDOR (đổi id tro
 | LAB-28 Đặt lịch theo múi giờ & đồng hồ | `/lab/timezone` | Đã làm |
 | LAB-27 Nhập/xuất CSV & đối chiếu dữ liệu | `/lab/csv` | Đã làm |
 | LAB-23 Email giao dịch (xác nhận đơn, đặt lại mật khẩu) | `/lab/mail` | Đã làm |
-| LAB-5, 6, 9, 10, 11, 15, 16, 25 | — | Chưa làm |
+| LAB-25 Tải tệp lên kho lưu trữ | `/lab/upload` | Đã làm |
+| LAB-5, 6, 9, 10, 11, 15, 16 | — | Chưa làm |
 
 ### Quy tắc kỹ thuật của trang lab
 - `/lab/<slug>` là **ứng dụng thuần**: không header, không thanh tìm kiếm của site (chỉ một liên kết quay lại ở layout lab) để locator của người học không bị trùng.

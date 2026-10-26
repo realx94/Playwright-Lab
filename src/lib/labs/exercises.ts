@@ -3648,4 +3648,188 @@ for (const [seconds, ok] of [
   },
 ];
 
-export const EXERCISES: Record<string, Exercise[]> = { login, forms, cart, playground, api, otp, todo, table, leave, chat, totp, oauth, pay, orders, guard, webhooks, rbac, timezone, csv, mail };
+const upload: Exercise[] = [
+  {
+    id: "upload-1",
+    title: "Bảng kiểm tra định dạng và dung lượng (data-driven)",
+    difficulty: 2,
+    bugs: ["BUG-01", "BUG-02"],
+    task: "Dùng hai mảng dữ liệu để sinh test: các tệp phải bị từ chối (đuôi lạ, đuôi và MIME không khớp, tệp rỗng, lớn hơn 2 MB một byte) cùng thông báo, và các tệp phải được chấp nhận (đúng 2 MB, đuôi viết hoa). Test phải đỏ khi bật BUG-01 hoặc BUG-02.",
+    criteria: [
+      "Tạo tệp trong bộ nhớ bằng Buffer.alloc và setInputFiles, không ghi tệp ra đĩa",
+      "Kiểm tra đúng biên 2 MB và 2 MB cộng 1 byte",
+      "Kiểm tra thông báo lỗi đầy đủ gồm tên tệp",
+      "Kiểm tra không có tệp nào được thêm sau khi bị từ chối",
+      "Test đỏ với BUG-01 và với BUG-02",
+      ...COMMON_CRITERIA,
+    ],
+    hints: [
+      "Kích thước biên: 2 * 1024 * 1024 byte.",
+      "setInputFiles nhận { name, mimeType, buffer }.",
+      "Tệp hợp lệ cần chờ tới 1,5 giây nên đặt timeout 10 giây cho assertion đếm tệp.",
+    ],
+    solution: `import { test, expect, type Page } from "@playwright/test";
+
+const MB2 = 2 * 1024 * 1024;
+
+async function open(page: Page) {
+  await page.goto("/lab/upload");
+  await page.getByTestId("reset-data").click();
+}
+
+// setInputFiles nhận trực tiếp tên, loại MIME và nội dung nên không cần tạo tệp trên đĩa.
+type F = { name: string; mimeType: string; buffer: Buffer };
+const file = (name: string, mimeType: string, size = 100): F => ({ name, mimeType, buffer: Buffer.alloc(size, 1) });
+const pick = (page: Page, files: F | F[]) => page.getByLabel("Chọn tệp").setInputFiles(files);
+
+const rejected: [string, F, string][] = [
+  ["đuôi không hỗ trợ", file("a.gif", "image/gif"), "a.gif: Định dạng không được hỗ trợ (chỉ PNG, JPG, PDF)"],
+  ["đuôi và MIME không khớp", file("gia.png", "application/pdf"), "gia.png: Định dạng không được hỗ trợ (chỉ PNG, JPG, PDF)"],
+  ["tệp rỗng", file("rong.pdf", "application/pdf", 0), "rong.pdf: Tệp rỗng"],
+  ["lớn hơn 2 MB một byte", file("lon.pdf", "application/pdf", MB2 + 1), "lon.pdf: Tệp vượt quá 2 MB"],
+];
+for (const [name, f, message] of rejected) {
+  test("từ chối: " + name, async ({ page }) => {
+    await open(page);
+    await pick(page, f);
+    await expect(page.getByTestId("upload-error")).toHaveText(message);
+    await expect(page.getByTestId("file-item")).toHaveCount(0);
+  });
+}
+
+const accepted: [string, F][] = [
+  ["đúng 2 MB", file("bien.pdf", "application/pdf", MB2)],
+  ["phần mở rộng viết hoa", file("ANH.PNG", "image/png")],
+];
+for (const [name, f] of accepted) {
+  test("chấp nhận: " + name, async ({ page }) => {
+    await open(page);
+    await pick(page, f);
+    await expect(page.getByTestId("file-item")).toHaveCount(1, { timeout: 10_000 });
+    await expect(page.getByTestId("upload-error")).toHaveCount(0);
+  });
+}`,
+  },
+  {
+    id: "upload-2",
+    title: "Tiến trình, huỷ giữa chừng và nhiều tệp",
+    difficulty: 2,
+    bugs: ["BUG-03"],
+    task: "Chọn một tệp hợp lệ và kiểm tra thanh tiến trình xuất hiện rồi biến mất khi tệp được thêm; chọn tệp khác rồi huỷ giữa chừng và chứng minh tệp không được thêm; chọn hai tệp (một hợp lệ, một lỗi) cùng lúc. Test phải đỏ khi bật BUG-03.",
+    criteria: [
+      "Kiểm tra thanh tiến trình có tên truy cập Tiến trình tải lên",
+      "Bấm Huỷ tải lên và kiểm tra thông báo đã huỷ",
+      "Kiểm tra số tệp trong danh sách bằng toHaveCount với timeout phù hợp",
+      "Chọn hai tệp bằng một lần setInputFiles với mảng",
+      "Test đỏ với BUG-03",
+      ...COMMON_CRITERIA,
+    ],
+    hints: [
+      "Tiến trình chạy trong khoảng 1,5 giây nên có đủ thời gian để bấm Huỷ ngay sau khi chọn tệp.",
+      "Sau khi huỷ, danh sách phải có 0 tệp.",
+      "Lỗi của từng tệp nằm trong data-testid upload-error.",
+    ],
+    solution: `import { test, expect, type Page } from "@playwright/test";
+
+const MB2 = 2 * 1024 * 1024;
+
+async function open(page: Page) {
+  await page.goto("/lab/upload");
+  await page.getByTestId("reset-data").click();
+}
+
+// setInputFiles nhận trực tiếp tên, loại MIME và nội dung nên không cần tạo tệp trên đĩa.
+type F = { name: string; mimeType: string; buffer: Buffer };
+const file = (name: string, mimeType: string, size = 100): F => ({ name, mimeType, buffer: Buffer.alloc(size, 1) });
+const pick = (page: Page, files: F | F[]) => page.getByLabel("Chọn tệp").setInputFiles(files);
+
+test("tiến trình hiển thị rồi tệp được thêm", async ({ page }) => {
+  await open(page);
+  await pick(page, file("a.pdf", "application/pdf"));
+  await expect(page.getByTestId("upload-progress")).toBeVisible();
+  await expect(page.getByLabel("Tiến trình tải lên")).toBeVisible();
+  await expect(page.getByTestId("file-item")).toHaveCount(1, { timeout: 10_000 });
+  await expect(page.getByTestId("upload-progress")).toHaveCount(0);
+});
+
+test("huỷ khi đang tải lên thì tệp không được thêm", async ({ page }) => {
+  await open(page);
+  await pick(page, file("huy.pdf", "application/pdf"));
+  await page.getByRole("button", { name: "Huỷ tải lên" }).click();
+  await expect(page.getByTestId("upload-error")).toHaveText("huy.pdf: Đã huỷ tải lên");
+  await expect(page.getByTestId("file-item")).toHaveCount(0);
+});
+
+test("chọn nhiều tệp: lỗi của tệp này không chặn tệp khác", async ({ page }) => {
+  await open(page);
+  await pick(page, [file("tot.pdf", "application/pdf"), file("loi.gif", "image/gif")]);
+  await expect(page.getByTestId("file-item")).toHaveCount(1, { timeout: 10_000 });
+  await expect(page.getByTestId("upload-error")).toHaveText("loi.gif: Định dạng không được hỗ trợ (chỉ PNG, JPG, PDF)");
+});`,
+  },
+  {
+    id: "upload-3",
+    title: "Kiểm tra kết quả tải lên: URL, kích thước, ảnh xem trước, giới hạn",
+    difficulty: 2,
+    task: "Tải ảnh PNG thật (1×1) và kiểm tra tên, kích thước đúng bằng số byte, URL theo mẫu CDN và ảnh xem trước thật sự hiển thị (naturalWidth lớn hơn 0). Sau đó tải 5 tệp (có một tên trùng), kiểm tra hậu tố (1), thử tệp thứ sáu bị từ chối và danh sách giữ nguyên sau khi tải lại trang.",
+    criteria: [
+      "Kiểm tra URL bằng biểu thức chính quy",
+      "Kiểm tra kích thước hiển thị bằng đúng số byte của buffer",
+      "Dùng evaluate để đọc naturalWidth của ảnh xem trước",
+      "Kiểm tra thứ tự và tên các tệp, gồm a (1).pdf",
+      "Kiểm tra thông báo tệp thứ sáu và số tệp sau khi reload",
+      ...COMMON_CRITERIA,
+    ],
+    hints: [
+      "Chuỗi base64 của PNG 1×1 đã cho trong đáp án có thể dùng làm dữ liệu mẫu.",
+      "toHaveText nhận mảng để so sánh tất cả các phần tử.",
+      "Danh sách được lưu trong localStorage nên còn nguyên sau reload.",
+    ],
+    solution: `import { test, expect, type Page } from "@playwright/test";
+
+const MB2 = 2 * 1024 * 1024;
+
+async function open(page: Page) {
+  await page.goto("/lab/upload");
+  await page.getByTestId("reset-data").click();
+}
+
+// setInputFiles nhận trực tiếp tên, loại MIME và nội dung nên không cần tạo tệp trên đĩa.
+type F = { name: string; mimeType: string; buffer: Buffer };
+const file = (name: string, mimeType: string, size = 100): F => ({ name, mimeType, buffer: Buffer.alloc(size, 1) });
+const pick = (page: Page, files: F | F[]) => page.getByLabel("Chọn tệp").setInputFiles(files);
+
+// PNG 1×1 hợp lệ để kiểm tra ảnh xem trước hiển thị được.
+const PNG = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==", "base64");
+
+test("kết quả tải lên: tên, kích thước, URL và ảnh xem trước", async ({ page }) => {
+  await open(page);
+  await pick(page, { name: "anh.png", mimeType: "image/png", buffer: PNG });
+  await expect(page.getByTestId("file-item")).toHaveCount(1, { timeout: 10_000 });
+  await expect(page.getByTestId("file-name")).toHaveText("anh.png");
+  await expect(page.getByTestId("file-size")).toHaveText(PNG.length + " byte");
+  await expect(page.getByTestId("file-url")).toHaveText(/^https:\\/\\/cdn\\.lab\\.dev\\/files\\/f-[a-z0-9-]+\\/anh\\.png$/);
+  const thumb = page.getByTestId("file-thumb");
+  await expect(thumb).toBeVisible();
+  expect(await thumb.evaluate((img: HTMLImageElement) => img.naturalWidth)).toBeGreaterThan(0);
+});
+
+test("tên trùng, giới hạn 5 tệp và giữ sau khi tải lại", async ({ page }) => {
+  await open(page);
+  for (const n of ["a.pdf", "a.pdf", "b.pdf", "c.pdf", "d.pdf"]) {
+    const before = await page.getByTestId("file-item").count();
+    await pick(page, file(n, "application/pdf"));
+    await expect(page.getByTestId("file-item")).toHaveCount(before + 1, { timeout: 10_000 });
+  }
+  await expect(page.getByTestId("file-name")).toHaveText(["a.pdf", "a (1).pdf", "b.pdf", "c.pdf", "d.pdf"]);
+
+  await pick(page, file("e.pdf", "application/pdf"));
+  await expect(page.getByTestId("upload-error")).toHaveText("e.pdf: Đã đạt tối đa 5 tệp");
+
+  await page.reload();
+  await expect(page.getByTestId("file-item")).toHaveCount(5);
+});`,
+  },
+];
+
+export const EXERCISES: Record<string, Exercise[]> = { login, forms, cart, playground, api, otp, todo, table, leave, chat, totp, oauth, pay, orders, guard, webhooks, rbac, timezone, csv, mail, upload };

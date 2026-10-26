@@ -432,6 +432,26 @@
       "lab": "mail",
       "spec": "tests/exercises/mail/mail-3.spec.ts",
       "bugs": []
+    },
+    "upload-1": {
+      "lab": "upload",
+      "spec": "tests/exercises/upload/upload-1.spec.ts",
+      "bugs": [
+        "BUG-01",
+        "BUG-02"
+      ]
+    },
+    "upload-2": {
+      "lab": "upload",
+      "spec": "tests/exercises/upload/upload-2.spec.ts",
+      "bugs": [
+        "BUG-03"
+      ]
+    },
+    "upload-3": {
+      "lab": "upload",
+      "spec": "tests/exercises/upload/upload-3.spec.ts",
+      "bugs": []
     }
   }
 }

@@ -528,7 +528,34 @@ const mail: Workshop = {
   ],
 };
 
-export const WORKSHOPS: Record<string, Workshop> = { login, forms, cart, playground, api, otp, todo, table, leave, chat, totp, oauth, pay, orders, guard, webhooks, rbac, timezone, csv, mail };
+const upload: Workshop = {
+  techniques: ["Boundary Value Analysis", "Equivalence Partitioning", "State Transition", "Error Guessing"],
+  rules: [
+    { id: "BR-01", text: "Chỉ nhận PNG, JPG/JPEG, PDF: phần mở rộng không phân biệt hoa thường và loại MIME phải khớp phần mở rộng" },
+    { id: "BR-02", text: "Mỗi tệp tối đa đúng 2 MB (2.097.152 byte); lớn hơn 1 byte bị từ chối; tệp rỗng bị từ chối" },
+    { id: "BR-03", text: "Khi tải lên hiển thị thanh tiến trình và phần trăm trong khoảng 1,5 giây, có nút Huỷ; huỷ thì tệp không được thêm" },
+    { id: "BR-04", text: "Tải thành công: hiển thị tên, kích thước, URL CDN; ảnh có ảnh xem trước; tên trùng được thêm hậu tố (1), (2)…" },
+    { id: "BR-05", text: "Tối đa 5 tệp; chọn nhiều tệp thì từng tệp được xử lý riêng, lỗi của tệp này không chặn tệp khác" },
+    { id: "BR-06", text: "Danh sách tệp được giữ khi tải lại trang và xoá được từng tệp" },
+  ],
+  cases: [
+    { id: "TC-U-101", title: "Tải PNG hợp lệ", precondition: "Danh sách trống", steps: "Chọn anh.png", data: "PNG 1×1", expected: "Có tiến trình, rồi hiện anh.png kèm URL và ảnh xem trước", type: "Happy", priority: "P0", br: ["BR-01", "BR-03", "BR-04"] },
+    { id: "TC-U-102", title: "Đuôi không hỗ trợ", precondition: "—", steps: "Chọn a.gif", data: "image/gif", expected: "Báo định dạng không được hỗ trợ", type: "EP", priority: "P0", br: ["BR-01"] },
+    { id: "TC-U-103", title: "Đuôi và MIME không khớp", precondition: "—", steps: "Chọn gia.png có MIME application/pdf", data: "gia.png", expected: "Báo định dạng không được hỗ trợ", type: "Security", priority: "P1", br: ["BR-01"] },
+    { id: "TC-U-104", title: "Đuôi viết hoa", precondition: "—", steps: "Chọn ANH.PNG", data: "ANH.PNG", expected: "Được chấp nhận", type: "EP", priority: "P1", br: ["BR-01"] },
+    { id: "TC-U-105", title: "Không có phần mở rộng", precondition: "—", steps: "Chọn khongduoi", data: "khongduoi", expected: "Báo định dạng không được hỗ trợ", type: "EP", priority: "P2", br: ["BR-01"] },
+    { id: "TC-U-106", title: "Đúng 2 MB", precondition: "—", steps: "Chọn tệp 2.097.152 byte", data: "2 MB", expected: "Được chấp nhận", type: "BVA", priority: "P0", br: ["BR-02"] },
+    { id: "TC-U-107", title: "2 MB cộng 1 byte", precondition: "—", steps: "Chọn tệp 2.097.153 byte", data: "2 MB + 1", expected: "Báo tệp vượt quá 2 MB", type: "BVA", priority: "P0", br: ["BR-02"] },
+    { id: "TC-U-108", title: "Tệp rỗng", precondition: "—", steps: "Chọn tệp 0 byte", data: "0", expected: "Báo tệp rỗng", type: "BVA", priority: "P1", br: ["BR-02"] },
+    { id: "TC-U-109", title: "Huỷ khi đang tải", precondition: "Đang tải", steps: "Bấm Huỷ tải lên", data: "—", expected: "Báo đã huỷ; không có tệp nào được thêm", type: "State", priority: "P0", br: ["BR-03"] },
+    { id: "TC-U-110", title: "Tên trùng", precondition: "Đã có a.pdf", steps: "Tải thêm a.pdf", data: "a.pdf", expected: "Tệp mới tên a (1).pdf", type: "State", priority: "P1", br: ["BR-04"] },
+    { id: "TC-U-111", title: "Chọn nhiều tệp lẫn lỗi", precondition: "—", steps: "Chọn tot.pdf và loi.gif cùng lúc", data: "2 tệp", expected: "tot.pdf được tải, loi.gif báo lỗi riêng", type: "EP", priority: "P1", br: ["BR-05"] },
+    { id: "TC-U-112", title: "Tệp thứ sáu", precondition: "Đã có 5 tệp", steps: "Tải thêm e.pdf", data: "e.pdf", expected: "Báo đã đạt tối đa 5 tệp", type: "BVA", priority: "P0", br: ["BR-05"] },
+    { id: "TC-U-113", title: "Giữ sau khi tải lại", precondition: "Đã có tệp", steps: "Tải lại trang", data: "—", expected: "Danh sách vẫn còn", type: "State", priority: "P2", br: ["BR-06"] },
+  ],
+};
+
+export const WORKSHOPS: Record<string, Workshop> = { login, forms, cart, playground, api, otp, todo, table, leave, chat, totp, oauth, pay, orders, guard, webhooks, rbac, timezone, csv, mail, upload };
 
 export function toCsv(cases: TestCase[]): string {
   const head = ["ID", "Tiêu đề", "Tiền điều kiện", "Các bước", "Dữ liệu", "Kết quả mong đợi", "Loại", "Ưu tiên", "BR"];
