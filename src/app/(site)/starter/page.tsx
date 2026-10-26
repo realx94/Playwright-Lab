@@ -31,7 +31,7 @@ export default function StarterPage() {
 
       <section className="space-y-3">
         <h2 className="text-xl font-semibold">Dùng starter repo</h2>
-        <pre className="overflow-x-auto rounded-lg bg-muted p-3 text-xs">
+        <pre tabIndex={0} className="overflow-x-auto rounded-lg bg-muted p-3 text-xs">
           <code>{`unzip playwright-lab-starter.zip   # hoặc giải nén bằng Explorer/Finder
 cd playwright-lab-starter
 npm install

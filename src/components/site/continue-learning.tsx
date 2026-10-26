@@ -28,18 +28,18 @@ export function ContinueLearning({ lessons }: { lessons: LessonRef[] }) {
 
   if (!next) {
     return (
-      <p className="rounded-xl border p-4 text-sm" data-testid="continue-all-done">
+      <p className="rounded-2xl border border-border bg-card p-5 text-sm shadow-panel" data-testid="continue-all-done">
         Bạn đã hoàn thành toàn bộ {lessons.length} bài. Hãy thử capstone ở bài cuối và ôn câu hỏi phỏng vấn.
       </p>
     );
   }
 
   return (
-    <section aria-label="Tiếp tục học" className="space-y-3 rounded-xl border p-4" data-testid="continue-learning">
+    <section aria-label="Tiếp tục học" className="space-y-4 rounded-2xl border border-border bg-card p-5 shadow-panel sm:p-6" data-testid="continue-learning">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <p className="text-sm text-muted-foreground">{progress.length ? "Tiếp tục học" : "Bài đầu tiên cho bạn"}</p>
-          <p className="font-medium">{next.title}</p>
+          <p className="text-sm font-semibold text-primary">{progress.length ? "Tiếp tục học" : "Bài đầu tiên cho bạn"}</p>
+          <p className="mt-1 text-lg font-semibold">{next.title}</p>
         </div>
         <Link href={`/learn/${next.slug}`} className={buttonVariants()} data-testid="continue-link">
           {progress.length ? "Học tiếp" : "Bắt đầu"}

@@ -32,10 +32,10 @@ export function LessonSidebar({ lessons }: { lessons: LessonRef[] }) {
   const levels = [...new Set(lessons.map((l) => l.level))];
 
   return (
-    <nav aria-label="Danh sách bài học" className="space-y-5 text-sm">
+    <nav aria-label="Danh sách bài học" className="space-y-6 text-sm">
       {levels.map((lv) => (
         <div key={lv}>
-          <p className="mb-1.5 px-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+          <p className="mb-2 px-3 text-xs font-bold uppercase tracking-wider text-muted-foreground">
             Level {lv} · {LEVEL_NAMES[lv] ?? ""}
           </p>
           <ul className="space-y-0.5">
@@ -49,13 +49,13 @@ export function LessonSidebar({ lessons }: { lessons: LessonRef[] }) {
                       href={`/learn/${l.slug}`}
                       aria-current={active ? "page" : undefined}
                       className={cn(
-                        "flex items-center justify-between gap-2 rounded-md px-2 py-1.5 hover:bg-accent",
-                        active && "bg-accent font-medium",
+                        "flex items-center justify-between gap-2 rounded-lg px-3 py-2 leading-snug text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground",
+                        active && "bg-accent font-semibold text-accent-foreground",
                       )}
                     >
                       <span>{l.title}</span>
                       {done.has(l.slug) && (
-                        <Check className="size-3.5 shrink-0 text-green-600" aria-label="Đã hoàn thành" />
+                        <Check className="size-3.5 shrink-0 text-success" aria-label="Đã hoàn thành" />
                       )}
                     </Link>
                   </li>

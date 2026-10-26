@@ -8,7 +8,7 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-sans);
+  --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
   --font-heading: var(--font-sans);
   --color-sidebar-ring: var(--sidebar-ring);
@@ -40,6 +40,10 @@
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
+  --color-surface: var(--surface);
+  --color-brand-soft: var(--brand-soft);
+  --color-success: var(--success);
+  --shadow-panel: var(--panel-shadow);
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
@@ -50,72 +54,81 @@
 }
 
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
+  /* Semantic design tokens: one source for site and lab UI. */
+  --background: #f6f8fc;
+  --foreground: #172338;
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
+  --card-foreground: #172338;
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
+  --popover-foreground: #172338;
+  --primary: #315bd9;
+  --primary-foreground: #ffffff;
+  --secondary: #eaf0ff;
+  --secondary-foreground: #2346a9;
+  --muted: #eef2f8;
+  --muted-foreground: #516079;
+  --accent: #eaf0ff;
+  --accent-foreground: #2346a9;
   --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
+  --border: #dce4f0;
+  --input: #cbd5e4;
+  --ring: #315bd9;
+  --surface: #ffffff;
+  --brand-soft: #eaf0ff;
+  --success: #167754;
+  --panel-shadow: 0 12px 34px -20px rgb(31 53 101 / 25%);
   --chart-1: oklch(0.87 0 0);
   --chart-2: oklch(0.556 0 0);
   --chart-3: oklch(0.439 0 0);
   --chart-4: oklch(0.371 0 0);
   --chart-5: oklch(0.269 0 0);
-  --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  --radius: 0.875rem;
+  --sidebar: #ffffff;
+  --sidebar-foreground: #172338;
+  --sidebar-primary: #315bd9;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #eaf0ff;
+  --sidebar-accent-foreground: #2346a9;
+  --sidebar-border: #dce4f0;
+  --sidebar-ring: #315bd9;
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
+  --background: #0f1726;
+  --foreground: #ecf2fc;
+  --card: #182437;
+  --card-foreground: #ecf2fc;
+  --popover: #182437;
+  --popover-foreground: #ecf2fc;
+  --primary: #93b0ff;
+  --primary-foreground: #102047;
+  --secondary: #243654;
+  --secondary-foreground: #e1eaff;
+  --muted: #202e43;
+  --muted-foreground: #aab9d0;
+  --accent: #263a5d;
+  --accent-foreground: #e1eaff;
   --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
+  --border: #34445d;
+  --input: #43536a;
+  --ring: #93b0ff;
+  --surface: #182437;
+  --brand-soft: #263a5d;
+  --success: #66d6a8;
+  --panel-shadow: 0 16px 36px -20px rgb(0 0 0 / 55%);
   --chart-1: oklch(0.87 0 0);
   --chart-2: oklch(0.556 0 0);
   --chart-3: oklch(0.439 0 0);
   --chart-4: oklch(0.371 0 0);
   --chart-5: oklch(0.269 0 0);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  --sidebar: #182437;
+  --sidebar-foreground: #ecf2fc;
+  --sidebar-primary: #93b0ff;
+  --sidebar-primary-foreground: #102047;
+  --sidebar-accent: #263a5d;
+  --sidebar-accent-foreground: #e1eaff;
+  --sidebar-border: #34445d;
+  --sidebar-ring: #93b0ff;
 }
 
 @layer base {
@@ -128,13 +141,17 @@
   html {
     @apply font-sans;
   }
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 3px;
+  }
 }
 /* Tô màu cú pháp (highlight.js) cho khối code trong bài học */
 .hljs { color: var(--foreground); background: transparent; }
 .hljs-comment, .hljs-quote { color: #4b5563; font-style: italic; }
 .hljs-keyword, .hljs-selector-tag, .hljs-literal, .hljs-built_in { color: #a626a4; }
 .hljs-string, .hljs-doctag, .hljs-regexp { color: #2e7d32; }
-.hljs-number, .hljs-attr, .hljs-attribute { color: #b45309; }
+.hljs-number, .hljs-attr, .hljs-attribute { color: #92400e; }
 .hljs-title, .hljs-section, .hljs-function .hljs-title { color: #1d4ed8; }
 .hljs-name, .hljs-tag, .hljs-type, .hljs-variable, .hljs-template-variable { color: #b91c1c; }
 .dark .hljs-comment, .dark .hljs-quote { color: #9ca3af; }

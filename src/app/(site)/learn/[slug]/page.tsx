@@ -40,7 +40,7 @@ export default async function LessonPage({ params }: PageProps<"/learn/[slug]">)
   const next = all[index + 1];
 
   return (
-    <article className="max-w-3xl py-8">
+    <article className="max-w-3xl pb-16 pt-10">
       <LessonTracker lessonId={lesson.slug} />
       <Breadcrumb>
         <BreadcrumbList>
@@ -59,9 +59,9 @@ export default async function LessonPage({ params }: PageProps<"/learn/[slug]">)
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
-      <p className="mt-4 text-sm text-muted-foreground">{lesson.minutes} phút</p>
-      <h1 className="mt-1 text-3xl font-bold">{lesson.title}</h1>
-      <div data-ask-ai className="prose prose-neutral dark:prose-invert mt-6 max-w-none">
+      <p className="mt-8 inline-flex rounded-lg bg-brand-soft px-3 py-1 text-sm font-semibold text-secondary-foreground">Bài {lesson.level}.{lesson.order} · {lesson.minutes} phút</p>
+      <h1 className="mt-4 text-3xl font-bold leading-tight tracking-tight sm:text-4xl">{lesson.title}</h1>
+      <div data-ask-ai className="prose prose-slate dark:prose-invert mt-9 max-w-none leading-8 prose-headings:scroll-mt-32 prose-headings:tracking-tight prose-p:leading-8 prose-a:text-primary prose-pre:rounded-xl prose-pre:border prose-pre:border-border prose-pre:bg-card prose-code:break-words">
         <Markdown>{lesson.body}</Markdown>
       </div>
       {lesson.keywords.length > 0 && (
@@ -75,7 +75,7 @@ export default async function LessonPage({ params }: PageProps<"/learn/[slug]">)
         </section>
       )}
       {quiz && (
-        <section className="mt-10 space-y-4 border-t pt-6">
+        <section className="mt-12 space-y-4 border-t border-border pt-8">
           <h2 className="text-xl font-semibold">Kiểm tra kiến thức</h2>
           <p className="text-sm text-muted-foreground">
             Thứ tự câu và đáp án được xáo trộn mỗi lần làm. Có câu chọn nhiều đáp án; phải chọn đúng và đủ mới được điểm.
@@ -85,7 +85,7 @@ export default async function LessonPage({ params }: PageProps<"/learn/[slug]">)
           </Suspense>
         </section>
       )}
-      <div className="mt-10 border-t pt-6">
+      <div className="mt-10 border-t border-border pt-6">
         <MarkDoneButton lessonId={lesson.slug} />
       </div>
       <nav aria-label="Điều hướng bài học" className="mt-8 grid gap-3 sm:grid-cols-2">
@@ -93,7 +93,7 @@ export default async function LessonPage({ params }: PageProps<"/learn/[slug]">)
           <Link
             href={`/learn/${prev.slug}`}
             data-testid="prev-lesson"
-            className="flex items-center gap-2 rounded-lg border p-3 text-sm hover:bg-accent"
+            className="flex items-center gap-2 rounded-xl border border-border bg-card p-4 text-sm shadow-panel hover:bg-accent"
           >
             <ChevronLeft className="size-4 shrink-0" />
             <span>
@@ -108,7 +108,7 @@ export default async function LessonPage({ params }: PageProps<"/learn/[slug]">)
           <Link
             href={`/learn/${next.slug}`}
             data-testid="next-lesson"
-            className="flex items-center justify-end gap-2 rounded-lg border p-3 text-right text-sm hover:bg-accent"
+            className="flex items-center justify-end gap-2 rounded-xl border border-border bg-card p-4 text-right text-sm shadow-panel hover:bg-accent"
           >
             <span>
               <span className="block text-xs text-muted-foreground">Bài tiếp theo</span>

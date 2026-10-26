@@ -73,7 +73,7 @@ function Steps({ os }: { os: "windows" | "macos" }) {
             <p className="font-medium">{s.title}</p>
             <p className="text-sm text-muted-foreground">{s.body}</p>
             {s.code && (
-              <pre className="overflow-x-auto rounded-lg bg-muted p-3 text-xs">
+              <pre tabIndex={0} className="overflow-x-auto rounded-lg bg-muted p-3 text-xs">
                 <code>{s.code}</code>
               </pre>
             )}

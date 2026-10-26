@@ -219,7 +219,7 @@ export function StatsApp({ lessons }: { lessons: LessonRef[] }) {
 
       {exercises.length > 0 && (
         <section className="space-y-2">
-          <h2 className="text-lg font-semibold">Bài tập lab đã nộp</h2>
+          <h2 className="text-lg font-semibold">Lịch sử đánh giá bài tập lab</h2>
           <ul className="divide-y rounded-xl border" data-testid="exercise-history">
             {exercises.slice(0, 10).map((a) => (
               <li key={a.id} className="flex items-center justify-between p-3 text-sm">
@@ -228,6 +228,7 @@ export function StatsApp({ lessons }: { lessons: LessonRef[] }) {
                 </span>
                 <span className="flex items-center gap-2">
                   {a.graded && <Badge variant="outline">Chấm tự động</Badge>}
+                  {!a.graded && <Badge variant="outline">Tự đánh giá</Badge>}
                   {a.solutionViewed && <Badge variant="outline">Đã xem đáp án</Badge>}
                   <Badge variant={a.checked === a.total ? "default" : "secondary"}>
                     {a.checked}/{a.total}

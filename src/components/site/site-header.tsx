@@ -54,23 +54,26 @@ function buildSearchItems(): SearchItem[] {
 
 export function SiteHeader() {
   return (
-    <header className="sticky top-0 z-40 border-b bg-background/80 backdrop-blur">
-      <div className="mx-auto flex h-14 max-w-7xl items-center gap-6 px-4">
-        <Link href="/" className="flex items-center gap-2 font-semibold">
-          <FlaskConical className="size-5" /> Playwright Lab
+    <header className="sticky top-0 z-40 border-b border-border bg-surface/95 shadow-sm backdrop-blur">
+      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6">
+        <Link href="/" className="flex shrink-0 items-center gap-2.5 rounded-lg font-semibold tracking-tight text-foreground">
+          <span className="flex size-9 items-center justify-center rounded-xl bg-primary text-primary-foreground">
+            <FlaskConical className="size-5" aria-hidden="true" />
+          </span>
+          <span>Playwright <span className="text-primary">Lab</span></span>
         </Link>
-        <nav aria-label="Điều hướng chính" className="hidden gap-4 text-sm text-muted-foreground md:flex">
-          {links.map((l) => (
-            <Link key={l.href} href={l.href} className="hover:text-foreground">
-              {l.label}
-            </Link>
-          ))}
-        </nav>
-        <div className="ml-auto flex items-center gap-1">
+        <div className="flex items-center gap-2">
           <SearchPalette items={buildSearchItems()} />
           <ThemeToggle />
         </div>
       </div>
+      <nav aria-label="Điều hướng chính" className="mx-auto flex h-11 max-w-7xl items-center gap-1 overflow-x-auto px-3 text-sm sm:px-5">
+        {links.map((l) => (
+          <Link key={l.href} href={l.href} className="shrink-0 rounded-lg px-3 py-1.5 font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:bg-accent">
+            {l.label}
+          </Link>
+        ))}
+      </nav>
     </header>
   );
 }
