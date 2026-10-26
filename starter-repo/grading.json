@@ -270,6 +270,26 @@
       "bugs": [
         "BUG-03"
       ]
+    },
+    "pay-1": {
+      "lab": "pay",
+      "spec": "tests/exercises/pay/pay-1.spec.ts",
+      "bugs": []
+    },
+    "pay-2": {
+      "lab": "pay",
+      "spec": "tests/exercises/pay/pay-2.spec.ts",
+      "bugs": [
+        "BUG-01"
+      ]
+    },
+    "pay-3": {
+      "lab": "pay",
+      "spec": "tests/exercises/pay/pay-3.spec.ts",
+      "bugs": [
+        "BUG-02",
+        "BUG-03"
+      ]
     }
   }
 }

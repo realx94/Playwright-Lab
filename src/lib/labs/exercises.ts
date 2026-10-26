@@ -2190,4 +2190,228 @@ test("đăng nhập lại cùng email không tạo tài khoản trùng", async (
   },
 ];
 
-export const EXERCISES: Record<string, Exercise[]> = { login, forms, cart, playground, api, otp, todo, table, leave, chat, totp, oauth };
+const pay: Exercise[] = [
+  {
+    id: "pay-1",
+    title: "Thanh toán bằng thẻ test: thành công, từ chối, không đủ số dư",
+    difficulty: 3,
+    task: "Thanh toán bằng thẻ 4242… và chờ đơn chuyển từ Đang chờ webhook sang Đã thanh toán. Sau đó kiểm tra thẻ bị từ chối và thẻ không đủ số dư không làm đổi trạng thái đơn. Ô nhập thẻ nằm trong iframe.",
+    criteria: [
+      "Dùng frameLocator để nhập số thẻ, hạn dùng và CVC",
+      "Chờ trạng thái đơn bằng assertion tự thử lại, không dùng chờ cố định",
+      "Kiểm tra doanh thu và sự kiện webhook sau khi thanh toán thành công",
+      "Kiểm tra thông báo và trạng thái đơn khi thẻ bị từ chối hoặc không đủ số dư",
+      ...COMMON_CRITERIA,
+    ],
+    hints: [
+      "iframe có title là Khung nhập thẻ: page.frameLocator('iframe[title=\"Khung nhập thẻ\"]').",
+      "Trạng thái đơn có data-testid là order-status; webhook về sau khoảng 2 giây nên assertion sẽ tự chờ.",
+      "Thẻ lỗi: 4000 0000 0000 0002 (từ chối) và 4000 0000 0000 9995 (không đủ số dư).",
+    ],
+    solution: `import { test, expect, type Page } from "@playwright/test";
+
+async function start(page: Page) {
+  await page.goto("/lab/pay");
+  await page.getByTestId("reset-data").click();
+}
+
+// Ô nhập thẻ nằm trong iframe nên phải dùng frameLocator; nút Thanh toán nằm ở trang cha.
+async function pay(page: Page, number: string, expiry = "12/35", cvc = "123") {
+  const frame = page.frameLocator('iframe[title="Khung nhập thẻ"]');
+  await frame.getByLabel("Số thẻ").fill(number);
+  await frame.getByLabel("Hết hạn (MM/YY)").fill(expiry);
+  await frame.getByLabel("CVC").fill(cvc);
+  await page.getByRole("button", { name: "Thanh toán" }).click();
+}
+
+const status = (page: Page) => page.getByTestId("order-status");
+
+async function paidOrder(page: Page) {
+  await start(page);
+  await pay(page, "4242 4242 4242 4242");
+  await expect(status(page)).toHaveText("Đã thanh toán");
+}
+
+async function refund(page: Page, amount: string) {
+  await page.getByLabel("Số tiền hoàn").fill(amount);
+  await page.getByRole("button", { name: "Hoàn tiền" }).click();
+}
+
+test("thẻ thành công và chờ webhook", async ({ page }) => {
+  await start(page);
+  await pay(page, "4242 4242 4242 4242");
+  await expect(status(page)).toHaveText("Đang chờ webhook");
+  await expect(status(page)).toHaveText("Đã thanh toán");
+  await expect(page.getByTestId("revenue")).toHaveText("Doanh thu ghi nhận: 500.000 ₫");
+  await expect(page.getByTestId("webhook-event")).toHaveText(["payment.succeeded · evt_1"]);
+});
+
+test("thẻ bị từ chối và không đủ số dư", async ({ page }) => {
+  await start(page);
+  await pay(page, "4000 0000 0000 0002");
+  await expect(page.getByTestId("pay-message")).toHaveText("Thẻ bị từ chối");
+  await expect(status(page)).toHaveText("Chưa thanh toán");
+
+  await pay(page, "4000 0000 0000 9995");
+  await expect(page.getByTestId("pay-message")).toHaveText("Số dư thẻ không đủ");
+  await expect(status(page)).toHaveText("Chưa thanh toán");
+});`,
+  },
+  {
+    id: "pay-2",
+    title: "3D Secure, kiểm tra thẻ trong iframe và webhook trễ",
+    difficulty: 3,
+    bugs: ["BUG-01"],
+    task: "Kiểm tra thẻ 4000 0025 0000 3155 phải hiện hộp 3D Secure; Thất bại thì không tính tiền, Xác thực thì Đã thanh toán. Thêm test lỗi dữ liệu thẻ hiển thị trong iframe và test webhook chỉ về sau 2 giây bằng đồng hồ giả. Test phải đỏ khi bật BUG-01.",
+    criteria: [
+      "Kiểm tra hộp thoại 3D Secure hiện ra (role dialog) trước khi trạng thái đổi",
+      "Có test nhánh Thất bại và nhánh Xác thực",
+      "Kiểm tra thông báo lỗi của iframe cho số thẻ sai Luhn và thẻ hết hạn",
+      "Dùng context.clock.setFixedTime để đẩy thời gian qua mốc 2 giây của webhook",
+      "Test đỏ với BUG-01",
+      ...COMMON_CRITERIA,
+    ],
+    hints: [
+      "Hộp 3D Secure có role dialog và tên Xác thực 3D Secure.",
+      "Lỗi của iframe nằm trong iframe: dùng frame.getByTestId('card-error') chứ không dùng page.",
+      "Đặt giờ giả trước khi mở trang rồi tăng thêm 2000 ms để webhook được giải phóng.",
+    ],
+    solution: `import { test, expect, type Page } from "@playwright/test";
+
+async function start(page: Page) {
+  await page.goto("/lab/pay");
+  await page.getByTestId("reset-data").click();
+}
+
+// Ô nhập thẻ nằm trong iframe nên phải dùng frameLocator; nút Thanh toán nằm ở trang cha.
+async function pay(page: Page, number: string, expiry = "12/35", cvc = "123") {
+  const frame = page.frameLocator('iframe[title="Khung nhập thẻ"]');
+  await frame.getByLabel("Số thẻ").fill(number);
+  await frame.getByLabel("Hết hạn (MM/YY)").fill(expiry);
+  await frame.getByLabel("CVC").fill(cvc);
+  await page.getByRole("button", { name: "Thanh toán" }).click();
+}
+
+const status = (page: Page) => page.getByTestId("order-status");
+
+async function paidOrder(page: Page) {
+  await start(page);
+  await pay(page, "4242 4242 4242 4242");
+  await expect(status(page)).toHaveText("Đã thanh toán");
+}
+
+async function refund(page: Page, amount: string) {
+  await page.getByLabel("Số tiền hoàn").fill(amount);
+  await page.getByRole("button", { name: "Hoàn tiền" }).click();
+}
+
+test("thẻ cần 3D Secure", async ({ page }) => {
+  await start(page);
+  await pay(page, "4000 0025 0000 3155");
+  const dialog = page.getByRole("dialog", { name: "Xác thực 3D Secure" });
+  await expect(dialog).toBeVisible();
+  await dialog.getByRole("button", { name: "Thất bại" }).click();
+  await expect(page.getByTestId("pay-message")).toHaveText("Xác thực 3D Secure thất bại");
+  await expect(status(page)).toHaveText("Chưa thanh toán");
+
+  await pay(page, "4000 0025 0000 3155");
+  await page.getByRole("dialog", { name: "Xác thực 3D Secure" }).getByRole("button", { name: "Xác thực" }).click();
+  await expect(status(page)).toHaveText("Đã thanh toán");
+});
+
+test("lỗi dữ liệu thẻ hiện trong iframe", async ({ page }) => {
+  await start(page);
+  const frame = page.frameLocator('iframe[title="Khung nhập thẻ"]');
+  await pay(page, "4242 4242 4242 4241");
+  await expect(frame.getByTestId("card-error")).toHaveText("Số thẻ không hợp lệ");
+  await pay(page, "4242 4242 4242 4242", "01/20");
+  await expect(frame.getByTestId("card-error")).toHaveText("Thẻ đã hết hạn");
+  await expect(status(page)).toHaveText("Chưa thanh toán");
+});
+
+test("webhook chỉ về sau 2 giây", async ({ page, context }) => {
+  const t0 = new Date("2026-03-01T10:00:00Z");
+  await context.clock.setFixedTime(t0);
+  await start(page);
+  await pay(page, "4242 4242 4242 4242");
+  await expect(status(page)).toHaveText("Đang chờ webhook");
+  await expect(page.getByTestId("webhook-event")).toHaveCount(0);
+
+  await context.clock.setFixedTime(new Date(t0.getTime() + 2000));
+  await expect(status(page)).toHaveText("Đã thanh toán");
+});`,
+  },
+  {
+    id: "pay-3",
+    title: "Hoàn tiền một phần/toàn phần và webhook idempotent",
+    difficulty: 3,
+    bugs: ["BUG-02", "BUG-03"],
+    task: "Trên đơn đã thanh toán 500.000 ₫: hoàn 200.000 ₫ rồi hoàn vượt mức phải bị từ chối, hoàn đủ phần còn lại thì đơn thành Đã hoàn tiền. Gửi lại webhook không được cộng doanh thu lần hai. Test phải đỏ khi bật BUG-02 hoặc BUG-03.",
+    criteria: [
+      "Có thao tác hoàn một phần và kiểm tra trạng thái Hoàn một phần cùng doanh thu",
+      "Có test biên: hoàn 300001 khi còn 300000 bị từ chối và số tiền đã hoàn không đổi",
+      "Hoàn đủ thì trạng thái Đã hoàn tiền và biểu mẫu hoàn biến mất",
+      "Gửi lại webhook và kiểm tra doanh thu giữ nguyên",
+      "Test đỏ với BUG-02 và với BUG-03",
+      ...COMMON_CRITERIA,
+    ],
+    hints: [
+      "Số tiền còn lại = 500000 − tổng đã hoàn; thử đúng biên còn lại và còn lại cộng 1.",
+      "Dùng getByLabel('Số tiền hoàn') cho ô nhập và data-testid order-refunded cho tổng đã hoàn.",
+      "Nút Gửi lại webhook mô phỏng nhà cung cấp gửi trùng cùng một event id.",
+    ],
+    solution: `import { test, expect, type Page } from "@playwright/test";
+
+async function start(page: Page) {
+  await page.goto("/lab/pay");
+  await page.getByTestId("reset-data").click();
+}
+
+// Ô nhập thẻ nằm trong iframe nên phải dùng frameLocator; nút Thanh toán nằm ở trang cha.
+async function pay(page: Page, number: string, expiry = "12/35", cvc = "123") {
+  const frame = page.frameLocator('iframe[title="Khung nhập thẻ"]');
+  await frame.getByLabel("Số thẻ").fill(number);
+  await frame.getByLabel("Hết hạn (MM/YY)").fill(expiry);
+  await frame.getByLabel("CVC").fill(cvc);
+  await page.getByRole("button", { name: "Thanh toán" }).click();
+}
+
+const status = (page: Page) => page.getByTestId("order-status");
+
+async function paidOrder(page: Page) {
+  await start(page);
+  await pay(page, "4242 4242 4242 4242");
+  await expect(status(page)).toHaveText("Đã thanh toán");
+}
+
+async function refund(page: Page, amount: string) {
+  await page.getByLabel("Số tiền hoàn").fill(amount);
+  await page.getByRole("button", { name: "Hoàn tiền" }).click();
+}
+
+test("hoàn tiền một phần rồi toàn phần", async ({ page }) => {
+  await paidOrder(page);
+
+  await refund(page, "200000");
+  await expect(status(page)).toHaveText("Hoàn một phần");
+  await expect(page.getByTestId("revenue")).toHaveText("Doanh thu ghi nhận: 300.000 ₫");
+
+  await refund(page, "300001");
+  await expect(page.getByTestId("refund-error")).toHaveText("Số tiền hoàn vượt quá số tiền còn lại");
+  await expect(page.getByTestId("order-refunded")).toHaveText("Đã hoàn: 200.000 ₫");
+
+  await refund(page, "300000");
+  await expect(status(page)).toHaveText("Đã hoàn tiền");
+  await expect(page.getByRole("button", { name: "Hoàn tiền" })).toHaveCount(0);
+});
+
+test("webhook gửi lại không cộng doanh thu lần hai", async ({ page }) => {
+  await paidOrder(page);
+  await page.getByRole("button", { name: "Gửi lại webhook" }).click();
+  await expect(page.getByTestId("webhook-event").last()).toContainText("trùng, bỏ qua");
+  await expect(page.getByTestId("revenue")).toHaveText("Doanh thu ghi nhận: 500.000 ₫");
+});`,
+  },
+];
+
+export const EXERCISES: Record<string, Exercise[]> = { login, forms, cart, playground, api, otp, todo, table, leave, chat, totp, oauth, pay };

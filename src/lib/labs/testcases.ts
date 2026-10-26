@@ -331,7 +331,34 @@ const oauth: Workshop = {
   ],
 };
 
-export const WORKSHOPS: Record<string, Workshop> = { login, forms, cart, playground, api, otp, todo, table, leave, chat, totp, oauth };
+const pay: Workshop = {
+  techniques: ["Decision Table", "State Transition", "Boundary Value Analysis", "Idempotency"],
+  rules: [
+    { id: "BR-01", text: "Thẻ 4242 4242 4242 4242 (hoặc 4111 1111 1111 1111) thành công; 4000 0000 0000 0002 bị từ chối; 4000 0000 0000 9995 không đủ số dư" },
+    { id: "BR-02", text: "Thẻ 4000 0025 0000 3155 yêu cầu xác thực 3D Secure; thất bại thì không tính tiền" },
+    { id: "BR-03", text: "Dữ liệu thẻ được kiểm tra trong iframe: số thẻ theo thuật toán Luhn, hết hạn MM/YY chưa qua, CVC 3 số" },
+    { id: "BR-04", text: "Thanh toán thành công thì đơn chờ webhook (khoảng 2 giây) rồi mới chuyển sang Đã thanh toán" },
+    { id: "BR-05", text: "Hoàn tiền: số nguyên lớn hơn 0 và không vượt số tiền còn lại; hoàn một phần → Hoàn một phần, hoàn đủ → Đã hoàn tiền" },
+    { id: "BR-06", text: "Webhook gửi lại cùng event id phải được xử lý idempotent (không cộng doanh thu lần hai)" },
+  ],
+  cases: [
+    { id: "TC-P-101", title: "Thanh toán thẻ thành công", precondition: "Đơn chưa thanh toán", steps: "Nhập 4242…, hết hạn 12/35, CVC 123, Thanh toán", data: "4242 4242 4242 4242", expected: "Đang chờ webhook rồi Đã thanh toán, doanh thu 500.000 ₫", type: "Happy", priority: "P0", br: ["BR-01", "BR-04"] },
+    { id: "TC-P-102", title: "Thẻ bị từ chối", precondition: "Đơn chưa thanh toán", steps: "Nhập thẻ 4000 0000 0000 0002", data: "4000 0000 0000 0002", expected: "Báo thẻ bị từ chối, đơn vẫn Chưa thanh toán", type: "Negative", priority: "P0", br: ["BR-01"] },
+    { id: "TC-P-103", title: "Không đủ số dư", precondition: "Đơn chưa thanh toán", steps: "Nhập thẻ 4000 0000 0000 9995", data: "4000 0000 0000 9995", expected: "Báo số dư thẻ không đủ", type: "Negative", priority: "P1", br: ["BR-01"] },
+    { id: "TC-P-104", title: "3D Secure xác thực thành công", precondition: "Đơn chưa thanh toán", steps: "Nhập thẻ 3155, bấm Xác thực", data: "4000 0025 0000 3155", expected: "Hiện hộp 3D Secure, sau đó Đã thanh toán", type: "Happy", priority: "P0", br: ["BR-02"] },
+    { id: "TC-P-105", title: "3D Secure thất bại", precondition: "Đơn chưa thanh toán", steps: "Nhập thẻ 3155, bấm Thất bại", data: "4000 0025 0000 3155", expected: "Báo xác thực thất bại, không tính tiền", type: "Negative", priority: "P0", br: ["BR-02"] },
+    { id: "TC-P-106", title: "Số thẻ sai Luhn", precondition: "Đơn chưa thanh toán", steps: "Nhập số thẻ đổi một chữ số cuối", data: "4242 4242 4242 4241", expected: "Iframe báo số thẻ không hợp lệ, không gửi giao dịch", type: "EP", priority: "P1", br: ["BR-03"] },
+    { id: "TC-P-107", title: "Thẻ đã hết hạn", precondition: "Đơn chưa thanh toán", steps: "Nhập hết hạn 01/20", data: "01/20", expected: "Iframe báo thẻ đã hết hạn", type: "BVA", priority: "P1", br: ["BR-03"] },
+    { id: "TC-P-108", title: "CVC thiếu số", precondition: "Đơn chưa thanh toán", steps: "Nhập CVC 12", data: "12", expected: "Iframe báo CVC gồm 3 chữ số", type: "BVA", priority: "P2", br: ["BR-03"] },
+    { id: "TC-P-109", title: "Webhook chưa về", precondition: "Vừa thanh toán thành công", steps: "Tải lại trang trước 2 giây", data: "—", expected: "Vẫn Đang chờ webhook", type: "State", priority: "P1", br: ["BR-04"] },
+    { id: "TC-P-110", title: "Hoàn một phần", precondition: "Đơn đã thanh toán 500.000 ₫", steps: "Hoàn 200000", data: "200000", expected: "Hoàn một phần, doanh thu 300.000 ₫", type: "State", priority: "P0", br: ["BR-05"] },
+    { id: "TC-P-111", title: "Hoàn vượt số tiền còn lại", precondition: "Đã hoàn 200000", steps: "Hoàn 300001", data: "300001", expected: "Báo vượt quá số tiền còn lại, không đổi dữ liệu", type: "BVA", priority: "P0", br: ["BR-05"] },
+    { id: "TC-P-112", title: "Hoàn đủ", precondition: "Đã hoàn 200000", steps: "Hoàn 300000", data: "300000", expected: "Đã hoàn tiền, doanh thu 0 ₫, hết biểu mẫu hoàn", type: "BVA", priority: "P0", br: ["BR-05"] },
+    { id: "TC-P-113", title: "Gửi lại webhook", precondition: "Đơn đã thanh toán", steps: "Bấm Gửi lại webhook", data: "evt_1", expected: "Ghi nhận trùng, doanh thu giữ nguyên 500.000 ₫", type: "Negative", priority: "P0", br: ["BR-06"] },
+  ],
+};
+
+export const WORKSHOPS: Record<string, Workshop> = { login, forms, cart, playground, api, otp, todo, table, leave, chat, totp, oauth, pay };
 
 export function toCsv(cases: TestCase[]): string {
   const head = ["ID", "Tiêu đề", "Tiền điều kiện", "Các bước", "Dữ liệu", "Kết quả mong đợi", "Loại", "Ưu tiên", "BR"];

@@ -140,6 +140,14 @@ Tạo hai chế độ: **Fake IdP** (trang đồng ý giả trong site, ổn đ�
 - Thẻ test: `4242…` thành công, `4000 0000 0000 0002` bị từ chối, `4000 0025 0000 3155` yêu cầu 3DS.
 - Kỹ năng: `frameLocator` cho Stripe Elements, chờ webhook cập nhật đơn, hoàn tiền một phần/toàn phần.
 - Kỹ thuật: decision table (loại thẻ × số tiền × kết quả), state đơn (Pending → Paid → Refunded).
+- **Bản đã làm (Fake Payment, không gọi Stripe thật):**
+  - BR-01 Thẻ `4242…`/`4111…` thành công; `…0002` bị từ chối; `…9995` không đủ số dư.
+  - BR-02 Thẻ `…3155` yêu cầu 3D Secure; thất bại thì không tính tiền.
+  - BR-03 Dữ liệu thẻ kiểm tra trong iframe: Luhn, hết hạn MM/YY, CVC 3 số.
+  - BR-04 Thanh toán xong, đơn chờ webhook khoảng 2 giây rồi mới thành Đã thanh toán.
+  - BR-05 Hoàn tiền là số nguyên > 0, không vượt số tiền còn lại.
+  - BR-06 Webhook gửi lại cùng event id xử lý idempotent.
+  - Bug: BUG-01 bỏ qua 3D Secure; BUG-02 hoàn vượt số tiền còn lại; BUG-03 webhook gửi lại cộng doanh thu lần hai.
 
 ### LAB-21 Xác minh DB sau khi gọi API (DB assertion)
 **Bối cảnh:** API quản lý đơn hàng; mỗi lệnh ghi phải phản ánh đúng vào DB.
@@ -189,7 +197,8 @@ Vai trò Admin/Manager/Staff/Guest; ma trận quyền; thử IDOR (đổi id tro
 | LAB-17 Đăng nhập Email OTP | `/lab/otp`, `/lab/inbox` | Đã làm (hộp thư giả, page.clock, bug toggle) |
 | LAB-18 Đăng nhập 2FA (TOTP) | `/lab/totp` | Đã làm (TOTP RFC 6238, cửa sổ ±1, mã khôi phục, khóa tài khoản, chống replay; chưa có SMS OTP) |
 | LAB-19 Đăng nhập OAuth (Fake IdP) | `/lab/oauth`, `/lab/oauth/idp` | Đã làm (redirect + popup, state/CSRF, code một lần, hết hạn, tài khoản trùng) |
-| LAB-05, 06, 09..11, 15, 16, 20..28 | — | Chưa làm; các lab cần dịch vụ bên ngoài (OAuth, Stripe, DB, email thật) phụ thuộc mô hình BYO |
+| LAB-20 Thanh toán thẻ (Fake Payment) | `/lab/pay` | Đã làm (iframe nhập thẻ, 3D Secure, webhook trễ, hoàn tiền, idempotency) |
+| LAB-05, 06, 09..11, 15, 16, 21..28 | — | Chưa làm; các lab cần dịch vụ bên ngoài (OAuth, Stripe, DB, email thật) phụ thuộc mô hình BYO |
 
 ### Quy tắc kỹ thuật của trang lab
 - `/lab/<slug>` là **ứng dụng thuần**: không header, không thanh tìm kiếm của site (chỉ một liên kết quay lại ở layout lab) để locator của người học không bị trùng.
