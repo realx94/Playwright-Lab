@@ -36,4 +36,5 @@ export const LABS: LabInfo[] = [
   { slug: "clinic", id: "LAB-10", title: "Y tế: đặt lịch khám", domain: "Healthcare", difficulty: 2, skills: ["date picker", "khung giờ", "page.clock", "biên 2 giờ / 24 giờ", "validation"], ready: true },
   { slug: "tickets", id: "LAB-11", title: "Hỗ trợ khách hàng (ticket & SLA)", domain: "CRM", difficulty: 2, skills: ["setInputFiles", "luồng trạng thái", "ma trận chuyển đổi", "SLA + page.clock", "bình luận"], ready: true },
   { slug: "i18n", id: "LAB-16", title: "Đa ngôn ngữ & responsive", domain: "i18n", difficulty: 2, skills: ["locale", "viewport", "Intl", "điểm gãy 640px", "không cuộn ngang"], ready: true },
+  { slug: "inventory", id: "LAB-09", title: "Quản lý kho & đơn nhập hàng", domain: "ERP", difficulty: 3, skills: ["nhiều trang", "dữ liệu dùng chung", "state đơn nhập", "nhãn theo ngưỡng", "decision table"], ready: true },
 ];

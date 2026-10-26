@@ -5194,4 +5194,244 @@ test("không cuộn ngang ở 320 px và ở điểm gãy 640 px", async ({ page
   },
 ];
 
-export const EXERCISES: Record<string, Exercise[]> = { login, forms, cart, playground, api, otp, todo, table, leave, chat, totp, oauth, pay, orders, guard, webhooks, rbac, timezone, csv, mail, upload, bank, booking, dashboard, clinic, tickets, i18n };
+const inventory: Exercise[] = [
+  {
+    id: "inventory-1",
+    title: "Nhãn tồn kho theo mức đặt lại (biên 51/50/49)",
+    difficulty: 2,
+    bugs: ["BUG-03"],
+    task: "Kiểm tra nhãn ban đầu (SKU-B đúng bằng mức đặt lại phải là Sắp hết) và thao tác xuất kho để đưa SKU-A qua các biên 51 (Đủ hàng), 50 (Sắp hết), 49 (Sắp hết) rồi nhập lại thành 51. Test phải đỏ khi bật BUG-03.",
+    criteria: [
+      "Dùng data-sku và data-testid để đọc tồn và nhãn từng sản phẩm",
+      "Kiểm tra nhãn ban đầu của cả ba sản phẩm",
+      "Đưa tồn về đúng 51, 50, 49 bằng các lần xuất kho nhỏ",
+      "Kiểm tra nhãn đổi đúng ở mỗi biên",
+      "Test đỏ với BUG-03",
+      ...COMMON_CRITERIA,
+    ],
+    hints: [
+      "Mức đặt lại của SKU-A là 50; từ 120 xuất 69 thì còn 51.",
+      "Dòng sản phẩm: page.locator('[data-sku=\"SKU-A\"]').",
+      "Nhãn nằm trong data-testid stock-label.",
+    ],
+    solution: `import { test, expect, type Page } from "@playwright/test";
+
+async function open(page: Page) {
+  await page.goto("/lab/inventory");
+  await page.getByTestId("reset-data").click();
+}
+
+const row = (page: Page, sku: string) => page.locator('[data-sku="' + sku + '"]');
+const qty = (page: Page, sku: string) => row(page, sku).getByTestId("stock-qty");
+const label = (page: Page, sku: string) => row(page, sku).getByTestId("stock-label");
+
+async function move(page: Page, f: { sku?: string; type: string; qty: string; note?: string }) {
+  await page.getByLabel("Sản phẩm").selectOption(f.sku ?? "SKU-A");
+  await page.getByLabel("Loại biến động").selectOption(f.type);
+  await page.getByLabel("Số lượng").fill(f.qty);
+  await page.getByLabel("Ghi chú").fill(f.note ?? "");
+  await page.getByRole("button", { name: "Ghi nhận" }).click();
+}
+
+async function createPo(page: Page, sku: string, quantity: string, supplier = "Công ty A") {
+  await page.getByLabel("Sản phẩm").selectOption(sku);
+  await page.getByLabel("Số lượng đặt").fill(quantity);
+  await page.getByLabel("Nhà cung cấp").selectOption(supplier);
+  await page.getByRole("button", { name: "Tạo đơn" }).click();
+}
+
+test("nhãn ban đầu: đúng mức đặt lại vẫn là Sắp hết", async ({ page }) => {
+  await open(page);
+  await expect(label(page, "SKU-A")).toHaveText("Đủ hàng");
+  await expect(label(page, "SKU-B")).toHaveText("Sắp hết");
+  await expect(label(page, "SKU-C")).toHaveText("Sắp hết");
+});
+
+test("chuyển nhãn theo mức đặt lại: 51 đủ hàng, 50 và 49 sắp hết", async ({ page }) => {
+  await open(page);
+  await move(page, { type: "Xuất kho", qty: "69" });
+  await expect(label(page, "SKU-A")).toHaveText("Đủ hàng");
+  await move(page, { type: "Xuất kho", qty: "1" });
+  await expect(label(page, "SKU-A")).toHaveText("Sắp hết");
+  await move(page, { type: "Xuất kho", qty: "1" });
+  await expect(label(page, "SKU-A")).toHaveText("Sắp hết");
+  await move(page, { type: "Nhập kho", qty: "2" });
+  await expect(label(page, "SKU-A")).toHaveText("Đủ hàng");
+});
+
+test("nhập kho cập nhật tồn và lịch sử", async ({ page }) => {
+  await open(page);
+  await move(page, { type: "Nhập kho", qty: "30" });
+  await expect(qty(page, "SKU-A")).toHaveText("150");
+  await expect(page.getByTestId("movement-row")).toHaveText(["SKU-A · Nhập kho 30 · 120 → 150"]);
+});`,
+  },
+  {
+    id: "inventory-2",
+    title: "Nhập, xuất, điều chỉnh: biên tồn kho và dữ liệu đầu vào",
+    difficulty: 3,
+    bugs: ["BUG-01"],
+    task: "Chứng minh xuất 121 khi tồn 120 bị chặn (không ghi lịch sử), xuất 120 đưa tồn về 0 và nhãn Hết hàng; kiểm tra các số lượng không hợp lệ (abc, -5, 0, 10000); điều chỉnh bắt buộc ghi chú và đặt tồn theo số đếm (kể cả 0 và 9999). Test phải đỏ khi bật BUG-01.",
+    criteria: [
+      "Sinh test cho các số lượng không hợp lệ từ một bảng dữ liệu",
+      "Kiểm tra tồn không đổi và không có lịch sử sau khi bị từ chối",
+      "Kiểm tra biên xuất đúng bằng tồn",
+      "Kiểm tra dòng lịch sử của điều chỉnh gồm tồn trước, tồn sau và ghi chú",
+      "Test đỏ với BUG-01",
+      ...COMMON_CRITERIA,
+    ],
+    hints: [
+      "Nhập 0 chỉ bị từ chối ở Nhập/Xuất; Điều chỉnh cho phép 0.",
+      "Thông báo lỗi và thành công đều ở data-testid inv-message.",
+      "Mỗi test dùng nút Reset dữ liệu lab ở đầu để bắt đầu từ dữ liệu gốc.",
+    ],
+    solution: `import { test, expect, type Page } from "@playwright/test";
+
+async function open(page: Page) {
+  await page.goto("/lab/inventory");
+  await page.getByTestId("reset-data").click();
+}
+
+const row = (page: Page, sku: string) => page.locator('[data-sku="' + sku + '"]');
+const qty = (page: Page, sku: string) => row(page, sku).getByTestId("stock-qty");
+const label = (page: Page, sku: string) => row(page, sku).getByTestId("stock-label");
+
+async function move(page: Page, f: { sku?: string; type: string; qty: string; note?: string }) {
+  await page.getByLabel("Sản phẩm").selectOption(f.sku ?? "SKU-A");
+  await page.getByLabel("Loại biến động").selectOption(f.type);
+  await page.getByLabel("Số lượng").fill(f.qty);
+  await page.getByLabel("Ghi chú").fill(f.note ?? "");
+  await page.getByRole("button", { name: "Ghi nhận" }).click();
+}
+
+async function createPo(page: Page, sku: string, quantity: string, supplier = "Công ty A") {
+  await page.getByLabel("Sản phẩm").selectOption(sku);
+  await page.getByLabel("Số lượng đặt").fill(quantity);
+  await page.getByLabel("Nhà cung cấp").selectOption(supplier);
+  await page.getByRole("button", { name: "Tạo đơn" }).click();
+}
+
+test("xuất vượt tồn bị chặn, xuất đúng bằng tồn thì Hết hàng", async ({ page }) => {
+  await open(page);
+  await move(page, { type: "Xuất kho", qty: "121" });
+  await expect(page.getByTestId("inv-message")).toHaveText("Không đủ hàng, tồn hiện tại 120");
+  await expect(qty(page, "SKU-A")).toHaveText("120");
+  await expect(page.getByTestId("movement-row")).toHaveCount(0);
+
+  await move(page, { type: "Xuất kho", qty: "120" });
+  await expect(qty(page, "SKU-A")).toHaveText("0");
+  await expect(label(page, "SKU-A")).toHaveText("Hết hàng");
+});
+
+const invalid: [string, string, string][] = [
+  ["abc", "", "Số lượng phải là số nguyên không âm"],
+  ["-5", "", "Số lượng phải là số nguyên không âm"],
+  ["0", "", "Số lượng phải từ 1 đến 9999"],
+  ["10000", "", "Số lượng tối đa 9999"],
+];
+for (const [q, note, message] of invalid) {
+  test("từ chối nhập kho với số lượng " + q, async ({ page }) => {
+    await open(page);
+    await move(page, { type: "Nhập kho", qty: q, note });
+    await expect(page.getByTestId("inv-message")).toHaveText(message);
+    await expect(qty(page, "SKU-A")).toHaveText("120");
+  });
+}
+
+test("điều chỉnh cần ghi chú và đặt tồn theo số đếm thực tế", async ({ page }) => {
+  await open(page);
+  await move(page, { type: "Điều chỉnh", qty: "10", note: "" });
+  await expect(page.getByTestId("inv-message")).toHaveText("Điều chỉnh tồn kho cần ghi chú lý do");
+  await move(page, { type: "Điều chỉnh", qty: "25", note: "Kiểm kê tháng 3" });
+  await expect(page.getByTestId("movement-row").first()).toHaveText("SKU-A · Điều chỉnh 25 · 120 → 25 · Kiểm kê tháng 3");
+  await move(page, { type: "Điều chỉnh", qty: "0", note: "Mất hàng" });
+  await expect(label(page, "SKU-A")).toHaveText("Hết hàng");
+  await move(page, { type: "Điều chỉnh", qty: "9999", note: "Biên" });
+  await expect(qty(page, "SKU-A")).toHaveText("9999");
+});`,
+  },
+  {
+    id: "inventory-3",
+    title: "Đơn nhập hàng xuyên hai trang",
+    difficulty: 3,
+    bugs: ["BUG-02"],
+    task: "Trên trang Đơn nhập hàng tạo PO001 cho SKU-C số lượng 100 (tổng 150.000 ₫), đi hết luồng Nháp → Đã gửi → Đã nhận và chứng minh chưa gửi thì không có nút Nhận hàng. Sang trang Tồn kho kiểm tra SKU-C tăng từ 10 lên 110 và có dòng lịch sử Nhận hàng PO001. Thêm test huỷ đơn không đổi tồn kho và biên số lượng đặt 1–5000. Test phải đỏ khi bật BUG-02.",
+    criteria: [
+      "Chuyển giữa hai trang bằng getByRole('link')",
+      "Kiểm tra tổng tiền và trạng thái Nháp của PO001",
+      "Kiểm tra sau khi nhận hàng không còn nút thao tác cho PO001",
+      "Kiểm tra tồn và lịch sử của SKU-C ở trang Tồn kho",
+      "Kiểm tra huỷ đơn và các biên số lượng đặt",
+      "Test đỏ với BUG-02",
+      ...COMMON_CRITERIA,
+    ],
+    hints: [
+      "Dữ liệu hai trang dùng chung nên không cần đăng nhập hay tải lại.",
+      "Nút thao tác có tên truy cập kiểu Gửi đơn PO001, Nhận hàng PO001, Huỷ đơn PO001.",
+      "Giá vốn SKU-C là 1.500 ₫ nên 100 cái là 150.000 ₫.",
+    ],
+    solution: `import { test, expect, type Page } from "@playwright/test";
+
+async function open(page: Page) {
+  await page.goto("/lab/inventory");
+  await page.getByTestId("reset-data").click();
+}
+
+const row = (page: Page, sku: string) => page.locator('[data-sku="' + sku + '"]');
+const qty = (page: Page, sku: string) => row(page, sku).getByTestId("stock-qty");
+const label = (page: Page, sku: string) => row(page, sku).getByTestId("stock-label");
+
+async function move(page: Page, f: { sku?: string; type: string; qty: string; note?: string }) {
+  await page.getByLabel("Sản phẩm").selectOption(f.sku ?? "SKU-A");
+  await page.getByLabel("Loại biến động").selectOption(f.type);
+  await page.getByLabel("Số lượng").fill(f.qty);
+  await page.getByLabel("Ghi chú").fill(f.note ?? "");
+  await page.getByRole("button", { name: "Ghi nhận" }).click();
+}
+
+async function createPo(page: Page, sku: string, quantity: string, supplier = "Công ty A") {
+  await page.getByLabel("Sản phẩm").selectOption(sku);
+  await page.getByLabel("Số lượng đặt").fill(quantity);
+  await page.getByLabel("Nhà cung cấp").selectOption(supplier);
+  await page.getByRole("button", { name: "Tạo đơn" }).click();
+}
+
+test("đơn nhập: Nháp → Đã gửi → Đã nhận cộng tồn kho và hiện ở trang Tồn kho", async ({ page }) => {
+  await open(page);
+  await page.getByRole("link", { name: "Đơn nhập hàng" }).click();
+  await createPo(page, "SKU-C", "100", "Công ty B");
+  await expect(page.getByTestId("po-message")).toHaveText("Đã tạo PO001");
+  await expect(page.getByTestId("po-row")).toContainText("PO001 · SKU-C × 100 · Công ty B · 150.000 ₫ · Nháp");
+  await expect(page.getByRole("button", { name: /^Nhận hàng/ })).toHaveCount(0);
+
+  await page.getByRole("button", { name: "Gửi đơn PO001" }).click();
+  await expect(page.getByTestId("po-status")).toHaveText("Đã gửi");
+  await page.getByRole("button", { name: "Nhận hàng PO001" }).click();
+  await expect(page.getByTestId("po-status")).toHaveText("Đã nhận");
+  await expect(page.getByRole("button", { name: /PO001$/ })).toHaveCount(0);
+
+  await page.getByRole("link", { name: "Tồn kho" }).click();
+  await expect(qty(page, "SKU-C")).toHaveText("110");
+  await expect(label(page, "SKU-C")).toHaveText("Đủ hàng");
+  await expect(page.getByTestId("movement-row").first()).toHaveText("SKU-C · Nhập kho 100 · 10 → 110 · Nhận hàng PO001");
+});
+
+test("huỷ đơn không đổi tồn kho; số lượng đặt có biên 1 và 5000", async ({ page }) => {
+  await page.goto("/lab/inventory/po");
+  await page.getByTestId("reset-data").click();
+  for (const bad of ["0", "5001", "abc"]) {
+    await createPo(page, "SKU-A", bad);
+    await expect(page.getByTestId("po-message")).toHaveText("Số lượng đặt từ 1 đến 5000");
+  }
+  await createPo(page, "SKU-A", "5000");
+  await expect(page.getByTestId("po-message")).toHaveText("Đã tạo PO001");
+  await page.getByRole("button", { name: "Huỷ đơn PO001" }).click();
+  await expect(page.getByTestId("po-status")).toHaveText("Đã huỷ");
+
+  await page.getByRole("link", { name: "Tồn kho" }).click();
+  await expect(qty(page, "SKU-A")).toHaveText("120");
+});`,
+  },
+];
+
+export const EXERCISES: Record<string, Exercise[]> = { login, forms, cart, playground, api, otp, todo, table, leave, chat, totp, oauth, pay, orders, guard, webhooks, rbac, timezone, csv, mail, upload, bank, booking, dashboard, clinic, tickets, i18n, inventory };

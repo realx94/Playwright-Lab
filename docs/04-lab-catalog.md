@@ -272,6 +272,13 @@ Vai trò Admin/Manager/Staff/Guest; ma trận quyền; thử IDOR (đổi id tro
 - BR-05 ≥ 640 px: điều hướng đủ + bảng; < 640 px: nút menu (`aria-expanded`) + thẻ; BR-06 không cuộn ngang ở mọi bề rộng.
 - Bug: BUG-01 bỏ qua ngôn ngữ trình duyệt; BUG-02 ngày không theo ngôn ngữ; BUG-03 bảng có `min-width` gây cuộn ngang ở 640 px.
 
+### LAB-09 Quản lý kho & đơn nhập hàng (bản đã làm)
+`/lab/inventory` (tồn kho, biến động nhập/xuất/điều chỉnh, lịch sử) và `/lab/inventory/po` (đơn nhập hàng); hai trang dùng chung dữ liệu trong trình duyệt. Import/export CSV được tách riêng ở LAB-27.
+- BR-01 dữ liệu gốc (A 120/50, B 40/40, C 10/30) và lịch sử biến động; BR-02 xuất không vượt tồn, điều chỉnh bắt buộc ghi chú.
+- BR-03 số lượng nguyên không âm (nhập/xuất 1–9999); BR-04 nhãn Hết hàng / Sắp hết (≤ mức đặt lại) / Đủ hàng.
+- BR-05 đơn nhập 1–5000, luồng Nháp → Đã gửi → Đã nhận, huỷ khi Nháp/Đã gửi; BR-06 nhận hàng cộng đúng số lượng, huỷ không đổi tồn.
+- Bug: BUG-01 xuất vượt tồn (tồn âm); BUG-02 nhận hàng cộng gấp đôi; BUG-03 đúng mức đặt lại không báo Sắp hết.
+
 ## Độ phủ kỹ năng theo lab (rà soát)
 | Kỹ năng | Lab |
 |---------|-----|
@@ -316,7 +323,7 @@ Vai trò Admin/Manager/Staff/Guest; ma trận quyền; thử IDOR (đổi id tro
 | LAB-10 Y tế: đặt lịch khám | `/lab/clinic` | Đã làm |
 | LAB-11 Hỗ trợ khách hàng (ticket & SLA) | `/lab/tickets` | Đã làm |
 | LAB-16 Đa ngôn ngữ & responsive | `/lab/i18n` | Đã làm |
-| LAB-9 | — | Chưa làm |
+| LAB-09 Quản lý kho & đơn nhập hàng | `/lab/inventory` | Đã làm |
 
 ### Quy tắc kỹ thuật của trang lab
 - `/lab/<slug>` là **ứng dụng thuần**: không header, không thanh tìm kiếm của site (chỉ một liên kết quay lại ở layout lab) để locator của người học không bị trùng.

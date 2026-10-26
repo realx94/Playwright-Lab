@@ -720,7 +720,34 @@ const i18n: Workshop = {
   ],
 };
 
-export const WORKSHOPS: Record<string, Workshop> = { login, forms, cart, playground, api, otp, todo, table, leave, chat, totp, oauth, pay, orders, guard, webhooks, rbac, timezone, csv, mail, upload, bank, booking, dashboard, clinic, tickets, i18n };
+const inventory: Workshop = {
+  techniques: ["State Transition", "Boundary Value Analysis", "Decision Table", "Equivalence Partitioning"],
+  rules: [
+    { id: "BR-01", text: "Ba sản phẩm ban đầu: SKU-A tồn 120 (mức đặt lại 50), SKU-B tồn 40 (mức 40), SKU-C tồn 10 (mức 30); mỗi biến động ghi lịch sử gồm tồn trước và tồn sau" },
+    { id: "BR-02", text: "Nhập kho cộng thêm; Xuất kho không được vượt tồn hiện tại (đúng bằng tồn thì được) và báo Không đủ hàng, tồn hiện tại N; Điều chỉnh đặt tồn bằng số đếm thực tế (0–9999) và bắt buộc ghi chú" },
+    { id: "BR-03", text: "Số lượng là số nguyên không âm; nhập/xuất từ 1 đến 9999; 0 chỉ hợp lệ cho Điều chỉnh" },
+    { id: "BR-04", text: "Nhãn: tồn = 0 là Hết hàng; tồn ≤ mức đặt lại là Sắp hết (đúng bằng mức đặt lại vẫn Sắp hết); còn lại Đủ hàng" },
+    { id: "BR-05", text: "Đơn nhập hàng: số lượng 1–5000, tổng tiền = số lượng × giá vốn; luồng Nháp → Đã gửi → Đã nhận; Nháp hoặc Đã gửi huỷ được; Đã nhận và Đã huỷ không còn thao tác; chỉ đơn Đã gửi mới nhận hàng được" },
+    { id: "BR-06", text: "Nhận hàng cộng đúng số lượng đặt vào tồn kho và ghi một biến động Nhập kho; dữ liệu dùng chung giữa trang Tồn kho và trang Đơn nhập hàng; huỷ đơn không đổi tồn kho" },
+  ],
+  cases: [
+    { id: "TC-I-101", title: "Nhãn trạng thái ban đầu", precondition: "Dữ liệu gốc", steps: "Đọc nhãn ba sản phẩm", data: "A 120, B 40, C 10", expected: "A Đủ hàng; B Sắp hết (đúng mức); C Sắp hết", type: "BVA", priority: "P0", br: ["BR-04"] },
+    { id: "TC-I-102", title: "Nhập kho", precondition: "SKU-A tồn 120", steps: "Nhập kho 30", data: "30", expected: "Tồn 150, lịch sử 120 → 150", type: "Happy", priority: "P0", br: ["BR-01", "BR-02"] },
+    { id: "TC-I-103", title: "Xuất vượt tồn", precondition: "SKU-A tồn 120", steps: "Xuất 121", data: "121", expected: "Không đủ hàng, tồn hiện tại 120; không ghi lịch sử", type: "BVA", priority: "P0", br: ["BR-02"] },
+    { id: "TC-I-104", title: "Xuất đúng bằng tồn", precondition: "SKU-A tồn 120", steps: "Xuất 120", data: "120", expected: "Tồn 0, nhãn Hết hàng", type: "BVA", priority: "P0", br: ["BR-02", "BR-04"] },
+    { id: "TC-I-105", title: "Biên mức đặt lại", precondition: "SKU-A", steps: "Đưa tồn về 51, 50, 49", data: "51/50/49", expected: "Đủ hàng, Sắp hết, Sắp hết", type: "BVA", priority: "P0", br: ["BR-04"] },
+    { id: "TC-I-106", title: "Số lượng không hợp lệ", precondition: "—", steps: "Nhập abc, -5, 0, 10000", data: "các giá trị", expected: "Thông báo tương ứng, tồn không đổi", type: "EP", priority: "P1", br: ["BR-03"] },
+    { id: "TC-I-107", title: "Điều chỉnh thiếu ghi chú", precondition: "—", steps: "Điều chỉnh 10 không ghi chú", data: "10", expected: "Cần ghi chú lý do", type: "Negative", priority: "P1", br: ["BR-02"] },
+    { id: "TC-I-108", title: "Điều chỉnh về 0 và 9999", precondition: "—", steps: "Điều chỉnh 0 rồi 9999 có ghi chú", data: "0, 9999", expected: "Hết hàng rồi tồn 9999", type: "BVA", priority: "P1", br: ["BR-02", "BR-03"] },
+    { id: "TC-I-109", title: "Tạo đơn nhập", precondition: "SKU-C giá vốn 1.500", steps: "Đặt 100, nhà cung cấp B", data: "100", expected: "PO001 trạng thái Nháp, tổng 150.000 ₫", type: "Happy", priority: "P0", br: ["BR-05"] },
+    { id: "TC-I-110", title: "Số lượng đặt", precondition: "—", steps: "Đặt 0, 5001, abc, 1, 5000", data: "các giá trị", expected: "0/5001/abc bị từ chối; 1 và 5000 hợp lệ", type: "BVA", priority: "P1", br: ["BR-05"] },
+    { id: "TC-I-111", title: "Nhận hàng cộng tồn", precondition: "PO001 Đã gửi", steps: "Nhận hàng rồi mở trang Tồn kho", data: "100", expected: "SKU-C 10 → 110, lịch sử Nhận hàng PO001", type: "State", priority: "P0", br: ["BR-06"] },
+    { id: "TC-I-112", title: "Chưa gửi chưa nhận được", precondition: "PO001 Nháp", steps: "Tìm nút Nhận hàng", data: "—", expected: "Không có nút Nhận hàng", type: "State", priority: "P1", br: ["BR-05"] },
+    { id: "TC-I-113", title: "Huỷ đơn", precondition: "PO Nháp và PO Đã gửi", steps: "Huỷ từng đơn", data: "—", expected: "Đã huỷ, không còn thao tác, tồn kho không đổi", type: "State", priority: "P1", br: ["BR-05", "BR-06"] },
+  ],
+};
+
+export const WORKSHOPS: Record<string, Workshop> = { login, forms, cart, playground, api, otp, todo, table, leave, chat, totp, oauth, pay, orders, guard, webhooks, rbac, timezone, csv, mail, upload, bank, booking, dashboard, clinic, tickets, i18n, inventory };
 
 export function toCsv(cases: TestCase[]): string {
   const head = ["ID", "Tiêu đề", "Tiền điều kiện", "Các bước", "Dữ liệu", "Kết quả mong đợi", "Loại", "Ưu tiên", "BR"];
