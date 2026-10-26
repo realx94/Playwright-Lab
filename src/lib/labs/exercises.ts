@@ -883,17 +883,19 @@ for (const c of cases) {
     ],
     hints: [
       "Dùng ?seed=10 để hai mã OTP khác nhau một cách chắc chắn.",
-      "Hộp thư xếp thư mới nhất lên đầu; allInnerTexts() trả về mảng theo thứ tự đó.",
+      "Hộp thư xếp thư mới nhất lên đầu; allInnerTexts() không tự chờ nên hãy chờ toHaveCount trước.",
       "context.clock.install() rồi fastForward('01:01') để vượt thời gian khoá.",
     ],
     solution: `import { test, expect, type BrowserContext } from "@playwright/test";
 
-async function readOtps(context: BrowserContext): Promise<string[]> {
+async function readOtps(context: BrowserContext, count: number): Promise<string[]> {
   const inbox = await context.newPage();
   await inbox.goto("/lab/inbox");
-  const bodies = await inbox.getByTestId("email-body").allInnerTexts();
+  const bodies = inbox.getByTestId("email-body");
+  await expect(bodies).toHaveCount(count);   // allInnerTexts() không tự chờ
+  const texts = await bodies.allInnerTexts();
   await inbox.close();
-  return bodies.map((b) => b.match(/[0-9]{6}/)![0]);   // mới nhất đứng đầu
+  return texts.map((b) => b.match(/[0-9]{6}/)![0]);   // mới nhất đứng đầu
 }
 
 test("gửi lại bị khoá 60 giây và mã cũ không còn hiệu lực", async ({ page, context }) => {
@@ -912,7 +914,7 @@ test("gửi lại bị khoá 60 giây và mã cũ không còn hiệu lực", asy
   await expect(resend).toBeEnabled();
   await resend.click();
 
-  const [second, first] = await readOtps(context);
+  const [second, first] = await readOtps(context, 2);
   expect(second).not.toBe(first);
 
   const message = page.getByTestId("otp-message");
@@ -927,4 +929,151 @@ test("gửi lại bị khoá 60 giây và mã cũ không còn hiệu lực", asy
   },
 ];
 
-export const EXERCISES: Record<string, Exercise[]> = { login, forms, cart, playground, api, otp };
+const todo: Exercise[] = [
+  {
+    id: "todo-1",
+    title: "Thêm, hoàn thành và xoá có xác nhận",
+    difficulty: 1,
+    task: "Đi hết luồng chính: thêm một công việc, tick hoàn thành, thử xoá rồi chọn Giữ lại, sau đó xoá thật và kiểm tra danh sách trống.",
+    criteria: [
+      "Dùng getByRole/getByLabel cho mọi thao tác, không dùng CSS dài",
+      "Kiểm tra bộ đếm sau khi thêm và sau khi hoàn thành",
+      "Kiểm tra cả hai nhánh của hộp thoại xác nhận (Giữ lại và Xoá hẳn)",
+      "Reset dữ liệu lab trước khi bắt đầu để test độc lập",
+      ...COMMON_CRITERIA,
+    ],
+    hints: [
+      "Checkbox có tên truy cập dạng Hoàn thành: <tên việc>.",
+      "Hộp thoại xác nhận là phần tử trong trang, không phải dialog của trình duyệt.",
+      "Danh sách trống hiện phần tử có data-testid là todo-empty.",
+    ],
+    solution: `import { test, expect } from "@playwright/test";
+
+test("thêm, hoàn thành và xoá có xác nhận", async ({ page }) => {
+  await page.goto("/lab/todo");
+  await page.getByTestId("reset-data").click();
+
+  await page.getByLabel("Công việc mới").fill("Mua sữa");
+  await page.getByRole("button", { name: "Thêm", exact: true }).click();
+  await expect(page.getByTestId("todo-item")).toHaveCount(1);
+  await expect(page.getByTestId("todo-count")).toHaveText("Còn 1 việc");
+
+  await page.getByRole("checkbox", { name: "Hoàn thành: Mua sữa" }).check();
+  await expect(page.getByTestId("todo-count")).toHaveText("Còn 0 việc");
+
+  await page.getByRole("button", { name: "Xoá Mua sữa" }).click();
+  await page.getByRole("button", { name: "Giữ lại" }).click();
+  await expect(page.getByTestId("todo-item")).toHaveCount(1);
+
+  await page.getByRole("button", { name: "Xoá Mua sữa" }).click();
+  await page.getByRole("button", { name: "Xoá hẳn" }).click();
+  await expect(page.getByTestId("todo-empty")).toBeVisible();
+});`,
+  },
+  {
+    id: "todo-2",
+    title: "Quy tắc thêm: rỗng, trùng, biên 80 và 20",
+    difficulty: 2,
+    task: "Kiểm tra các quy tắc khi thêm việc: tên rỗng/khoảng trắng, tên 80 và 81 ký tự, trùng tên khác hoa thường và giới hạn 20 việc. Chạy lại với ?bugs=BUG-01 và ?bugs=BUG-03 để thấy lỗi.",
+    criteria: [
+      "Có đủ biên tên 80/81 ký tự và biên số lượng 20/21 việc",
+      "Test trùng tên dùng chữ hoa khác chữ thường (Mua sữa và mua SỮA)",
+      "Dùng hàm helper để thêm việc, không lặp lại các bước",
+      "Test đỏ với BUG-01 (trùng tên) và BUG-03 (giới hạn 21)",
+      ...COMMON_CRITERIA,
+    ],
+    hints: [
+      "Dùng chuỗi lặp: 'a'.repeat(81).",
+      "Dùng vòng for để thêm 20 việc rồi thêm việc thứ 21.",
+      "Thông báo lỗi nằm trong phần tử có data-testid là todo-error.",
+    ],
+    solution: `import { test, expect, type Page } from "@playwright/test";
+
+async function open(page: Page) {
+  await page.goto("/lab/todo");   // thêm ?bugs=BUG-01 hoặc BUG-03 để thấy test đỏ
+  await page.getByTestId("reset-data").click();
+}
+
+async function add(page: Page, title: string) {
+  await page.getByLabel("Công việc mới").fill(title);
+  await page.getByRole("button", { name: "Thêm", exact: true }).click();
+}
+
+const error = (page: Page) => page.getByTestId("todo-error");
+
+test("tên rỗng, khoảng trắng và biên 80/81", async ({ page }) => {
+  await open(page);
+  await add(page, "");
+  await expect(error(page)).toContainText("Vui lòng nhập");
+  await add(page, "   ");
+  await expect(error(page)).toContainText("Vui lòng nhập");
+  await add(page, "a".repeat(81));
+  await expect(error(page)).toContainText("tối đa 80");
+  await add(page, "a".repeat(80));
+  await expect(page.getByTestId("todo-item")).toHaveCount(1);
+});
+
+test("trùng tên không phân biệt hoa thường", async ({ page }) => {
+  await open(page);
+  await add(page, "Mua sữa");
+  await add(page, "mua SỮA");
+  await expect(error(page)).toHaveText("Công việc này đã tồn tại");
+  await expect(page.getByTestId("todo-item")).toHaveCount(1);
+});
+
+test("giới hạn 20 công việc", async ({ page }) => {
+  await open(page);
+  for (let i = 1; i <= 20; i++) await add(page, "Việc " + i);
+  await expect(page.getByTestId("todo-item")).toHaveCount(20);
+  await add(page, "Việc 21");
+  await expect(error(page)).toContainText("Tối đa 20");
+  await expect(page.getByTestId("todo-item")).toHaveCount(20);
+});`,
+  },
+  {
+    id: "todo-3",
+    title: "Bộ lọc, bộ đếm và dữ liệu sau khi tải lại",
+    difficulty: 2,
+    task: "Kiểm tra bộ đếm chỉ tính việc chưa xong, ba bộ lọc hoạt động đúng và dữ liệu vẫn còn sau khi tải lại trang. Chạy lại với ?bugs=BUG-02 để thấy lỗi.",
+    criteria: [
+      "Kiểm tra số lượng và nội dung hiển thị của từng bộ lọc",
+      "Kiểm tra bộ đếm trước và sau khi hoàn thành một việc",
+      "Sau khi tải lại, xác nhận trạng thái đã xong của việc vẫn được giữ",
+      "Test đỏ với BUG-02 (bộ đếm đếm cả việc đã xong)",
+      ...COMMON_CRITERIA,
+    ],
+    hints: [
+      "Nút lọc có aria-pressed; dùng getByRole('button', { name, exact: true }).",
+      "Bộ lọc không được lưu sau khi tải lại, nhưng danh sách thì có.",
+      "toBeChecked() kiểm tra trạng thái của checkbox.",
+    ],
+    solution: `import { test, expect } from "@playwright/test";
+
+test("bộ lọc, bộ đếm và lưu dữ liệu", async ({ page }) => {
+  await page.goto("/lab/todo");   // thêm ?bugs=BUG-02 để thấy test đỏ
+  await page.getByTestId("reset-data").click();
+
+  for (const title of ["A", "B", "C"]) {
+    await page.getByLabel("Công việc mới").fill(title);
+    await page.getByRole("button", { name: "Thêm", exact: true }).click();
+  }
+  await expect(page.getByTestId("todo-count")).toHaveText("Còn 3 việc");
+
+  await page.getByRole("checkbox", { name: "Hoàn thành: A" }).check();
+  await expect(page.getByTestId("todo-count")).toHaveText("Còn 2 việc");
+
+  await page.getByRole("button", { name: "Hoàn thành", exact: true }).click();
+  await expect(page.getByTestId("todo-item")).toHaveCount(1);
+  await expect(page.getByTestId("todo-title")).toHaveText("A");
+
+  await page.getByRole("button", { name: "Đang làm" }).click();
+  await expect(page.getByTestId("todo-item")).toHaveCount(2);
+
+  await page.reload();
+  await expect(page.getByTestId("todo-item")).toHaveCount(3);
+  await expect(page.getByRole("checkbox", { name: "Hoàn thành: A" })).toBeChecked();
+});`,
+  },
+];
+
+export const EXERCISES: Record<string, Exercise[]> = { login, forms, cart, playground, api, otp, todo };

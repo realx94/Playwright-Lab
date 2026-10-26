@@ -171,7 +171,36 @@ const otp: Workshop = {
   ],
 };
 
-export const WORKSHOPS: Record<string, Workshop> = { login, forms, cart, playground, api, otp };
+const todo: Workshop = {
+  techniques: ["Equivalence Partitioning", "Boundary Value Analysis", "State Transition", "CRUD"],
+  rules: [
+    { id: "BR-01", text: "Tên công việc 1–80 ký tự, không chỉ gồm khoảng trắng" },
+    { id: "BR-02", text: "Không thêm công việc trùng tên (không phân biệt hoa thường)" },
+    { id: "BR-03", text: "Tối đa 20 công việc" },
+    { id: "BR-04", text: "Tick hoàn thành chuyển việc sang Hoàn thành; bỏ tick quay lại Đang làm" },
+    { id: "BR-05", text: "Xoá một công việc phải qua hộp thoại xác nhận" },
+    { id: "BR-06", text: "Bộ lọc Tất cả / Đang làm / Hoàn thành; bộ đếm Còn N việc chỉ tính việc chưa xong" },
+    { id: "BR-07", text: "Dữ liệu được giữ sau khi tải lại trang" },
+  ],
+  cases: [
+    { id: "TC-T-001", title: "Thêm công việc hợp lệ", precondition: "Danh sách trống", steps: "Nhập Mua sữa, bấm Thêm", data: "Mua sữa", expected: "Có 1 việc, bộ đếm Còn 1 việc", type: "Happy", priority: "P0", br: ["BR-01"] },
+    { id: "TC-T-002", title: "Tên rỗng", precondition: "Danh sách trống", steps: "Bấm Thêm khi ô nhập trống", data: "(rỗng)", expected: "Báo vui lòng nhập tên", type: "EP", priority: "P0", br: ["BR-01"] },
+    { id: "TC-T-003", title: "Tên chỉ có khoảng trắng", precondition: "Danh sách trống", steps: "Nhập ba dấu cách, bấm Thêm", data: "   ", expected: "Báo vui lòng nhập tên", type: "EP", priority: "P1", br: ["BR-01"] },
+    { id: "TC-T-004", title: "Tên 80 ký tự", precondition: "Danh sách trống", steps: "Nhập 80 ký tự, bấm Thêm", data: "a × 80", expected: "Thêm thành công", type: "BVA", priority: "P1", br: ["BR-01"] },
+    { id: "TC-T-005", title: "Tên 81 ký tự", precondition: "Danh sách trống", steps: "Nhập 81 ký tự, bấm Thêm", data: "a × 81", expected: "Báo tối đa 80 ký tự", type: "BVA", priority: "P1", br: ["BR-01"] },
+    { id: "TC-T-006", title: "Trùng tên khác hoa thường", precondition: "Đã có Mua sữa", steps: "Thêm mua SỮA", data: "mua SỮA", expected: "Báo công việc đã tồn tại", type: "EP", priority: "P0", br: ["BR-02"] },
+    { id: "TC-T-007", title: "Việc thứ 20", precondition: "Đã có 19 việc", steps: "Thêm việc thứ 20", data: "—", expected: "Thêm thành công", type: "BVA", priority: "P0", br: ["BR-03"] },
+    { id: "TC-T-008", title: "Việc thứ 21", precondition: "Đã có 20 việc", steps: "Thêm việc thứ 21", data: "—", expected: "Báo tối đa 20, vẫn 20 việc", type: "BVA", priority: "P0", br: ["BR-03"] },
+    { id: "TC-T-009", title: "Đánh dấu hoàn thành", precondition: "Có 1 việc đang làm", steps: "Tick checkbox", data: "—", expected: "Việc gạch ngang, bộ đếm Còn 0 việc", type: "State", priority: "P0", br: ["BR-04", "BR-06"] },
+    { id: "TC-T-010", title: "Bỏ đánh dấu", precondition: "Có 1 việc đã xong", steps: "Bỏ tick", data: "—", expected: "Việc quay lại Đang làm, bộ đếm Còn 1 việc", type: "State", priority: "P1", br: ["BR-04"] },
+    { id: "TC-T-011", title: "Xoá nhưng chọn Giữ lại", precondition: "Có 1 việc", steps: "Bấm Xoá rồi Giữ lại", data: "—", expected: "Việc vẫn còn", type: "Negative", priority: "P1", br: ["BR-05"] },
+    { id: "TC-T-012", title: "Xoá và xác nhận", precondition: "Có 1 việc", steps: "Bấm Xoá rồi Xoá hẳn", data: "—", expected: "Việc biến mất, hiện danh sách trống", type: "Happy", priority: "P0", br: ["BR-05"] },
+    { id: "TC-T-013", title: "Lọc Hoàn thành", precondition: "Có 1 việc xong, 1 việc đang làm", steps: "Bấm bộ lọc Hoàn thành", data: "—", expected: "Chỉ hiện việc đã xong", type: "Decision", priority: "P1", br: ["BR-06"] },
+    { id: "TC-T-014", title: "Tải lại trang", precondition: "Có 2 việc, 1 việc đã xong", steps: "Tải lại trang", data: "—", expected: "Vẫn 2 việc và trạng thái được giữ", type: "State", priority: "P1", br: ["BR-07"] },
+  ],
+};
+
+export const WORKSHOPS: Record<string, Workshop> = { login, forms, cart, playground, api, otp, todo };
 
 export function toCsv(cases: TestCase[]): string {
   const head = ["ID", "Tiêu đề", "Tiền điều kiện", "Các bước", "Dữ liệu", "Kết quả mong đợi", "Loại", "Ưu tiên", "BR"];
