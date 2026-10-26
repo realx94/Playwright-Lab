@@ -37,6 +37,7 @@ export interface StorageAdapter {
   saveAttempt(a: QuizAttempt): Promise<void>;
   listAttempts(): Promise<QuizAttempt[]>;
   addAsk(e: AskAiEntry): Promise<void>;
+  listAsk(): Promise<AskAiEntry[]>;
   exportAll(): Promise<ExportData>;
   importAll(data: ExportData): Promise<void>;
   clearAll(): Promise<void>;

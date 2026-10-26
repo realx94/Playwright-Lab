@@ -45,6 +45,9 @@ export const localAdapter: StorageAdapter = {
   async addAsk(e) {
     await (await db()).add("askAiHistory", e);
   },
+  async listAsk() {
+    return (await db()).getAll("askAiHistory");
+  },
   async exportAll() {
     const d = await db();
     return {

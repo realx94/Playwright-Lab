@@ -3,25 +3,33 @@
 import { useEffect } from "react";
 import { storage } from "@/lib/storage";
 
-/** Ghi lịch sử xem bài và thời gian đọc vào IndexedDB. */
+/** Ghi lịch sử xem bài và cộng dồn thời gian đọc vào IndexedDB khi rời trang. */
 export function LessonTracker({ lessonId }: { lessonId: string }) {
   useEffect(() => {
     const start = Date.now();
-    let prev = { timeSpentSec: 0, status: "in-progress" as "in-progress" | "done" };
     storage
       .getProgress(lessonId)
-      .then((p) => {
-        if (p) prev = { timeSpentSec: p.timeSpentSec, status: p.status };
-      })
+      .then((p) =>
+        storage.saveProgress({
+          lessonId,
+          status: p?.status ?? "in-progress",
+          lastViewedAt: Date.now(),
+          timeSpentSec: p?.timeSpentSec ?? 0,
+        }),
+      )
       .catch(() => {});
     return () => {
+      const spent = Math.round((Date.now() - start) / 1000);
       storage
-        .saveProgress({
-          lessonId,
-          status: prev.status,
-          lastViewedAt: Date.now(),
-          timeSpentSec: prev.timeSpentSec + Math.round((Date.now() - start) / 1000),
-        })
+        .getProgress(lessonId)
+        .then((p) =>
+          storage.saveProgress({
+            lessonId,
+            status: p?.status ?? "in-progress",
+            lastViewedAt: Date.now(),
+            timeSpentSec: (p?.timeSpentSec ?? 0) + spent,
+          }),
+        )
         .catch(() => {});
     };
   }, [lessonId]);

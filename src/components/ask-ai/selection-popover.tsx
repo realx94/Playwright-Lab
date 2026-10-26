@@ -45,23 +45,40 @@ export function SelectionPopover() {
   }, []);
 
   useEffect(() => {
-    const onUp = () => setTimeout(update, 0);
+    let mouseDown = false;
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    const onDown = () => {
+      mouseDown = true;
+    };
+    const onUp = () => {
+      mouseDown = false;
+      setTimeout(update, 0);
+    };
+    // Chọn bằng bàn phím hoặc bằng code cũng hiện popover (trừ khi đang kéo chuột).
+    const onSelChange = () => {
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        if (!mouseDown) update();
+      }, 150);
+    };
     const onKey = (e: KeyboardEvent) => {
       if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === "a") {
         const t = normalizeSelection(window.getSelection()?.toString() ?? "");
         if (isValidSelection(t)) ask(t);
       }
     };
+    document.addEventListener("mousedown", onDown);
     document.addEventListener("mouseup", onUp);
     document.addEventListener("touchend", onUp);
     document.addEventListener("keydown", onKey);
-    document.addEventListener("selectionchange", () => {
-      if (window.getSelection()?.isCollapsed) setPos(null);
-    });
+    document.addEventListener("selectionchange", onSelChange);
     return () => {
+      clearTimeout(timer);
+      document.removeEventListener("mousedown", onDown);
       document.removeEventListener("mouseup", onUp);
       document.removeEventListener("touchend", onUp);
       document.removeEventListener("keydown", onKey);
+      document.removeEventListener("selectionchange", onSelChange);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [update, style]);

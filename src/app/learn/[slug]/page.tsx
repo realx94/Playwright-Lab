@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { AskAiKeyword } from "@/components/ask-ai/selection-popover";
+import { MarkDoneButton } from "@/components/site/mark-done-button";
 import { LessonTracker } from "@/components/site/lesson-tracker";
 import { getLesson, getLessons } from "@/lib/content";
 
@@ -38,6 +39,9 @@ export default async function LessonPage({ params }: PageProps<"/learn/[slug]">)
           </div>
         </section>
       )}
+      <div className="mt-10 border-t pt-6">
+        <MarkDoneButton lessonId={lesson.slug} />
+      </div>
     </article>
   );
 }
