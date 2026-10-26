@@ -9,6 +9,8 @@ const PAGES = [
   "/labs",
   "/labs/login",
   "/stats",
+  "/settings/services",
+  "/lab/sms",
   "/starter",
   "/glossary",
   "/cheatsheet",

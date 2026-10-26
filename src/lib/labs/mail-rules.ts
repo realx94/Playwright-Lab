@@ -82,6 +82,6 @@ export function writeJson(key: string, value: unknown) {
 
 export const clearMailLab = () => {
   try {
-    for (const k of [ORDERS_KEY, TOKENS_KEY, INBOX_KEY]) localStorage.removeItem(k);
+    for (const k of [ORDERS_KEY, TOKENS_KEY, INBOX_KEY, "lab:sms"]) localStorage.removeItem(k);
   } catch {}
 };

@@ -15,6 +15,7 @@ const links = [
   { href: "/glossary", label: "Thuật ngữ" },
   { href: "/cheatsheet", label: "Cheat sheet" },
   { href: "/stats", label: "Thống kê" },
+  { href: "/settings/services", label: "Dịch vụ" },
 ];
 
 function buildSearchItems(): SearchItem[] {

@@ -4,6 +4,13 @@ Nguyên tắc: **mọi lab có chế độ mặc định chạy 100% trong site 
 
 > **Quyết định mới nhất (ưu tiên hơn các mục bên dưới):** triển khai **mock-first**. Tầng A (built-in) là phạm vi hiện tại; không build Supabase, BYO Setup Wizard, kho khoá mã hoá hay trang hướng dẫn đăng ký. Ngoại lệ: **email/OTP gửi thật** (qua Resend free, người học tự dán API key; key lưu trong trình duyệt và đi kèm từng request qua server proxy, server không lưu; Fake Inbox là chế độ dự phòng/CI). TOTP/2FA tính hoàn toàn trong code. Tầng B khác chỉ làm sau, và chỉ với dịch vụ xác nhận được đăng ký miễn phí (ví dụ Mailtrap, Stripe test mode). Cần kiểm tra lại giới hạn gói free của Resend/Brevo/Mailtrap trước khi viết hướng dẫn đăng ký. Các mục 6–8 giữ lại làm thiết kế tham khảo cho tầng B.
 
+> **Trạng thái triển khai (cập nhật):**
+> - **Đã làm:** trang `/settings/services` (US-16.01, 16.03, 16.06, 16.08): người học dán Resend API key, key lưu trong `localStorage` của trình duyệt (khoá `byo:resend`) và đi kèm từng request qua proxy `POST /api/byo/resend` (header `x-resend-key`); server không lưu, không ghi log, chỉ gọi `api.resend.com`, giới hạn 10 request/phút/IP với khoá thật (bộ nhớ theo instance, chỉ là lớp chặn cơ bản trên serverless). Nút **Gửi email thử**, trạng thái Chưa cấu hình / Đã lưu / Đã kết nối / Lỗi, nút Xoá khoá, xuất `.env`. Khi bật, LAB-17 (kênh Email) và LAB-23 gửi thêm thư thật; hộp thư giả vẫn luôn có thư nên test không phụ thuộc mạng.
+> - **Chế độ thử không cần tài khoản:** khoá bắt đầu bằng `re_test_` chạy Resend giả trong site (không gọi mạng): `re_test_demo` chỉ gửi được tới `owner@example.com` khi dùng `onboarding@resend.dev` (giống Resend thật chỉ cho gửi tới email chủ tài khoản; đặt From khác thì gửi được tới mọi địa chỉ), `re_test_invalid` luôn 401, `re_test_limit` luôn 429.
+> - **SMS:** không gửi SMS thật. LAB-17 có kênh SMS giả, tin nhắn hiện ở `/lab/sms` (OTP ASCII ≤ 160 ký tự, số điện thoại bị che `090****567`).
+> - **Chưa làm (cần project Supabase/tài khoản của chủ site, không kiểm thử được nếu thiếu): đăng nhập, bảng `user_service_credentials` mã hoá, đồng bộ lịch sử học (US-16.04, 15.06), Neon BYO và nút tạo schema (US-16.05), proxy `/api/byo/*` cho dịch vụ khác. Hướng dẫn đăng ký có hình (US-16.10) cần chụp màn hình thật nên làm sau.
+> - Resend: chưa xác minh điều khoản gói free tại thời điểm viết; trang cài đặt chỉ hướng dẫn chung và nhắc người học đọc trang giá của Resend.
+
 ## 1. Chiến lược 2 tầng
 | Tầng | Mô tả | Dùng khi |
 |------|-------|----------|

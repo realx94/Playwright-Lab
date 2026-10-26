@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { describeMirror, mirrorToRealInbox } from "@/lib/byo/mail-delivery";
 import {
   MAX_FAILS,
   OTP_KEY,
@@ -20,7 +21,12 @@ import {
   isEmail,
   loadJson,
   pushMail,
+  pushSms,
+  maskPhone,
+  PHONES,
   INBOX_KEY,
+  SMS_KEY,
+  type Channel,
   type OtpState,
 } from "@/lib/labs/otp-rules";
 
@@ -39,12 +45,15 @@ export function OtpApp() {
   const [code, setCode] = useState("");
   const [notice, setNotice] = useState<Notice>(null);
   const [now, setNow] = useState(0);
+  const [channel, setChannel] = useState<Channel>("email");
+  const [realStatus, setRealStatus] = useState<string | null>(null);
 
   useEffect(() => {
     /* eslint-disable react-hooks/set-state-in-effect */
     const s = loadJson<OtpState>(OTP_KEY, emptyOtpState);
     setState(s);
     setEmail(s.email);
+    setChannel(s.channel ?? "email");
     if (s.email && !s.session && (s.otp || s.sentAt.length)) setStage("code");
     setNow(Date.now());
     setReady(true);
@@ -64,12 +73,14 @@ export function OtpApp() {
     try {
       localStorage.removeItem(OTP_KEY);
       localStorage.removeItem(INBOX_KEY);
+      localStorage.removeItem(SMS_KEY);
     } catch {}
     setState(emptyOtpState);
     setStage("email");
     setEmail("");
     setCode("");
     setNotice(null);
+    setRealStatus(null);
   }
 
   const cooldownLeft = Math.max(
@@ -94,20 +105,24 @@ export function OtpApp() {
     const sentAt = [...recent, t];
     if (REGISTERED.includes(email)) {
       const otp = generateOtp(seed === null ? null : seed + sentAt.length);
-      pushMail({
-        to: email,
-        subject: "Mã xác thực đăng nhập",
-        body: `Mã đăng nhập của bạn là ${otp}. Mã có hiệu lực trong 5 phút.`,
-        sentAt: t,
-      });
-      save({ ...state, email, otp, prevOtp: state.otp, issuedAt: t, fails: 0, sentAt });
+      if (channel === "sms") {
+        // SMS giả: ASCII không dấu để vừa một tin nhắn 160 ký tự
+        pushSms({ to: PHONES[email], body: `Ma OTP cua ban la ${otp}. Co hieu luc 5 phut. Khong chia se ma nay.`, sentAt: t });
+        setRealStatus(null);
+      } else {
+        const mail = { to: email, subject: "Mã xác thực đăng nhập", body: `Mã đăng nhập của bạn là ${otp}. Mã có hiệu lực trong 5 phút.` };
+        pushMail({ ...mail, sentAt: t });
+        // Gửi thêm email thật nếu người học đã bật trong Cài đặt → Dịch vụ của tôi
+        void mirrorToRealInbox(mail).then((res) => setRealStatus(res ? describeMirror(res, email) : null));
+      }
+      save({ ...state, email, otp, prevOtp: state.otp, issuedAt: t, fails: 0, sentAt, channel });
     } else {
       // BR-04: email chưa đăng ký vẫn nhận thông báo trung tính nhưng không có thư nào được gửi
-      save({ ...state, email, otp: null, prevOtp: null, sentAt });
+      save({ ...state, email, otp: null, prevOtp: null, sentAt, channel });
     }
     setStage("code");
     setCode("");
-    setNotice({ kind: "info", text: "Nếu email hợp lệ, mã xác thực đã được gửi" });
+    setNotice({ kind: "info", text: channel === "sms" ? "Nếu tài khoản hợp lệ, mã xác thực đã được gửi bằng SMS" : "Nếu email hợp lệ, mã xác thực đã được gửi" });
   }
 
   function verify() {
@@ -174,6 +189,18 @@ export function OtpApp() {
             <Label htmlFor="otp-email">Email</Label>
             <Input id="otp-email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
           </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="otp-channel">Nhận mã qua</Label>
+            <select
+              id="otp-channel"
+              className="h-8 w-full rounded-lg border bg-background px-2 text-sm"
+              value={channel}
+              onChange={(e) => setChannel(e.target.value as Channel)}
+            >
+              <option value="email">Email</option>
+              <option value="sms">SMS</option>
+            </select>
+          </div>
           <Button type="submit" className="w-full">
             Gửi mã
           </Button>
@@ -188,11 +215,27 @@ export function OtpApp() {
           className="space-y-4"
         >
           <p className="text-sm text-muted-foreground">
-            Mã đã gửi tới <b data-testid="otp-email-shown">{state.email}</b>.{" "}
-            <a href="/lab/inbox" target="_blank" rel="noopener" className="underline">
-              Mở hộp thư
-            </a>
+            {state.channel === "sms" && PHONES[state.email] ? (
+              <>
+                Mã đã gửi bằng SMS tới số <b data-testid="otp-phone-shown">{maskPhone(PHONES[state.email])}</b>.{" "}
+                <a href="/lab/sms" target="_blank" rel="noopener" className="underline">
+                  Mở hộp tin nhắn
+                </a>
+              </>
+            ) : (
+              <>
+                Mã đã gửi tới <b data-testid="otp-email-shown">{state.email}</b>.{" "}
+                <a href="/lab/inbox" target="_blank" rel="noopener" className="underline">
+                  Mở hộp thư
+                </a>
+              </>
+            )}
           </p>
+          {realStatus && (
+            <p className="text-xs text-muted-foreground" data-testid="real-mail-status">
+              {realStatus}
+            </p>
+          )}
           <div className="space-y-1.5">
             <Label htmlFor="otp-code">Mã OTP</Label>
             <Input

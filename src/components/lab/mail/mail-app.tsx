@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useBugs } from "@/lib/labs/use-bugs";
 import { pushMail } from "@/lib/labs/otp-rules";
+import { describeMirror, mirrorToRealInbox } from "@/lib/byo/mail-delivery";
 import {
   ORDERS_KEY,
   PRODUCTS,
@@ -35,6 +36,12 @@ export function MailApp() {
   const [orderMsg, setOrderMsg] = useState<Msg>(null);
   const [resetEmail, setResetEmail] = useState("");
   const [resetMsg, setResetMsg] = useState<Msg>(null);
+  const [realStatus, setRealStatus] = useState<string | null>(null);
+
+  /** Gửi thêm email thật nếu người học đã bật trong Cài đặt → Dịch vụ của tôi. */
+  function mirror(mail: { to: string; subject: string; body: string }) {
+    void mirrorToRealInbox(mail).then((res) => setRealStatus(res ? describeMirror(res, mail.to) : null));
+  }
 
   function placeOrder(e: React.FormEvent) {
     e.preventDefault();
@@ -49,6 +56,7 @@ export function MailApp() {
     writeJson(ORDERS_KEY, [...orders, order]);
     const m = orderMail(order, window.location.origin, bugs);
     pushMail({ to: order.email, subject: m.subject, body: m.body, sentAt: Date.now() });
+    mirror({ to: order.email, subject: m.subject, body: m.body });
     setOrderMsg({ kind: "success", text: `Đã đặt đơn #${order.id}. Email xác nhận đã được gửi tới ${order.email}` });
   }
 
@@ -64,6 +72,7 @@ export function MailApp() {
       writeJson(TOKENS_KEY, tokens);
       const m = resetMail(token, window.location.origin);
       pushMail({ to: addr, subject: m.subject, body: m.body, sentAt: Date.now() });
+      mirror({ to: addr, subject: m.subject, body: m.body });
     }
     setResetMsg({ kind: "success", text: "Nếu email đã đăng ký, chúng tôi đã gửi liên kết đặt lại mật khẩu" });
   }
@@ -127,6 +136,12 @@ export function MailApp() {
         <Button type="submit">Gửi liên kết đặt lại</Button>
       </form>
 
+      {realStatus && (
+        <p className="text-xs text-muted-foreground" data-testid="real-mail-status">
+          {realStatus}
+        </p>
+      )}
+
       <Button
         type="button"
         variant="ghost"
@@ -136,6 +151,7 @@ export function MailApp() {
           clearMailLab();
           setOrderMsg(null);
           setResetMsg(null);
+          setRealStatus(null);
         }}
       >
         Reset dữ liệu lab
