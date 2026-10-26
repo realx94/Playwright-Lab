@@ -145,7 +145,33 @@ const api: Workshop = {
   ],
 };
 
-export const WORKSHOPS: Record<string, Workshop> = { login, forms, cart, playground, api };
+const otp: Workshop = {
+  techniques: ["State Transition", "Boundary Value Analysis", "Security input", "Decision Table"],
+  rules: [
+    { id: "BR-01", text: "OTP gồm 6 chữ số, có hiệu lực 5 phút" },
+    { id: "BR-02", text: "Nhập sai 3 lần thì mã bị huỷ, phải xin mã mới" },
+    { id: "BR-03", text: "Gửi lại cách nhau tối thiểu 60 giây, tối đa 5 lần mỗi giờ" },
+    { id: "BR-04", text: "Email chưa đăng ký vẫn nhận thông báo trung tính, không có thư nào được gửi" },
+    { id: "BR-05", text: "Xin mã mới thì mã cũ hết hiệu lực" },
+    { id: "BR-06", text: "Đăng nhập OTP thành công vào trang chính, mã chỉ dùng một lần" },
+  ],
+  cases: [
+    { id: "TC-O-001", title: "Đăng nhập bằng OTP hợp lệ", precondition: "user@lab.dev đã đăng ký", steps: "Gửi mã, đọc OTP trong hộp thư, nhập mã", data: "OTP trong thư", expected: "Vào trang chính", type: "Happy", priority: "P0", br: ["BR-01", "BR-06"] },
+    { id: "TC-O-002", title: "Email chưa đăng ký", precondition: "Hộp thư trống", steps: "Gửi mã cho nobody@lab.dev", data: "nobody@lab.dev", expected: "Thông báo trung tính; hộp thư vẫn trống", type: "Security", priority: "P0", br: ["BR-04"] },
+    { id: "TC-O-003", title: "Mã sai lần thứ nhất", precondition: "Đã gửi mã", steps: "Nhập mã sai", data: "111111", expected: "Báo mã không đúng, còn 2 lần", type: "Negative", priority: "P1", br: ["BR-02"] },
+    { id: "TC-O-004", title: "Sai 3 lần huỷ mã", precondition: "Đã gửi mã", steps: "Nhập sai ba lần liên tiếp", data: "111111 × 3", expected: "Báo mã đã bị huỷ", type: "State", priority: "P0", br: ["BR-02"] },
+    { id: "TC-O-005", title: "Mã đúng sau khi đã bị huỷ", precondition: "Mã đã bị huỷ", steps: "Nhập mã đúng ban đầu", data: "OTP gốc", expected: "Báo không hợp lệ hoặc hết hạn", type: "State", priority: "P0", br: ["BR-02"] },
+    { id: "TC-O-006", title: "Mã ở giây 299", precondition: "Đồng hồ giả, vừa gửi mã", steps: "Chuyển thời gian +299 giây rồi nhập mã", data: "+299s", expected: "Đăng nhập thành công", type: "BVA", priority: "P0", br: ["BR-01"] },
+    { id: "TC-O-007", title: "Mã ở giây 300", precondition: "Đồng hồ giả, vừa gửi mã", steps: "Chuyển thời gian +300 giây rồi nhập mã", data: "+300s", expected: "Đăng nhập thành công (biên)", type: "BVA", priority: "P0", br: ["BR-01"] },
+    { id: "TC-O-008", title: "Mã ở giây 301", precondition: "Đồng hồ giả, vừa gửi mã", steps: "Chuyển thời gian +301 giây rồi nhập mã", data: "+301s", expected: "Báo mã đã hết hạn", type: "BVA", priority: "P0", br: ["BR-01"] },
+    { id: "TC-O-009", title: "Nút gửi lại bị khoá", precondition: "Vừa gửi mã", steps: "Quan sát nút Gửi lại mã", data: "—", expected: "Nút bị khoá, hiển thị đếm ngược", type: "State", priority: "P1", br: ["BR-03"] },
+    { id: "TC-O-010", title: "Gửi lại sau 61 giây", precondition: "Vừa gửi mã", steps: "Chuyển +61 giây rồi gửi lại", data: "+61s", expected: "Nút mở khoá, có thư thứ hai", type: "BVA", priority: "P1", br: ["BR-03"] },
+    { id: "TC-O-011", title: "Mã cũ sau khi xin mã mới", precondition: "Đã gửi lại một lần", steps: "Nhập mã của lần gửi đầu", data: "OTP đầu", expected: "Báo mã không đúng", type: "State", priority: "P0", br: ["BR-05"] },
+    { id: "TC-O-012", title: "Vượt 5 lần mỗi giờ", precondition: "Đã gửi 5 lần trong 1 giờ", steps: "Gửi lần thứ 6", data: "—", expected: "Báo yêu cầu quá nhiều lần", type: "BVA", priority: "P2", br: ["BR-03"] },
+  ],
+};
+
+export const WORKSHOPS: Record<string, Workshop> = { login, forms, cart, playground, api, otp };
 
 export function toCsv(cases: TestCase[]): string {
   const head = ["ID", "Tiêu đề", "Tiền điều kiện", "Các bước", "Dữ liệu", "Kết quả mong đợi", "Loại", "Ưu tiên", "BR"];

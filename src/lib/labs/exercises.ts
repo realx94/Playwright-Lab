@@ -719,4 +719,212 @@ test("xoá sách không tồn tại trả 404", async ({ request }) => {
   },
 ];
 
-export const EXERCISES: Record<string, Exercise[]> = { login, forms, cart, playground, api };
+const otp: Exercise[] = [
+  {
+    id: "otp-1",
+    title: "Đăng nhập bằng OTP đọc từ hộp thư",
+    difficulty: 3,
+    task: "Gửi mã tới user@lab.dev, mở hộp thư giả ở một tab thứ hai để đọc mã OTP, rồi nhập mã vào tab đăng nhập và xác nhận vào được trang chính.",
+    criteria: [
+      "Tách việc đọc OTP thành hàm riêng (helper) có thể dùng lại",
+      "Mở hộp thư bằng một page mới trong cùng context (cùng localStorage)",
+      "Chờ giao diện chuyển sang bước nhập mã trước khi đọc hộp thư",
+      "Dùng biểu thức chính quy để lấy đúng 6 chữ số, báo lỗi rõ nếu không tìm thấy",
+      ...COMMON_CRITERIA,
+    ],
+    hints: [
+      "Hai page trong cùng một context dùng chung localStorage.",
+      "Email nằm trong phần tử có data-testid là email-body.",
+      "Dùng innerText() rồi match(/[0-9]{6}/) để lấy mã.",
+    ],
+    solution: `import { test, expect, type BrowserContext } from "@playwright/test";
+
+async function readOtp(context: BrowserContext): Promise<string> {
+  const inbox = await context.newPage();
+  await inbox.goto("/lab/inbox");
+  const text = await inbox.getByTestId("email-body").first().innerText();
+  await inbox.close();
+  const match = text.match(/[0-9]{6}/);
+  if (!match) throw new Error("Không tìm thấy OTP trong email");
+  return match[0];
+}
+
+test("đăng nhập bằng OTP đọc từ hộp thư", async ({ page, context }) => {
+  await page.goto("/lab/otp");
+  await page.getByTestId("reset-data").click();
+  await page.getByLabel("Email").fill("user@lab.dev");
+  await page.getByRole("button", { name: "Gửi mã" }).click();
+  await expect(page.getByLabel("Mã OTP")).toBeVisible();
+
+  const otp = await readOtp(context);
+  await page.getByLabel("Mã OTP").fill(otp);
+  await page.getByRole("button", { name: "Xác nhận" }).click();
+  await expect(page.getByTestId("dashboard")).toBeVisible();
+});`,
+  },
+  {
+    id: "otp-2",
+    title: "Nhập sai 3 lần và bắt BUG-01",
+    difficulty: 3,
+    task: "Chứng minh rằng sau 3 lần nhập sai thì mã bị huỷ và ngay cả mã đúng cũng không còn dùng được. Chạy lại với ?bugs=BUG-01 để chắc chắn test của bạn phát hiện được lỗi.",
+    criteria: [
+      "Kiểm tra thông báo còn lại bao nhiêu lần sau lần sai đầu tiên",
+      "Kiểm tra thông báo mã đã bị huỷ sau lần sai thứ ba",
+      "Sau đó nhập mã ĐÚNG và khẳng định vẫn bị từ chối",
+      "Test xanh trên lab sạch và đỏ khi bật ?bugs=BUG-01",
+      ...COMMON_CRITERIA,
+    ],
+    hints: [
+      "Lấy OTP thật từ hộp thư rồi cố ý nhập một mã khác.",
+      "Chọn mã sai khác mã thật để tránh vô tình đúng.",
+      "Thông báo kết quả nằm trong phần tử có data-testid là otp-message.",
+    ],
+    solution: `import { test, expect, type BrowserContext, type Page } from "@playwright/test";
+
+async function readOtp(context: BrowserContext): Promise<string> {
+  const inbox = await context.newPage();
+  await inbox.goto("/lab/inbox");
+  const text = await inbox.getByTestId("email-body").first().innerText();
+  await inbox.close();
+  return text.match(/[0-9]{6}/)![0];
+}
+
+async function submit(page: Page, code: string) {
+  await page.getByLabel("Mã OTP").fill(code);
+  await page.getByRole("button", { name: "Xác nhận" }).click();
+}
+
+test("sai 3 lần thì mã đúng cũng bị từ chối", async ({ page, context }) => {
+  await page.goto("/lab/otp");   // thêm ?bugs=BUG-01 để thấy test đỏ
+  await page.getByTestId("reset-data").click();
+  await page.getByLabel("Email").fill("user@lab.dev");
+  await page.getByRole("button", { name: "Gửi mã" }).click();
+  await expect(page.getByLabel("Mã OTP")).toBeVisible();
+
+  const otp = await readOtp(context);
+  const wrong = otp === "111111" ? "222222" : "111111";
+  const message = page.getByTestId("otp-message");
+
+  await submit(page, wrong);
+  await expect(message).toContainText("Còn 2 lần");
+  await submit(page, wrong);
+  await submit(page, wrong);
+  await expect(message).toContainText("đã bị huỷ");
+
+  await submit(page, otp);
+  await expect(message).toContainText("không hợp lệ hoặc đã hết hạn");
+  await expect(page.getByTestId("dashboard")).toHaveCount(0);
+});`,
+  },
+  {
+    id: "otp-3",
+    title: "Biên hết hạn 5 phút với đồng hồ giả",
+    difficulty: 3,
+    task: "Dùng đồng hồ giả để kiểm tra đúng biên hiệu lực của mã: giây 299 và 300 còn hiệu lực, giây 301 đã hết hạn. Chạy lại với ?bugs=BUG-02 để thấy lỗi.",
+    criteria: [
+      "Không dùng waitForTimeout hay chờ thật 5 phút",
+      "Đặt giờ giả bằng clock của context, không phụ thuộc thời gian thật của máy",
+      "Dùng data-driven cho ba mốc 299, 300, 301 giây",
+      "Test xanh trên lab sạch, đỏ khi bật ?bugs=BUG-02 (với mốc 301)",
+      ...COMMON_CRITERIA,
+    ],
+    hints: [
+      "context.clock.setFixedTime(date) cố định giờ giả và giữ nguyên các timer.",
+      "Đặt giờ T0 trước khi gửi mã, rồi đặt T0 + số giây trước khi nhập mã.",
+      "Dùng clock.install + fastForward sẽ bị lệch vài giây vì thời gian vẫn chạy thật.",
+    ],
+    solution: `import { test, expect, type BrowserContext } from "@playwright/test";
+
+async function readOtp(context: BrowserContext): Promise<string> {
+  const inbox = await context.newPage();
+  await inbox.goto("/lab/inbox");
+  const text = await inbox.getByTestId("email-body").first().innerText();
+  await inbox.close();
+  return text.match(/[0-9]{6}/)![0];
+}
+
+const T0 = new Date("2026-03-01T10:00:00");
+const cases = [
+  { offset: 299, valid: true },
+  { offset: 300, valid: true },
+  { offset: 301, valid: false },
+];
+
+for (const c of cases) {
+  test("mã ở giây " + c.offset + (c.valid ? " còn hiệu lực" : " đã hết hạn"), async ({ page, context }) => {
+    await context.clock.setFixedTime(T0);
+    await page.goto("/lab/otp");   // thêm ?bugs=BUG-02 để thấy test đỏ
+    await page.getByTestId("reset-data").click();
+    await page.getByLabel("Email").fill("user@lab.dev");
+    await page.getByRole("button", { name: "Gửi mã" }).click();
+    await expect(page.getByLabel("Mã OTP")).toBeVisible();
+
+    const otp = await readOtp(context);
+    await context.clock.setFixedTime(new Date(T0.getTime() + c.offset * 1000));
+    await page.getByLabel("Mã OTP").fill(otp);
+    await page.getByRole("button", { name: "Xác nhận" }).click();
+
+    if (c.valid) await expect(page.getByTestId("dashboard")).toBeVisible();
+    else await expect(page.getByTestId("otp-message")).toContainText("hết hạn");
+  });
+}`,
+  },
+  {
+    id: "otp-4",
+    title: "Gửi lại mã và bắt BUG-03",
+    difficulty: 3,
+    task: "Kiểm tra nút Gửi lại mã bị khoá 60 giây đầu, mở khoá sau đó, và khi đã xin mã mới thì mã cũ phải bị từ chối. Chạy lại với ?bugs=BUG-03 để thấy lỗi.",
+    criteria: [
+      "Khẳng định nút bị khoá và có thông báo đếm ngược ngay sau khi gửi",
+      "Dùng đồng hồ giả để vượt 60 giây, không chờ thật",
+      "Đọc được cả hai mã từ hộp thư và phân biệt mã cũ, mã mới",
+      "Mã cũ bị từ chối, mã mới được chấp nhận; đỏ khi bật ?bugs=BUG-03",
+      ...COMMON_CRITERIA,
+    ],
+    hints: [
+      "Dùng ?seed=10 để hai mã OTP khác nhau một cách chắc chắn.",
+      "Hộp thư xếp thư mới nhất lên đầu; allInnerTexts() trả về mảng theo thứ tự đó.",
+      "context.clock.install() rồi fastForward('01:01') để vượt thời gian khoá.",
+    ],
+    solution: `import { test, expect, type BrowserContext } from "@playwright/test";
+
+async function readOtps(context: BrowserContext): Promise<string[]> {
+  const inbox = await context.newPage();
+  await inbox.goto("/lab/inbox");
+  const bodies = await inbox.getByTestId("email-body").allInnerTexts();
+  await inbox.close();
+  return bodies.map((b) => b.match(/[0-9]{6}/)![0]);   // mới nhất đứng đầu
+}
+
+test("gửi lại bị khoá 60 giây và mã cũ không còn hiệu lực", async ({ page, context }) => {
+  await context.clock.install();
+  await page.goto("/lab/otp?seed=10");   // thêm bugs=BUG-03 để thấy test đỏ
+  await page.getByTestId("reset-data").click();
+  await page.getByLabel("Email").fill("user@lab.dev");
+  await page.getByRole("button", { name: "Gửi mã" }).click();
+  await expect(page.getByLabel("Mã OTP")).toBeVisible();
+
+  const resend = page.getByRole("button", { name: "Gửi lại mã" });
+  await expect(resend).toBeDisabled();
+  await expect(page.getByTestId("cooldown")).toContainText("Gửi lại sau");
+
+  await context.clock.fastForward("01:01");
+  await expect(resend).toBeEnabled();
+  await resend.click();
+
+  const [second, first] = await readOtps(context);
+  expect(second).not.toBe(first);
+
+  const message = page.getByTestId("otp-message");
+  await page.getByLabel("Mã OTP").fill(first);
+  await page.getByRole("button", { name: "Xác nhận" }).click();
+  await expect(message).toContainText("Mã không đúng");
+
+  await page.getByLabel("Mã OTP").fill(second);
+  await page.getByRole("button", { name: "Xác nhận" }).click();
+  await expect(page.getByTestId("dashboard")).toBeVisible();
+});`,
+  },
+];
+
+export const EXERCISES: Record<string, Exercise[]> = { login, forms, cart, playground, api, otp };
