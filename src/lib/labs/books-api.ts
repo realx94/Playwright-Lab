@@ -73,7 +73,7 @@ export function resetState(res: NextResponse): NextResponse {
 
 export const bugsOf = (req: NextRequest) =>
   new Set(
-    [req.nextUrl.searchParams.get("bugs"), req.headers.get("x-lab-bugs")]
+    [req.nextUrl.searchParams.get("bugs"), req.headers.get("x-lab-bugs"), req.cookies.get("lab_bugs")?.value]
       .filter(Boolean)
       .flatMap((v) => (v as string).split(",")),
   );

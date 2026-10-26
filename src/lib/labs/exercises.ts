@@ -2,6 +2,8 @@ export interface Exercise {
   id: string;
   title: string;
   difficulty: 1 | 2 | 3;
+  /** Bug (qua ?bugs= hoặc cookie lab_bugs) mà bài này phải phát hiện; dùng cho chấm tự động. */
+  bugs?: string[];
   task: string;
   /** Tiêu chí đạt: khách quan, người học tự kiểm chứng được. */
   criteria: string[];
@@ -42,6 +44,7 @@ test("đăng nhập hợp lệ", async ({ page }) => {
     id: "login-2",
     title: "Data-driven: các lỗi mật khẩu",
     difficulty: 2,
+    bugs: ["BUG-01"],
     task: "Tách dữ liệu khỏi logic: sinh nhiều test từ một mảng dữ liệu, mỗi trường hợp kiểm tra đúng thông báo lỗi mật khẩu.",
     criteria: [
       "Mỗi bộ dữ liệu là một test riêng có tên mô tả",
@@ -79,6 +82,7 @@ for (const c of cases) {
     id: "login-3",
     title: "Khoá tài khoản sau 5 lần sai",
     difficulty: 3,
+    bugs: ["BUG-02"],
     task: "Kiểm tra quy tắc khoá: lần sai thứ 4 chưa khoá, lần sai thứ 5 thì khoá. Tránh lặp code và luôn bắt đầu từ trạng thái sạch.",
     criteria: [
       "Kiểm tra cả lần sai thứ 4 (chưa khoá) và lần thứ 5 (khoá)",
@@ -120,6 +124,7 @@ test("khoá ở lần sai thứ 5, chưa khoá ở lần 4", async ({ page }) =>
     id: "login-4",
     title: "Bắt bug: mật khẩu 7 ký tự được chấp nhận",
     difficulty: 3,
+    bugs: ["BUG-01"],
     task: "Viết một test PASS trên lab bình thường nhưng FAIL khi bật bug bằng ?bugs=BUG-01. Đây là cách kiểm tra test của bạn có thật sự phát hiện lỗi hay không.",
     criteria: [
       "Test xanh khi mở /lab/login",
@@ -298,6 +303,7 @@ test("đơn dưới 1 triệu tính ship và VAT", async ({ page }) => {
     id: "cart-2",
     title: "Mã SALE10 quanh các ngưỡng",
     difficulty: 2,
+    bugs: ["BUG-02"],
     task: "Kiểm tra mã SALE10 ở ngưỡng tối thiểu 500.000đ và mức giảm tối đa 100.000đ (decision table).",
     criteria: [
       "Có trường hợp đúng 500.000đ (giảm 50.000)",
@@ -353,6 +359,7 @@ test("giảm giá bị chặn trần 100.000", async ({ page }) => {
     id: "cart-3",
     title: "Vòng đời đơn và bắt BUG-03",
     difficulty: 3,
+    bugs: ["BUG-03"],
     task: "Kiểm tra đơn đi đúng chuỗi trạng thái và KHÔNG huỷ được khi đang giao. Sau đó chạy lại với ?bugs=BUG-03 để chắc chắn test của bạn phát hiện được lỗi.",
     criteria: [
       "Đi qua đủ: Mới → Đã thanh toán → Đang giao",
@@ -526,6 +533,7 @@ const api: Exercise[] = [
     id: "api-1",
     title: "GET: danh sách, phân trang và tìm kiếm",
     difficulty: 2,
+    bugs: ["BUG-01"],
     task: "Kiểm tra endpoint danh sách: giá trị mặc định, trang cuối, giới hạn pageSize và tìm kiếm không phân biệt hoa thường.",
     criteria: [
       "Kiểm tra cả status, cấu trúc body (page, pageSize, total, data) và số phần tử",
@@ -614,6 +622,7 @@ test("token chỉ đọc → 403 khi xoá", async ({ request }) => {
     id: "api-3",
     title: "Dữ liệu sai: 422 và 409",
     difficulty: 3,
+    bugs: ["BUG-02"],
     task: "Kiểm tra validation: giá âm, giá vượt trần, ISBN sai định dạng cho 422 kèm đúng trường lỗi; ISBN trùng cho 409.",
     criteria: [
       "Dùng data-driven cho các trường hợp 422, mỗi trường hợp một test",
@@ -673,6 +682,7 @@ test("409: isbn trùng", async ({ request }) => {
     id: "api-4",
     title: "Vòng đời CRUD và bắt bug",
     difficulty: 3,
+    bugs: ["BUG-02", "BUG-03"],
     task: "Đi hết vòng đời: tạo → đọc → sửa → xoá → đọc lại (404). Sau đó chạy lại với ?bugs=BUG-02 và ?bugs=BUG-03 để chắc chắn test của bạn phát hiện được lỗi.",
     criteria: [
       "Kiểm tra status của từng bước và header Location sau khi tạo",
@@ -766,6 +776,7 @@ test("đăng nhập bằng OTP đọc từ hộp thư", async ({ page, context }
     id: "otp-2",
     title: "Nhập sai 3 lần và bắt BUG-01",
     difficulty: 3,
+    bugs: ["BUG-01"],
     task: "Chứng minh rằng sau 3 lần nhập sai thì mã bị huỷ và ngay cả mã đúng cũng không còn dùng được. Chạy lại với ?bugs=BUG-01 để chắc chắn test của bạn phát hiện được lỗi.",
     criteria: [
       "Kiểm tra thông báo còn lại bao nhiêu lần sau lần sai đầu tiên",
@@ -820,6 +831,7 @@ test("sai 3 lần thì mã đúng cũng bị từ chối", async ({ page, contex
     id: "otp-3",
     title: "Biên hết hạn 5 phút với đồng hồ giả",
     difficulty: 3,
+    bugs: ["BUG-02"],
     task: "Dùng đồng hồ giả để kiểm tra đúng biên hiệu lực của mã: giây 299 và 300 còn hiệu lực, giây 301 đã hết hạn. Chạy lại với ?bugs=BUG-02 để thấy lỗi.",
     criteria: [
       "Không dùng waitForTimeout hay chờ thật 5 phút",
@@ -873,6 +885,7 @@ for (const c of cases) {
     id: "otp-4",
     title: "Gửi lại mã và bắt BUG-03",
     difficulty: 3,
+    bugs: ["BUG-03"],
     task: "Kiểm tra nút Gửi lại mã bị khoá 60 giây đầu, mở khoá sau đó, và khi đã xin mã mới thì mã cũ phải bị từ chối. Chạy lại với ?bugs=BUG-03 để thấy lỗi.",
     criteria: [
       "Khẳng định nút bị khoá và có thông báo đếm ngược ngay sau khi gửi",
@@ -974,6 +987,7 @@ test("thêm, hoàn thành và xoá có xác nhận", async ({ page }) => {
     id: "todo-2",
     title: "Quy tắc thêm: rỗng, trùng, biên 80 và 20",
     difficulty: 2,
+    bugs: ["BUG-01", "BUG-03"],
     task: "Kiểm tra các quy tắc khi thêm việc: tên rỗng/khoảng trắng, tên 80 và 81 ký tự, trùng tên khác hoa thường và giới hạn 20 việc. Chạy lại với ?bugs=BUG-01 và ?bugs=BUG-03 để thấy lỗi.",
     criteria: [
       "Có đủ biên tên 80/81 ký tự và biên số lượng 20/21 việc",
@@ -1034,6 +1048,7 @@ test("giới hạn 20 công việc", async ({ page }) => {
     id: "todo-3",
     title: "Bộ lọc, bộ đếm và dữ liệu sau khi tải lại",
     difficulty: 2,
+    bugs: ["BUG-02"],
     task: "Kiểm tra bộ đếm chỉ tính việc chưa xong, ba bộ lọc hoạt động đúng và dữ liệu vẫn còn sau khi tải lại trang. Chạy lại với ?bugs=BUG-02 để thấy lỗi.",
     criteria: [
       "Kiểm tra số lượng và nội dung hiển thị của từng bộ lọc",
@@ -1081,6 +1096,7 @@ const table: Exercise[] = [
     id: "table-1",
     title: "Tìm kiếm, lọc và tổng số",
     difficulty: 2,
+    bugs: ["BUG-01"],
     task: "Kiểm tra tìm kiếm (có kết quả và không có kết quả), lọc vai trò, và lọc kết hợp vai trò với trạng thái. Luôn đối chiếu với tổng số hiển thị.",
     criteria: [
       "Dùng getByLabel cho ô tìm kiếm và các bộ lọc",
@@ -1166,6 +1182,7 @@ test("đổi số dòng mỗi trang", async ({ page }) => {
     id: "table-3",
     title: "Sắp xếp theo ngày và bắt BUG-03",
     difficulty: 3,
+    bugs: ["BUG-03"],
     task: "Chứng minh cột Ngày tạo sắp xếp đúng theo thời gian: đọc toàn bộ ngày trên trang, chuyển về thời gian thật và so sánh. Chạy lại với ?bugs=BUG-03 để thấy lỗi.",
     criteria: [
       "Kiểm tra aria-sort của tiêu đề cột sau mỗi lần bấm",
@@ -1244,6 +1261,7 @@ test("chọn tất cả chỉ chọn trang hiện tại và khoá hàng loạt",
     id: "table-5",
     title: "Bắt BUG-01 và BUG-02",
     difficulty: 3,
+    bugs: ["BUG-01", "BUG-02"],
     task: "Viết hai test bắt lỗi: tìm kiếm phải không phân biệt hoa thường (BUG-01) và đổi bộ lọc phải đưa về trang 1 (BUG-02). Mỗi test xanh trên lab sạch và đỏ khi bật bug tương ứng.",
     criteria: [
       "Test tìm kiếm dùng chữ in hoa khác với dữ liệu gốc",

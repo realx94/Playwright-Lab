@@ -151,6 +151,14 @@ function ExerciseItem({
             )}
           </div>
 
+          <p className="text-xs text-muted-foreground" data-testid={`grade-hint-${ex.id}`}>
+            Chấm tự động: <code>npm run grade -- --exercise {ex.id}</code>
+            {ex.bugs?.length
+              ? ` (test phải xanh trên lab sạch và đỏ khi bật ${ex.bugs.join(", ")})`
+              : " (test phải xanh trên lab sạch)"}
+            , rồi tải file kết quả lên trang Thống kê.
+          </p>
+
           <div className="flex items-center gap-3 border-t pt-4">
             <Button onClick={submit}>
               <Check className="size-4" /> Nộp bài ({pct}%)

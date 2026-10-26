@@ -5,6 +5,7 @@ import path from "node:path";
 import { EXERCISES } from "../src/lib/labs/exercises.ts";
 
 const OUT = path.join("starter-repo", "tests", "exercises");
+const grading: Record<string, { lab: string; spec: string; bugs: string[] }> = {};
 fs.rmSync(OUT, { recursive: true, force: true });
 
 for (const [lab, list] of Object.entries(EXERCISES)) {
@@ -30,6 +31,8 @@ test.fixme("${ex.title}", async ({ page }) => {
 });
 `;
     fs.writeFileSync(path.join(OUT, lab, `${ex.id}.spec.ts`), body);
+    grading[ex.id] = { lab, spec: `tests/exercises/${lab}/${ex.id}.spec.ts`, bugs: ex.bugs ?? [] };
   }
 }
-console.log("Đã sinh stub bài tập vào", OUT);
+fs.writeFileSync(path.join("starter-repo", "grading.json"), JSON.stringify({ version: 1, exercises: grading }, null, 2) + "\n");
+console.log("Đã sinh stub bài tập và grading.json vào", OUT);

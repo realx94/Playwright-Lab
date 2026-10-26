@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useBugs } from "@/lib/labs/use-bugs";
 import { useSearchParams } from "next/navigation";
 import { ArrowDown, ArrowUp, Download } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -45,8 +46,7 @@ function loadUsers(): User[] {
 
 export function TableApp() {
   const params = useSearchParams();
-  const bugParam = params.get("bugs") ?? "";
-  const bugs = useMemo(() => new Set(bugParam.split(",").filter(Boolean)), [bugParam]);
+  const bugs = useBugs();
   const rawDelay = Number(params.get("delay"));
   const delay = Number.isFinite(rawDelay) && rawDelay >= 0 && params.get("delay") !== null ? Math.min(rawDelay, 5000) : 300;
 

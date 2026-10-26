@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useBugs } from "@/lib/labs/use-bugs";
 import { useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -27,7 +28,7 @@ type Notice = { kind: "info" | "error"; text: string } | null;
 
 export function OtpApp() {
   const params = useSearchParams();
-  const bugs = new Set((params.get("bugs") ?? "").split(",").filter(Boolean));
+  const bugs = useBugs();
   const seedParam = params.get("seed");
   const seed = seedParam !== null && !Number.isNaN(Number(seedParam)) ? Number(seedParam) : null;
 

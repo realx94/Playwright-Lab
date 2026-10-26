@@ -11,6 +11,7 @@
     "report": "playwright show-report",
     "codegen": "playwright codegen $BASE_URL",
     "typecheck": "tsc --noEmit",
+    "grade": "node scripts/grade.mjs",
     "format": "prettier --write ."
   },
   "devDependencies": {

@@ -1,0 +1,190 @@
+{
+  "version": 1,
+  "exercises": {
+    "login-1": {
+      "lab": "login",
+      "spec": "tests/exercises/login/login-1.spec.ts",
+      "bugs": []
+    },
+    "login-2": {
+      "lab": "login",
+      "spec": "tests/exercises/login/login-2.spec.ts",
+      "bugs": [
+        "BUG-01"
+      ]
+    },
+    "login-3": {
+      "lab": "login",
+      "spec": "tests/exercises/login/login-3.spec.ts",
+      "bugs": [
+        "BUG-02"
+      ]
+    },
+    "login-4": {
+      "lab": "login",
+      "spec": "tests/exercises/login/login-4.spec.ts",
+      "bugs": [
+        "BUG-01"
+      ]
+    },
+    "forms-1": {
+      "lab": "forms",
+      "spec": "tests/exercises/forms/forms-1.spec.ts",
+      "bugs": []
+    },
+    "forms-2": {
+      "lab": "forms",
+      "spec": "tests/exercises/forms/forms-2.spec.ts",
+      "bugs": []
+    },
+    "forms-3": {
+      "lab": "forms",
+      "spec": "tests/exercises/forms/forms-3.spec.ts",
+      "bugs": []
+    },
+    "cart-1": {
+      "lab": "cart",
+      "spec": "tests/exercises/cart/cart-1.spec.ts",
+      "bugs": []
+    },
+    "cart-2": {
+      "lab": "cart",
+      "spec": "tests/exercises/cart/cart-2.spec.ts",
+      "bugs": [
+        "BUG-02"
+      ]
+    },
+    "cart-3": {
+      "lab": "cart",
+      "spec": "tests/exercises/cart/cart-3.spec.ts",
+      "bugs": [
+        "BUG-03"
+      ]
+    },
+    "playground-1": {
+      "lab": "playground",
+      "spec": "tests/exercises/playground/playground-1.spec.ts",
+      "bugs": []
+    },
+    "playground-2": {
+      "lab": "playground",
+      "spec": "tests/exercises/playground/playground-2.spec.ts",
+      "bugs": []
+    },
+    "playground-3": {
+      "lab": "playground",
+      "spec": "tests/exercises/playground/playground-3.spec.ts",
+      "bugs": []
+    },
+    "playground-4": {
+      "lab": "playground",
+      "spec": "tests/exercises/playground/playground-4.spec.ts",
+      "bugs": []
+    },
+    "api-1": {
+      "lab": "api",
+      "spec": "tests/exercises/api/api-1.spec.ts",
+      "bugs": [
+        "BUG-01"
+      ]
+    },
+    "api-2": {
+      "lab": "api",
+      "spec": "tests/exercises/api/api-2.spec.ts",
+      "bugs": []
+    },
+    "api-3": {
+      "lab": "api",
+      "spec": "tests/exercises/api/api-3.spec.ts",
+      "bugs": [
+        "BUG-02"
+      ]
+    },
+    "api-4": {
+      "lab": "api",
+      "spec": "tests/exercises/api/api-4.spec.ts",
+      "bugs": [
+        "BUG-02",
+        "BUG-03"
+      ]
+    },
+    "otp-1": {
+      "lab": "otp",
+      "spec": "tests/exercises/otp/otp-1.spec.ts",
+      "bugs": []
+    },
+    "otp-2": {
+      "lab": "otp",
+      "spec": "tests/exercises/otp/otp-2.spec.ts",
+      "bugs": [
+        "BUG-01"
+      ]
+    },
+    "otp-3": {
+      "lab": "otp",
+      "spec": "tests/exercises/otp/otp-3.spec.ts",
+      "bugs": [
+        "BUG-02"
+      ]
+    },
+    "otp-4": {
+      "lab": "otp",
+      "spec": "tests/exercises/otp/otp-4.spec.ts",
+      "bugs": [
+        "BUG-03"
+      ]
+    },
+    "todo-1": {
+      "lab": "todo",
+      "spec": "tests/exercises/todo/todo-1.spec.ts",
+      "bugs": []
+    },
+    "todo-2": {
+      "lab": "todo",
+      "spec": "tests/exercises/todo/todo-2.spec.ts",
+      "bugs": [
+        "BUG-01",
+        "BUG-03"
+      ]
+    },
+    "todo-3": {
+      "lab": "todo",
+      "spec": "tests/exercises/todo/todo-3.spec.ts",
+      "bugs": [
+        "BUG-02"
+      ]
+    },
+    "table-1": {
+      "lab": "table",
+      "spec": "tests/exercises/table/table-1.spec.ts",
+      "bugs": [
+        "BUG-01"
+      ]
+    },
+    "table-2": {
+      "lab": "table",
+      "spec": "tests/exercises/table/table-2.spec.ts",
+      "bugs": []
+    },
+    "table-3": {
+      "lab": "table",
+      "spec": "tests/exercises/table/table-3.spec.ts",
+      "bugs": [
+        "BUG-03"
+      ]
+    },
+    "table-4": {
+      "lab": "table",
+      "spec": "tests/exercises/table/table-4.spec.ts",
+      "bugs": []
+    },
+    "table-5": {
+      "lab": "table",
+      "spec": "tests/exercises/table/table-5.spec.ts",
+      "bugs": [
+        "BUG-01",
+        "BUG-02"
+      ]
+    }
+  }
+}

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useBugs } from "@/lib/labs/use-bugs";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -37,8 +37,7 @@ function load(): State {
 }
 
 export function CartApp() {
-  const params = useSearchParams();
-  const bugs = new Set((params.get("bugs") ?? "").split(",").filter(Boolean));
+  const bugs = useBugs();
   const [state, setState] = useState<State>(empty);
   const [ready, setReady] = useState(false);
   const [code, setCode] = useState("");
@@ -82,7 +81,6 @@ export function CartApp() {
     save({
       lines: {},
       coupon: null,
-      // eslint-disable-next-line react-hooks/purity -- chạy trong event handler
       order: { id: `DH-${Date.now().toString().slice(-6)}`, status: "Mới", total: t.total },
     });
   }

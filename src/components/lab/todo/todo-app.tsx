@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useBugs } from "@/lib/labs/use-bugs";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -45,8 +45,7 @@ function load(): TodoState {
 }
 
 export function TodoApp() {
-  const params = useSearchParams();
-  const bugs = new Set((params.get("bugs") ?? "").split(",").filter(Boolean));
+  const bugs = useBugs();
 
   const [state, setState] = useState<TodoState>(emptyTodo);
   const [ready, setReady] = useState(false);

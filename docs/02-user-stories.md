@@ -124,6 +124,7 @@ Persona: **L** = Learner (QA), **M** = Mentor, **A** = Admin/Content author.
 - AC: lệnh `npm run grade -- --lab <slug> --spec <file>` trong starter repo chạy spec trên lab sạch (phải xanh) rồi lần lượt với từng bug `?bugs=BUG-xx` (phải đỏ); điểm = số bug bắt được / tổng số bug, trừ điểm nếu đỏ do timeout/locator sai.
 - AC: xuất file JSON kết quả; người học tải lên site để lưu vào lịch sử (không có server chấm nên chỉ để tự học, không cấp chứng chỉ).
 - Phụ thuộc: starter repo (US-11.01); lab đọc bug từ cookie `lab_bugs` ngoài query để cấu hình runner tiêm bug được.
+- Trạng thái: **đã làm**. `npm run grade -- --exercise <id>` trong starter repo; bài tập khai báo `bugs` cần bắt; trang Thống kê nhập file `grade-<id>.json` (kiểm tra khớp phiên bản bài tập). `npm run verify:solutions` chứng minh mọi đáp án mẫu xanh trên lab sạch và đỏ khi bật đúng bug.
 
 **US-06.08 (P2)** – Là L, tôi muốn học dùng AI (Copilot/Claude, Playwright MCP, agents) để tăng tốc viết test mà vẫn kiểm soát chất lượng.
 

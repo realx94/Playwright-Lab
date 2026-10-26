@@ -45,10 +45,23 @@ tests/
 
 Bài “bắt bug”: test phải **xanh** ở `/lab/<lab>` và **đỏ** ở `/lab/<lab>?bugs=BUG-xx`. Dùng `await page.goto(path + "?bugs=BUG-01")` hoặc `loginPage.goto(["BUG-01"])` để thử.
 
-## 6. Mẹo
+## 6. Chấm tự động (mutation grading)
+Sau khi viết xong một bài tập, chấm thử bằng lệnh:
+```bash
+npm run grade -- --exercise login-4
+```
+Công cụ sẽ:
+1. Chạy file `tests/exercises/<lab>/<mã bài>.spec.ts` của bạn trên lab **sạch** — phải xanh (không còn `.fixme`).
+2. Với bài “bắt bug”, bật lần lượt từng bug của lab (qua cookie `lab_bugs`) và chạy lại — test của bạn phải **đỏ**, nghĩa là nó thật sự phát hiện được lỗi.
+
+Điểm = 1 (xanh trên lab sạch) + số bug bắt được. Kết quả được ghi vào `grade-<mã bài>.json`; tải file này lên mục **Thống kê** của website để lưu vào lịch sử. Vì không có máy chủ xác thực nên điểm chỉ dùng để tự học.
+
+Mẹo: nếu test vẫn xanh khi bật bug, hãy kiểm tra assertion của bạn có đủ mạnh và có dùng đúng dữ liệu biên chưa.
+
+## 7. Mẹo
 - `npx playwright codegen $BASE_URL/lab/login` để sinh code nháp, sau đó chuyển locator về dạng `getByRole`.
 - Test lỗi? Mở trace: `npx playwright show-trace test-results/<thư mục>/trace.zip`.
 - Chạy một test: `npx playwright test -g "đăng nhập hợp lệ"`.
 
-## 7. CI (tuỳ chọn)
+## 8. CI (tuỳ chọn)
 `.github/workflows/e2e.yml` chạy test mỗi lần push. Thêm biến `BASE_URL` trong *Settings → Secrets and variables → Actions → Variables*.

@@ -25,6 +25,8 @@ export interface ExerciseAttempt {
   hintsUsed: number;
   solutionViewed: boolean;
   takenAt: number;
+  /** true nếu điểm đến từ kết quả chấm tự động (npm run grade) thay vì tự đánh giá. */
+  graded?: boolean;
 }
 
 export interface AskAiEntry {

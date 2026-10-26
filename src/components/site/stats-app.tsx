@@ -3,8 +3,9 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { toast } from "sonner";
-import { Download, Trash2, Upload } from "lucide-react";
+import { Download, FileCheck, Trash2, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { attemptFromGrade } from "@/lib/labs/grading";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -35,6 +36,7 @@ export function StatsApp({ lessons }: { lessons: LessonRef[] }) {
   const [attempts, setAttempts] = useState<QuizAttempt[]>([]);
   const [exercises, setExercises] = useState<ExerciseAttempt[]>([]);
   const fileRef = useRef<HTMLInputElement>(null);
+  const gradeRef = useRef<HTMLInputElement>(null);
 
   const refresh = useCallback(async () => {
     setProgress(await storage.listProgress());
@@ -67,6 +69,17 @@ export function StatsApp({ lessons }: { lessons: LessonRef[] }) {
       toast.success("Đã nhập dữ liệu");
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "File không hợp lệ");
+    }
+  }
+
+  async function importGrade(file: File) {
+    try {
+      const attempt = attemptFromGrade(JSON.parse(await file.text()));
+      await storage.saveExercise(attempt);
+      await refresh();
+      toast.success(`Đã lưu kết quả chấm: ${attempt.checked}/${attempt.total}`);
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "File kết quả không hợp lệ");
     }
   }
 
@@ -181,6 +194,29 @@ export function StatsApp({ lessons }: { lessons: LessonRef[] }) {
         </section>
       )}
 
+      <section className="space-y-2" aria-label="Chấm tự động">
+        <h2 className="text-lg font-semibold">Kết quả chấm tự động</h2>
+        <p className="text-sm text-muted-foreground">
+          Chạy <code>npm run grade -- --exercise &lt;mã bài&gt;</code> trong starter repo, rồi tải file{" "}
+          <code>grade-&lt;mã bài&gt;.json</code> lên đây. Kết quả không có máy chủ xác thực nên chỉ dùng để tự học.
+        </p>
+        <Button variant="outline" onClick={() => gradeRef.current?.click()}>
+          <FileCheck className="size-4" /> Tải kết quả chấm
+        </Button>
+        <input
+          ref={gradeRef}
+          type="file"
+          accept="application/json"
+          hidden
+          data-testid="grade-input"
+          onChange={(e) => {
+            const f = e.target.files?.[0];
+            if (f) importGrade(f);
+            e.target.value = "";
+          }}
+        />
+      </section>
+
       {exercises.length > 0 && (
         <section className="space-y-2">
           <h2 className="text-lg font-semibold">Bài tập lab đã nộp</h2>
@@ -191,6 +227,7 @@ export function StatsApp({ lessons }: { lessons: LessonRef[] }) {
                   {a.labSlug} · {a.exerciseId} · {new Date(a.takenAt).toLocaleString("vi-VN")}
                 </span>
                 <span className="flex items-center gap-2">
+                  {a.graded && <Badge variant="outline">Chấm tự động</Badge>}
                   {a.solutionViewed && <Badge variant="outline">Đã xem đáp án</Badge>}
                   <Badge variant={a.checked === a.total ? "default" : "secondary"}>
                     {a.checked}/{a.total}

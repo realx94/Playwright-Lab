@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useBugs } from "@/lib/labs/use-bugs";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -34,8 +34,7 @@ function load(): State {
 }
 
 export function LoginApp() {
-  const params = useSearchParams();
-  const bugs = new Set((params.get("bugs") ?? "").split(",").filter(Boolean));
+  const bugs = useBugs();
   const [state, setState] = useState<State>(empty);
   const [ready, setReady] = useState(false);
   const [email, setEmail] = useState("");
