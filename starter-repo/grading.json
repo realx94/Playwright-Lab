@@ -412,6 +412,26 @@
       "bugs": [
         "BUG-01"
       ]
+    },
+    "mail-1": {
+      "lab": "mail",
+      "spec": "tests/exercises/mail/mail-1.spec.ts",
+      "bugs": [
+        "BUG-02"
+      ]
+    },
+    "mail-2": {
+      "lab": "mail",
+      "spec": "tests/exercises/mail/mail-2.spec.ts",
+      "bugs": [
+        "BUG-01",
+        "BUG-03"
+      ]
+    },
+    "mail-3": {
+      "lab": "mail",
+      "spec": "tests/exercises/mail/mail-3.spec.ts",
+      "bugs": []
     }
   }
 }

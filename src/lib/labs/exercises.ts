@@ -3410,4 +3410,242 @@ test("xuất CSV đúng chuẩn và nhập lại", async ({ page }) => {
   },
 ];
 
-export const EXERCISES: Record<string, Exercise[]> = { login, forms, cart, playground, api, otp, todo, table, leave, chat, totp, oauth, pay, orders, guard, webhooks, rbac, timezone, csv };
+const mail: Exercise[] = [
+  {
+    id: "mail-1",
+    title: "Kiểm tra nội dung email xác nhận (đa ngôn ngữ)",
+    difficulty: 2,
+    bugs: ["BUG-02"],
+    task: "Đặt 3 × Giày rồi mở hộp thư giả ở tab mới. Kiểm tra người nhận, tiêu đề, tên khách, dòng hàng và tổng tiền của email tiếng Việt; lặp lại với email tiếng Anh để kiểm tra định dạng tiền 750,000 VND. Test phải đỏ khi bật BUG-02.",
+    criteria: [
+      "Mở hộp thư bằng context.newPage() vì cùng origin dùng chung localStorage",
+      "Kiểm tra email-to, email-subject và email-body bằng assertion tự thử lại",
+      "Kiểm tra dòng hàng 3 × Giày = 750.000 ₫ và tổng cộng",
+      "Kiểm tra bản tiếng Anh dùng dấu phẩy và hậu tố VND",
+      "Test đỏ với BUG-02",
+      ...COMMON_CRITERIA,
+    ],
+    hints: [
+      "Tổng cộng đúng bằng đơn giá nhân số lượng; bug khiến email chỉ ghi đơn giá.",
+      "Dùng selectOption({ label: 'Giày' }) cho ô sản phẩm và selectOption('en') cho ngôn ngữ.",
+      "Nội dung thư có nhiều dòng; dùng toContainText cho từng dòng cần kiểm.",
+    ],
+    solution: `import { test, expect, type BrowserContext, type Page } from "@playwright/test";
+
+async function open(page: Page) {
+  await page.goto("/lab/mail");
+  await page.getByTestId("reset-data").click();
+}
+
+// Hộp thư giả nằm ở trang khác nhưng cùng origin nên mở ở tab mới của cùng context là đọc được.
+async function inbox(context: BrowserContext) {
+  const p = await context.newPage();
+  await p.goto("/lab/inbox");
+  return p;
+}
+
+async function order(page: Page, o: { name?: string; email?: string; qty?: string; lang?: string } = {}) {
+  await page.getByLabel("Tên khách hàng").fill(o.name ?? "Nguyễn An");
+  await page.getByLabel("Email đặt hàng").fill(o.email ?? "an@lab.dev");
+  await page.getByLabel("Sản phẩm").selectOption({ label: "Giày" });
+  await page.getByLabel("Số lượng").fill(o.qty ?? "3");
+  await page.getByLabel("Ngôn ngữ email").selectOption(o.lang ?? "vi");
+  await page.getByRole("button", { name: "Đặt hàng" }).click();
+}
+
+async function requestReset(page: Page, email: string) {
+  await page.getByLabel("Email tài khoản").fill(email);
+  await page.getByRole("button", { name: "Gửi liên kết đặt lại" }).click();
+}
+
+test("email xác nhận tiếng Việt", async ({ page, context }) => {
+  await open(page);
+  await order(page);
+  const box = await inbox(context);
+  await expect(box.getByTestId("email-item")).toHaveCount(1);
+  await expect(box.getByTestId("email-to")).toHaveText("an@lab.dev");
+  await expect(box.getByTestId("email-subject")).toHaveText("Xác nhận đơn hàng #A1001");
+  const body = box.getByTestId("email-body");
+  await expect(body).toContainText("Xin chào Nguyễn An");
+  await expect(body).toContainText("3 × Giày = 750.000 ₫");
+  await expect(body).toContainText("Tổng cộng: 750.000 ₫");
+});
+
+test("email tiếng Anh dùng định dạng tiền tiếng Anh", async ({ page, context }) => {
+  await open(page);
+  await order(page, { lang: "en" });
+  const box = await inbox(context);
+  await expect(box.getByTestId("email-subject")).toHaveText("Order confirmation #A1001");
+  await expect(box.getByTestId("email-body")).toContainText("Total: 750,000 VND");
+});`,
+  },
+  {
+    id: "mail-2",
+    title: "Quên mật khẩu: chống dò tài khoản và liên kết một lần",
+    difficulty: 2,
+    bugs: ["BUG-01", "BUG-03"],
+    task: "Chứng minh email lạ nhận cùng thông báo trung tính nhưng không có thư nào, email đã đăng ký nhận đúng một thư; lấy liên kết trong thư, đặt mật khẩu mới (kiểm tra mật khẩu yếu bị chặn) và chứng minh liên kết không dùng lại được. Test phải đỏ khi bật BUG-01 hoặc BUG-03.",
+    criteria: [
+      "Kiểm tra thông báo trung tính giống nhau cho email lạ và email đã đăng ký",
+      "Kiểm tra hộp thư vẫn 0 thư sau khi gửi cho email lạ",
+      "Lấy href của liên kết trong thư bằng getAttribute",
+      "Kiểm tra mật khẩu yếu bị từ chối rồi đổi thành công bằng mật khẩu hợp lệ",
+      "Mở lại liên kết cũ và kiểm tra báo không hợp lệ",
+      "Test đỏ với BUG-01 và BUG-03",
+      ...COMMON_CRITERIA,
+    ],
+    hints: [
+      "Số thư hiển thị ở data-testid inbox-count dưới dạng N thư.",
+      "Liên kết có dạng /lab/mail/reset?token=t-xxxx; mở bằng box.goto(href).",
+      "Ô nhập có nhãn Mật khẩu mới và Nhập lại mật khẩu.",
+    ],
+    solution: `import { test, expect, type BrowserContext, type Page } from "@playwright/test";
+
+async function open(page: Page) {
+  await page.goto("/lab/mail");
+  await page.getByTestId("reset-data").click();
+}
+
+// Hộp thư giả nằm ở trang khác nhưng cùng origin nên mở ở tab mới của cùng context là đọc được.
+async function inbox(context: BrowserContext) {
+  const p = await context.newPage();
+  await p.goto("/lab/inbox");
+  return p;
+}
+
+async function order(page: Page, o: { name?: string; email?: string; qty?: string; lang?: string } = {}) {
+  await page.getByLabel("Tên khách hàng").fill(o.name ?? "Nguyễn An");
+  await page.getByLabel("Email đặt hàng").fill(o.email ?? "an@lab.dev");
+  await page.getByLabel("Sản phẩm").selectOption({ label: "Giày" });
+  await page.getByLabel("Số lượng").fill(o.qty ?? "3");
+  await page.getByLabel("Ngôn ngữ email").selectOption(o.lang ?? "vi");
+  await page.getByRole("button", { name: "Đặt hàng" }).click();
+}
+
+async function requestReset(page: Page, email: string) {
+  await page.getByLabel("Email tài khoản").fill(email);
+  await page.getByRole("button", { name: "Gửi liên kết đặt lại" }).click();
+}
+
+test("quên mật khẩu: email lạ không nhận thư, email đăng ký nhận thư", async ({ page, context }) => {
+  await open(page);
+  await requestReset(page, "la@lab.dev");
+  await expect(page.getByTestId("reset-message")).toHaveText("Nếu email đã đăng ký, chúng tôi đã gửi liên kết đặt lại mật khẩu");
+  const empty = await inbox(context);
+  await expect(empty.getByTestId("inbox-count")).toHaveText("0 thư");
+
+  await requestReset(page, "user@lab.dev");
+  await expect(page.getByTestId("reset-message")).toHaveText("Nếu email đã đăng ký, chúng tôi đã gửi liên kết đặt lại mật khẩu");
+  const box = await inbox(context);
+  await expect(box.getByTestId("email-item")).toHaveCount(1);
+  await expect(box.getByTestId("email-subject")).toHaveText("Đặt lại mật khẩu");
+});
+
+test("liên kết đặt lại dùng một lần", async ({ page, context }) => {
+  await open(page);
+  await requestReset(page, "user@lab.dev");
+  const box = await inbox(context);
+  const href = (await box.getByRole("link", { name: /reset\\?token=/ }).getAttribute("href"))!;
+
+  await box.goto(href);
+  await box.getByLabel("Mật khẩu mới").fill("yeu");
+  await box.getByLabel("Nhập lại mật khẩu").fill("yeu");
+  await box.getByRole("button", { name: "Đổi mật khẩu" }).click();
+  await expect(box.getByTestId("reset-error")).toHaveText("Mật khẩu tối thiểu 8 ký tự và có ít nhất một chữ số");
+
+  await box.getByLabel("Mật khẩu mới").fill("MatKhau123");
+  await box.getByLabel("Nhập lại mật khẩu").fill("MatKhau123");
+  await box.getByRole("button", { name: "Đổi mật khẩu" }).click();
+  await expect(box.getByTestId("reset-done")).toHaveText("Đã đổi mật khẩu thành công");
+
+  await box.goto(href);
+  await expect(box.getByTestId("reset-invalid")).toBeVisible();
+});`,
+  },
+  {
+    id: "mail-3",
+    title: "Liên kết trong email và thời hạn 15 phút",
+    difficulty: 2,
+    task: "Bấm liên kết Xem đơn hàng trong email và kiểm tra trang đơn; thử một đơn không tồn tại. Dùng đồng hồ giả để chứng minh liên kết đặt lại mật khẩu còn hiệu lực đúng ở giây thứ 900 và hết hạn ở giây thứ 901.",
+    criteria: [
+      "Bấm liên kết bằng getByRole('link') với biểu thức chính quy khớp địa chỉ",
+      "Kiểm tra tiêu đề và tổng tiền trên trang đơn",
+      "Kiểm tra thông báo không tìm thấy với mã đơn không có",
+      "Dùng context.clock.setFixedTime để kiểm tra biên 900 và 901 giây",
+      "Sinh hai test bằng vòng for từ bảng dữ liệu",
+      ...COMMON_CRITERIA,
+    ],
+    hints: [
+      "Cố định giờ trước khi yêu cầu liên kết rồi mới tăng giờ.",
+      "Biên: đúng 15 phút còn hiệu lực, hơn 1 giây thì hết hạn.",
+      "Dùng biểu thức chính quy /\\/lab\\/mail\\/order\\/A1001/ cho tên liên kết.",
+    ],
+    solution: `import { test, expect, type BrowserContext, type Page } from "@playwright/test";
+
+async function open(page: Page) {
+  await page.goto("/lab/mail");
+  await page.getByTestId("reset-data").click();
+}
+
+// Hộp thư giả nằm ở trang khác nhưng cùng origin nên mở ở tab mới của cùng context là đọc được.
+async function inbox(context: BrowserContext) {
+  const p = await context.newPage();
+  await p.goto("/lab/inbox");
+  return p;
+}
+
+async function order(page: Page, o: { name?: string; email?: string; qty?: string; lang?: string } = {}) {
+  await page.getByLabel("Tên khách hàng").fill(o.name ?? "Nguyễn An");
+  await page.getByLabel("Email đặt hàng").fill(o.email ?? "an@lab.dev");
+  await page.getByLabel("Sản phẩm").selectOption({ label: "Giày" });
+  await page.getByLabel("Số lượng").fill(o.qty ?? "3");
+  await page.getByLabel("Ngôn ngữ email").selectOption(o.lang ?? "vi");
+  await page.getByRole("button", { name: "Đặt hàng" }).click();
+}
+
+async function requestReset(page: Page, email: string) {
+  await page.getByLabel("Email tài khoản").fill(email);
+  await page.getByRole("button", { name: "Gửi liên kết đặt lại" }).click();
+}
+
+test("tổng tiền trong email bằng số lượng nhân đơn giá", async ({ page, context }) => {
+  await open(page);
+  await order(page, { qty: "3" });
+  const box = await inbox(context);
+  await expect(box.getByTestId("email-body")).toContainText("Tổng cộng: 750.000 ₫");
+});
+
+test("mở liên kết trong email dẫn tới đúng đơn", async ({ page, context }) => {
+  await open(page);
+  await order(page);
+  const box = await inbox(context);
+  await box.getByRole("link", { name: /\\/lab\\/mail\\/order\\/A1001/ }).click();
+  await expect(box.getByTestId("order-title")).toHaveText("Đơn hàng #A1001");
+  await expect(box.getByTestId("order-total")).toHaveText("Tổng cộng: 750.000 ₫");
+
+  await box.goto("/lab/mail/order/A9999");
+  await expect(box.getByTestId("order-missing")).toBeVisible();
+});
+
+for (const [seconds, ok] of [
+  [900, true],
+  [901, false],
+] as const) {
+  test("liên kết đặt lại ở giây thứ " + seconds, async ({ page, context }) => {
+    const t0 = new Date("2026-03-01T10:00:00Z");
+    await context.clock.setFixedTime(t0);
+    await open(page);
+    await requestReset(page, "user@lab.dev");
+
+    const box = await inbox(context);
+    const href = (await box.getByRole("link", { name: /reset\\?token=/ }).getAttribute("href"))!;
+    await context.clock.setFixedTime(new Date(t0.getTime() + seconds * 1000));
+    await box.goto(href);
+    if (ok) await expect(box.getByLabel("Mật khẩu mới")).toBeVisible();
+    else await expect(box.getByTestId("reset-invalid")).toBeVisible();
+  });
+}`,
+  },
+];
+
+export const EXERCISES: Record<string, Exercise[]> = { login, forms, cart, playground, api, otp, todo, table, leave, chat, totp, oauth, pay, orders, guard, webhooks, rbac, timezone, csv, mail };

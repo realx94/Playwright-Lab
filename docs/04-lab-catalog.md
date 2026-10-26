@@ -178,6 +178,11 @@ Tạo hai chế độ: **Fake IdP** (trang đồng ý giả trong site, ổn đ�
 
 ### LAB-23 Email giao dịch
 Kiểm tra email đơn hàng/reset mật khẩu: tiêu đề, người nhận, nội dung động, link, định dạng tiền, ngôn ngữ; mở link trong email bằng Playwright.
+- **Bản đã làm:** `/lab/mail` (đặt hàng + quên mật khẩu), thư vào hộp thư giả `/lab/inbox` (đã hỗ trợ liên kết bấm được), trang `/lab/mail/order/{id}` và `/lab/mail/reset?token=`. Chưa gửi email thật; xem tích hợp Resend ở `06-integrations.md`.
+  - BR-01 email xác nhận đúng người nhận/tiêu đề/nội dung; BR-02 định dạng tiền và từ ngữ theo ngôn ngữ.
+  - BR-03 liên kết xem đơn đầy đủ và đúng đơn; BR-04 quên mật khẩu trung tính, chỉ gửi cho email đã đăng ký.
+  - BR-05 liên kết đặt lại dùng một lần, hiệu lực 15 phút; BR-06 mật khẩu mới ≥ 8 ký tự có chữ số và khớp.
+  - Bug: BUG-01 gửi thư cho email lạ; BUG-02 tổng tiền trong email thiếu số lượng; BUG-03 liên kết dùng lại được.
 
 ### LAB-26 RBAC & multi-tenant
 Vai trò Admin/Manager/Staff/Guest; ma trận quyền; thử IDOR (đổi id trong URL/API) phải nhận 403/404; dùng nhiều `browserContext` cho nhiều người dùng cùng lúc.
@@ -251,7 +256,8 @@ Vai trò Admin/Manager/Staff/Guest; ma trận quyền; thử IDOR (đổi id tro
 | LAB-26 Phân quyền RBAC & multi-tenant | `/lab/rbac` | Đã làm |
 | LAB-28 Đặt lịch theo múi giờ & đồng hồ | `/lab/timezone` | Đã làm |
 | LAB-27 Nhập/xuất CSV & đối chiếu dữ liệu | `/lab/csv` | Đã làm |
-| LAB-5, 6, 9, 10, 11, 15, 16, 23, 25 | — | Chưa làm |
+| LAB-23 Email giao dịch (xác nhận đơn, đặt lại mật khẩu) | `/lab/mail` | Đã làm |
+| LAB-5, 6, 9, 10, 11, 15, 16, 25 | — | Chưa làm |
 
 ### Quy tắc kỹ thuật của trang lab
 - `/lab/<slug>` là **ứng dụng thuần**: không header, không thanh tìm kiếm của site (chỉ một liên kết quay lại ở layout lab) để locator của người học không bị trùng.

@@ -503,7 +503,32 @@ const csv: Workshop = {
   ],
 };
 
-export const WORKSHOPS: Record<string, Workshop> = { login, forms, cart, playground, api, otp, todo, table, leave, chat, totp, oauth, pay, orders, guard, webhooks, rbac, timezone, csv };
+const mail: Workshop = {
+  techniques: ["Equivalence Partitioning", "State Transition", "Content Verification", "Security"],
+  rules: [
+    { id: "BR-01", text: "Đặt hàng hợp lệ gửi email xác nhận tới đúng địa chỉ: tiêu đề có mã đơn, nội dung có tên khách, dòng hàng và tổng tiền đúng" },
+    { id: "BR-02", text: "Định dạng tiền theo ngôn ngữ email: tiếng Việt 750.000 ₫, tiếng Anh 750,000 VND; từ ngữ cố định cũng đổi theo ngôn ngữ" },
+    { id: "BR-03", text: "Liên kết Xem đơn hàng trong email là địa chỉ đầy đủ dẫn tới đúng đơn; đơn không tồn tại hiển thị thông báo không tìm thấy" },
+    { id: "BR-04", text: "Quên mật khẩu luôn trả thông báo trung tính; chỉ email đã đăng ký mới nhận thư (chống dò tài khoản)" },
+    { id: "BR-05", text: "Liên kết đặt lại mật khẩu dùng một lần và hiệu lực 15 phút (đúng 15 phút còn hiệu lực, quá 1 giây thì hết hạn)" },
+    { id: "BR-06", text: "Mật khẩu mới tối thiểu 8 ký tự có ít nhất một chữ số và phải khớp với ô nhập lại" },
+  ],
+  cases: [
+    { id: "TC-M-101", title: "Email xác nhận tiếng Việt", precondition: "Hộp thư trống", steps: "Đặt 3 × Giày, ngôn ngữ Tiếng Việt", data: "an@lab.dev", expected: "1 thư tới an@lab.dev; tiêu đề Xác nhận đơn hàng #A1001; Tổng cộng: 750.000 ₫", type: "Happy", priority: "P0", br: ["BR-01", "BR-02"] },
+    { id: "TC-M-102", title: "Email tiếng Anh", precondition: "Hộp thư trống", steps: "Đặt 3 × Giày, ngôn ngữ English", data: "an@lab.dev", expected: "Subject Order confirmation #A1001; Total: 750,000 VND", type: "Happy", priority: "P1", br: ["BR-02"] },
+    { id: "TC-M-103", title: "Liên kết xem đơn", precondition: "Đã có email xác nhận", steps: "Bấm liên kết trong thư", data: "link đơn A1001", expected: "Mở trang đơn #A1001 với tổng 750.000 ₫", type: "Happy", priority: "P0", br: ["BR-03"] },
+    { id: "TC-M-104", title: "Đơn không tồn tại", precondition: "—", steps: "Mở /lab/mail/order/A9999", data: "A9999", expected: "Hiển thị không tìm thấy đơn hàng", type: "Negative", priority: "P2", br: ["BR-03"] },
+    { id: "TC-M-105", title: "Dữ liệu đặt hàng sai", precondition: "—", steps: "Đặt với email sai, tên rỗng, số lượng 11", data: "sai / rỗng / 11", expected: "Báo lỗi tương ứng và không gửi thư nào", type: "EP", priority: "P1", br: ["BR-01"] },
+    { id: "TC-M-106", title: "Quên mật khẩu email đã đăng ký", precondition: "Hộp thư trống", steps: "Gửi liên kết cho user@lab.dev", data: "user@lab.dev", expected: "Thông báo trung tính và 1 thư Đặt lại mật khẩu", type: "Happy", priority: "P0", br: ["BR-04"] },
+    { id: "TC-M-107", title: "Quên mật khẩu email lạ", precondition: "Hộp thư trống", steps: "Gửi liên kết cho la@lab.dev", data: "la@lab.dev", expected: "Cùng thông báo trung tính, không có thư", type: "Security", priority: "P0", br: ["BR-04"] },
+    { id: "TC-M-108", title: "Liên kết còn đúng 15 phút", precondition: "Đã nhận thư", steps: "Mở liên kết sau 900 giây", data: "900s", expected: "Hiện biểu mẫu đặt mật khẩu mới", type: "BVA", priority: "P0", br: ["BR-05"] },
+    { id: "TC-M-109", title: "Liên kết quá 15 phút 1 giây", precondition: "Đã nhận thư", steps: "Mở liên kết sau 901 giây", data: "901s", expected: "Báo liên kết hết hạn", type: "BVA", priority: "P0", br: ["BR-05"] },
+    { id: "TC-M-110", title: "Dùng lại liên kết", precondition: "Đã đổi mật khẩu bằng liên kết", steps: "Mở lại liên kết đó", data: "—", expected: "Báo không hợp lệ hoặc đã sử dụng", type: "Security", priority: "P0", br: ["BR-05"] },
+    { id: "TC-M-111", title: "Mật khẩu yếu và không khớp", precondition: "Ở trang đặt lại", steps: "Nhập yeu / MatKhau123 và MatKhau124", data: "yeu", expected: "Báo thiếu độ mạnh; báo không khớp", type: "EP", priority: "P1", br: ["BR-06"] },
+  ],
+};
+
+export const WORKSHOPS: Record<string, Workshop> = { login, forms, cart, playground, api, otp, todo, table, leave, chat, totp, oauth, pay, orders, guard, webhooks, rbac, timezone, csv, mail };
 
 export function toCsv(cases: TestCase[]): string {
   const head = ["ID", "Tiêu đề", "Tiền điều kiện", "Các bước", "Dữ liệu", "Kết quả mong đợi", "Loại", "Ưu tiên", "BR"];

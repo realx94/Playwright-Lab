@@ -5,6 +5,19 @@ import { Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { INBOX_KEY, loadInbox, type InboxMail } from "@/lib/labs/otp-rules";
 
+/** Biến địa chỉ http(s) trong thư thành liên kết bấm được. */
+function linkify(text: string) {
+  return text.split(/(https?:\/\/\S+)/g).map((part, i) =>
+    /^https?:\/\//.test(part) ? (
+      <a key={i} href={part} className="underline">
+        {part}
+      </a>
+    ) : (
+      part
+    ),
+  );
+}
+
 /** Hộp thư giả: lab “gửi” email vào localStorage, trang này hiển thị chúng. */
 export function InboxApp() {
   const [mails, setMails] = useState<InboxMail[] | null>(null);
@@ -49,7 +62,9 @@ export function InboxApp() {
               <p className="font-medium" data-testid="email-subject">
                 {m.subject}
               </p>
-              <p data-testid="email-body">{m.body}</p>
+              <p data-testid="email-body" className="whitespace-pre-line">
+                {linkify(m.body)}
+              </p>
             </li>
           ))}
         </ul>

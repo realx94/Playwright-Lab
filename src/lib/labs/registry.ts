@@ -28,4 +28,5 @@ export const LABS: LabInfo[] = [
   { slug: "rbac", id: "LAB-26", title: "Phân quyền RBAC & multi-tenant", domain: "Authorization", difficulty: 3, skills: ["ma trận quyền", "IDOR", "403 vs 404", "nhiều context", "tách tổ chức"], ready: true },
   { slug: "timezone", id: "LAB-28", title: "Đặt lịch theo múi giờ & đồng hồ", domain: "Time", difficulty: 3, skills: ["timezoneId", "page.clock", "DST", "biên thời gian", "đếm ngược"], ready: true },
   { slug: "csv", id: "LAB-27", title: "Nhập/xuất CSV & đối chiếu dữ liệu", domain: "Reporting", difficulty: 2, skills: ["setInputFiles", "download", "parse CSV", "RFC 4180", "round trip"], ready: true },
+  { slug: "mail", id: "LAB-23", title: "Email giao dịch (xác nhận đơn, đặt lại mật khẩu)", domain: "Notification", difficulty: 2, skills: ["đọc email", "nội dung động", "liên kết trong email", "định dạng tiền", "token hết hạn"], ready: true },
 ];
