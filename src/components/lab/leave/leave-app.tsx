@@ -50,6 +50,7 @@ export function LeaveApp() {
   const [ready, setReady] = useState(false);
   const [draft, setDraft] = useState<Draft>(blank);
   const [error, setError] = useState<string | null>(null);
+  const [approveError, setApproveError] = useState<string | null>(null);
   const [rejecting, setRejecting] = useState<LeaveRequest | null>(null);
   const [rejectReason, setRejectReason] = useState("");
   const [rejectError, setRejectError] = useState<string | null>(null);
@@ -105,6 +106,17 @@ export function LeaveApp() {
   function update(id: number, patch: Partial<LeaveRequest>) {
     const current = load();
     persist({ ...current, requests: current.requests.map((r) => (r.id === id ? { ...r, ...patch } : r)) });
+  }
+
+  /** BR-08: duyệt đơn phép năm phải kiểm lại số dư tại thời điểm duyệt. */
+  function approve(r: LeaveRequest) {
+    const current = load();
+    const left = balance(current.requests);
+    if (r.type === "annual" && r.days > left) {
+      return setApproveError(`Không thể duyệt đơn #${r.id}: phép năm còn ${left} ngày, đơn cần ${r.days} ngày`);
+    }
+    setApproveError(null);
+    update(r.id, { status: "approved" });
   }
 
   function confirmReject() {
@@ -196,6 +208,11 @@ export function LeaveApp() {
 
       <section aria-label="Danh sách đơn nghỉ phép" className="space-y-2">
         <h2 className="font-semibold">{role === "manager" ? "Đơn cần xử lý" : "Đơn của tôi"}</h2>
+        {approveError && (
+          <p role="alert" className="text-sm text-destructive" data-testid="leave-approve-error">
+            {approveError}
+          </p>
+        )}
         <div className="overflow-x-auto rounded-xl border">
           <Table>
             <TableHeader>
@@ -233,7 +250,7 @@ export function LeaveApp() {
                     <TableCell className="space-x-2 text-right">
                       {r.status === "pending" && canApprove && (
                         <>
-                          <Button size="sm" aria-label={`Duyệt đơn #${r.id}`} onClick={() => update(r.id, { status: "approved" })}>
+                          <Button size="sm" aria-label={`Duyệt đơn #${r.id}`} onClick={() => approve(r)}>
                             Duyệt
                           </Button>
                           <Button

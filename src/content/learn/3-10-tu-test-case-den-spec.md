@@ -88,7 +88,7 @@ test("[TC-C-006][BR-02] SALE10 ở biên 500.000", async ({ page }) => {
 });
 ```
 
-Điểm đáng chú ý: không có dòng "mở trang" hay "reset" trong test vì đã nằm trong `beforeEach` (tiền điều kiện). Kết quả dùng `Math.abs` vì ô giảm giá hiển thị số âm.
+Điểm đáng chú ý: không có dòng "mở trang" hay "reset" trong test vì đã nằm trong `beforeEach` (tiền điều kiện). Kết quả dùng `Math.abs` vì ô giảm giá hiển thị số âm khi có giảm (ví dụ `-50.000đ`).
 
 ### Bước 5. Gom các test case cùng khuôn thành dữ liệu
 Mục đích: một vòng lặp, nhiều test.
@@ -184,7 +184,14 @@ Lab cho phép bật lỗi có chủ đích qua `?bugs=BUG-xx`. Với LAB-03: BUG
 
 Các test còn lại vẫn xanh. Nếu bật bug mà không test nào đỏ, tức bộ test của bạn có lỗ hổng. Nếu dùng starter repo, cấu hình của nó cũng cho phép bật bug qua biến môi trường mà không sửa code: `LAB_BUGS=BUG-02` (bash) hoặc `$env:LAB_BUGS="BUG-02"` (PowerShell) trước lệnh `npx playwright test`.
 
-Lưu ý đã học ở bài 3.7: BUG-01 của LAB-03 (làm tròn VAT) không thể phát hiện qua giao diện với 3 sản phẩm còn hàng, vì không tổ hợp số lượng nào cho VAT lẻ; hãy ghi giới hạn này vào báo cáo thay vì cố viết test không thể đỏ.
+Lưu ý: BUG-01 của LAB-03 (làm tròn VAT xuống) **cũng bắt được qua giao diện** nhờ Cáp sạc USB-C 99.999đ (bài 3.7), nhưng spec trên chưa có dòng nào dùng dữ liệu đó nên nó vẫn xanh khi bật BUG-01. Đó là một lỗ hổng của bộ test (xem bài tập 3 ở phần Thử ngay trong lab). Để bắt được, thêm vào mảng `cases` một dòng cho TC-C-009 (tính tay: 99.999 nhân 0,08 bằng 7.999,92, làm tròn gần nhất là 8.000; ship 30.000; tổng 99.999 cộng 8.000 cộng 30.000 bằng 137.999):
+
+```ts
+  { tc: "TC-C-009", br: ["BR-04"], title: "VAT làm tròn gần nhất",
+    lines: [["p5", 1]], money: { shipping: 30_000, vat: 8_000, total: 137_999 } },
+```
+
+Dòng này xanh trên lab sạch và đỏ khi bật `?bugs=BUG-01` (VAT thành 7.999, `Expected: 8000 Received: 7999`). Khi đó spec có 8 test thay vì 7.
 
 ### Bước 10. Đặt file vào đúng chỗ và chạy
 Mục đích: chạy được ở môi trường của bạn.
@@ -258,7 +265,7 @@ for (const c of cases) {
     }
 
     await test.step("Kiểm tra kết quả", async () => {
-      // Ô nào có giá trị mong đợi thì so; Math.abs vì giảm giá hiển thị số âm (kể cả "-0đ").
+      // Ô nào có giá trị mong đợi thì so; Math.abs vì giảm giá hiển thị số âm khi có giảm (ví dụ "-50.000đ").
       for (const f of ["discount", "shipping", "vat", "total"] as const) {
         const want = c.money?.[f];
         if (want !== undefined) expect.soft(Math.abs(await num(page, f)), `ô ${f}`).toBe(want);
@@ -295,14 +302,14 @@ Running 7 tests using ... workers
 ## Thử ngay trong lab
 1. Chạy file trên lab sạch (7 test xanh). Chạy `--list --reporter=json | node trace.mjs` và xem BR-01 chưa phủ.
 2. Làm Bước 9: bật `?bugs=BUG-02`, rồi `?bugs=BUG-03`. Ghi lại test nào đỏ và thông báo lỗi.
-3. Mở `/labs/cart`, đối chiếu từng dòng trong bảng workshop với từng test: test nào chưa có test case ứng với nó? (TC-C-001, TC-C-003, TC-C-009 và TC-C-010 chưa dịch.)
+3. Mở `/labs/cart`, đối chiếu từng dòng trong bảng workshop với từng test: test nào chưa có test case ứng với nó? (TC-C-001, TC-C-003, TC-C-009 và TC-C-010 chưa dịch; với TC-C-009 hãy dùng dòng dữ liệu cáp sạc ở Bước 9 rồi kiểm chứng bằng `?bugs=BUG-01`.)
 4. Mở báo cáo HTML (`npx playwright show-report`) và xem `annotation` BR hiển thị ở mỗi test.
 
 ## Lỗi thường gặp
 - **Triệu chứng**: `-g "BR-02"` chọn thiếu hoặc thừa test so với ma trận. **Nguyên nhân**: tên test không đồng nhất (viết `BR 02`, quên BR). **Cách sửa**: dùng một định dạng duy nhất `[TC-x-nnn][BR-nn,BR-mm]`, sinh tên từ dữ liệu như trong Demo.
 - **Triệu chứng**: test data-driven đỏ ở một dòng, các dòng khác xanh nhưng bạn không biết dòng nào. **Nguyên nhân**: tên test giống nhau giữa các dòng. **Cách sửa**: đưa ID test case vào tên test (mỗi dòng một tên riêng).
 - **Triệu chứng**: thêm 6 màn hình mà tổng tiền vẫn như 5 màn hình, kèm thông báo `Tối đa 5 sản phẩm`. **Nguyên nhân**: số lượng bị chặn ở tồn kho (BR-01: tối đa 10 và không vượt tồn kho; màn hình chỉ còn 5). **Cách sửa**: chọn số lượng hợp lệ trong dữ liệu test, hoặc dùng đúng tình huống đó làm test case BR-01.
-- **Triệu chứng**: `Expected: 0 Received: -0` ở ô giảm giá. **Nguyên nhân**: giao diện hiển thị `-0đ`, và `Number("-0")` là âm không. **Cách sửa**: so sánh `Math.abs(...)` như trong Demo.
+- **Triệu chứng**: `Expected: 0 Received: -0` ở ô giảm giá (gặp ở lab bản cũ; lab hiện hiển thị `0đ`). **Nguyên nhân**: giao diện từng hiển thị `-0đ`, và `Number("-0")` là âm không. **Cách sửa**: so sánh `Math.abs(...)` như trong Demo, cách này an toàn ở cả hai phiên bản.
 - **Triệu chứng**: test xanh khi bật `?bugs=BUG-02`. **Nguyên nhân**: không test nào dùng dữ liệu làm lộ lỗi (giảm giá vượt trần cần tạm tính trên 1.000.000). **Cách sửa**: thêm test case dùng 1 màn hình (3.200.000), như TC-C-008.
 - **Triệu chứng**: `trace.mjs` báo `SyntaxError: Unexpected token` khi parse. **Nguyên nhân**: có dòng chữ khác lẫn vào JSON (cảnh báo của npx hoặc reporter). **Cách sửa**: chạy lại với đúng `--reporter=json` và không in thêm gì ra stdout, hoặc lưu JSON ra file rồi đọc file.
 

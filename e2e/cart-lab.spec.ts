@@ -74,3 +74,22 @@ test("BUG-03 cho phép huỷ đơn đang giao", async ({ page }) => {
   await page.getByRole("button", { name: /Chuyển: Đang giao/ }).click();
   await expect(page.getByRole("button", { name: "Huỷ đơn" })).toBeVisible();
 });
+
+test("VAT làm tròn đến đồng: 99.999 đ × 8% = 7.999,92 làm tròn thành 8.000", async ({ page }) => {
+  await addProduct(page, "p5"); // 99.999
+  expect(await num(page, "vat")).toBe(8_000);
+  expect(await num(page, "shipping")).toBe(30_000);
+  expect(await num(page, "total")).toBe(137_999);
+});
+
+test("không có mã giảm giá thì dòng Giảm giá hiện 0đ, không phải -0đ", async ({ page }) => {
+  await addProduct(page, "p2");
+  await expect(page.getByTestId("discount")).toHaveText("0đ");
+});
+
+test("BUG-01: VAT làm tròn xuống làm lộ lỗi trên giá lẻ", async ({ page }) => {
+  await page.goto("/lab/cart?bugs=BUG-01");
+  await page.getByTestId("reset-data").click();
+  await addProduct(page, "p5");
+  expect(await num(page, "vat")).toBe(7_999);
+});

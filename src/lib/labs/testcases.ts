@@ -82,7 +82,7 @@ const cart: Workshop = {
     { id: "TC-C-006", title: "SALE10 ở biên 500.000", precondition: "Giỏ 500.000đ", steps: "Áp dụng SALE10", data: "500.000", expected: "Giảm 50.000", type: "BVA", priority: "P0", br: ["BR-02"] },
     { id: "TC-C-007", title: "SALE10 dưới ngưỡng", precondition: "Giỏ 250.000đ", steps: "Áp dụng SALE10", data: "250.000", expected: "Báo đơn tối thiểu 500.000đ", type: "Negative", priority: "P1", br: ["BR-02"] },
     { id: "TC-C-008", title: "Giảm giá bị chặn trần", precondition: "Giỏ 3.200.000đ", steps: "Áp dụng SALE10", data: "3.200.000", expected: "Giảm 100.000 (không phải 320.000)", type: "Decision", priority: "P0", br: ["BR-02"] },
-    { id: "TC-C-009", title: "VAT làm tròn", precondition: "Tổng sau giảm có VAT lẻ", steps: "So sánh VAT hiển thị với tính tay", data: "—", expected: "Làm tròn gần nhất, không cắt xuống", type: "Decision", priority: "P1", br: ["BR-04"] },
+    { id: "TC-C-009", title: "VAT làm tròn", precondition: "Giỏ trống", steps: "Thêm Cáp sạc USB-C × 1 rồi so sánh VAT hiển thị với tính tay", data: "99.999 đ", expected: "VAT 8.000 đ (làm tròn gần nhất của 7.999,92), không cắt xuống 7.999", type: "Decision", priority: "P1", br: ["BR-04"] },
     { id: "TC-C-010", title: "Vòng đời đơn hợp lệ", precondition: "Đã đặt hàng", steps: "Chuyển lần lượt các trạng thái", data: "—", expected: "Mới → Đã thanh toán → Đang giao → Hoàn tất", type: "State", priority: "P0", br: ["BR-06"] },
     { id: "TC-C-011", title: "Không huỷ được đơn đang giao", precondition: "Đơn Đang giao", steps: "Tìm nút Huỷ đơn", data: "—", expected: "Không có nút Huỷ", type: "State", priority: "P0", br: ["BR-06"] },
   ],
@@ -239,6 +239,7 @@ const leave: Workshop = {
     { id: "BR-05", text: "Chỉ Quản lý được duyệt hoặc từ chối; từ chối bắt buộc có lý do" },
     { id: "BR-06", text: "Chỉ khi được duyệt, phép năm mới bị trừ; đơn đã duyệt không huỷ được" },
     { id: "BR-07", text: "Không cho gửi đơn trùng khoảng ngày với đơn đang chờ hoặc đã duyệt" },
+    { id: "BR-08", text: "Khi duyệt đơn phép năm, hệ thống kiểm lại số dư tại thời điểm duyệt; không đủ thì không duyệt" },
   ],
   cases: [
     { id: "TC-H-001", title: "Gửi đơn hợp lệ", precondition: "Là nhân viên, hôm nay 02/03/2026", steps: "Chọn 09/03 đến 11/03, nhập lý do, gửi", data: "3 ngày", expected: "Đơn Chờ duyệt, số ngày 3, phép năm vẫn 12", type: "Happy", priority: "P0", br: ["BR-01", "BR-03", "BR-06"] },
@@ -254,6 +255,7 @@ const leave: Workshop = {
     { id: "TC-H-011", title: "Nhân viên không có nút Duyệt", precondition: "Có đơn chờ duyệt", steps: "Quan sát danh sách ở vai trò Nhân viên", data: "—", expected: "Không có nút Duyệt/Từ chối", type: "Security", priority: "P0", br: ["BR-05"] },
     { id: "TC-H-012", title: "Huỷ đơn chờ duyệt", precondition: "Có đơn chờ duyệt", steps: "Nhân viên bấm Huỷ đơn", data: "—", expected: "Đơn Đã huỷ", type: "State", priority: "P1", br: ["BR-04"] },
     { id: "TC-H-013", title: "Huỷ đơn đã duyệt", precondition: "Đơn đã được duyệt", steps: "Tìm nút Huỷ đơn", data: "—", expected: "Không có nút Huỷ đơn", type: "State", priority: "P0", br: ["BR-06"] },
+    { id: "TC-H-014", title: "Duyệt đơn khi số dư không còn đủ", precondition: "Hai đơn phép năm 12 ngày đều Chờ duyệt (không trùng ngày)", steps: "Quản lý duyệt đơn thứ nhất rồi duyệt đơn thứ hai", data: "12 + 12 ngày", expected: "Đơn thứ hai không được duyệt, báo phép năm còn 0 ngày, đơn cần 12 ngày; số dư không âm", type: "Negative", priority: "P0", br: ["BR-08", "BR-06"] },
   ],
 };
 

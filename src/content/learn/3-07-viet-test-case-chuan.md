@@ -14,7 +14,7 @@ keywords: [test case template, traceability matrix, test case priority]
 - Lập **ma trận truy vết** BR và test case, chỉ ra BR chưa được phủ hoặc chỉ có một test.
 
 ## Bạn cần chuẩn bị
-- Đã học bài 3.1 đến 3.6. Mở `/labs/cart` và `/labs/leave` để xem bộ test case mẫu thật (11 và 13 test case).
+- Đã học bài 3.1 đến 3.6. Mở `/labs/cart` và `/labs/leave` để xem bộ test case mẫu thật (11 và 14 test case).
 - Node.js 22.18 trở lên nếu muốn chạy script ở phần Demo (`node cov.ts`); nếu dùng bản cũ hơn, chạy `npx tsx cov.ts`.
 
 ## Kiến thức cần nắm
@@ -101,17 +101,17 @@ Mục đích: lọc những test case mơ hồ.
 
 Checklist: (1) tiêu đề đọc là hiểu; (2) tiền điều kiện chỉ là trạng thái; (3) bước chỉ là hành động; (4) dữ liệu là giá trị thật và khả đạt; (5) kết quả quan sát được, có số; (6) gắn BR và ưu tiên; (7) độc lập với test case khác.
 
-Áp dụng cho TC-C-009 trong bộ mẫu:
+Áp dụng cho TC-C-009 (VAT làm tròn). Bảng dưới là **bản viết yếu** từng có trong bộ mẫu, lúc lab chưa có sản phẩm nào cho VAT lẻ; bộ mẫu hiện đã được viết lại theo cách ở cuối bước này:
 
-| Trường | Hiện tại | Vấn đề |
+| Trường | Bản yếu | Vấn đề |
 |--------|----------|--------|
 | Tiêu đề | VAT làm tròn | Được |
-| Tiền điều kiện | Tổng sau giảm có VAT lẻ | Không nói cách tạo, và với 3 sản phẩm còn hàng không thể tạo VAT lẻ |
+| Tiền điều kiện | Tổng sau giảm có VAT lẻ | Không nói cách tạo; lúc đó lab chưa có sản phẩm nào cho VAT lẻ |
 | Bước | So sánh VAT hiển thị với tính tay | Không có hành động cụ thể |
 | Dữ liệu | — | Thiếu |
 | Kết quả | Làm tròn gần nhất, không cắt xuống | Không có con số |
 
-Cách viết lại: chọn dữ liệu cho VAT lẻ, ví dụ tai nghe giá 799.999đ (nếu có hàng): VAT là 799.999 nhân 0,08 bằng 63.999,92. Làm tròn gần nhất là 64.000, cắt xuống là 63.999. Test case sửa: tiền điều kiện "Giỏ có 1 tai nghe 799.999đ, không mã"; bước "xem dòng VAT"; kết quả mong đợi "VAT 64.000; ship 30.000; tổng 893.999". Hiện tại tai nghe hết hàng nên test này cần dữ liệu seed khác hoặc kiểm ở tầng đơn vị; đó là điều phải ghi nhận vào báo cáo (xem bài 3.3).
+Cách viết lại: chọn dữ liệu cho VAT lẻ. Lab hiện có sản phẩm p5 "Cáp sạc USB-C" giá 99.999đ (tồn 10) đúng cho mục đích này: 1 cáp có tạm tính 99.999, VAT là 99.999 nhân 0,08 bằng 7.999,92. Làm tròn gần nhất là 8.000, cắt xuống là 7.999. Ship là 30.000 (dưới 1.000.000) và tổng là 99.999 cộng 8.000 cộng 30.000 bằng 137.999. Test case sửa: tiền điều kiện "Giỏ trống, không áp mã"; bước "Thêm Cáp sạc USB-C × 1 rồi so sánh dòng VAT với tính tay"; dữ liệu "99.999đ"; kết quả mong đợi "VAT 8.000đ (làm tròn gần nhất của 7.999,92), không phải 7.999; ship 30.000; tổng 137.999". Dữ liệu này khả đạt từ giao diện, nên test case chạy tay và automate được; nếu bật `?bugs=BUG-01` (VAT làm tròn xuống), dòng VAT hiện 7.999 và test đỏ. Bài học: khi một test case "không thể làm" vì thiếu dữ liệu, ghi nhận vào báo cáo và đề nghị thêm dữ liệu seed (lab đã làm đúng như vậy với cáp sạc, xem bài 3.3).
 
 ### Bước 10. Lập ma trận truy vết và tìm lỗ hổng
 Mục đích: chứng minh độ phủ BR.
@@ -127,9 +127,9 @@ Ma trận BR và test case của LAB-03 từ bộ mẫu (cột: BR, các test ca
 | BR-05 hết hàng | TC-C-001, TC-C-002 | 2 |
 | BR-06 trạng thái đơn | TC-C-010, TC-C-011 | 2 |
 
-Cộng: 12 liên kết từ 11 test case (TC-C-004 trỏ 2 BR). Mọi BR có ít nhất một test, nhưng BR-01 chỉ có một: TC-C-003 kiểm giới hạn 10; **không** có test cho "không vượt tồn kho" (màn hình 24 inch chỉ còn 5, bài 3.3 đã nêu). Đó là một lỗ hổng. Tương tự BR-04 mới có TC-C-004 (không lẻ) và TC-C-009 (khó thực hiện).
+Cộng: 12 liên kết từ 11 test case (TC-C-004 trỏ 2 BR). Mọi BR có ít nhất một test, nhưng BR-01 chỉ có một: TC-C-003 kiểm giới hạn 10; **không** có test cho "không vượt tồn kho" (màn hình 24 inch chỉ còn 5, bài 3.3 đã nêu). Đó là một lỗ hổng. Với BR-04, TC-C-004 chỉ kiểm VAT chẵn (20.000) còn TC-C-009 (cáp sạc, VAT lẻ) mới kiểm làm tròn; hai test case bổ sung nhau nên BR-04 phủ khá tốt.
 
-Với LAB-07 (13 test case), ma trận cho: BR-01 (2 test: TC-H-001, TC-H-004), BR-02 (2), BR-03 (4), BR-04 (2), BR-05 (2), BR-06 (3), BR-07 (1). Tổng liên kết là 16. Lỗ hổng: BR-01 có biên trên 200 ký tự nhưng test chỉ có biên dưới (lý do 9 ký tự); BR-07 chỉ có một test trùng ngày (TC-H-008, đơn 11/03 trùng đơn 09 đến 11/03) mà chưa kiểm đơn đã huỷ không chặn.
+Với LAB-07 (14 test case), ma trận cho: BR-01 (2 test: TC-H-001, TC-H-004), BR-02 (2), BR-03 (4), BR-04 (2), BR-05 (2), BR-06 (4, vì TC-H-014 cũng trỏ BR-06), BR-07 (1), BR-08 (1: TC-H-014). Tổng liên kết là 18. Lỗ hổng: BR-08 chỉ có một test (chưa kiểm đơn nghỉ ốm vẫn duyệt được khi phép năm đã hết); BR-01 có biên trên 200 ký tự nhưng test chỉ có biên dưới (lý do 9 ký tự); BR-07 chỉ có một test trùng ngày (TC-H-008, đơn 11/03 trùng đơn 09 đến 11/03) mà chưa kiểm đơn đã huỷ không chặn.
 
 ## Demo code
 Hai phần: (1) mẫu cấu trúc test case dạng dữ liệu, trùng với kiểu `TestCase` mà site dùng cho workshop; (2) script tính độ phủ BR từ dữ liệu đó. Lưu thành `cov.ts` rồi chạy `node cov.ts`.
@@ -209,4 +209,4 @@ Mở `/labs/cart` và `/labs/leave`, đọc kỹ các bảng test case mẫu. Ch
 1. Viết lại một test case yếu: "Kiểm tra đăng nhập thành công" cho `/lab/login` thành test case đủ các cột (ID, tiền điều kiện, bước, dữ liệu, kết quả mong đợi, ưu tiên, BR). Xong khi: người khác chạy tay theo bảng mà không phải hỏi lại.
 2. Viết 4 test case mới (ID, tiền điều kiện, bước, dữ liệu, kết quả mong đợi) cho BR-01 của LAB-03 còn thiếu: không vượt tồn kho của màn hình 24 inch (tồn 5). Xong khi: ít nhất một test case dùng biên 5/6, và bạn gắn BR-01 cho từng cái.
 3. Rà lại ưu tiên của 11 test case LAB-03 theo bảng tiêu chí ở Bước 7 và chỉ ra những test case bạn hạ xuống P1 hoặc P2 cùng lý do. Xong khi: tỉ lệ P0 giảm xuống dưới 50 phần trăm và mỗi thay đổi có lý do bằng một câu.
-4. Chạy script `cov.ts` với bộ 13 test case LAB-07 (lấy từ `/labs/leave`) và báo cáo BR nào còn mỏng. Xong khi: bạn ra ma trận 7 BR với tổng 16 liên kết và đề xuất ít nhất 2 test case bổ sung.
+4. Chạy script `cov.ts` với bộ 14 test case LAB-07 (lấy từ `/labs/leave`) và báo cáo BR nào còn mỏng. Xong khi: bạn ra ma trận 8 BR với tổng 18 liên kết và đề xuất ít nhất 2 test case bổ sung.

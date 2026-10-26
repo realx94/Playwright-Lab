@@ -156,7 +156,7 @@ export function CartApp() {
         <dl className="space-y-1 text-sm">
           {[
             ["Tạm tính", totals.subtotal, "subtotal"],
-            ["Giảm giá", -totals.discount, "discount"],
+            ["Giảm giá", totals.discount ? -totals.discount : 0, "discount"],
             ["VAT 8%", totals.vat, "vat"],
             ["Phí ship", totals.shipping, "shipping"],
           ].map(([l, v, id]) => (

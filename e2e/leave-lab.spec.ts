@@ -116,3 +116,20 @@ test("BUG-01/02/03 làm lộ ba lỗi có chủ đích", async ({ page, context 
   await send(page, { from: "2026-03-10", to: "2026-03-10" });
   await expect(page.getByTestId("leave-row")).toHaveCount(2); // BUG-03: đáng lẽ bị chặn vì trùng ngày
 });
+
+test("BR-08: duyệt lại số dư tại thời điểm duyệt, đơn thứ hai 12 ngày không được duyệt", async ({ page, context }) => {
+  await open(page, context);
+  await send(page, { from: "2026-04-01", to: "2026-04-12" }); // 12 ngày
+  await send(page, { from: "2026-05-04", to: "2026-05-15" }); // 12 ngày, không trùng
+  await expect(page.getByTestId("leave-row")).toHaveCount(2);
+
+  const mgr = await managerTab(context);
+  await mgr.getByRole("button", { name: "Duyệt đơn #1" }).click();
+  await expect(mgr.getByTestId("leave-status-1")).toHaveText("Đã duyệt");
+  await mgr.getByRole("button", { name: "Duyệt đơn #2" }).click();
+  await expect(mgr.getByTestId("leave-approve-error")).toHaveText(
+    "Không thể duyệt đơn #2: phép năm còn 0 ngày, đơn cần 12 ngày",
+  );
+  await expect(mgr.getByTestId("leave-status-2")).toHaveText("Chờ duyệt");
+  await expect(page.getByTestId("leave-balance")).toHaveText("Phép năm còn 0/12 ngày");
+});

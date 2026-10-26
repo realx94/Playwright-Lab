@@ -102,7 +102,7 @@ Gợi ý: lab này tính lý do **sau khi cắt khoảng trắng hai đầu**, n
 ### Bước 5. Biên khả đạt: khi giao diện không tạo được n-1 và n+1
 Mục đích: tránh viết test không thể chạy.
 
-LAB-03 có BR-02: SALE10 yêu cầu tạm tính từ 500.000đ. Biên 3 giá trị theo lý thuyết là 499.999 / 500.000 / 500.001. Nhưng giá sản phẩm trong lab là 450.000 (bàn phím), 250.000 (chuột), 3.200.000 (màn hình); tai nghe giá 799.999 đã hết hàng. Mọi tổng tạm tính đều là bội của 50.000. Danh sách các tạm tính khả đạt nhỏ hơn 1.300.000: 250.000, 450.000, 500.000, 700.000, 750.000, 900.000, 950.000, 1.000.000, 1.150.000, 1.200.000, 1.250.000. Vì vậy:
+LAB-03 có BR-02: SALE10 yêu cầu tạm tính từ 500.000đ. Biên 3 giá trị theo lý thuyết là 499.999 / 500.000 / 500.001. Nhưng giá sản phẩm trong lab là 450.000 (bàn phím), 250.000 (chuột), 3.200.000 (màn hình), 99.999 (cáp sạc USB-C); tai nghe giá 799.999 đã hết hàng. Ba sản phẩm đầu đều có giá là bội của 50.000, nên nếu không mua cáp sạc thì mọi tổng tạm tính đều là bội của 50.000. Cáp sạc 99.999 là giá lẻ nhưng vẫn không tạo được biên 499.999: 5 cáp ra 499.995 (dưới ngưỡng 5 đồng), còn cộng cáp với sản phẩm khác không khớp 499.999 hay 500.001 ở bất kỳ số lượng nào. Danh sách các tạm tính khả đạt nhỏ hơn 1.300.000 **không dùng cáp sạc**: 250.000, 450.000, 500.000, 700.000, 750.000, 900.000, 950.000, 1.000.000, 1.150.000, 1.200.000, 1.250.000. Vì vậy:
 
 | Biên | Lý thuyết n-1, n, n+1 | Khả đạt gần nhất (dưới, đúng, trên) | Cách có được |
 |------|-----------------------|-------------------------------------|--------------|
@@ -123,7 +123,7 @@ Giá trị kỳ vọng tại các điểm khả đạt (tính tay trước khi c
 
 Trong bảng, dòng 500.000 và 450.000 cho tổng bằng nhau (516.000) nhưng vì lý do khác nhau: ở 450.000 không giảm nhưng ship 30.000; ở 500.000 có giảm 50.000. Một test chỉ so **tổng** sẽ không phân biệt được hai trường hợp, nên hãy assert từng dòng (giảm giá, ship).
 
-Với biên thật 499.999 và 500.001 bạn cần cách khác: test ở tầng đơn vị cho hàm tính tiền, hoặc tạo dữ liệu qua API, hoặc đề nghị đội thêm sản phẩm giá lẻ vào dữ liệu seed. Ghi nhận giới hạn này vào báo cáo thay vì bỏ qua.
+Với biên thật 499.999 và 500.001 bạn cần cách khác: test ở tầng đơn vị cho hàm tính tiền, tạo dữ liệu qua API, hoặc đề nghị đội thêm sản phẩm giá lẻ phù hợp vào dữ liệu seed (lab đã làm điều này một lần: cáp sạc 99.999đ được thêm để kiểm VAT làm tròn, xem bài 3.7, nhưng giá của nó không tạo ra biên 499.999). Ghi nhận giới hạn này vào báo cáo thay vì bỏ qua.
 
 ### Bước 6. Biên theo số lần và trạng thái
 Mục đích: biên không chỉ là con số nhập vào.
@@ -264,7 +264,7 @@ Giải thích: mỗi mảng là một **bảng biên** dạng dữ liệu; thêm
 - **Triệu chứng**: test biên 254 ký tự đỏ với `Expected: 0 Received: 1` ở lỗi email. **Nguyên nhân**: đếm sai độ dài, quên rằng 254 gồm cả `@lab.dev`. **Cách sửa**: dùng hàm `emailOfLength` và kiểm `.length` bằng `expect(value).toHaveLength(254)` ngay trong test.
 - **Triệu chứng**: test BR-03 "12 ngày" đỏ vì kết quả là 11 ngày. **Nguyên nhân**: tính số ngày là hiệu hai ngày thay vì cộng thêm 1 (đếm cả ngày đầu và cuối). **Cách sửa**: đọc BR kỹ và viết kết quả mong đợi theo BR, không theo trực giác.
 - **Triệu chứng**: test đúng biên "ngày bắt đầu bằng hôm nay" lúc xanh lúc đỏ, đặc biệt gần nửa đêm. **Nguyên nhân**: "hôm nay" lấy từ giờ thật. **Cách sửa**: cố định giờ bằng `context.clock.setFixedTime`.
-- **Triệu chứng**: không thể nhập 499.999 vào giỏ hàng. **Nguyên nhân**: tổng tạm tính là bội của 50.000, biên thật không khả đạt từ UI. **Cách sửa**: chọn giá trị khả đạt gần nhất (450.000, 500.000, 700.000), ghi nhận giới hạn, kiểm biên thật ở tầng thấp hơn.
+- **Triệu chứng**: không thể nhập 499.999 vào giỏ hàng. **Nguyên nhân**: các tổng tạm tính khả đạt chủ yếu là bội của 50.000 (cáp sạc 99.999 cũng không ghép ra được 499.999), biên thật không khả đạt từ UI. **Cách sửa**: chọn giá trị khả đạt gần nhất (450.000, 500.000, 700.000), ghi nhận giới hạn, kiểm biên thật ở tầng thấp hơn.
 - **Triệu chứng**: chạy 6 test biên mà bộ đếm khoá tài khoản làm các test sau bị khoá. **Nguyên nhân**: không reset dữ liệu giữa các test. **Cách sửa**: bấm `reset-data` trong `beforeEach`.
 
 ## Tóm tắt
@@ -272,7 +272,7 @@ Giải thích: mỗi mảng là một **bảng biên** dạng dữ liệu; thêm
 - Mỗi biên lấy n-1, n, n+1 (3 giá trị) hoặc n và giá trị sát ngoài (2 giá trị); khoảng hợp lệ có hai biên nên mật khẩu 8 đến 32 cần 6 test.
 - Dùng hàm sinh dữ liệu theo độ dài thay vì đếm tay; cố định thời gian khi biên là ngày giờ.
 - Biên có thể là số đếm lần thử (khoá ở lần 5), số lượng và tồn kho, không chỉ độ dài.
-- Phải kiểm tra biên **khả đạt**: ở LAB-03 các tạm tính là bội của 50.000 nên dùng 450.000, 500.000, 700.000.
+- Phải kiểm tra biên **khả đạt**: ở LAB-03 các tạm tính chủ yếu là bội của 50.000 và không ghép được 499.999 nên dùng 450.000, 500.000, 700.000.
 - EP và BVA bổ sung nhau: EP không bắt BUG-01 của LAB-01, BVA bắt được.
 
 ## Bài tập

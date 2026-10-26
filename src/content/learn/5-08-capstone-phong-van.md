@@ -233,7 +233,7 @@ for (const c of cases) {
 }
 ```
 
-Lưu ý: ở số lượng 1 lab hiển thị giảm giá là `-0`, và `Number("-0")` cho ra `-0`. Assertion của Playwright so sánh bằng `Object.is`, nên `-0` khác `0` và bạn sẽ thấy `Expected: 0 Received: -0`. Dòng `|| 0` trong hàm `amount` ở Bước 5 xử lý việc đó: `-0` là giá trị "falsy" nên `|| 0` đổi nó thành `0`. Đây là ví dụ thật cho việc dữ liệu đo cần chuẩn hoá ở một chỗ.
+Lưu ý: ở số lượng 1 lab hiển thị giảm giá là `0đ` (bản lab cũ từng hiển thị `-0đ`, nay đã sửa). Với giao diện cũ, `Number("-0")` cho ra `-0`. Assertion của Playwright so sánh bằng `Object.is`, nên `-0` khác `0` và bạn từng thấy `Expected: 0 Received: -0`. Dòng `|| 0` trong hàm `amount` ở Bước 5 là lớp phòng thủ cho trường hợp đó: `-0` là giá trị "falsy" nên `|| 0` đổi nó thành `0`. Đây là ví dụ thật cho việc dữ liệu đo cần chuẩn hoá ở một chỗ.
 
 Kết quả mong đợi: chạy `npx playwright test pricing` thấy 4 test xanh. Mỗi dòng bảng quyết định là một test có tên nêu BR.
 

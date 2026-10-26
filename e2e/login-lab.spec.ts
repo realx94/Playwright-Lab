@@ -35,3 +35,12 @@ test("BUG-01 cho phép mật khẩu 7 ký tự", async ({ page }) => {
   await page.getByRole("button", { name: "Đăng nhập" }).click();
   await expect(page.getByTestId("password-error")).toHaveCount(0);
 });
+
+for (const email of ["user@lab..dev", "us..er@lab.dev", ".user@lab.dev", "user.@lab.dev"]) {
+  test(`email có dấu chấm sai vị trí bị từ chối: ${email}`, async ({ page }) => {
+    await page.getByLabel("Email").fill(email);
+    await page.getByLabel("Mật khẩu").fill("Passw0rd!");
+    await page.getByRole("button", { name: "Đăng nhập" }).click();
+    await expect(page.getByTestId("email-error")).toHaveText("Email không hợp lệ");
+  });
+}

@@ -44,7 +44,7 @@ Mục đích: có cái để chấm điểm.
 | 3 | TC-L-006 | Khoá tài khoản sau 5 lần sai (có 15 phút khoá) |
 | 4 | TC-L-009 | Ghi nhớ đăng nhập hiển thị phiên 7 ngày |
 | 5 | TC-C-004 | Đơn 250.000đ tính ship 30.000, VAT 20.000 |
-| 6 | TC-C-009 | VAT làm tròn (cần dữ liệu VAT lẻ) |
+| 6 | TC-C-009 | VAT làm tròn (1 Cáp sạc USB-C 99.999đ, VAT 8.000) |
 | 7 | TC-C-011 | Không huỷ được đơn đang giao |
 | 8 | TC-H-001 | Gửi đơn nghỉ phép hợp lệ |
 | 9 | (mới) | Giao diện "trông đẹp, cân đối" |
@@ -71,13 +71,13 @@ Kết quả chấm (rủi ro, tần suất, ổn định, dễ tự động; đi
 | TC-L-003, TC-L-004 biên mật khẩu | 4 | 4 | 5 | 5 | 12 + 8 + 10 + 5 = 35 | Automate (data-driven) |
 | TC-C-011 không huỷ đơn đang giao | 5 | 3 | 5 | 4 | 15 + 6 + 10 + 4 = 35 | Automate, vào regression |
 | TC-L-006 khoá sau 5 lần sai | 5 | 3 | 3 | 3 | 15 + 6 + 6 + 3 = 30 | Automate khi có `page.clock` |
+| TC-C-009 VAT làm tròn | 3 | 2 | 4 | 4 | 9 + 4 + 8 + 4 = 25 | Automate khi ổn định hoặc có thời gian (có thể gộp vào bộ data-driven của TC-C-004) |
 | TC-L-009 ghi nhớ 7 ngày | 2 | 2 | 4 | 3 | 6 + 4 + 8 + 3 = 21 | Hoãn, kiểm tay |
-| TC-C-009 VAT làm tròn | 3 | 2 | 2 | 1 | 9 + 4 + 4 + 1 = 18 | Chưa automate (thiếu dữ liệu) |
 | Giao diện trông đẹp | 2 | 1 | 1 | 1 | 6 + 2 + 2 + 1 = 11 | Kiểm tay, khám phá |
 
 Ngưỡng gợi ý (đội bạn có thể đặt khác): từ 32 điểm trở lên thì automate ngay; từ 24 đến 31 thì automate khi ổn định hoặc có thời gian; dưới 24 thì kiểm tay hoặc khám phá (exploratory).
 
-Giải thích vài điểm: TC-L-006 có ổn định thấp (3) vì phải xử lý thời gian khoá 15 phút, chỉ ổn định khi dùng đồng hồ giả. TC-C-009 chấm "dễ tự động" bằng 1 vì với các sản phẩm còn hàng của lab không tạo được VAT lẻ (bài 3.3, 3.7); thiếu dữ liệu nên chưa thể automate.
+Giải thích vài điểm: TC-L-006 có ổn định thấp (3) vì phải xử lý thời gian khoá 15 phút, chỉ ổn định khi dùng đồng hồ giả. TC-C-009 từng bị chấm "dễ tự động" bằng 1 (tổng 18, chưa automate) vì lab chưa có sản phẩm nào cho VAT lẻ. Từ khi lab thêm Cáp sạc USB-C 99.999đ, dữ liệu khả đạt (1 cáp có VAT 7.999,92 hiển thị 8.000) nên "dễ tự động" lên 4 và "ổn định" lên 4 (kết quả xác định, không phụ thuộc thời gian); tổng 9 + 4 + 8 + 4 = 25, rơi vào nhóm 24 đến 31. Đây là ví dụ điểm số thay đổi khi điều kiện thay đổi: chấm lại sau mỗi lần dữ liệu hoặc ứng dụng đổi.
 
 ### Bước 3. Tính ROI và điểm hoà vốn
 Mục đích: biết khi nào việc viết test "có lãi".
@@ -137,7 +137,7 @@ Bạn có thể đặt lệnh vào `package.json` để cả đội cùng dùng:
 ### Bước 6. Quyết định "không automate" và theo dõi flaky
 Mục đích: biết điều gì nên để người làm.
 
-Không nên (hoặc chưa nên) automate: kiểm tra cảm quan (đẹp, dễ dùng), ca chạy một lần, tính năng đang thay đổi từng ngày, ca cần dữ liệu hoặc thiết bị mà bạn chưa có (như TC-C-009 hiện tại). Với những ca này hãy ghi rõ lý do để người sau không hiểu nhầm là "bị bỏ quên". Khi một test tự động bị flaky, đừng bỏ qua: sửa nguyên nhân (đợi sai, dữ liệu không reset) hoặc đưa ra khỏi smoke; một smoke đỏ giả khiến cả đội mất lòng tin.
+Không nên (hoặc chưa nên) automate: kiểm tra cảm quan (đẹp, dễ dùng), ca chạy một lần, tính năng đang thay đổi từng ngày, ca cần dữ liệu hoặc thiết bị mà bạn chưa có (như TC-C-009 từng bị vậy cho đến khi lab thêm Cáp sạc USB-C). Với những ca này hãy ghi rõ lý do để người sau không hiểu nhầm là "bị bỏ quên". Khi một test tự động bị flaky, đừng bỏ qua: sửa nguyên nhân (đợi sai, dữ liệu không reset) hoặc đưa ra khỏi smoke; một smoke đỏ giả khiến cả đội mất lòng tin.
 
 ## Demo code
 Spec dưới đây gồm ba test smoke (một cho mỗi lab) và một test regression; chạy được trên site.
@@ -211,7 +211,7 @@ Kết quả mong đợi khi chạy `npx playwright test --grep @smoke`: ba test 
 
 ## Tóm tắt
 - Automation không phải mục tiêu; hãy chọn test theo rủi ro, tần suất, ổn định và độ dễ tự động.
-- Chấm điểm có trọng số biến cảm tính thành số (ví dụ 40, 35, 30, 21, 18, 11) để cả đội cùng quyết định.
+- Chấm điểm có trọng số biến cảm tính thành số (ví dụ 40, 35, 30, 25, 21, 11) để cả đội cùng quyết định.
 - Điểm hoà vốn N bằng B chia (m trừ a): test data-driven hoà vốn nhanh, test hiển thị ít lặp hoà vốn chậm.
 - Smoke nhỏ và tuyệt đối ổn định; sanity nhắm vùng vừa sửa; regression rộng để bảo vệ thay đổi.
 - Tag (`@smoke`, `@regression`) cộng `--grep` và `--grep-invert` biến phân loại thành lệnh chạy.

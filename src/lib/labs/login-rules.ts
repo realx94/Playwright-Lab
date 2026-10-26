@@ -8,7 +8,7 @@ const EMAIL_RE = /^[^\s@<>]+@[^\s@<>]+\.[^\s@<>]{2,}$/;
 
 export function validateEmail(email: string): string | null {
   if (!email) return "Vui lòng nhập email";
-  if (email.length > EMAIL_MAX || !EMAIL_RE.test(email)) return "Email không hợp lệ";
+  if (email.length > EMAIL_MAX || !EMAIL_RE.test(email) || /\.\.|^\.|\.@/.test(email)) return "Email không hợp lệ";
   return null;
 }
 

@@ -58,7 +58,7 @@ Hỏi: "Có những lý do khác nhau nào khiến email bị từ chối?" Mỗ
 | EP-E5 | Chứa khoảng trắng | `us er@lab.dev` | "Email không hợp lệ" |
 | EP-E6 | Chứa ký tự < hoặc > (thường là thử XSS) | `<script>alert(1)</script>` | "Email không hợp lệ" |
 
-Lưu ý: lớp quá dài (hơn 254 ký tự) là một lớp nữa, nhưng nó thuộc về **biên** nên ta để cho bài 3.3. Tổng cộng: 1 lớp hợp lệ và 5 lớp không hợp lệ.
+Lưu ý: lớp quá dài (hơn 254 ký tự) là một lớp nữa, nhưng nó thuộc về **biên** nên ta để cho bài 3.3. Tổng cộng: 1 lớp hợp lệ và 5 lớp không hợp lệ. Ngoài ra lab cũng từ chối email có dấu chấm đặt sai chỗ (hai dấu chấm liên tiếp, bắt đầu bằng dấu chấm, hoặc phần tên kết thúc bằng dấu chấm), ví dụ `user@lab..dev`, `us..er@lab.dev`, `.user@lab.dev`, `user.@lab.dev`, đều báo "Email không hợp lệ"; ta coi chúng là các biến thể của lớp định dạng sai thay vì tách thêm lớp.
 
 ### Bước 3. Chia lớp cho Mật khẩu theo từng tiêu chí
 Mục đích: BR-02 có nhiều tiêu chí độc lập (độ dài, bốn loại ký tự), phải tách từng tiêu chí.

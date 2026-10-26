@@ -66,7 +66,7 @@ Kết quả mong đợi của bước này: bạn có bảng actor và hai danh 
 ### Bước 2. Tách và đánh số Business Rule
 Mục đích: biến từng câu văn thành quy tắc nguyên tử có ID.
 
-Đi từng câu, gạch chân điều kiện và con số, tách chữ "và" nếu nối hai quy tắc. Bạn sẽ ra bảng dưới đây; nó khớp với danh sách BR trên trang `/labs/leave`.
+Đi từng câu, gạch chân điều kiện và con số, tách chữ "và" nếu nối hai quy tắc. Bạn sẽ ra bảng dưới đây; nó khớp với danh sách BR trên trang `/labs/leave`. Lưu ý BR-08 ở cuối bảng không có trong yêu cầu gốc: nó xuất hiện sau khi bạn hỏi câu số 4 ở Bước 4 và người ra yêu cầu bổ sung (xem phần đó).
 
 | BR | Nội dung quy tắc | Câu gốc |
 |----|------------------|---------|
@@ -77,6 +77,7 @@ Mục đích: biến từng câu văn thành quy tắc nguyên tử có ID.
 | BR-05 | Chỉ Quản lý duyệt hoặc từ chối; từ chối bắt buộc có lý do | "Quản lý duyệt hoặc từ chối", "phải ghi lý do" |
 | BR-06 | Chỉ khi đơn được duyệt phép năm mới bị trừ; đơn đã duyệt không huỷ được | "Chỉ khi đơn được duyệt..." |
 | BR-07 | Không gửi đơn trùng khoảng ngày với đơn đang chờ hoặc đã duyệt | "Không được gửi đơn trùng ngày" |
+| BR-08 | Khi duyệt đơn phép năm, kiểm lại số dư tại thời điểm duyệt; không đủ thì không duyệt | Không có trong yêu cầu gốc; thêm sau câu hỏi số 4 ở Bước 4 |
 
 Hai chỗ cần để ý. Thứ nhất, con số "10 đến 200 ký tự" không có trong đoạn mô tả thô: nó đến từ tài liệu BR của lab. Ngoài đời, một con số bị thiếu cũng là câu hỏi cho Bước 4. Thứ hai, câu "đơn đã duyệt không huỷ được" là quy tắc **ngầm**: đoạn mô tả chỉ nói nhân viên huỷ được đơn *chưa* duyệt, bạn phải tự suy ra điều ngược lại và ghi thành BR để nó có test.
 
@@ -107,12 +108,12 @@ Một cách tìm hiệu quả là đi qua danh sách "câu hỏi mồi" cho mỗ
 | 1 | "Không ở quá khứ": bắt đầu đúng hôm nay có được không? | Biên của BR-02 | Hôm nay hợp lệ, hôm qua bị báo lỗi |
 | 2 | Thứ Bảy, Chủ nhật, ngày lễ có tính vào số ngày nghỉ không? | Ảnh hưởng số dư phép | Lab đếm theo ngày lịch: 07/03 đến 08/03 (T7, CN) cho 2 ngày |
 | 3 | Nghỉ ốm và không lương có bị giới hạn 12 ngày không? | Phạm vi của BR-03 | Chỉ Phép năm bị giới hạn (đơn nghỉ ốm 20 ngày vẫn gửi được) |
-| 4 | Kiểm tra số dư lúc gửi hay lúc duyệt? Đơn đang chờ có "giữ chỗ" phép không? | Có thể thủng số dư | Lab chỉ so với số đã duyệt, nên hai đơn 12 ngày cùng gửi được; duyệt cả hai thì số dư hiển thị "-12/12" |
+| 4 | Kiểm tra số dư lúc gửi hay lúc duyệt? Đơn đang chờ có "giữ chỗ" phép không? | Có thể thủng số dư | Lúc gửi lab chỉ so với số đã duyệt, nên hai đơn 12 ngày cùng gửi được; lúc duyệt, lab kiểm lại số dư (BR-08): duyệt đơn đầu xong, duyệt đơn hai báo "phép năm còn 0 ngày, đơn cần 12 ngày" và đơn vẫn Chờ duyệt |
 | 5 | Lý do toàn khoảng trắng tính là bao nhiêu ký tự? | Biên của BR-01 | Cắt khoảng trắng hai đầu rồi mới đếm, 20 dấu cách bị báo "tối thiểu 10" |
 | 6 | Đơn đã huỷ hoặc bị từ chối còn chặn gửi đơn trùng ngày không? | Phạm vi của BR-07 | Không chặn: huỷ xong gửi lại đúng khoảng ngày cũ được |
 | 7 | Thứ tự kiểm tra khi sai nhiều lỗi cùng lúc, báo lỗi nào trước? | Quyết định dữ liệu test (bài 3.2) | Ngày, rồi lý do, rồi số dư, rồi trùng ngày |
 
-Dòng 4 là phát hiện đáng giá nhất: BR-06 nói "chỉ khi duyệt mới trừ phép", nhưng không nói điều gì ngăn quản lý duyệt vượt số dư. Đó là một **lỗ hổng yêu cầu**, nên ghi vào báo cáo dưới dạng câu hỏi chứ không vội gọi là bug.
+Dòng 4 là phát hiện đáng giá nhất, và nó minh hoạ cả một quy trình. Ban đầu BR-06 chỉ nói "chỉ khi duyệt mới trừ phép", không nói điều gì ngăn quản lý duyệt vượt số dư: một **lỗ hổng yêu cầu**. Bạn ghi nó thành câu hỏi (chưa vội gọi là bug), người ra yêu cầu trả lời "phải kiểm lại số dư lúc duyệt", và câu trả lời đó được thêm vào bảng thành **BR-08** (ID mới ở cuối, không đánh số lại các BR cũ). Cuối cùng bạn viết một test **khoá hành vi đúng** (xem Demo code). Trước khi có BR-08, hai đơn 12 ngày duyệt liền nhau từng làm số dư hiển thị "-12/12"; lab hiện đã sửa nên không còn tái hiện được.
 
 Kết quả mong đợi: một bảng câu hỏi có ít nhất 5 dòng, mỗi dòng có cột "quan sát" bạn tự kiểm tra, không chép từ bài này. Hãy thử lại từng dòng trên `/lab/leave` (nhớ bấm "Reset dữ liệu lab" giữa các lần thử).
 
@@ -155,7 +156,7 @@ Mục đích: ghi thành văn bản điều bạn sẽ test, kèm kỹ thuật d
 Gửi bảng này (kèm bảng câu hỏi ở Bước 4) cho người ra yêu cầu. Câu trả lời của họ sẽ biến "giả định" thành "BR chính thức"; nếu hành vi lab khác câu trả lời, đó là bug.
 
 ## Demo code
-Bước 4 cho thấy một lợi ích của phân tích kỹ: biến câu hỏi thành **test kiểm chứng giả định**. Test dưới đây giữ lại hành vi đã quan sát (câu hỏi số 4) để lần sau có ai đổi hành vi, bạn biết ngay. Nó chạy trên lab và tự dùng đồng hồ giả để "hôm nay" luôn là 02/03/2026.
+Bước 4 cho thấy một lợi ích của phân tích kỹ: biến câu hỏi thành **test kiểm chứng giả định**. Test dưới đây khoá lại hành vi đã được chốt thành BR-08 (câu hỏi số 4) để lần sau có ai đổi hành vi, bạn biết ngay. Nó chạy trên lab và tự dùng đồng hồ giả để "hôm nay" luôn là 02/03/2026.
 
 ```ts
 import { test, expect } from "@playwright/test";
@@ -163,7 +164,7 @@ import { test, expect } from "@playwright/test";
 // Đồng hồ giả: thứ Hai 02/03/2026, để mọi ngày trong test đều hợp lệ.
 const NOW = new Date("2026-03-02T09:00:00");
 
-test("[ASSUMP-04][BR-03,BR-06] số dư chỉ trừ khi duyệt, hai đơn 12 ngày cùng gửi được", async ({ page, context }) => {
+test("[ASSUMP-04][BR-08] duyệt lại số dư tại thời điểm duyệt, đơn thứ hai 12 ngày không được duyệt", async ({ page, context }) => {
   await context.clock.setFixedTime(NOW);          // cố định "bây giờ" cho cả context
   await page.goto("/lab/leave");
   await page.getByTestId("reset-data").click();   // dữ liệu sạch cho mỗi test
@@ -177,29 +178,34 @@ test("[ASSUMP-04][BR-03,BR-06] số dư chỉ trừ khi duyệt, hai đơn 12 ng
   };
 
   await send("2026-04-01", "2026-04-12");          // 12 ngày
-  await send("2026-05-01", "2026-05-12");          // thêm 12 ngày, không trùng ngày
+  await send("2026-05-04", "2026-05-15");          // thêm 12 ngày, không trùng ngày
   await expect(page.getByTestId("leave-row")).toHaveCount(2);
 
-  // Chuyển sang vai trò Quản lý và duyệt cả hai đơn.
+  // Chuyển sang vai trò Quản lý: duyệt đơn #1 được, đơn #2 phải bị chặn.
   await page.getByLabel("Vai trò").selectOption("manager");
   await page.getByRole("button", { name: "Duyệt đơn #1" }).click();
+  await expect(page.getByTestId("leave-status-1")).toHaveText("Đã duyệt");
   await page.getByRole("button", { name: "Duyệt đơn #2" }).click();
 
-  // Hành vi quan sát được; nếu đội xác nhận đây là lỗi thì đổi thành test bắt bug.
-  await expect(page.getByTestId("leave-balance")).toHaveText("Phép năm còn -12/12 ngày");
+  // BR-08: báo lỗi, đơn vẫn Chờ duyệt, số dư không âm.
+  await expect(page.getByTestId("leave-approve-error")).toHaveText(
+    "Không thể duyệt đơn #2: phép năm còn 0 ngày, đơn cần 12 ngày",
+  );
+  await expect(page.getByTestId("leave-status-2")).toHaveText("Chờ duyệt");
+  await expect(page.getByTestId("leave-balance")).toHaveText("Phép năm còn 0/12 ngày");
 });
 ```
 
-Giải thích từng đoạn: `context.clock.setFixedTime` cố định giờ của mọi trang trong context nên việc kiểm "không ở quá khứ" ổn định. `send` là hàm tiện ích để không lặp bốn dòng thao tác. Hai lần gửi dùng khoảng ngày khác nhau để không dính BR-07. Dòng `selectOption("manager")` đổi vai trò ngay trên cùng trang. Dòng assert cuối ghi lại hành vi hiện tại; tên test có `ASSUMP-04` để truy vết về câu hỏi số 4.
+Giải thích từng đoạn: `context.clock.setFixedTime` cố định giờ của mọi trang trong context nên việc kiểm "không ở quá khứ" ổn định. `send` là hàm tiện ích để không lặp bốn dòng thao tác. Hai lần gửi dùng khoảng ngày khác nhau để không dính BR-07. Dòng `selectOption("manager")` đổi vai trò ngay trên cùng trang. Ba dòng assert cuối khoá hành vi đúng của BR-08: thông báo lỗi nằm ở phần tử `leave-approve-error`, đơn #2 vẫn "Chờ duyệt" và số dư là 0/12 chứ không âm. Tên test có `ASSUMP-04` (truy vết về câu hỏi số 4) và `BR-08` (quy tắc được bổ sung từ câu hỏi đó). Nếu có ai bỏ kiểm tra số dư lúc duyệt, test này đỏ ngay.
 
 ## Thử ngay trong lab
-Mở `/lab/leave` và lần lượt thử bảng ở Bước 4. Nhớ đặt đồng hồ hợp lý: nếu bạn thử bằng tay, "hôm nay" là ngày thật của máy; các ví dụ ở trên dùng ngày giả nên hãy chọn ngày bắt đầu là hôm nay hoặc sau đó. Sau mỗi thử nghiệm hãy bấm "Reset dữ liệu lab". Đối chiếu với trang `/labs/leave` để xem 7 BR chính thức và 13 test case mẫu (TC-H-001 đến TC-H-013).
+Mở `/lab/leave` và lần lượt thử bảng ở Bước 4. Nhớ đặt đồng hồ hợp lý: nếu bạn thử bằng tay, "hôm nay" là ngày thật của máy; các ví dụ ở trên dùng ngày giả nên hãy chọn ngày bắt đầu là hôm nay hoặc sau đó. Sau mỗi thử nghiệm hãy bấm "Reset dữ liệu lab". Đối chiếu với trang `/labs/leave` để xem 8 BR chính thức và 14 test case mẫu (TC-H-001 đến TC-H-014; TC-H-014 kiểm BR-08).
 
 ## Lỗi thường gặp
 - **Triệu chứng**: test viết xong mới bị phản hồi "đúng ra phải khác". **Nguyên nhân**: bắt tay viết test khi chưa rõ quy tắc, tự diễn giải. **Cách sửa**: không viết test cho BR còn dòng "chưa rõ" ở bảng câu hỏi; hỏi trước, hoặc ghi giả định rõ ràng.
 - **Triệu chứng**: một test case "vừa kiểm ngày vừa kiểm lý do" fail mà không biết do đâu. **Nguyên nhân**: BR gộp, không nguyên tử. **Cách sửa**: tách BR (BR-02 và BR-01), mỗi test case trỏ về ít BR nhất có thể.
-- **Triệu chứng**: bug "số dư âm" lọt đến production dù có 13 test case. **Nguyên nhân**: không ai hỏi "kiểm tra số dư lúc gửi hay lúc duyệt". Quy tắc ngầm (làm tròn, múi giờ, thứ tự kiểm tra, trạng thái trung gian) bị bỏ sót. **Cách sửa**: dùng danh sách câu hỏi mồi ở Bước 4 cho mọi BR.
-- **Triệu chứng**: bảng BR của bạn khác bảng của đồng nghiệp dù cùng đọc một tài liệu. **Nguyên nhân**: không có định danh ổn định, hoặc đánh số lại sau khi thêm quy tắc. **Cách sửa**: chỉ thêm ID mới ở cuối (BR-08), không đổi số cũ; ghi phiên bản tài liệu.
+- **Triệu chứng**: bug "số dư âm" lọt đến production dù có cả bộ test case. **Nguyên nhân**: không ai hỏi "kiểm tra số dư lúc gửi hay lúc duyệt". Quy tắc ngầm (làm tròn, múi giờ, thứ tự kiểm tra, trạng thái trung gian) bị bỏ sót. **Cách sửa**: dùng danh sách câu hỏi mồi ở Bước 4 cho mọi BR.
+- **Triệu chứng**: bảng BR của bạn khác bảng của đồng nghiệp dù cùng đọc một tài liệu. **Nguyên nhân**: không có định danh ổn định, hoặc đánh số lại sau khi thêm quy tắc. **Cách sửa**: chỉ thêm ID mới ở cuối (như BR-08 của LAB-07 được thêm sau BR-07), không đổi số cũ; ghi phiên bản tài liệu.
 - **Triệu chứng**: AC kiểu "hệ thống hoạt động đúng". **Nguyên nhân**: Then không quan sát được. **Cách sửa**: viết Then bằng chữ hoặc con số xuất hiện trên màn hình.
 
 ## Tóm tắt

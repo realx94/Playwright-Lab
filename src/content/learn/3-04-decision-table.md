@@ -31,7 +31,7 @@ Hãy tưởng tượng quy định ở một phòng gym: hội viên được v�
 Vì sao không dùng EP và BVA là đủ? Vì EP/BVA tập trung vào **một biến** mỗi lần. Khi kết quả phụ thuộc vào **sự kết hợp** nhiều biến (mã giảm giá, ngưỡng đơn tối thiểu, ngưỡng miễn ship), lỗi thường nằm ở sự tương tác: ví dụ miễn ship tính trên số tiền **sau** giảm giá chứ không phải trước. Chỉ có bảng quyết định mới làm lộ tương tác đó.
 
 ## Thực hành từng bước
-Ví dụ xuyên suốt: giỏ hàng LAB-03 với ba điều kiện về mã SALE10 và phí ship. Dữ liệu sản phẩm: bàn phím cơ 450.000đ, chuột không dây 250.000đ, màn hình 24 inch 3.200.000đ (tồn kho 5), tai nghe hết hàng.
+Ví dụ xuyên suốt: giỏ hàng LAB-03 với ba điều kiện về mã SALE10 và phí ship. Dữ liệu sản phẩm: bàn phím cơ 450.000đ, chuột không dây 250.000đ, màn hình 24 inch 3.200.000đ (tồn kho 5), cáp sạc USB-C 99.999đ (tồn kho 10), tai nghe hết hàng. Bảng quyết định dưới đây chỉ dùng ba sản phẩm đầu; cáp sạc dành cho test làm tròn VAT ở bài 3.7.
 
 ### Bước 1. Chọn điều kiện và hành động
 Mục đích: chuyển văn bản BR thành điều kiện đúng/sai độc lập.
@@ -156,7 +156,7 @@ Kiểm đếm: R1 gồm 1 cột, R2 gồm 1 cột, R3 gồm 2 cột (C tuỳ ý)
 Khi nào dừng bảng đầy đủ? Với n điều kiện, 2^n tăng nhanh (n bằng 4 là 16, n bằng 6 là 64). Nếu có quá nhiều điều kiện, hãy tách thành nhiều bảng nhỏ (mỗi hành động một bảng) hoặc dùng pairwise ở bài 3.6.
 
 ## Demo code
-Mỗi luật là một dòng dữ liệu; hàm đọc số chuẩn hoá chuỗi tiền (bỏ ký tự không phải số) và dùng giá trị tuyệt đối cho giảm giá vì giao diện hiển thị khoản giảm dạng số âm (kể cả "-0đ").
+Mỗi luật là một dòng dữ liệu; hàm đọc số chuẩn hoá chuỗi tiền (bỏ ký tự không phải số) và dùng giá trị tuyệt đối cho giảm giá vì giao diện hiển thị khoản giảm dạng số âm khi có giảm (ví dụ "-50.000đ").
 
 ```ts
 import { test, expect, type Page } from "@playwright/test";
@@ -208,18 +208,18 @@ test("[DT-R3][BR-02] báo đơn tối thiểu khi dưới ngưỡng", async ({ p
 });
 ```
 
-Giải thích: `product-p3` là màn hình 24 inch, `product-p2` là chuột. `Math.abs` vì ô "Giảm giá" hiển thị số âm; ở luật R3 và R4 giao diện hiển thị `-0đ` và `Number("-0")` là `-0`, mà `toBe(0)` phân biệt `-0` với `0`, nên dùng `Math.abs` tránh sai lệch. Hai dòng `expect` còn lại so ship và tổng; nếu muốn chi tiết hơn bạn thêm VAT.
+Giải thích: `product-p3` là màn hình 24 inch, `product-p2` là chuột. `Math.abs` vì ô "Giảm giá" hiển thị số âm khi có giảm (ví dụ `-50.000đ`), còn kết quả mong đợi trong bảng ta ghi dạng số dương. Ở luật R3 và R4 (không giảm) lab hiển thị `0đ`; trước đây lab từng hiển thị `-0đ`, khiến `Number("-0")` là `-0` và `toBe(0)` báo lỗi vì phân biệt `-0` với `0`. Lỗi hiển thị đó đã được sửa trong lab, nhưng `Math.abs` vẫn an toàn và giúp test không phụ thuộc dấu. Hai dòng `expect` còn lại so ship và tổng; nếu muốn chi tiết hơn bạn thêm VAT.
 
 ## Thử ngay trong lab
 1. Chạy spec trên lab sạch: cả 5 test xanh.
 2. Mở `/lab/cart?bugs=BUG-02` (đổi `page.goto` thành `/lab/cart?bugs=BUG-02`): R1 đỏ vì giảm giá thành 320.000 thay vì 100.000 (bỏ trần). R2 vẫn xanh vì 10% của 1.000.000 đúng bằng 100.000, cho thấy mỗi luật bắt một loại lỗi khác nhau.
 3. Thử bằng tay trường hợp "áp mã rồi bớt hàng": thêm 2 chuột, áp SALE10 (giảm 50.000), rồi bấm nút giảm một chuột. Quan sát khoản giảm về 0. Bảng quyết định không nói đến thứ tự thao tác này; hãy ghi thành câu hỏi cho yêu cầu (bài 3.1).
-4. Thử tính tay VAT cho các tạm tính khác: với 3 sản phẩm còn hàng của lab, mọi tổ hợp số lượng hợp lệ đều cho VAT là số nguyên (đã kiểm toàn bộ 726 tổ hợp số lượng, mỗi tổ hợp có và không mã). Vì vậy BR-04 (làm tròn VAT) **không thể** kiểm bằng dữ liệu hiện tại qua giao diện; xem lại bài 3.3 về giới hạn dữ liệu.
+4. Thử tính tay VAT cho các tạm tính khác. Với ba sản phẩm đầu (bàn phím, chuột, màn hình), tạm tính luôn là bội của 50.000 nên VAT 8% luôn là số nguyên. Chỉ khi thêm **Cáp sạc USB-C** (99.999đ) mới ra VAT lẻ: 1 cáp có VAT 7.999,92, giao diện hiển thị 8.000 (làm tròn gần nhất). Đó chính là dữ liệu để kiểm BR-04 qua giao diện, xem bài 3.7.
 
 ## Lỗi thường gặp
 - **Triệu chứng**: bảng có 6 luật nhưng test chỉ bao 4. **Nguyên nhân**: bỏ qua cột có hành động giống cột trước mà không gộp đúng. **Cách sửa**: sau khi gộp, kiểm đếm lại tổng số cột bằng 2^n.
 - **Triệu chứng**: test R2 đỏ với `Expected: 30000 Received: 0` ở ship. **Nguyên nhân**: kết quả mong đợi tính ship theo tạm tính trước giảm (1.000.000) thay vì sau giảm (900.000). **Cách sửa**: đọc lại BR-03: "miễn ship khi tạm tính **sau giảm giá**".
-- **Triệu chứng**: test báo `Expected: 0 Received: -0` ở khoản giảm giá. **Nguyên nhân**: giao diện hiển thị `-0đ` và `Number("-0")` là âm không. **Cách sửa**: so sánh `Math.abs(...)` hoặc so sánh chuỗi hiển thị.
+- **Triệu chứng**: test báo `Expected: 0 Received: -0` ở khoản giảm giá (gặp ở các phiên bản lab cũ; lab hiện đã hiển thị `0đ`). **Nguyên nhân**: giao diện từng hiển thị `-0đ` và `Number("-0")` là âm không. **Cách sửa**: so sánh `Math.abs(...)` hoặc so sánh chuỗi hiển thị; nên giữ `Math.abs` nếu bạn lấy giảm giá theo trị tuyệt đối.
 - **Triệu chứng**: tính tổng tiền theo VAT trên cả phí ship làm chênh lệch 2.400 đồng ở R2. **Nguyên nhân**: hiểu sai VAT (BR-04: VAT chỉ trên phần sau giảm giá). **Cách sửa**: ghi công thức vào bảng trước khi tính.
 - **Triệu chứng**: không tạo được giỏ hàng đúng tạm tính mong muốn. **Nguyên nhân**: chọn dữ liệu bất khả đạt (ví dụ 999.999). **Cách sửa**: chọn tổ hợp sản phẩm theo bảng khả đạt ở bài 3.3.
 

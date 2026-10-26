@@ -10,6 +10,7 @@ export const PRODUCTS: Product[] = [
   { id: "p2", name: "Chuột không dây", price: 250_000, stock: 20 },
   { id: "p3", name: "Màn hình 24 inch", price: 3_200_000, stock: 5 },
   { id: "p4", name: "Tai nghe", price: 799_999, stock: 0 },
+  { id: "p5", name: "Cáp sạc USB-C", price: 99_999, stock: 10 },
 ];
 
 export const MAX_QTY = 10;

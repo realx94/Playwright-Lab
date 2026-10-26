@@ -56,7 +56,7 @@ Mỗi lab = **bài toán nghiệp vụ + app chạy tại `/lab/<slug>` + test c
 ### LAB-01 Login & Đăng ký
 **Bối cảnh:** Cổng khách hàng của công ty bảo hiểm.
 **BR mẫu:**
-- BR-01 Email hợp lệ theo định dạng chuẩn, tối đa 254 ký tự.
+- BR-01 Email hợp lệ theo định dạng chuẩn (không có hai dấu chấm liên tiếp, không bắt đầu hoặc kết thúc phần tên bằng dấu chấm), tối đa 254 ký tự.
 - BR-02 Mật khẩu 8–32 ký tự, có hoa, thường, số, ký tự đặc biệt.
 - BR-03 Sai mật khẩu 5 lần liên tiếp → khoá tài khoản 15 phút.
 - BR-04 “Ghi nhớ đăng nhập” giữ phiên 7 ngày.
@@ -82,7 +82,7 @@ Bao phủ: text/number/email, radio, checkbox nhóm, dropdown (native + custom),
 - BR-01 Mỗi sản phẩm tối đa 10 và không vượt tồn kho.
 - BR-02 Mã giảm `SALE10` giảm 10%, đơn tối thiểu 500.000đ, tối đa giảm 100.000đ.
 - BR-03 Miễn phí ship khi tạm tính sau giảm giá ≥ 1.000.000đ; còn lại 30.000đ.
-- BR-04 VAT 8% tính sau giảm giá, làm tròn đến đồng.
+- BR-04 VAT 8% tính sau giảm giá, làm tròn đến đồng (dữ liệu bắt được lỗi làm tròn: Cáp sạc USB-C 99.999đ, VAT 7.999,92 → 8.000).
 - BR-05 Hết hàng → không thêm được vào giỏ.
 - BR-06 Trạng thái đơn: Mới → Đã thanh toán → Đang giao → Hoàn tất; Huỷ chỉ khi chưa giao.
 **Kỹ thuật:** decision table (mã × ngưỡng × ship), BVA ở 499.999/500.000/500.001, state transition đơn hàng.
@@ -300,7 +300,7 @@ Vai trò Admin/Manager/Staff/Guest; ma trận quyền; thử IDOR (đổi id tro
 | LAB-02 Form đa dạng | `/lab/forms` | Đã làm |
 | LAB-03 Giỏ hàng & Checkout | `/lab/cart` | Đã làm |
 | LAB-04 Quản lý công việc (CRUD) | `/lab/todo` | Đã làm |
-| LAB-07 Nghỉ phép & duyệt đơn (HR) | `/lab/leave` | Đã làm (hai vai trò trên hai tab, ngày tháng, số dư phép, phân quyền) |
+| LAB-07 Nghỉ phép & duyệt đơn (HR) | `/lab/leave` | Đã làm (hai vai trò trên hai tab, ngày tháng, số dư phép, phân quyền; BR-08: kiểm lại số dư khi duyệt) |
 | LAB-08 Bảng dữ liệu động | `/lab/table` | Đã làm (tìm kiếm, lọc, sắp xếp, phân trang, chọn nhiều, CSV) |
 | LAB-12 Chat thời gian thực | `/lab/chat` | Đã làm (BroadcastChannel, hai tab, chỉ báo đang nhập, tab ẩn) |
 | LAB-13 Tình huống khó (Playground) | `/lab/playground` | Đã làm (dialog, tab mới, iframe, shadow DOM, kéo thả, tải trễ, cuộn vô hạn, tải xuống) |
