@@ -33,13 +33,13 @@ export function IdpConsent() {
 
   if (clientId !== CLIENT_ID)
     return (
-      <p role="alert" className="rounded-xl border p-6 text-destructive" data-testid="idp-error">
+      <p role="alert" className="rounded-xl border p-6 text-red-700 dark:text-red-400" data-testid="idp-error">
         Lỗi: client_id không hợp lệ.
       </p>
     );
   if (!redirectOk)
     return (
-      <p role="alert" className="rounded-xl border p-6 text-destructive" data-testid="idp-error">
+      <p role="alert" className="rounded-xl border p-6 text-red-700 dark:text-red-400" data-testid="idp-error">
         Lỗi: redirect_uri không khớp với địa chỉ đã đăng ký.
       </p>
     );

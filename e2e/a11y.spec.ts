@@ -23,6 +23,10 @@ const PAGES = [
   "/lab/otp",
   "/lab/inbox",
   "/lab/api",
+  ...[
+    "totp", "oauth", "oauth/idp", "pay", "pay/frame", "orders", "guard", "webhooks", "rbac", "timezone", "csv", "mail",
+    "mail/reset", "upload", "bank", "booking", "dashboard", "clinic", "tickets", "i18n", "inventory", "inventory/po", "leave", "chat",
+  ].map((s) => `/lab/${s}`),
 ];
 
 for (const path of PAGES) {

@@ -31,7 +31,7 @@ export function OrderPage() {
   if (order === undefined) return null;
   if (!order)
     return (
-      <p role="alert" className="rounded-xl border p-6 text-destructive" data-testid="order-missing">
+      <p role="alert" className="rounded-xl border p-6 text-red-700 dark:text-red-400" data-testid="order-missing">
         Không tìm thấy đơn hàng #{id}
       </p>
     );
@@ -81,7 +81,7 @@ export function ResetPage() {
   if (status === "checking") return null;
   if (status === "invalid")
     return (
-      <p role="alert" className="rounded-xl border p-6 text-destructive" data-testid="reset-invalid">
+      <p role="alert" className="rounded-xl border p-6 text-red-700 dark:text-red-400" data-testid="reset-invalid">
         Liên kết không hợp lệ, đã được sử dụng hoặc đã hết hạn
       </p>
     );
