@@ -668,7 +668,34 @@ const clinic: Workshop = {
   ],
 };
 
-export const WORKSHOPS: Record<string, Workshop> = { login, forms, cart, playground, api, otp, todo, table, leave, chat, totp, oauth, pay, orders, guard, webhooks, rbac, timezone, csv, mail, upload, bank, booking, dashboard, clinic };
+const tickets: Workshop = {
+  techniques: ["State Transition", "Boundary Value Analysis", "Decision Table", "Equivalence Partitioning"],
+  rules: [
+    { id: "BR-01", text: "Tạo ticket: tiêu đề 5–100 ký tự, mô tả 10–1000 ký tự (đã cắt khoảng trắng), bắt buộc chọn mức ưu tiên; tệp đính kèm tuỳ chọn PNG/JPG/PDF/TXT tối đa 1 MB (đúng 1 MB hợp lệ)" },
+    { id: "BR-02", text: "Hạn xử lý (SLA) tính từ lúc tạo: Khẩn 1 giờ, Cao 4 giờ, Trung bình 8 giờ, Thấp 24 giờ" },
+    { id: "BR-03", text: "Chuyển trạng thái chỉ theo ma trận: Mới→Đang xử lý; Đang xử lý→Chờ khách/Đã giải quyết; Chờ khách→Đang xử lý; Đã giải quyết→Đóng/Đang xử lý; Đóng không còn thao tác" },
+    { id: "BR-04", text: "Đang mở: hiển thị Còn X giờ Y phút; quá hạn khi bây giờ lớn hơn hạn (đúng hạn chưa quá hạn); đã giải quyết thì ghi nhận đúng hạn hoặc trễ hạn" },
+    { id: "BR-05", text: "Chỉ chuyển sang Đã giải quyết khi có ít nhất một bình luận; bình luận không được rỗng" },
+    { id: "BR-06", text: "Ticket đã đóng không nhận thêm bình luận" },
+  ],
+  cases: [
+    { id: "TC-T-101", title: "Tạo ticket hợp lệ", precondition: "Bây giờ 2026-03-02 08:00 UTC", steps: "Nhập đủ thông tin, ưu tiên Trung bình, đính kèm loi.txt", data: "T0001", expected: "Trạng thái Mới, hạn 16:00, SLA còn 8 giờ 0 phút, có tên tệp", type: "Happy", priority: "P0", br: ["BR-01", "BR-02"] },
+    { id: "TC-T-102", title: "Thiếu thông tin", precondition: "—", steps: "Tiêu đề 3 ký tự, mô tả 8 ký tự, không chọn ưu tiên", data: "ngắn", expected: "Ba thông báo lỗi tương ứng", type: "Negative", priority: "P1", br: ["BR-01"] },
+    { id: "TC-T-103", title: "Biên độ dài", precondition: "—", steps: "Tiêu đề đúng 5, mô tả đúng 10; rồi 101 và 1001", data: "5/10 và 101/1001", expected: "5/10 hợp lệ; 101/1001 bị từ chối", type: "BVA", priority: "P0", br: ["BR-01"] },
+    { id: "TC-T-104", title: "Tệp sai định dạng", precondition: "—", steps: "Đính kèm virus.exe", data: ".exe", expected: "Chỉ nhận PNG, JPG, PDF, TXT", type: "EP", priority: "P1", br: ["BR-01"] },
+    { id: "TC-T-105", title: "Tệp 1 MB và 1 MB + 1 byte", precondition: "—", steps: "Đính kèm hai tệp", data: "1048576 / 1048577", expected: "Tệp đúng 1 MB hợp lệ; lớn hơn bị từ chối", type: "BVA", priority: "P0", br: ["BR-01"] },
+    { id: "TC-T-106", title: "SLA theo mức ưu tiên", precondition: "Bây giờ 08:00", steps: "Tạo bốn ticket với bốn mức", data: "Khẩn/Cao/TB/Thấp", expected: "Hạn 09:00, 12:00, 16:00 và 08:00 hôm sau", type: "Decision", priority: "P0", br: ["BR-02"] },
+    { id: "TC-T-107", title: "Đúng hạn chưa quá hạn", precondition: "Ticket Khẩn lúc 08:00", steps: "Chuyển giờ sang 09:00:00", data: "+1 giờ", expected: "Còn 0 giờ 0 phút, chưa Quá hạn", type: "BVA", priority: "P0", br: ["BR-04"] },
+    { id: "TC-T-108", title: "Quá hạn một giây", precondition: "Ticket Khẩn lúc 08:00", steps: "Chuyển giờ sang 09:00:01", data: "+1 giờ 1 giây", expected: "SLA Quá hạn", type: "BVA", priority: "P0", br: ["BR-04"] },
+    { id: "TC-T-109", title: "Chuyển đổi hợp lệ theo trạng thái", precondition: "Ticket mới tạo", steps: "Quan sát nút chuyển ở từng trạng thái", data: "Mới → Đang xử lý → …", expected: "Chỉ hiện các nút theo ma trận", type: "State", priority: "P0", br: ["BR-03"] },
+    { id: "TC-T-110", title: "Giải quyết khi chưa có bình luận", precondition: "Ticket Đang xử lý", steps: "Bấm Chuyển sang Đã giải quyết", data: "0 bình luận", expected: "Cần ít nhất một bình luận; trạng thái giữ nguyên", type: "Negative", priority: "P0", br: ["BR-05"] },
+    { id: "TC-T-111", title: "Bình luận rỗng", precondition: "—", steps: "Gửi bình luận trống", data: "(rỗng)", expected: "Bình luận không được để trống", type: "EP", priority: "P2", br: ["BR-05"] },
+    { id: "TC-T-112", title: "Giải quyết đúng hạn / trễ hạn", precondition: "Ticket Khẩn", steps: "Giải quyết lúc +30 phút rồi một ticket khác lúc +2 giờ", data: "—", expected: "Giải quyết đúng hạn; Giải quyết trễ hạn", type: "State", priority: "P1", br: ["BR-04"] },
+    { id: "TC-T-113", title: "Bình luận sau khi đóng", precondition: "Ticket Đóng", steps: "Gửi bình luận", data: "—", expected: "Ticket đã đóng, không thể bình luận", type: "Negative", priority: "P1", br: ["BR-06"] },
+  ],
+};
+
+export const WORKSHOPS: Record<string, Workshop> = { login, forms, cart, playground, api, otp, todo, table, leave, chat, totp, oauth, pay, orders, guard, webhooks, rbac, timezone, csv, mail, upload, bank, booking, dashboard, clinic, tickets };
 
 export function toCsv(cases: TestCase[]): string {
   const head = ["ID", "Tiêu đề", "Tiền điều kiện", "Các bước", "Dữ liệu", "Kết quả mong đợi", "Loại", "Ưu tiên", "BR"];

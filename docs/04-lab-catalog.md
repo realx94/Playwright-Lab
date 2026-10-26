@@ -258,6 +258,13 @@ Vai trò Admin/Manager/Staff/Guest; ma trận quyền; thử IDOR (đổi id tro
 - BR-05 huỷ khi còn ≥ 24 giờ; BR-06 tối đa 3 lịch mỗi số điện thoại, mã KHnnnn.
 - Bug: BUG-01 cho đặt trùng khung giờ; BUG-02 nhận ngày Chủ nhật; BUG-03 bỏ kiểm tra họ tên và số điện thoại.
 
+### LAB-11 Hỗ trợ khách hàng: ticket & SLA (bản đã làm)
+`/lab/tickets`: tạo ticket có tệp đính kèm, luồng trạng thái, SLA theo mức ưu tiên, bình luận; dùng `page.clock`.
+- BR-01 tiêu đề 5–100, mô tả 10–1000, bắt buộc ưu tiên; tệp PNG/JPG/PDF/TXT ≤ 1 MB.
+- BR-02 SLA: Khẩn 1h, Cao 4h, Trung bình 8h, Thấp 24h; BR-03 ma trận chuyển trạng thái (Đóng là cuối).
+- BR-04 quá hạn khi bây giờ > hạn; đã giải quyết ghi đúng/trễ hạn; BR-05 giải quyết cần ≥ 1 bình luận; BR-06 ticket đóng không bình luận.
+- Bug: BUG-01 ưu tiên Cao có hạn 8 giờ; BUG-02 tính quá hạn khi bằng hạn; BUG-03 ticket đóng vẫn nhận bình luận.
+
 ## Độ phủ kỹ năng theo lab (rà soát)
 | Kỹ năng | Lab |
 |---------|-----|
@@ -300,7 +307,8 @@ Vai trò Admin/Manager/Staff/Guest; ma trận quyền; thử IDOR (đổi id tro
 | LAB-06 Đặt vé xem phim (sơ đồ ghế & giữ chỗ) | `/lab/booking` | Đã làm |
 | LAB-15 Dashboard doanh thu & biểu đồ | `/lab/dashboard` | Đã làm |
 | LAB-10 Y tế: đặt lịch khám | `/lab/clinic` | Đã làm |
-| LAB-9, 11, 16 | — | Chưa làm |
+| LAB-11 Hỗ trợ khách hàng (ticket & SLA) | `/lab/tickets` | Đã làm |
+| LAB-9, 16 | — | Chưa làm |
 
 ### Quy tắc kỹ thuật của trang lab
 - `/lab/<slug>` là **ứng dụng thuần**: không header, không thanh tìm kiếm của site (chỉ một liên kết quay lại ở layout lab) để locator của người học không bị trùng.
