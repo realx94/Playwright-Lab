@@ -79,9 +79,9 @@ Bao phủ: text/number/email, radio, checkbox nhóm, dropdown (native + custom),
 
 ### LAB-03 Giỏ hàng & Checkout
 **BR mẫu:**
-- BR-01 Tối đa 10 sản phẩm/đơn vị; số lượng 1–99.
+- BR-01 Mỗi sản phẩm tối đa 10 và không vượt tồn kho.
 - BR-02 Mã giảm `SALE10` giảm 10%, đơn tối thiểu 500.000đ, tối đa giảm 100.000đ.
-- BR-03 Miễn phí ship cho đơn ≥ 1.000.000đ; còn lại 30.000đ.
+- BR-03 Miễn phí ship khi tạm tính sau giảm giá ≥ 1.000.000đ; còn lại 30.000đ.
 - BR-04 VAT 8% tính sau giảm giá, làm tròn đến đồng.
 - BR-05 Hết hàng → không thêm được vào giỏ.
 - BR-06 Trạng thái đơn: Mới → Đã thanh toán → Đang giao → Hoàn tất; Huỷ chỉ khi chưa giao.
