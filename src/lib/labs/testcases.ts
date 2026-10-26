@@ -611,7 +611,35 @@ const booking: Workshop = {
   ],
 };
 
-export const WORKSHOPS: Record<string, Workshop> = { login, forms, cart, playground, api, otp, todo, table, leave, chat, totp, oauth, pay, orders, guard, webhooks, rbac, timezone, csv, mail, upload, bank, booking };
+const dashboard: Workshop = {
+  techniques: ["Data Validation", "Boundary Value Analysis", "Equivalence Partitioning", "Oracle"],
+  rules: [
+    { id: "BR-01", text: "Dữ liệu từ 2026-02-01 đến 2026-03-31; khoảng lọc hợp lệ khi bắt đầu ≤ kết thúc, nằm trong dữ liệu và dài tối đa 31 ngày" },
+    { id: "BR-02", text: "KPI: doanh thu = tổng doanh thu các ngày; số đơn = tổng số đơn; giá trị TB/đơn = doanh thu ÷ số đơn làm tròn" },
+    { id: "BR-03", text: "So với kỳ trước = (doanh thu − doanh thu kỳ trước) ÷ doanh thu kỳ trước × 100, một chữ số thập phân; kỳ trước là khoảng cùng độ dài ngay trước ngày bắt đầu; không có dữ liệu thì báo Không có dữ liệu kỳ trước" },
+    { id: "BR-04", text: "Biểu đồ có một cột cho mỗi ngày trong khoảng (gồm cả ngày kết thúc); chiều cao tỷ lệ với doanh thu, cột cao nhất cao 160 điểm" },
+    { id: "BR-05", text: "Biểu đồ, bảng số liệu và KPI phải cho cùng một con số; lọc theo danh mục thay đổi tất cả, tiêu đề biểu đồ nêu danh mục và khoảng ngày" },
+    { id: "BR-06", text: "Nút đặt nhanh 7 ngày, 30 ngày cuối dữ liệu và Tháng 2 đặt lại cả hai ô ngày" },
+  ],
+  cases: [
+    { id: "TC-D-201", title: "KPI mặc định", precondition: "Khoảng 2026-03-25 đến 03-31, Tất cả", steps: "Đọc bốn KPI", data: "7 ngày", expected: "Khớp giá trị tính độc lập từ công thức", type: "Happy", priority: "P0", br: ["BR-02", "BR-03"] },
+    { id: "TC-D-202", title: "Giá trị TB theo đơn", precondition: "Có doanh thu và số đơn", steps: "Đọc Giá trị TB/đơn", data: "—", expected: "Bằng doanh thu chia số đơn, không chia số ngày", type: "Happy", priority: "P0", br: ["BR-02"] },
+    { id: "TC-D-203", title: "Tăng trưởng", precondition: "Có kỳ trước", steps: "Đọc So với kỳ trước", data: "—", expected: "Mẫu số là doanh thu kỳ trước, một chữ số thập phân", type: "Happy", priority: "P0", br: ["BR-03"] },
+    { id: "TC-D-204", title: "Không có kỳ trước", precondition: "Chọn Tháng 2", steps: "Đọc So với kỳ trước", data: "02-01..02-28", expected: "Không có dữ liệu kỳ trước", type: "BVA", priority: "P1", br: ["BR-03"] },
+    { id: "TC-D-205", title: "Số cột bằng số ngày", precondition: "Khoảng 7 ngày", steps: "Đếm cột", data: "7", expected: "7 cột, ngày đầu và cuối đúng", type: "BVA", priority: "P0", br: ["BR-04"] },
+    { id: "TC-D-206", title: "Một ngày", precondition: "Chọn cùng ngày bắt đầu và kết thúc", steps: "Đếm cột", data: "1 ngày", expected: "1 cột", type: "BVA", priority: "P2", br: ["BR-04"] },
+    { id: "TC-D-207", title: "Chiều cao tỷ lệ", precondition: "Có biểu đồ", steps: "So chiều cao các cột với doanh thu", data: "—", expected: "Tỷ lệ đúng, cột cao nhất cao 160", type: "Happy", priority: "P1", br: ["BR-04"] },
+    { id: "TC-D-208", title: "Biểu đồ khớp bảng và KPI", precondition: "Bật Xem dạng bảng", steps: "So tổng các cột, các dòng bảng và KPI", data: "—", expected: "Cùng một số liệu", type: "Happy", priority: "P0", br: ["BR-05"] },
+    { id: "TC-D-209", title: "Lọc danh mục", precondition: "Chọn Điện tử", steps: "Đọc KPI và tiêu đề", data: "Điện tử", expected: "Số liệu chỉ của Điện tử; tiêu đề nêu Điện tử", type: "EP", priority: "P1", br: ["BR-05"] },
+    { id: "TC-D-210", title: "Khoảng đảo ngược", precondition: "—", steps: "Từ 03-10 đến 03-01", data: "đảo", expected: "Ngày bắt đầu phải trước hoặc bằng ngày kết thúc", type: "Negative", priority: "P1", br: ["BR-01"] },
+    { id: "TC-D-211", title: "Ngoài dữ liệu", precondition: "—", steps: "Từ 2026-01-31", data: "ngoài", expected: "Dữ liệu chỉ có từ 2026-02-01 đến 2026-03-31", type: "Negative", priority: "P1", br: ["BR-01"] },
+    { id: "TC-D-212", title: "Đúng 31 ngày", precondition: "—", steps: "Từ 02-01 đến 03-03", data: "31 ngày", expected: "Hợp lệ, 31 cột", type: "BVA", priority: "P0", br: ["BR-01"] },
+    { id: "TC-D-213", title: "32 ngày", precondition: "—", steps: "Từ 02-01 đến 03-04", data: "32 ngày", expected: "Chọn tối đa 31 ngày, không vẽ biểu đồ", type: "BVA", priority: "P0", br: ["BR-01"] },
+    { id: "TC-D-214", title: "Nút đặt nhanh", precondition: "—", steps: "Bấm 30 ngày cuối dữ liệu", data: "—", expected: "Từ 2026-03-02, 30 cột", type: "Happy", priority: "P2", br: ["BR-06"] },
+  ],
+};
+
+export const WORKSHOPS: Record<string, Workshop> = { login, forms, cart, playground, api, otp, todo, table, leave, chat, totp, oauth, pay, orders, guard, webhooks, rbac, timezone, csv, mail, upload, bank, booking, dashboard };
 
 export function toCsv(cases: TestCase[]): string {
   const head = ["ID", "Tiêu đề", "Tiền điều kiện", "Các bước", "Dữ liệu", "Kết quả mong đợi", "Loại", "Ưu tiên", "BR"];

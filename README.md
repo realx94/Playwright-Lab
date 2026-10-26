@@ -3,7 +3,7 @@
 Website học **Playwright Automation từ Zero đến Hero** cho QA: bài học, lab nghiệp vụ, thiết kế test case, bài tập kèm chấm tự động và starter repo.
 
 - **55 bài học** (Level 0–5), mỗi bài có quiz xáo trộn chống đoán mẹo
-- **23 lab** trong chính website (`/lab/*`): Login, Form, Giỏ hàng, Todo, Bảng dữ liệu, Playground, Mock API, Email OTP, 2FA TOTP, OAuth giả, Thanh toán thẻ, Đơn hàng & DB, Nghỉ phép (hai vai trò), Chat thời gian thực, CAPTCHA & giới hạn tần suất; mỗi lab có business rule, test case mẫu, bug có chủ đích và bài tập
+- **24 lab** trong chính website (`/lab/*`): Login, Form, Giỏ hàng, Todo, Bảng dữ liệu, Playground, Mock API, Email OTP, 2FA TOTP, OAuth giả, Thanh toán thẻ, Đơn hàng & DB, Nghỉ phép (hai vai trò), Chat thời gian thực, CAPTCHA & giới hạn tần suất; mỗi lab có business rule, test case mẫu, bug có chủ đích và bài tập
 - **Starter repo** (`starter-repo/`) tải về làm bài, có `npm run grade` chấm bằng mutation grading
 - Tra cứu: tìm kiếm `Ctrl+K`, thuật ngữ, cheat sheet; bôi đen bất kỳ chữ nào để **hỏi Google AI**
 - Lịch sử học và kết quả lưu ngay trong trình duyệt (IndexedDB), không cần tài khoản

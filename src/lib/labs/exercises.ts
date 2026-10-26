@@ -4300,4 +4300,256 @@ test("bán hết ghế của một suất", async ({ page }) => {
   },
 ];
 
-export const EXERCISES: Record<string, Exercise[]> = { login, forms, cart, playground, api, otp, todo, table, leave, chat, totp, oauth, pay, orders, guard, webhooks, rbac, timezone, csv, mail, upload, bank, booking };
+const dashboard: Exercise[] = [
+  {
+    id: "dashboard-1",
+    title: "KPI: đối chiếu với giá trị tính độc lập (oracle)",
+    difficulty: 2,
+    bugs: ["BUG-01", "BUG-02"],
+    task: "Đọc công thức dữ liệu mô phỏng ở đầu trang lab, tự viết hàm tính doanh thu, số đơn, giá trị TB/đơn và tăng trưởng cho 7 ngày cuối dữ liệu (kỳ trước là 18–24/03) rồi so với bốn KPI trên giao diện. Thêm test Tháng 2 không có kỳ trước. Test phải đỏ khi bật BUG-01 hoặc BUG-02.",
+    criteria: [
+      "Tự tính số liệu kỳ vọng bằng code, không sao chép số từ giao diện",
+      "Định dạng tiền kiểu 1.234.567 ₫ trong test để so sánh",
+      "Kiểm tra giá trị TB/đơn chia cho số đơn",
+      "Kiểm tra tăng trưởng với mẫu số là kỳ trước và đúng một chữ số thập phân",
+      "Kiểm tra thông báo không có dữ liệu kỳ trước cho Tháng 2",
+      "Test đỏ với BUG-01 và với BUG-02",
+      ...COMMON_CRITERIA,
+    ],
+    hints: [
+      "Số đơn = 10 + (d×7 + c×3) mod 13; d là số ngày kể từ 2026-02-01.",
+      "Tăng trưởng = (hiện tại − kỳ trước) ÷ kỳ trước × 100.",
+      "toFixed(1) cho một chữ số thập phân; thêm dấu + khi dương.",
+    ],
+    solution: `import { test, expect, type Page } from "@playwright/test";
+
+// Oracle độc lập: tự tính số liệu từ công thức công khai ở đầu trang lab, không đọc lại từ giao diện.
+const DAY = 86_400_000;
+const ms = (iso: string) => Date.parse(iso + "T00:00:00Z");
+const iso = (t: number) => new Date(t).toISOString().slice(0, 10);
+const money = (n: number) => String(n).replace(/\\B(?=(\\d{3})+(?!\\d))/g, ".") + " ₫";
+
+function cell(date: string, c: number) {
+  const d = Math.round((ms(date) - ms("2026-02-01")) / DAY);
+  const orders = 10 + ((d * 7 + c * 3) % 13);
+  return { orders, revenue: orders * ([500_000, 200_000, 300_000][c] + (d % 5) * 10_000) };
+}
+
+function expected(from: string, to: string, cats = [0, 1, 2]) {
+  const days: { date: string; orders: number; revenue: number }[] = [];
+  for (let t = ms(from); t <= ms(to); t += DAY) {
+    const date = iso(t);
+    days.push({
+      date,
+      orders: cats.reduce((s, c) => s + cell(date, c).orders, 0),
+      revenue: cats.reduce((s, c) => s + cell(date, c).revenue, 0),
+    });
+  }
+  return days;
+}
+
+async function open(page: Page) {
+  await page.goto("/lab/dashboard");
+  await expect(page.getByTestId("kpi-revenue")).toBeVisible();
+}
+
+async function setRange(page: Page, from: string, to: string) {
+  await page.getByLabel("Từ ngày").fill(from);
+  await page.getByLabel("Đến ngày").fill(to);
+}
+
+test("KPI mặc định khớp giá trị tính độc lập", async ({ page }) => {
+  await open(page);
+  const cur = expected("2026-03-25", "2026-03-31");
+  const prev = expected("2026-03-18", "2026-03-24");
+  const revenue = cur.reduce((s, d) => s + d.revenue, 0);
+  const orders = cur.reduce((s, d) => s + d.orders, 0);
+  const prevRevenue = prev.reduce((s, d) => s + d.revenue, 0);
+  const growth = ((revenue - prevRevenue) / prevRevenue) * 100;
+
+  await expect(page.getByTestId("kpi-revenue")).toHaveText(money(revenue));
+  await expect(page.getByTestId("kpi-orders")).toHaveText(String(orders));
+  await expect(page.getByTestId("kpi-average")).toHaveText(money(Math.round(revenue / orders)));
+  await expect(page.getByTestId("kpi-growth")).toHaveText((growth >= 0 ? "+" : "") + growth.toFixed(1) + "%");
+});
+
+test("không có kỳ trước cho tháng 2", async ({ page }) => {
+  await open(page);
+  await page.getByRole("button", { name: "Tháng 2" }).click();
+  await expect(page.getByTestId("kpi-growth")).toHaveText("Không có dữ liệu kỳ trước");
+});`,
+  },
+  {
+    id: "dashboard-2",
+    title: "Biểu đồ nhất quán với số liệu",
+    difficulty: 2,
+    bugs: ["BUG-03"],
+    task: "Chứng minh biểu đồ đúng: có đúng 7 cột với ngày đầu 2026-03-25 và ngày cuối 2026-03-31, giá trị từng cột khớp số liệu kỳ vọng, tổng cột bằng KPI doanh thu, chiều cao tỷ lệ với giá trị (cột cao nhất cao 160), và bảng số liệu khớp. Test phải đỏ khi bật BUG-03.",
+    criteria: [
+      "Đọc data-date và data-value của các cột bằng evaluateAll",
+      "Kiểm tra danh sách ngày đầy đủ gồm cả ngày kết thúc",
+      "Kiểm tra tổng các cột bằng KPI doanh thu",
+      "Kiểm tra tỷ lệ chiều cao với sai số tối đa 1 điểm",
+      "Kiểm tra dòng đầu của bảng bằng locator('td')",
+      "Test đỏ với BUG-03",
+      ...COMMON_CRITERIA,
+    ],
+    hints: [
+      "Biểu đồ là SVG: mỗi cột là một phần tử rect có data-testid bar.",
+      "Cột cao nhất luôn cao 160 điểm (vùng vẽ 170 trừ lề 10).",
+      "Bảng chỉ hiện sau khi bấm Xem dạng bảng.",
+    ],
+    solution: `import { test, expect, type Page } from "@playwright/test";
+
+// Oracle độc lập: tự tính số liệu từ công thức công khai ở đầu trang lab, không đọc lại từ giao diện.
+const DAY = 86_400_000;
+const ms = (iso: string) => Date.parse(iso + "T00:00:00Z");
+const iso = (t: number) => new Date(t).toISOString().slice(0, 10);
+const money = (n: number) => String(n).replace(/\\B(?=(\\d{3})+(?!\\d))/g, ".") + " ₫";
+
+function cell(date: string, c: number) {
+  const d = Math.round((ms(date) - ms("2026-02-01")) / DAY);
+  const orders = 10 + ((d * 7 + c * 3) % 13);
+  return { orders, revenue: orders * ([500_000, 200_000, 300_000][c] + (d % 5) * 10_000) };
+}
+
+function expected(from: string, to: string, cats = [0, 1, 2]) {
+  const days: { date: string; orders: number; revenue: number }[] = [];
+  for (let t = ms(from); t <= ms(to); t += DAY) {
+    const date = iso(t);
+    days.push({
+      date,
+      orders: cats.reduce((s, c) => s + cell(date, c).orders, 0),
+      revenue: cats.reduce((s, c) => s + cell(date, c).revenue, 0),
+    });
+  }
+  return days;
+}
+
+async function open(page: Page) {
+  await page.goto("/lab/dashboard");
+  await expect(page.getByTestId("kpi-revenue")).toBeVisible();
+}
+
+async function setRange(page: Page, from: string, to: string) {
+  await page.getByLabel("Từ ngày").fill(from);
+  await page.getByLabel("Đến ngày").fill(to);
+}
+
+test("biểu đồ nhất quán với số liệu và đủ số ngày", async ({ page }) => {
+  await open(page);
+  const days = expected("2026-03-25", "2026-03-31");
+  const bars = page.getByTestId("bar");
+  await expect(bars).toHaveCount(7);
+  expect(await bars.evaluateAll((els) => els.map((e) => e.getAttribute("data-date")))).toEqual(days.map((d) => d.date));
+
+  const values = await bars.evaluateAll((els) => els.map((e) => Number(e.getAttribute("data-value"))));
+  expect(values).toEqual(days.map((d) => d.revenue));
+  await expect(page.getByTestId("kpi-revenue")).toHaveText(money(values.reduce((a, b) => a + b, 0)));
+
+  const heights = await bars.evaluateAll((els) => els.map((e) => Number(e.getAttribute("height"))));
+  const max = Math.max(...values);
+  heights.forEach((h, i) => expect(Math.abs(h - (values[i] / max) * 160)).toBeLessThanOrEqual(1));
+  expect(Math.max(...heights)).toBe(160);
+});
+
+test("bảng số liệu khớp biểu đồ", async ({ page }) => {
+  await open(page);
+  const days = expected("2026-03-25", "2026-03-31");
+  await page.getByRole("button", { name: "Xem dạng bảng" }).click();
+  await expect(page.getByTestId("chart-row")).toHaveCount(7);
+  await expect(page.getByTestId("chart-row").first().locator("td")).toHaveText([days[0].date, String(days[0].orders), money(days[0].revenue)]);
+});`,
+  },
+  {
+    id: "dashboard-3",
+    title: "Bộ lọc: danh mục, nút đặt nhanh và biên khoảng ngày",
+    difficulty: 2,
+    task: "Kiểm tra lọc danh mục Điện tử đổi doanh thu và tiêu đề biểu đồ; nút 30 ngày cuối dữ liệu đặt Từ ngày 2026-03-02 và vẽ 30 cột; kiểm tra khoảng ngày đảo ngược, ngoài dữ liệu, đúng 31 ngày (hợp lệ) và 32 ngày (bị từ chối), và khoảng một ngày.",
+    criteria: [
+      "Kiểm tra tiêu đề biểu đồ nêu đúng danh mục và khoảng ngày",
+      "Kiểm tra nút đặt nhanh cập nhật ô ngày và số cột",
+      "Kiểm tra từng thông báo lỗi của khoảng ngày",
+      "Kiểm tra biên 31 ngày và 32 ngày",
+      "Kiểm tra khi có lỗi thì không vẽ cột nào",
+      ...COMMON_CRITERIA,
+    ],
+    hints: [
+      "Ô ngày là input type=date: fill nhận chuỗi YYYY-MM-DD.",
+      "Từ 2026-02-01 đến 2026-03-03 là đúng 31 ngày.",
+      "Thông báo lỗi có data-testid range-error.",
+    ],
+    solution: `import { test, expect, type Page } from "@playwright/test";
+
+// Oracle độc lập: tự tính số liệu từ công thức công khai ở đầu trang lab, không đọc lại từ giao diện.
+const DAY = 86_400_000;
+const ms = (iso: string) => Date.parse(iso + "T00:00:00Z");
+const iso = (t: number) => new Date(t).toISOString().slice(0, 10);
+const money = (n: number) => String(n).replace(/\\B(?=(\\d{3})+(?!\\d))/g, ".") + " ₫";
+
+function cell(date: string, c: number) {
+  const d = Math.round((ms(date) - ms("2026-02-01")) / DAY);
+  const orders = 10 + ((d * 7 + c * 3) % 13);
+  return { orders, revenue: orders * ([500_000, 200_000, 300_000][c] + (d % 5) * 10_000) };
+}
+
+function expected(from: string, to: string, cats = [0, 1, 2]) {
+  const days: { date: string; orders: number; revenue: number }[] = [];
+  for (let t = ms(from); t <= ms(to); t += DAY) {
+    const date = iso(t);
+    days.push({
+      date,
+      orders: cats.reduce((s, c) => s + cell(date, c).orders, 0),
+      revenue: cats.reduce((s, c) => s + cell(date, c).revenue, 0),
+    });
+  }
+  return days;
+}
+
+async function open(page: Page) {
+  await page.goto("/lab/dashboard");
+  await expect(page.getByTestId("kpi-revenue")).toBeVisible();
+}
+
+async function setRange(page: Page, from: string, to: string) {
+  await page.getByLabel("Từ ngày").fill(from);
+  await page.getByLabel("Đến ngày").fill(to);
+}
+
+test("lọc theo danh mục", async ({ page }) => {
+  await open(page);
+  await page.getByLabel("Danh mục").selectOption("dien-tu");
+  const cur = expected("2026-03-25", "2026-03-31", [0]);
+  await expect(page.getByTestId("kpi-revenue")).toHaveText(money(cur.reduce((s, d) => s + d.revenue, 0)));
+  await expect(page.getByTestId("chart-title")).toHaveText("Doanh thu theo ngày · Điện tử · 2026-03-25 đến 2026-03-31");
+});
+
+test("nút đặt nhanh", async ({ page }) => {
+  await open(page);
+  await page.getByRole("button", { name: "30 ngày cuối dữ liệu" }).click();
+  await expect(page.getByLabel("Từ ngày")).toHaveValue("2026-03-02");
+  await expect(page.getByTestId("bar")).toHaveCount(30);
+});
+
+test("kiểm tra khoảng ngày và biên 31/32 ngày", async ({ page }) => {
+  await open(page);
+  await setRange(page, "2026-03-10", "2026-03-01");
+  await expect(page.getByTestId("range-error")).toHaveText("Ngày bắt đầu phải trước hoặc bằng ngày kết thúc");
+  await setRange(page, "2026-01-31", "2026-02-05");
+  await expect(page.getByTestId("range-error")).toHaveText("Dữ liệu chỉ có từ 2026-02-01 đến 2026-03-31");
+
+  await setRange(page, "2026-02-01", "2026-03-04");
+  await expect(page.getByTestId("range-error")).toHaveText("Chọn tối đa 31 ngày");
+  await expect(page.getByTestId("bar")).toHaveCount(0);
+
+  await setRange(page, "2026-02-01", "2026-03-03");
+  await expect(page.getByTestId("range-error")).toHaveCount(0);
+  await expect(page.getByTestId("bar")).toHaveCount(31);
+
+  await setRange(page, "2026-03-15", "2026-03-15");
+  await expect(page.getByTestId("bar")).toHaveCount(1);
+});`,
+  },
+];
+
+export const EXERCISES: Record<string, Exercise[]> = { login, forms, cart, playground, api, otp, todo, table, leave, chat, totp, oauth, pay, orders, guard, webhooks, rbac, timezone, csv, mail, upload, bank, booking, dashboard };

@@ -244,6 +244,13 @@ Vai trò Admin/Manager/Staff/Guest; ma trận quyền; thử IDOR (đổi id tro
 - BR-06 hết ghế → "Suất chiếu đã hết vé"; ghế đã bán giữ khi tải lại.
 - Bug: BUG-01 ghế VIP tính giá thường; BUG-02 thanh toán được sau khi hết hạn giữ chỗ; BUG-03 cho đặt tới 7 ghế.
 
+### LAB-15 Dashboard & biểu đồ (bản đã làm)
+`/lab/dashboard`: dữ liệu mô phỏng xác định (2026-02-01..2026-03-31, 3 danh mục) với công thức công khai để người học tự tính **oracle** độc lập; KPI, biểu đồ cột SVG, bảng số liệu, bộ lọc ngày + danh mục.
+- BR-01 khoảng hợp lệ: bắt đầu ≤ kết thúc, trong dữ liệu, tối đa 31 ngày; BR-02 KPI doanh thu/số đơn/TB theo đơn.
+- BR-03 tăng trưởng so với kỳ trước (mẫu số là kỳ trước, 1 chữ số thập phân; không có kỳ trước thì báo); BR-04 một cột mỗi ngày gồm cả ngày cuối, chiều cao tỷ lệ (cao nhất 160).
+- BR-05 biểu đồ/bảng/KPI cùng số liệu, lọc danh mục đổi tất cả; BR-06 nút đặt nhanh.
+- Bug: BUG-01 TB/đơn chia cho số ngày; BUG-02 tăng trưởng chia cho kỳ hiện tại; BUG-03 mất ngày cuối của khoảng.
+
 ## Độ phủ kỹ năng theo lab (rà soát)
 | Kỹ năng | Lab |
 |---------|-----|
@@ -284,7 +291,8 @@ Vai trò Admin/Manager/Staff/Guest; ma trận quyền; thử IDOR (đổi id tro
 | LAB-25 Tải tệp lên kho lưu trữ | `/lab/upload` | Đã làm |
 | LAB-05 Ngân hàng: chuyển tiền nhiều bước | `/lab/bank` | Đã làm |
 | LAB-06 Đặt vé xem phim (sơ đồ ghế & giữ chỗ) | `/lab/booking` | Đã làm |
-| LAB-9, 10, 11, 15, 16 | — | Chưa làm |
+| LAB-15 Dashboard doanh thu & biểu đồ | `/lab/dashboard` | Đã làm |
+| LAB-9, 10, 11, 16 | — | Chưa làm |
 
 ### Quy tắc kỹ thuật của trang lab
 - `/lab/<slug>` là **ứng dụng thuần**: không header, không thanh tìm kiếm của site (chỉ một liên kết quay lại ở layout lab) để locator của người học không bị trùng.

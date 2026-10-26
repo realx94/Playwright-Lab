@@ -492,6 +492,26 @@
       "lab": "booking",
       "spec": "tests/exercises/booking/booking-3.spec.ts",
       "bugs": []
+    },
+    "dashboard-1": {
+      "lab": "dashboard",
+      "spec": "tests/exercises/dashboard/dashboard-1.spec.ts",
+      "bugs": [
+        "BUG-01",
+        "BUG-02"
+      ]
+    },
+    "dashboard-2": {
+      "lab": "dashboard",
+      "spec": "tests/exercises/dashboard/dashboard-2.spec.ts",
+      "bugs": [
+        "BUG-03"
+      ]
+    },
+    "dashboard-3": {
+      "lab": "dashboard",
+      "spec": "tests/exercises/dashboard/dashboard-3.spec.ts",
+      "bugs": []
     }
   }
 }
