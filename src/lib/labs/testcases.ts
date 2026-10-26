@@ -555,7 +555,37 @@ const upload: Workshop = {
   ],
 };
 
-export const WORKSHOPS: Record<string, Workshop> = { login, forms, cart, playground, api, otp, todo, table, leave, chat, totp, oauth, pay, orders, guard, webhooks, rbac, timezone, csv, mail, upload };
+const bank: Workshop = {
+  techniques: ["Boundary Value Analysis", "Decision Table", "State Transition", "Security"],
+  rules: [
+    { id: "BR-01", text: "Số dư ban đầu 10.000.000 ₫; số tiền là số nguyên từ 10.000 đến 5.000.000 mỗi giao dịch; số tiền cộng phí không vượt số dư" },
+    { id: "BR-02", text: "Hạn mức chuyển trong ngày 8.000.000 ₫, cộng dồn các giao dịch thành công và đặt lại vào ngày hôm sau" },
+    { id: "BR-03", text: "Biểu phí: ≤ 500.000 miễn phí; 500.001–2.000.000 là 3.300 ₫; trên 2.000.000 là 11.000 ₫" },
+    { id: "BR-04", text: "Tài khoản nhận gồm đúng 10 chữ số, phải tồn tại, không được là tài khoản của chính mình; bước xác nhận hiển thị tên người nhận, số tiền, phí và tổng trừ" },
+    { id: "BR-05", text: "OTP 6 số hiệu lực 60 giây (đúng 60 giây còn hiệu lực); sai 3 lần thì huỷ giao dịch và quay về bước 1; có thể gửi lại OTP" },
+    { id: "BR-06", text: "Thành công: sinh mã giao dịch TXnnnn, trừ số tiền cộng phí, thêm vào lịch sử, giữ khi tải lại; Quay lại không mất dữ liệu đã nhập" },
+  ],
+  cases: [
+    { id: "TC-B-101", title: "Chuyển 1.000.000 ₫ thành công", precondition: "Số dư 10.000.000", steps: "Nhập, xác nhận, nhập OTP đúng", data: "0123456789, 1000000", expected: "Phí 3.300, tổng trừ 1.003.300, số dư 8.996.700, mã TX0001", type: "Happy", priority: "P0", br: ["BR-01", "BR-03", "BR-06"] },
+    { id: "TC-B-102", title: "Số tài khoản thiếu số", precondition: "—", steps: "Nhập 123", data: "123", expected: "Số tài khoản gồm đúng 10 chữ số", type: "EP", priority: "P1", br: ["BR-04"] },
+    { id: "TC-B-103", title: "Chuyển cho chính mình", precondition: "—", steps: "Nhập 1122334455", data: "1122334455", expected: "Không thể chuyển cho chính mình", type: "Negative", priority: "P0", br: ["BR-04"] },
+    { id: "TC-B-104", title: "Tài khoản không tồn tại", precondition: "—", steps: "Nhập 5555555555", data: "5555555555", expected: "Không tìm thấy tài khoản nhận", type: "Negative", priority: "P1", br: ["BR-04"] },
+    { id: "TC-B-105", title: "Số tiền 9.999", precondition: "—", steps: "Nhập 9999", data: "9999", expected: "Số tiền tối thiểu 10.000 ₫", type: "BVA", priority: "P0", br: ["BR-01"] },
+    { id: "TC-B-106", title: "Số tiền 5.000.001", precondition: "—", steps: "Nhập 5000001", data: "5000001", expected: "Số tiền tối đa mỗi giao dịch 5.000.000 ₫", type: "BVA", priority: "P0", br: ["BR-01"] },
+    { id: "TC-B-107", title: "Phí đúng 500.000", precondition: "—", steps: "Nhập 500000, xem xác nhận", data: "500000", expected: "Phí 0 ₫", type: "BVA", priority: "P0", br: ["BR-03"] },
+    { id: "TC-B-108", title: "Phí 500.001", precondition: "—", steps: "Nhập 500001", data: "500001", expected: "Phí 3.300 ₫", type: "BVA", priority: "P0", br: ["BR-03"] },
+    { id: "TC-B-109", title: "Phí 2.000.001", precondition: "—", steps: "Nhập 2000001", data: "2000001", expected: "Phí 11.000 ₫", type: "BVA", priority: "P1", br: ["BR-03"] },
+    { id: "TC-B-110", title: "Hạn mức ngày", precondition: "Đã chuyển 5.000.000", steps: "Chuyển thêm 3.000.001 rồi 3.000.000", data: "3000001 / 3000000", expected: "3.000.001 bị từ chối; 3.000.000 thành công", type: "BVA", priority: "P0", br: ["BR-02"] },
+    { id: "TC-B-111", title: "Hạn mức đặt lại ngày hôm sau", precondition: "Đã chạm hạn mức", steps: "Đổi giờ sang ngày hôm sau, chuyển tiếp", data: "+24 giờ", expected: "Không còn báo vượt hạn mức", type: "State", priority: "P1", br: ["BR-02"] },
+    { id: "TC-B-112", title: "Số dư không đủ", precondition: "Số dư 1.978.000", steps: "Chuyển 2.000.000", data: "2000000", expected: "Số dư không đủ (cộng cả phí)", type: "Decision", priority: "P0", br: ["BR-01"] },
+    { id: "TC-B-113", title: "OTP sai 3 lần", precondition: "Ở bước OTP", steps: "Nhập sai 3 lần", data: "000000", expected: "Báo huỷ giao dịch, quay về bước 1, số dư giữ nguyên", type: "State", priority: "P0", br: ["BR-05"] },
+    { id: "TC-B-114", title: "OTP đúng 60 giây", precondition: "Đã sinh OTP", steps: "Nhập sau 60 giây", data: "60s", expected: "Thành công", type: "BVA", priority: "P0", br: ["BR-05"] },
+    { id: "TC-B-115", title: "OTP quá 60 giây", precondition: "Đã sinh OTP", steps: "Nhập sau 61 giây rồi gửi lại", data: "61s", expected: "Báo hết hạn; mã mới dùng được", type: "BVA", priority: "P0", br: ["BR-05"] },
+    { id: "TC-B-116", title: "Quay lại giữ dữ liệu", precondition: "Ở bước xác nhận", steps: "Bấm Quay lại", data: "—", expected: "Các ô còn nguyên giá trị", type: "State", priority: "P2", br: ["BR-06"] },
+  ],
+};
+
+export const WORKSHOPS: Record<string, Workshop> = { login, forms, cart, playground, api, otp, todo, table, leave, chat, totp, oauth, pay, orders, guard, webhooks, rbac, timezone, csv, mail, upload, bank };
 
 export function toCsv(cases: TestCase[]): string {
   const head = ["ID", "Tiêu đề", "Tiền điều kiện", "Các bước", "Dữ liệu", "Kết quả mong đợi", "Loại", "Ưu tiên", "BR"];

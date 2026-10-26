@@ -3832,4 +3832,270 @@ test("tên trùng, giới hạn 5 tệp và giữ sau khi tải lại", async ({
   },
 ];
 
-export const EXERCISES: Record<string, Exercise[]> = { login, forms, cart, playground, api, otp, todo, table, leave, chat, totp, oauth, pay, orders, guard, webhooks, rbac, timezone, csv, mail, upload };
+const bank: Exercise[] = [
+  {
+    id: "bank-1",
+    title: "Chuyển tiền qua 4 bước và kiểm tra dữ liệu đầu vào",
+    difficulty: 3,
+    task: "Tự động hoá một lần chuyển 1.000.000 ₫ qua đủ 4 bước: kiểm tra màn xác nhận (tên người nhận, phí, tổng trừ), đọc OTP giả lập trên màn hình, kiểm tra số dư, mã giao dịch và lịch sử. Thêm test data-driven cho sáu kiểu đầu vào bị từ chối ở bước 1.",
+    criteria: [
+      "Viết hàm helper cho từng bước (nhập, xác nhận, OTP)",
+      "Đọc OTP giả lập từ data-testid otp-hint thay vì đoán",
+      "Kiểm tra phí 3.300 ₫ và tổng trừ 1.003.300 ₫ ở bước xác nhận",
+      "Kiểm tra số dư mới, mã giao dịch TX0001 và một dòng lịch sử",
+      "Sinh test cho các đầu vào bị từ chối bằng vòng for từ mảng dữ liệu",
+      ...COMMON_CRITERIA,
+    ],
+    hints: [
+      "Số dư mới = 10.000.000 − 1.000.000 − 3.300 = 8.996.700 ₫.",
+      "Hộp thông báo lỗi có data-testid là transfer-error.",
+      "Các trường: Số tài khoản nhận, Số tiền (₫), Nội dung chuyển khoản; nút Tiếp tục, Xác nhận, Xác thực.",
+    ],
+    solution: `import { test, expect, type Page } from "@playwright/test";
+
+const A = "0123456789";
+
+async function open(page: Page) {
+  await page.goto("/lab/bank");
+  await page.getByTestId("reset-data").click();
+}
+
+async function fill(page: Page, account: string, amount: string, note = "") {
+  await page.getByLabel("Số tài khoản nhận").fill(account);
+  await page.getByLabel("Số tiền (₫)").fill(amount);
+  await page.getByLabel("Nội dung chuyển khoản").fill(note);
+  await page.getByRole("button", { name: "Tiếp tục" }).click();
+}
+
+// OTP giả lập hiển thị ngay trên màn hình (data-testid otp-hint) nên test đọc trực tiếp.
+async function otpAndVerify(page: Page) {
+  await page.getByLabel("Mã OTP").fill((await page.getByTestId("otp-hint").textContent())!);
+  await page.getByRole("button", { name: "Xác thực" }).click();
+}
+
+async function transfer(page: Page, amount: string) {
+  await fill(page, A, amount);
+  await page.getByRole("button", { name: "Xác nhận" }).click();
+  await otpAndVerify(page);
+  await expect(page.getByTestId("txn-success")).toBeVisible();
+  await page.getByRole("button", { name: "Chuyển tiếp" }).click();
+}
+
+test("chuyển tiền thành công qua 4 bước", async ({ page }) => {
+  await open(page);
+  await expect(page.getByTestId("balance")).toHaveText("10.000.000 ₫");
+  await fill(page, A, "1000000", "Tiền nhà");
+  await expect(page.getByTestId("confirm-name")).toHaveText("Người nhận: Nguyễn Văn A");
+  await expect(page.getByTestId("confirm-fee")).toHaveText("Phí: 3.300 ₫");
+  await expect(page.getByTestId("confirm-total")).toHaveText("Tổng trừ: 1.003.300 ₫");
+
+  await page.getByRole("button", { name: "Xác nhận" }).click();
+  await otpAndVerify(page);
+  await expect(page.getByTestId("txn-id")).toHaveText("Mã giao dịch: TX0001");
+  await expect(page.getByTestId("balance")).toHaveText("8.996.700 ₫");
+  await expect(page.getByTestId("history-row")).toHaveCount(1);
+});
+
+const invalid: [string, string, string][] = [
+  ["123", "100000", "Số tài khoản gồm đúng 10 chữ số"],
+  ["1122334455", "100000", "Không thể chuyển cho chính mình"],
+  ["5555555555", "100000", "Không tìm thấy tài khoản nhận"],
+  [A, "abc", "Số tiền phải là số nguyên dương"],
+  [A, "9999", "Số tiền tối thiểu 10.000 ₫"],
+  [A, "5000001", "Số tiền tối đa mỗi giao dịch 5.000.000 ₫"],
+];
+for (const [account, amount, message] of invalid) {
+  test("bước 1 từ chối " + account + " / " + amount, async ({ page }) => {
+    await open(page);
+    await fill(page, account, amount);
+    await expect(page.getByTestId("transfer-error")).toHaveText(message);
+  });
+}`,
+  },
+  {
+    id: "bank-2",
+    title: "Biểu phí ở các mốc biên và hạn mức trong ngày",
+    difficulty: 3,
+    bugs: ["BUG-01", "BUG-02"],
+    task: "Kiểm tra phí tại các mốc 10.000, 499.999, 500.000, 500.001, 2.000.000 và 2.000.001. Sau đó chứng minh hạn mức ngày cộng dồn: chuyển 5.000.000 rồi 3.000.001 bị từ chối, 3.000.000 thành công, rồi đổi đồng hồ sang ngày hôm sau để hạn mức được đặt lại. Test phải đỏ khi bật BUG-01 hoặc BUG-02.",
+    criteria: [
+      "Sinh test cho từng mốc phí từ một bảng dữ liệu",
+      "Chỉ cần dừng ở bước xác nhận để đọc phí",
+      "Kiểm tra biên hạn mức ngày bằng 3.000.001 và 3.000.000",
+      "Dùng context.clock.setFixedTime để sang ngày hôm sau",
+      "Test đỏ với BUG-01 và với BUG-02",
+      ...COMMON_CRITERIA,
+    ],
+    hints: [
+      "Phí ở 500.000 là 0 ₫, ở 500.001 là 3.300 ₫.",
+      "Hạn mức ngày là 8.000.000 ₫ tính trên tổng số tiền đã chuyển thành công, không tính phí.",
+      "Đặt giờ giả trước khi mở trang để 'hôm nay' cố định.",
+    ],
+    solution: `import { test, expect, type Page } from "@playwright/test";
+
+const A = "0123456789";
+
+async function open(page: Page) {
+  await page.goto("/lab/bank");
+  await page.getByTestId("reset-data").click();
+}
+
+async function fill(page: Page, account: string, amount: string, note = "") {
+  await page.getByLabel("Số tài khoản nhận").fill(account);
+  await page.getByLabel("Số tiền (₫)").fill(amount);
+  await page.getByLabel("Nội dung chuyển khoản").fill(note);
+  await page.getByRole("button", { name: "Tiếp tục" }).click();
+}
+
+// OTP giả lập hiển thị ngay trên màn hình (data-testid otp-hint) nên test đọc trực tiếp.
+async function otpAndVerify(page: Page) {
+  await page.getByLabel("Mã OTP").fill((await page.getByTestId("otp-hint").textContent())!);
+  await page.getByRole("button", { name: "Xác thực" }).click();
+}
+
+async function transfer(page: Page, amount: string) {
+  await fill(page, A, amount);
+  await page.getByRole("button", { name: "Xác nhận" }).click();
+  await otpAndVerify(page);
+  await expect(page.getByTestId("txn-success")).toBeVisible();
+  await page.getByRole("button", { name: "Chuyển tiếp" }).click();
+}
+
+const fees: [string, string][] = [
+  ["10000", "0 ₫"],
+  ["499999", "0 ₫"],
+  ["500000", "0 ₫"],
+  ["500001", "3.300 ₫"],
+  ["2000000", "3.300 ₫"],
+  ["2000001", "11.000 ₫"],
+];
+for (const [amount, fee] of fees) {
+  test("phí cho " + amount + " là " + fee, async ({ page }) => {
+    await open(page);
+    await fill(page, A, amount);
+    await expect(page.getByTestId("confirm-fee")).toHaveText("Phí: " + fee);
+  });
+}
+
+test("hạn mức ngày cộng dồn và đặt lại vào ngày hôm sau", async ({ page, context }) => {
+  const t0 = new Date("2026-03-01T03:00:00Z");
+  await context.clock.setFixedTime(t0);
+  await open(page);
+  await transfer(page, "5000000");
+
+  await fill(page, A, "3000001");
+  await expect(page.getByTestId("transfer-error")).toHaveText("Vượt hạn mức chuyển trong ngày 8.000.000 ₫");
+  await page.getByLabel("Số tiền (₫)").fill("3000000");
+  await page.getByRole("button", { name: "Tiếp tục" }).click();
+  await expect(page.getByRole("heading", { name: /Bước 2/ })).toBeVisible();
+  await page.getByRole("button", { name: "Xác nhận" }).click();
+  await otpAndVerify(page);
+  await expect(page.getByTestId("txn-success")).toBeVisible();
+  await page.getByRole("button", { name: "Chuyển tiếp" }).click();
+
+  await fill(page, A, "10000");
+  await expect(page.getByTestId("transfer-error")).toContainText("Vượt hạn mức");
+
+  await context.clock.setFixedTime(new Date(t0.getTime() + 24 * 3600_000));
+  await page.getByRole("button", { name: "Tiếp tục" }).click();
+  await expect(page.getByRole("heading", { name: /Bước 2/ })).toBeVisible();
+});`,
+  },
+  {
+    id: "bank-3",
+    title: "OTP: sai 3 lần và thời hạn 60 giây",
+    difficulty: 3,
+    bugs: ["BUG-03"],
+    task: "Chứng minh nhập sai OTP hai lần báo (1/3), (2/3) và lần thứ ba huỷ giao dịch quay về bước 1 với số dư không đổi; dùng đồng hồ giả để chứng minh OTP còn hiệu lực đúng ở giây thứ 60 và hết hạn ở giây thứ 61 (gửi lại OTP rồi thành công). Test phải đỏ khi bật BUG-03.",
+    criteria: [
+      "Tạo mã sai chắc chắn khác mã thật",
+      "Kiểm tra từng thông báo đếm số lần sai",
+      "Kiểm tra giao dịch bị huỷ: quay về bước 1 và số dư giữ nguyên",
+      "Kiểm tra biên 60 giây và 61 giây bằng đồng hồ giả",
+      "Gửi lại OTP sau khi hết hạn và hoàn tất giao dịch",
+      "Test đỏ với BUG-03",
+      ...COMMON_CRITERIA,
+    ],
+    hints: [
+      "Không dùng chờ thật 60 giây: đổi giờ giả bằng setFixedTime.",
+      "Mã OTP là chuỗi 6 số hiển thị trong otp-hint.",
+      "Sau khi gửi lại OTP phải đọc lại otp-hint vì mã đã đổi.",
+    ],
+    solution: `import { test, expect, type Page } from "@playwright/test";
+
+const A = "0123456789";
+
+async function open(page: Page) {
+  await page.goto("/lab/bank");
+  await page.getByTestId("reset-data").click();
+}
+
+async function fill(page: Page, account: string, amount: string, note = "") {
+  await page.getByLabel("Số tài khoản nhận").fill(account);
+  await page.getByLabel("Số tiền (₫)").fill(amount);
+  await page.getByLabel("Nội dung chuyển khoản").fill(note);
+  await page.getByRole("button", { name: "Tiếp tục" }).click();
+}
+
+// OTP giả lập hiển thị ngay trên màn hình (data-testid otp-hint) nên test đọc trực tiếp.
+async function otpAndVerify(page: Page) {
+  await page.getByLabel("Mã OTP").fill((await page.getByTestId("otp-hint").textContent())!);
+  await page.getByRole("button", { name: "Xác thực" }).click();
+}
+
+async function transfer(page: Page, amount: string) {
+  await fill(page, A, amount);
+  await page.getByRole("button", { name: "Xác nhận" }).click();
+  await otpAndVerify(page);
+  await expect(page.getByTestId("txn-success")).toBeVisible();
+  await page.getByRole("button", { name: "Chuyển tiếp" }).click();
+}
+
+// Mã sai chắc chắn khác mã thật.
+const wrongOtp = async (page: Page) => ((await page.getByTestId("otp-hint").textContent()) === "111111" ? "222222" : "111111");
+
+test("OTP sai 3 lần thì huỷ giao dịch", async ({ page }) => {
+  await open(page);
+  await fill(page, A, "100000");
+  await page.getByRole("button", { name: "Xác nhận" }).click();
+  for (const n of [1, 2]) {
+    await page.getByLabel("Mã OTP").fill(await wrongOtp(page));
+    await page.getByRole("button", { name: "Xác thực" }).click();
+    await expect(page.getByTestId("transfer-error")).toHaveText("Mã OTP không đúng (" + n + "/3)");
+  }
+  await page.getByLabel("Mã OTP").fill(await wrongOtp(page));
+  await page.getByRole("button", { name: "Xác thực" }).click();
+  await expect(page.getByTestId("transfer-error")).toHaveText("Nhập sai OTP quá 3 lần, giao dịch đã bị huỷ");
+  await expect(page.getByRole("heading", { name: /Bước 1/ })).toBeVisible();
+  await expect(page.getByTestId("balance")).toHaveText("10.000.000 ₫");
+});
+
+for (const [seconds, ok] of [
+  [60, true],
+  [61, false],
+] as const) {
+  test("OTP ở giây thứ " + seconds, async ({ page, context }) => {
+    const t0 = new Date("2026-03-01T03:00:00Z");
+    await context.clock.setFixedTime(t0);
+    await open(page);
+    await fill(page, A, "100000");
+    await page.getByRole("button", { name: "Xác nhận" }).click();
+    const code = (await page.getByTestId("otp-hint").textContent())!;
+
+    await context.clock.setFixedTime(new Date(t0.getTime() + seconds * 1000));
+    await page.getByLabel("Mã OTP").fill(code);
+    await page.getByRole("button", { name: "Xác thực" }).click();
+    if (ok) {
+      await expect(page.getByTestId("txn-success")).toBeVisible();
+    } else {
+      await expect(page.getByTestId("transfer-error")).toHaveText("Mã OTP đã hết hạn, hãy gửi lại");
+      await page.getByRole("button", { name: "Gửi lại OTP" }).click();
+      await otpAndVerify(page);
+      await expect(page.getByTestId("txn-success")).toBeVisible();
+    }
+  });
+}`,
+  },
+];
+
+export const EXERCISES: Record<string, Exercise[]> = { login, forms, cart, playground, api, otp, todo, table, leave, chat, totp, oauth, pay, orders, guard, webhooks, rbac, timezone, csv, mail, upload, bank };

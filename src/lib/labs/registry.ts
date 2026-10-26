@@ -30,4 +30,5 @@ export const LABS: LabInfo[] = [
   { slug: "csv", id: "LAB-27", title: "Nhập/xuất CSV & đối chiếu dữ liệu", domain: "Reporting", difficulty: 2, skills: ["setInputFiles", "download", "parse CSV", "RFC 4180", "round trip"], ready: true },
   { slug: "mail", id: "LAB-23", title: "Email giao dịch (xác nhận đơn, đặt lại mật khẩu)", domain: "Notification", difficulty: 2, skills: ["đọc email", "nội dung động", "liên kết trong email", "định dạng tiền", "token hết hạn"], ready: true },
   { slug: "upload", id: "LAB-25", title: "Tải tệp lên kho lưu trữ", domain: "Storage", difficulty: 2, skills: ["setInputFiles", "biên dung lượng", "định dạng", "tiến trình", "huỷ", "nhiều tệp"], ready: true },
+  { slug: "bank", id: "LAB-05", title: "Ngân hàng: chuyển tiền nhiều bước", domain: "Banking", difficulty: 3, skills: ["multi-step", "OTP giả", "biểu phí", "hạn mức ngày", "page.clock"], ready: true },
 ];

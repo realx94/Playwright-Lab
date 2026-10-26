@@ -229,6 +229,13 @@ Vai trò Admin/Manager/Staff/Guest; ma trận quyền; thử IDOR (đổi id tro
 - BR-05 tối đa 5 tệp; nhiều tệp xử lý riêng từng tệp; BR-06 giữ khi tải lại, xoá được.
 - Bug: BUG-01 loại cả tệp đúng 2 MB; BUG-02 đuôi viết hoa bị từ chối; BUG-03 huỷ không có tác dụng.
 
+### LAB-05 Ngân hàng: chuyển tiền (bản đã làm)
+`/lab/bank`: 4 bước (nhập → xác nhận → OTP giả lập hiển thị trên màn hình → kết quả), số dư ban đầu 10.000.000 ₫, tài khoản nhận `0123456789`/`9876543210`.
+- BR-01 số tiền nguyên 10.000–5.000.000, số tiền + phí ≤ số dư; BR-02 hạn mức ngày 8.000.000 ₫ cộng dồn, đặt lại hôm sau.
+- BR-03 phí: ≤ 500.000 miễn phí; đến 2.000.000 là 3.300; trên đó 11.000. BR-04 tài khoản nhận 10 số, tồn tại, không phải của mình.
+- BR-05 OTP hiệu lực 60 giây, sai 3 lần thì huỷ; BR-06 mã giao dịch TXnnnn, lịch sử, giữ khi tải lại.
+- Bug: BUG-01 phí tính cả ở đúng 500.000; BUG-02 hạn mức ngày không cộng dồn; BUG-03 sai OTP quá 3 lần không huỷ.
+
 ## Độ phủ kỹ năng theo lab (rà soát)
 | Kỹ năng | Lab |
 |---------|-----|
@@ -267,7 +274,8 @@ Vai trò Admin/Manager/Staff/Guest; ma trận quyền; thử IDOR (đổi id tro
 | LAB-27 Nhập/xuất CSV & đối chiếu dữ liệu | `/lab/csv` | Đã làm |
 | LAB-23 Email giao dịch (xác nhận đơn, đặt lại mật khẩu) | `/lab/mail` | Đã làm |
 | LAB-25 Tải tệp lên kho lưu trữ | `/lab/upload` | Đã làm |
-| LAB-5, 6, 9, 10, 11, 15, 16 | — | Chưa làm |
+| LAB-05 Ngân hàng: chuyển tiền nhiều bước | `/lab/bank` | Đã làm |
+| LAB-6, 9, 10, 11, 15, 16 | — | Chưa làm |
 
 ### Quy tắc kỹ thuật của trang lab
 - `/lab/<slug>` là **ứng dụng thuần**: không header, không thanh tìm kiếm của site (chỉ một liên kết quay lại ở layout lab) để locator của người học không bị trùng.

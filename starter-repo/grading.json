@@ -452,6 +452,26 @@
       "lab": "upload",
       "spec": "tests/exercises/upload/upload-3.spec.ts",
       "bugs": []
+    },
+    "bank-1": {
+      "lab": "bank",
+      "spec": "tests/exercises/bank/bank-1.spec.ts",
+      "bugs": []
+    },
+    "bank-2": {
+      "lab": "bank",
+      "spec": "tests/exercises/bank/bank-2.spec.ts",
+      "bugs": [
+        "BUG-01",
+        "BUG-02"
+      ]
+    },
+    "bank-3": {
+      "lab": "bank",
+      "spec": "tests/exercises/bank/bank-3.spec.ts",
+      "bugs": [
+        "BUG-03"
+      ]
     }
   }
 }
