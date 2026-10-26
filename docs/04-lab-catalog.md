@@ -198,6 +198,14 @@ Vai trò Admin/Manager/Staff/Guest; ma trận quyền; thử IDOR (đổi id tro
 - Bug: BUG-01 không đòi CAPTCHA; BUG-02 thiếu `Retry-After`; BUG-03 mật khẩu đúng vượt qua khóa.
 **Kỹ năng:** `request` + 429, `expect.poll` chờ hết khóa, khoá test CAPTCHA, trạng thái disabled/đếm ngược.
 
+### LAB-28 Lịch/Booking với múi giờ & Clock (bản đã làm)
+`/lab/timezone`: 12 khung giờ cố định theo UTC (01:00–12:00), hiển thị theo múi giờ chọn hoặc múi giờ trình duyệt (`timezoneId`), điều khiển "bây giờ" bằng `page.clock`.
+- BR-01 giờ hiển thị theo múi giờ chọn/trình duyệt, `data-utc` không đổi; BR-02 khung đã bắt đầu → Đã qua.
+- BR-03 đóng đặt khi còn dưới 2 giờ (đúng 2 giờ còn đặt được); BR-04 một lịch hẹn, xác nhận giờ địa phương + UTC, đếm ngược, giữ khi tải lại, huỷ.
+- BR-05 ngày 2026-03-08 ở New York không có 02:00 (DST).
+- Bug: BUG-01 bỏ qua múi giờ đã chọn; BUG-02 đặt được khung đã qua; BUG-03 sai giờ sau thời điểm chuyển giờ mùa hè.
+- Lưu ý thực tế: Chromium có thể báo `Asia/Saigon` thay cho `Asia/Ho_Chi_Minh`; lab chuẩn hoá tên.
+
 ## Độ phủ kỹ năng theo lab (rà soát)
 | Kỹ năng | Lab |
 |---------|-----|
@@ -232,7 +240,8 @@ Vai trò Admin/Manager/Staff/Guest; ma trận quyền; thử IDOR (đổi id tro
 | LAB-24 CAPTCHA & giới hạn tần suất | `/lab/guard` | Đã làm |
 | LAB-22 Webhook & sự kiện bất đồng bộ | `/lab/webhooks` | Đã làm |
 | LAB-26 Phân quyền RBAC & multi-tenant | `/lab/rbac` | Đã làm |
-| LAB-5, 6, 9, 10, 11, 15, 16, 23, 25, 27, 28 | — | Chưa làm |
+| LAB-28 Đặt lịch theo múi giờ & đồng hồ | `/lab/timezone` | Đã làm |
+| LAB-5, 6, 9, 10, 11, 15, 16, 23, 25, 27 | — | Chưa làm |
 
 ### Quy tắc kỹ thuật của trang lab
 - `/lab/<slug>` là **ứng dụng thuần**: không header, không thanh tìm kiếm của site (chỉ một liên kết quay lại ở layout lab) để locator của người học không bị trùng.

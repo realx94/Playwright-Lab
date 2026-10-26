@@ -455,7 +455,31 @@ const rbac: Workshop = {
   ],
 };
 
-export const WORKSHOPS: Record<string, Workshop> = { login, forms, cart, playground, api, otp, todo, table, leave, chat, totp, oauth, pay, orders, guard, webhooks, rbac };
+const timezone: Workshop = {
+  techniques: ["Boundary Value Analysis", "State Transition", "Error Guessing", "Compatibility"],
+  rules: [
+    { id: "BR-01", text: "Mười hai khung giờ cố định theo UTC (01:00–12:00); giờ hiển thị theo múi giờ chọn, hoặc múi giờ trình duyệt khi chọn Tự động" },
+    { id: "BR-02", text: "Khung giờ đã bắt đầu (bắt đầu ≤ bây giờ) hiển thị Đã qua và không đặt được" },
+    { id: "BR-03", text: "Đóng đặt trước giờ bắt đầu dưới 2 giờ: đúng 2 giờ còn đặt được, ít hơn 2 giờ hiển thị Đã đóng đặt" },
+    { id: "BR-04", text: "Mỗi người chỉ có một lịch hẹn; xác nhận hiển thị cả giờ địa phương và UTC, đếm ngược còn bao nhiêu giờ phút, giữ khi tải lại, huỷ được" },
+    { id: "BR-05", text: "Ngày chuyển giờ mùa hè (2026-03-08, New York): giờ hiển thị phải theo độ lệch thật, không có 02:00 địa phương" },
+  ],
+  cases: [
+    { id: "TC-Z-101", title: "Múi giờ trình duyệt UTC+7", precondition: "timezoneId Asia/Ho_Chi_Minh", steps: "Mở trang, xem khung giờ", data: "01:00 UTC", expected: "Khung đầu hiển thị 08:00; múi giờ ghi Asia/Ho_Chi_Minh", type: "Happy", priority: "P0", br: ["BR-01"] },
+    { id: "TC-Z-102", title: "Chọn múi giờ khác", precondition: "Trình duyệt UTC+7", steps: "Chọn America/New_York", data: "01:00 UTC", expected: "Khung đầu hiển thị 20:00; data-utc không đổi", type: "Happy", priority: "P0", br: ["BR-01"] },
+    { id: "TC-Z-103", title: "Khung giờ đã qua", precondition: "Bây giờ 04:00 UTC", steps: "Xem khung 03:00 và 04:00 UTC", data: "03:00, 04:00", expected: "Đã qua, không có nút Đặt", type: "BVA", priority: "P0", br: ["BR-02"] },
+    { id: "TC-Z-104", title: "Còn dưới 2 giờ", precondition: "Bây giờ 04:00 UTC", steps: "Xem khung 05:00 UTC", data: "còn 1 giờ", expected: "Đã đóng đặt", type: "BVA", priority: "P0", br: ["BR-03"] },
+    { id: "TC-Z-105", title: "Còn đúng 2 giờ", precondition: "Bây giờ 04:00:00 UTC", steps: "Xem khung 06:00 UTC", data: "còn 2 giờ", expected: "Vẫn đặt được", type: "BVA", priority: "P0", br: ["BR-03"] },
+    { id: "TC-Z-106", title: "Còn 2 giờ trừ 1 giây", precondition: "Bây giờ 04:00:01 UTC", steps: "Xem khung 06:00 UTC", data: "còn 1:59:59", expected: "Đã đóng đặt", type: "BVA", priority: "P1", br: ["BR-03"] },
+    { id: "TC-Z-107", title: "Xác nhận đặt lịch", precondition: "Trình duyệt UTC+7", steps: "Đặt khung 07:00 UTC", data: "07:00 UTC", expected: "Hiển thị 14:00 (Asia/Ho_Chi_Minh) · UTC 07:00", type: "Happy", priority: "P1", br: ["BR-04"] },
+    { id: "TC-Z-108", title: "Đếm ngược theo đồng hồ", precondition: "Đã đặt khung 07:00 UTC lúc 04:00", steps: "Chuyển giờ lên 04:30", data: "+30 phút", expected: "Còn 3 giờ 0 phút rồi còn 2 giờ 30 phút", type: "State", priority: "P1", br: ["BR-04"] },
+    { id: "TC-Z-109", title: "Giữ lịch sau khi tải lại", precondition: "Đã đặt lịch", steps: "Tải lại trang rồi huỷ", data: "—", expected: "Lịch vẫn còn, huỷ xong biến mất", type: "State", priority: "P2", br: ["BR-04"] },
+    { id: "TC-Z-110", title: "Ngày chuyển giờ mùa hè", precondition: "Chọn New York, ngày 2026-03-08", steps: "Đọc danh sách giờ", data: "UTC 01:00–12:00", expected: "20:00 … 01:00 rồi 03:00 … 08:00, không có 02:00", type: "BVA", priority: "P0", br: ["BR-05"] },
+    { id: "TC-Z-111", title: "Ngày thường không nhảy giờ", precondition: "Chọn New York, ngày 2026-03-01", steps: "Đọc danh sách giờ", data: "UTC 01:00–12:00", expected: "Có 02:00, giờ liên tục", type: "Happy", priority: "P1", br: ["BR-05"] },
+  ],
+};
+
+export const WORKSHOPS: Record<string, Workshop> = { login, forms, cart, playground, api, otp, todo, table, leave, chat, totp, oauth, pay, orders, guard, webhooks, rbac, timezone };
 
 export function toCsv(cases: TestCase[]): string {
   const head = ["ID", "Tiêu đề", "Tiền điều kiện", "Các bước", "Dữ liệu", "Kết quả mong đợi", "Loại", "Ưu tiên", "BR"];

@@ -371,6 +371,27 @@
       "lab": "rbac",
       "spec": "tests/exercises/rbac/rbac-3.spec.ts",
       "bugs": []
+    },
+    "timezone-1": {
+      "lab": "timezone",
+      "spec": "tests/exercises/timezone/timezone-1.spec.ts",
+      "bugs": [
+        "BUG-01"
+      ]
+    },
+    "timezone-2": {
+      "lab": "timezone",
+      "spec": "tests/exercises/timezone/timezone-2.spec.ts",
+      "bugs": [
+        "BUG-03"
+      ]
+    },
+    "timezone-3": {
+      "lab": "timezone",
+      "spec": "tests/exercises/timezone/timezone-3.spec.ts",
+      "bugs": [
+        "BUG-02"
+      ]
     }
   }
 }

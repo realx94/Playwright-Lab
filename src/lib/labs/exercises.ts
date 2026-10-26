@@ -3097,4 +3097,159 @@ test("staff chỉ sửa tài liệu của mình; erin chỉ thấy tổ chức B
   },
 ];
 
-export const EXERCISES: Record<string, Exercise[]> = { login, forms, cart, playground, api, otp, todo, table, leave, chat, totp, oauth, pay, orders, guard, webhooks, rbac };
+const timezone: Exercise[] = [
+  {
+    id: "timezone-1",
+    title: "Múi giờ trình duyệt và múi giờ được chọn",
+    difficulty: 3,
+    bugs: ["BUG-01"],
+    task: "Đặt timezoneId của context là Asia/Ho_Chi_Minh và kiểm tra 12 khung giờ hiển thị 08:00 đến 19:00. Sau đó chọn America/New_York và kiểm tra khung đầu là 20:00 trong khi data-utc không đổi. Cuối cùng kiểm tra xác nhận đặt lịch hiển thị cả giờ địa phương và UTC. Test phải đỏ khi bật BUG-01.",
+    criteria: [
+      "Dùng test.use({ timezoneId }) cho nhóm test, không đổi múi giờ của máy",
+      "Kiểm tra toàn bộ danh sách giờ bằng allInnerTexts và toEqual",
+      "Kiểm tra data-utc không đổi khi đổi múi giờ hiển thị",
+      "Đặt lịch với giờ giả cố định và kiểm tra dòng xác nhận có cả giờ địa phương lẫn UTC",
+      "Test đỏ với BUG-01",
+      ...COMMON_CRITERIA,
+    ],
+    hints: [
+      "Chromium có thể báo Asia/Saigon thay cho Asia/Ho_Chi_Minh; lab đã chuẩn hoá tên này.",
+      "Dùng context.clock.setFixedTime để 'bây giờ' cố định trước khi mở trang, tránh khung đặt bị đóng.",
+      "01:00 UTC là 08:00 ở UTC+7 và là 20:00 (ngày hôm trước) ở New York giờ chuẩn.",
+    ],
+    solution: `import { test, expect, type Page } from "@playwright/test";
+
+const times = (page: Page) => page.getByTestId("slot-time").allInnerTexts();
+const slot = (page: Page, utc: string) => page.locator('[data-utc="' + utc + '"]');
+
+async function open(page: Page) {
+  await page.goto("/lab/timezone");
+  await page.getByTestId("reset-data").click();
+  await expect(page.getByTestId("slot")).toHaveCount(12);
+}
+
+test.use({ timezoneId: "Asia/Ho_Chi_Minh" });
+
+test("tự động dùng múi giờ trình duyệt", async ({ page }) => {
+  await open(page);
+  await expect(page.getByTestId("tz-current")).toContainText("Asia/Ho_Chi_Minh");
+  expect(await times(page)).toEqual(["08:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00"]);
+});
+
+test("chọn múi giờ khác, giờ UTC giữ nguyên", async ({ page }) => {
+  await open(page);
+  await page.getByLabel("Múi giờ hiển thị").selectOption("America/New_York");
+  await expect(page.getByTestId("slot-time").first()).toHaveText("20:00");
+  await expect(page.getByTestId("slot").first()).toHaveAttribute("data-utc", "2026-03-01T01:00:00.000Z");
+});
+
+test("xác nhận đặt lịch có giờ địa phương và UTC", async ({ page, context }) => {
+  await context.clock.setFixedTime(new Date("2026-03-01T04:00:00Z"));
+  await open(page);
+  await page.getByRole("button", { name: "Đặt 14:00" }).click();
+  await expect(page.getByTestId("booking-confirm")).toHaveText("Đã đặt lịch: 14:00 (Asia/Ho_Chi_Minh) · UTC 07:00");
+});`,
+  },
+  {
+    id: "timezone-2",
+    title: "Ngày chuyển giờ mùa hè (DST)",
+    difficulty: 3,
+    bugs: ["BUG-03"],
+    task: "Với trình duyệt ở New York, so sánh ngày thường 2026-03-01 (giờ liên tục, có 02:00) với ngày 2026-03-08 (chuyển giờ mùa hè: không có khung 02:00 địa phương). Test phải đỏ khi bật BUG-03.",
+    criteria: [
+      "Đặt timezoneId là America/New_York",
+      "Ngày 2026-03-01: khung đầu là 20:00 và danh sách chứa 02:00",
+      "Ngày 2026-03-08: danh sách đúng 20:00 … 01:00 rồi 03:00 … 08:00 và không chứa 02:00",
+      "Dùng toEqual cho toàn bộ danh sách để bắt cả lỗi lệch giờ nhỏ",
+      "Test đỏ với BUG-03",
+      ...COMMON_CRITERIA,
+    ],
+    hints: [
+      "Lúc 07:00 UTC ngày 2026-03-08, New York chuyển từ 02:00 EST sang 03:00 EDT nên không có 02:xx.",
+      "Chọn ngày bằng getByLabel('Ngày (UTC)').selectOption('2026-03-08').",
+      "Lấy giờ của 12 khung bằng page.getByTestId('slot-time').allInnerTexts().",
+    ],
+    solution: `import { test, expect, type Page } from "@playwright/test";
+
+const times = (page: Page) => page.getByTestId("slot-time").allInnerTexts();
+const slot = (page: Page, utc: string) => page.locator('[data-utc="' + utc + '"]');
+
+async function open(page: Page) {
+  await page.goto("/lab/timezone");
+  await page.getByTestId("reset-data").click();
+  await expect(page.getByTestId("slot")).toHaveCount(12);
+}
+
+test.use({ timezoneId: "America/New_York" });
+
+test("ngày thường giờ liên tục", async ({ page }) => {
+  await open(page);
+  const t = await times(page);
+  expect(t[0]).toBe("20:00");
+  expect(t).toContain("02:00");
+});
+
+test("ngày chuyển giờ mùa hè không có 02:00", async ({ page }) => {
+  await open(page);
+  await page.getByLabel("Ngày (UTC)").selectOption("2026-03-08");
+  expect(await times(page)).toEqual(["20:00", "21:00", "22:00", "23:00", "00:00", "01:00", "03:00", "04:00", "05:00", "06:00", "07:00", "08:00"]);
+});`,
+  },
+  {
+    id: "timezone-3",
+    title: "Điều khiển đồng hồ: khung đã qua, đóng đặt 2 giờ, đếm ngược",
+    difficulty: 3,
+    bugs: ["BUG-02"],
+    task: "Dùng context.clock.setFixedTime để đặt 'bây giờ' là 04:00:00 UTC: các khung 01–04 là Đã qua, 05:00 Đã đóng đặt, 06:00 (đúng 2 giờ) vẫn đặt được; thêm 1 giây thì 06:00 cũng đóng. Sau đó đặt khung 07:00, kiểm tra đếm ngược và giá trị mới khi tiến đồng hồ 30 phút. Test phải đỏ khi bật BUG-02.",
+    criteria: [
+      "Đặt giờ giả trước khi mở trang",
+      "Kiểm tra trạng thái từng khung đã qua bằng thuộc tính data-utc",
+      "Kiểm tra biên: đúng 2 giờ còn đặt được và 2 giờ trừ 1 giây thì đóng",
+      "Kiểm tra đếm ngược Còn 3 giờ 0 phút rồi Còn 2 giờ 30 phút sau khi đổi giờ giả",
+      "Test đỏ với BUG-02",
+      ...COMMON_CRITERIA,
+    ],
+    hints: [
+      "Đặt timezoneId là UTC để nhãn giờ trùng giờ UTC, dễ đọc.",
+      "Gọi setFixedTime lần nữa để 'tiến' đồng hồ; trang cập nhật mỗi 0,5 giây nên assertion sẽ tự chờ.",
+      "Khung có data-utc dạng 2026-03-01T06:00:00.000Z.",
+    ],
+    solution: `import { test, expect, type Page } from "@playwright/test";
+
+const times = (page: Page) => page.getByTestId("slot-time").allInnerTexts();
+const slot = (page: Page, utc: string) => page.locator('[data-utc="' + utc + '"]');
+
+async function open(page: Page) {
+  await page.goto("/lab/timezone");
+  await page.getByTestId("reset-data").click();
+  await expect(page.getByTestId("slot")).toHaveCount(12);
+}
+
+test.use({ timezoneId: "UTC" });
+
+test("khung đã qua và đóng đặt trước 2 giờ", async ({ page, context }) => {
+  await context.clock.setFixedTime(new Date("2026-03-01T04:00:00Z"));
+  await open(page);
+  for (const h of ["01", "02", "03", "04"]) {
+    await expect(slot(page, "2026-03-01T" + h + ":00:00.000Z").getByTestId("slot-state")).toHaveText("Đã qua");
+  }
+  await expect(slot(page, "2026-03-01T05:00:00.000Z").getByTestId("slot-state")).toHaveText("Đã đóng đặt");
+  await expect(slot(page, "2026-03-01T06:00:00.000Z").getByRole("button", { name: "Đặt 06:00" })).toBeVisible();
+
+  await context.clock.setFixedTime(new Date("2026-03-01T04:00:01Z"));
+  await expect(slot(page, "2026-03-01T06:00:00.000Z").getByTestId("slot-state")).toHaveText("Đã đóng đặt");
+});
+
+test("đặt lịch và đếm ngược theo đồng hồ", async ({ page, context }) => {
+  await context.clock.setFixedTime(new Date("2026-03-01T04:00:00Z"));
+  await open(page);
+  await page.getByRole("button", { name: "Đặt 07:00" }).click();
+  await expect(page.getByTestId("booking-countdown")).toHaveText("Còn 3 giờ 0 phút");
+
+  await context.clock.setFixedTime(new Date("2026-03-01T04:30:00Z"));
+  await expect(page.getByTestId("booking-countdown")).toHaveText("Còn 2 giờ 30 phút");
+});`,
+  },
+];
+
+export const EXERCISES: Record<string, Exercise[]> = { login, forms, cart, playground, api, otp, todo, table, leave, chat, totp, oauth, pay, orders, guard, webhooks, rbac, timezone };

@@ -26,4 +26,5 @@ export const LABS: LabInfo[] = [
   { slug: "guard", id: "LAB-24", title: "CAPTCHA & giới hạn tần suất", domain: "Security", difficulty: 3, skills: ["429 + Retry-After", "CAPTCHA test mode", "backoff", "expect.poll", "brute-force"], ready: true },
   { slug: "webhooks", id: "LAB-22", title: "Webhook & sự kiện bất đồng bộ", domain: "Integration", difficulty: 3, skills: ["chữ ký HMAC", "idempotency", "retry/backoff", "replay", "expect.poll"], ready: true },
   { slug: "rbac", id: "LAB-26", title: "Phân quyền RBAC & multi-tenant", domain: "Authorization", difficulty: 3, skills: ["ma trận quyền", "IDOR", "403 vs 404", "nhiều context", "tách tổ chức"], ready: true },
+  { slug: "timezone", id: "LAB-28", title: "Đặt lịch theo múi giờ & đồng hồ", domain: "Time", difficulty: 3, skills: ["timezoneId", "page.clock", "DST", "biên thời gian", "đếm ngược"], ready: true },
 ];
