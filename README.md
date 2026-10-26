@@ -1,36 +1,49 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Playwright Lab
 
-## Getting Started
+Website học **Playwright Automation từ Zero đến Hero** cho QA: bài học, lab nghiệp vụ, thiết kế test case, bài tập kèm chấm tự động và starter repo.
 
-First, run the development server:
+- **55 bài học** (Level 0–5), mỗi bài có quiz xáo trộn chống đoán mẹo
+- **9 lab** trong chính website (`/lab/*`): Login, Form, Giỏ hàng, Todo, Bảng dữ liệu, Playground, Mock API, Email OTP… mỗi lab có business rule, test case mẫu, bug có chủ đích và bài tập
+- **Starter repo** (`starter-repo/`) tải về làm bài, có `npm run grade` chấm bằng mutation grading
+- Tra cứu: tìm kiếm `Ctrl+K`, thuật ngữ, cheat sheet; bôi đen bất kỳ chữ nào để **hỏi Google AI**
+- Lịch sử học và kết quả lưu ngay trong trình duyệt (IndexedDB), không cần tài khoản
 
+Tài liệu sản phẩm nằm ở [docs/](docs/README.md).
+
+## Chạy local
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npx playwright install chromium
+npm run dev            # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Kiểm tra chất lượng
+```bash
+npm run lint
+npx playwright test            # e2e cho site, lab, quiz, trang hướng dẫn (tự build và chạy ở cổng 3100)
+npm run verify:solutions       # đáp án mẫu: xanh trên lab sạch, đỏ khi bật đúng bug
+npm run starter:stubs          # sinh lại file bài tập và grading.json cho starter repo
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Deploy
+- **Vercel**: import repo, framework Next.js, không cần cấu hình thêm.
+- **Netlify**: đã có `netlify.toml` (plugin `@netlify/plugin-nextjs`).
+- Biến môi trường (tuỳ chọn): `NEXT_PUBLIC_SITE_URL` — địa chỉ gốc của site, dùng cho sitemap và metadata.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+`public/starter-repo.zip` được tạo tự động ở bước `prebuild`, không cần commit.
 
-## Learn More
+## Cấu trúc
+```text
+src/app/(site)/      trang học (có header, tìm kiếm, bôi đen hỏi AI)
+src/app/lab/         ứng dụng lab thuần (không header để locator sạch)
+src/app/api/lab/     mock API cho LAB-14
+src/content/         bài học (md), quiz (json), thuật ngữ
+src/lib/labs/        quy tắc nghiệp vụ, test case mẫu, bài tập, đăng ký lab
+src/lib/storage/     StorageAdapter (IndexedDB), sẵn sàng thay bằng Supabase
+starter-repo/        project Playwright cho người học
+e2e/                 test của chính site
+scripts/             công cụ: đóng gói starter, sinh stub, kiểm tra đáp án
+docs/                PRD, user stories, curriculum, lab catalog, kiến trúc
+```
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Quy ước làm việc với Claude Code nằm trong [CLAUDE.md](CLAUDE.md).

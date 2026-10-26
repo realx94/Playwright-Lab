@@ -147,7 +147,7 @@ export function StatsApp({ lessons }: { lessons: LessonRef[] }) {
                   {d}/{inLv.length}
                 </span>
               </div>
-              <Progress value={(d / inLv.length) * 100} />
+              <Progress value={(d / inLv.length) * 100} aria-label={`Tiến độ Level ${lv}`} />
             </div>
           );
         })}

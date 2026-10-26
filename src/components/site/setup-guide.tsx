@@ -125,7 +125,7 @@ export function SetupGuide() {
 
       <section className="space-y-3" aria-label="Checklist thiết lập">
         <h2 className="text-xl font-semibold">Checklist thiết lập</h2>
-        <Progress value={(count / CHECKS.length) * 100} />
+        <Progress value={(count / CHECKS.length) * 100} aria-label="Tiến độ thiết lập môi trường" />
         <p className="text-sm text-muted-foreground" data-testid="setup-progress">
           Đã hoàn thành {count}/{CHECKS.length}
         </p>

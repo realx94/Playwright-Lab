@@ -166,7 +166,13 @@ function ScrollSection() {
   }, [more, count]);
   return (
     <Section id="sec-scroll" title="Cuộn vô hạn">
-      <div data-testid="scroll-list" className="h-40 overflow-auto rounded-md border">
+      <div
+        data-testid="scroll-list"
+        tabIndex={0}
+        role="region"
+        aria-label="Danh sách cuộn vô hạn"
+        className="h-40 overflow-auto rounded-md border"
+      >
         <ul>
           {Array.from({ length: count }, (_, i) => (
             <li key={i} className="border-b px-3 py-2">

@@ -131,7 +131,7 @@
 }
 /* Tô màu cú pháp (highlight.js) cho khối code trong bài học */
 .hljs { color: var(--foreground); background: transparent; }
-.hljs-comment, .hljs-quote { color: #6b7280; font-style: italic; }
+.hljs-comment, .hljs-quote { color: #4b5563; font-style: italic; }
 .hljs-keyword, .hljs-selector-tag, .hljs-literal, .hljs-built_in { color: #a626a4; }
 .hljs-string, .hljs-doctag, .hljs-regexp { color: #2e7d32; }
 .hljs-number, .hljs-attr, .hljs-attribute { color: #b45309; }
