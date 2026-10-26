@@ -431,7 +431,31 @@ const webhooks: Workshop = {
   ],
 };
 
-export const WORKSHOPS: Record<string, Workshop> = { login, forms, cart, playground, api, otp, todo, table, leave, chat, totp, oauth, pay, orders, guard, webhooks };
+const rbac: Workshop = {
+  techniques: ["Permission Matrix", "Security", "Decision Table", "Error Guessing"],
+  rules: [
+    { id: "BR-01", text: "Mọi API cần token Bearer của người dùng hợp lệ; thiếu hoặc sai → 401" },
+    { id: "BR-02", text: "Danh sách chỉ trả tài liệu của tổ chức người dùng; tài liệu tổ chức khác không bao giờ xuất hiện" },
+    { id: "BR-03", text: "Truy cập tài liệu của tổ chức khác bằng id (đọc/sửa/xoá) trả 404 như không tồn tại, không trả 403 (chống IDOR)" },
+    { id: "BR-04", text: "Tạo: admin, manager, staff. Sửa: admin, manager, và staff chỉ với tài liệu của chính mình. Guest chỉ đọc" },
+    { id: "BR-05", text: "Xoá: chỉ admin; manager, staff, guest nhận 403" },
+  ],
+  cases: [
+    { id: "TC-R-101", title: "Không token", precondition: "—", steps: "GET danh sách không có Authorization", data: "(không)", expected: "401", type: "Security", priority: "P0", br: ["BR-01"] },
+    { id: "TC-R-102", title: "Token lạ", precondition: "—", steps: "GET với Bearer ai-do", data: "ai-do", expected: "401", type: "Security", priority: "P1", br: ["BR-01"] },
+    { id: "TC-R-103", title: "Danh sách tách tổ chức", precondition: "Có dữ liệu A và B", steps: "alice rồi erin GET danh sách", data: "alice (A), erin (B)", expected: "alice thấy 3 tài liệu A; erin thấy 2 tài liệu B", type: "Security", priority: "P0", br: ["BR-02"] },
+    { id: "TC-R-104", title: "IDOR đọc", precondition: "d-b1 thuộc tổ chức B", steps: "alice GET d-b1", data: "d-b1", expected: "404 (không phải 403, không lộ nội dung)", type: "Security", priority: "P0", br: ["BR-03"] },
+    { id: "TC-R-105", title: "IDOR sửa/xoá", precondition: "d-b1, d-b2 thuộc B", steps: "alice PATCH d-b1 và DELETE d-b2", data: "d-b1, d-b2", expected: "404 và dữ liệu B không đổi", type: "Security", priority: "P0", br: ["BR-03"] },
+    { id: "TC-R-106", title: "Guest tạo tài liệu", precondition: "dave là guest", steps: "dave POST tài liệu", data: "title hợp lệ", expected: "403", type: "Decision", priority: "P0", br: ["BR-04"] },
+    { id: "TC-R-107", title: "Staff sửa tài liệu người khác", precondition: "d-a1 của alice", steps: "carol PATCH d-a1", data: "d-a1", expected: "403", type: "Decision", priority: "P0", br: ["BR-04"] },
+    { id: "TC-R-108", title: "Staff sửa tài liệu của mình", precondition: "d-a3 của carol", steps: "carol PATCH d-a3", data: "d-a3", expected: "200", type: "Decision", priority: "P1", br: ["BR-04"] },
+    { id: "TC-R-109", title: "Manager xoá", precondition: "bob là manager", steps: "bob DELETE d-a2", data: "d-a2", expected: "403", type: "Decision", priority: "P0", br: ["BR-05"] },
+    { id: "TC-R-110", title: "Admin xoá", precondition: "alice là admin", steps: "alice DELETE d-a2", data: "d-a2", expected: "204", type: "Happy", priority: "P0", br: ["BR-05"] },
+    { id: "TC-R-111", title: "Giao diện theo vai trò", precondition: "Đăng nhập dave (guest)", steps: "Quan sát nút", data: "dave", expected: "Không có Tạo, Sửa, Xoá", type: "Decision", priority: "P1", br: ["BR-04", "BR-05"] },
+  ],
+};
+
+export const WORKSHOPS: Record<string, Workshop> = { login, forms, cart, playground, api, otp, todo, table, leave, chat, totp, oauth, pay, orders, guard, webhooks, rbac };
 
 export function toCsv(cases: TestCase[]): string {
   const head = ["ID", "Tiêu đề", "Tiền điều kiện", "Các bước", "Dữ liệu", "Kết quả mong đợi", "Loại", "Ưu tiên", "BR"];

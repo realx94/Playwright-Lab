@@ -351,6 +351,26 @@
       "lab": "webhooks",
       "spec": "tests/exercises/webhooks/webhooks-3.spec.ts",
       "bugs": []
+    },
+    "rbac-1": {
+      "lab": "rbac",
+      "spec": "tests/exercises/rbac/rbac-1.spec.ts",
+      "bugs": [
+        "BUG-03"
+      ]
+    },
+    "rbac-2": {
+      "lab": "rbac",
+      "spec": "tests/exercises/rbac/rbac-2.spec.ts",
+      "bugs": [
+        "BUG-01",
+        "BUG-02"
+      ]
+    },
+    "rbac-3": {
+      "lab": "rbac",
+      "spec": "tests/exercises/rbac/rbac-3.spec.ts",
+      "bugs": []
     }
   }
 }

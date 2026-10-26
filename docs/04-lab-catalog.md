@@ -181,6 +181,12 @@ Kiểm tra email đơn hàng/reset mật khẩu: tiêu đề, người nhận, n
 
 ### LAB-26 RBAC & multi-tenant
 Vai trò Admin/Manager/Staff/Guest; ma trận quyền; thử IDOR (đổi id trong URL/API) phải nhận 403/404; dùng nhiều `browserContext` cho nhiều người dùng cùng lúc.
+- **Bản đã làm:** `/lab/rbac`, API `/api/lab/rbac/docs[/{id}]` với `Authorization: Bearer <alice|bob|carol|dave|erin>`; tổ chức A (alice admin, bob manager, carol staff, dave guest) và B (erin admin).
+  - BR-01 thiếu/sai token → 401; BR-02 danh sách tách theo tổ chức.
+  - BR-03 truy cập tài liệu tổ chức khác bằng id → 404 (không 403, chống IDOR).
+  - BR-04 tạo: admin/manager/staff; sửa: admin/manager và staff chỉ tài liệu của mình; guest chỉ đọc.
+  - BR-05 xoá: chỉ admin.
+  - Bug: BUG-01 IDOR đọc theo id; BUG-02 danh sách lộ tổ chức khác; BUG-03 manager xoá được.
 
 ### LAB-24 CAPTCHA & Rate limit (bản đã làm)
 Đăng nhập chống brute-force: `POST /api/lab/guard/login`; cookie phiên giữ bộ đếm.
@@ -225,7 +231,8 @@ Vai trò Admin/Manager/Staff/Guest; ma trận quyền; thử IDOR (đổi id tro
 | LAB-21 Đơn hàng & xác minh DB | `/lab/orders`, `/api/lab/orders`, `/api/lab/db/*` | Đã làm (DB mô phỏng chỉ-đọc, rollback, idempotency, xoá mềm, UI ↔ API ↔ DB) |
 | LAB-24 CAPTCHA & giới hạn tần suất | `/lab/guard` | Đã làm |
 | LAB-22 Webhook & sự kiện bất đồng bộ | `/lab/webhooks` | Đã làm |
-| LAB-5, 6, 9, 10, 11, 15, 16, 23, 25, 26, 27, 28 | — | Chưa làm |
+| LAB-26 Phân quyền RBAC & multi-tenant | `/lab/rbac` | Đã làm |
+| LAB-5, 6, 9, 10, 11, 15, 16, 23, 25, 27, 28 | — | Chưa làm |
 
 ### Quy tắc kỹ thuật của trang lab
 - `/lab/<slug>` là **ứng dụng thuần**: không header, không thanh tìm kiếm của site (chỉ một liên kết quay lại ở layout lab) để locator của người học không bị trùng.

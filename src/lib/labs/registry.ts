@@ -25,4 +25,5 @@ export const LABS: LabInfo[] = [
   { slug: "orders", id: "LAB-21", title: "Đơn hàng & xác minh DB", domain: "Data", difficulty: 3, skills: ["API + DB", "SELECT chỉ-đọc", "rollback", "idempotency", "xoá mềm", "UI ↔ API ↔ DB"], ready: true },
   { slug: "guard", id: "LAB-24", title: "CAPTCHA & giới hạn tần suất", domain: "Security", difficulty: 3, skills: ["429 + Retry-After", "CAPTCHA test mode", "backoff", "expect.poll", "brute-force"], ready: true },
   { slug: "webhooks", id: "LAB-22", title: "Webhook & sự kiện bất đồng bộ", domain: "Integration", difficulty: 3, skills: ["chữ ký HMAC", "idempotency", "retry/backoff", "replay", "expect.poll"], ready: true },
+  { slug: "rbac", id: "LAB-26", title: "Phân quyền RBAC & multi-tenant", domain: "Authorization", difficulty: 3, skills: ["ma trận quyền", "IDOR", "403 vs 404", "nhiều context", "tách tổ chức"], ready: true },
 ];

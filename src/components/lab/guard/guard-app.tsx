@@ -78,6 +78,7 @@ export function GuardApp() {
   const [lockedUntil, setLockedUntil] = useState(0);
   const [now, setNow] = useState(0);
   const [user, setUser] = useState<string | null>(null);
+  const [pending, setPending] = useState(false);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -91,6 +92,15 @@ export function GuardApp() {
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
+    setPending(true);
+    try {
+      await login();
+    } finally {
+      setPending(false);
+    }
+  }
+
+  async function login() {
     const q = [...bugs].length ? `?bugs=${[...bugs].join(",")}` : "";
     const res = await fetch("/api/lab/guard/login" + q, {
       method: "POST",
@@ -165,7 +175,7 @@ export function GuardApp() {
           Thử lại sau {secondsLeft} giây
         </p>
       )}
-      <Button type="submit" className="w-full" disabled={locked}>
+      <Button type="submit" className="w-full" disabled={locked || pending}>
         Đăng nhập
       </Button>
       <Button type="button" variant="ghost" size="sm" onClick={reset} data-testid="reset-data">

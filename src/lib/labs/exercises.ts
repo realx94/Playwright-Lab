@@ -2942,4 +2942,159 @@ test("giao diện tự cập nhật khi webhook đến", async ({ page }) => {
   },
 ];
 
-export const EXERCISES: Record<string, Exercise[]> = { login, forms, cart, playground, api, otp, todo, table, leave, chat, totp, oauth, pay, orders, guard, webhooks };
+const rbac: Exercise[] = [
+  {
+    id: "rbac-1",
+    title: "Ma trận quyền theo vai trò (data-driven)",
+    difficulty: 3,
+    bugs: ["BUG-03"],
+    task: "Viết một test chạy lặp cho từng vai trò admin, bob (manager), carol (staff) và dave (guest): kiểm tra kết quả tạo, sửa tài liệu của người khác và xoá d-a2 đúng theo ma trận quyền. Thêm test staff chỉ sửa được tài liệu của chính mình. Test phải đỏ khi bật BUG-03.",
+    criteria: [
+      "Khai báo ma trận dưới dạng mảng và sinh test bằng vòng for",
+      "Kiểm tra đúng status code cho từng ô của ma trận: 201/200/204 hoặc 403",
+      "Dùng request context mới cho mỗi test để dữ liệu không ảnh hưởng nhau",
+      "Có test staff sửa d-a3 và tài liệu tự tạo được (200) nhưng không sửa được d-a2 (403)",
+      "Test đỏ với BUG-03",
+      ...COMMON_CRITERIA,
+    ],
+    hints: [
+      "Token là tên người dùng: Authorization: Bearer bob.",
+      "Hàng ma trận: [người dùng, tạo, sửa d-a1, xoá d-a2] = [alice 201 200 204], [bob 201 200 403], [carol 201 403 403], [dave 403 403 403].",
+      "Đặt tên test có chứa tên người dùng để báo cáo dễ đọc.",
+    ],
+    solution: `import { test, expect, type APIRequestContext } from "@playwright/test";
+
+const DOCS = "/api/lab/rbac/docs";
+const as = (user: string) => ({ Authorization: "Bearer " + user });
+const ids = async (request: APIRequestContext, user: string) =>
+  ((await (await request.get(DOCS, { headers: as(user) })).json()) as { data: { id: string }[] }).data.map((d) => d.id);
+
+const matrix = [
+  ["alice", 201, 200, 204],
+  ["bob", 201, 200, 403],
+  ["carol", 201, 403, 403],
+  ["dave", 403, 403, 403],
+] as const;
+
+for (const [user, create, edit, del] of matrix) {
+  test("ma trận quyền của " + user, async ({ request }) => {
+    const h = as(user);
+    expect((await request.post(DOCS, { headers: h, data: { title: "Tài liệu mới" } })).status()).toBe(create);
+    expect((await request.patch(DOCS + "/d-a1", { headers: h, data: { title: "Sửa thử" } })).status()).toBe(edit);
+    expect((await request.delete(DOCS + "/d-a2", { headers: h })).status()).toBe(del);
+  });
+}
+
+test("staff chỉ sửa được tài liệu của chính mình", async ({ request }) => {
+  const h = as("carol");
+  expect((await request.patch(DOCS + "/d-a3", { headers: h, data: { title: "Của Carol (sửa)" } })).status()).toBe(200);
+  const created = await (await request.post(DOCS, { headers: h, data: { title: "Mới" } })).json();
+  expect((await request.patch(DOCS + "/" + created.id, { headers: h, data: { title: "Mới (sửa)" } })).status()).toBe(200);
+  expect((await request.patch(DOCS + "/d-a2", { headers: h, data: { title: "x" } })).status()).toBe(403);
+});`,
+  },
+  {
+    id: "rbac-2",
+    title: "Tách tổ chức và IDOR",
+    difficulty: 3,
+    bugs: ["BUG-01", "BUG-02"],
+    task: "Chứng minh mỗi tổ chức chỉ thấy dữ liệu của mình và rằng đổi id trong URL sang tài liệu tổ chức khác luôn trả 404 (đọc, sửa, xoá), không phải 403, và không làm đổi dữ liệu. Test phải đỏ khi bật BUG-01 hoặc BUG-02.",
+    criteria: [
+      "Kiểm tra danh sách của alice (tổ chức A) và erin (tổ chức B) không giao nhau",
+      "Kiểm tra GET, PATCH và DELETE tài liệu tổ chức khác đều trả 404",
+      "Kiểm tra sau các lần thử đó danh sách của tổ chức bị nhắm tới không đổi",
+      "Kiểm tra token thiếu hoặc lạ trả 401",
+      "Test đỏ với BUG-01 và với BUG-02",
+      ...COMMON_CRITERIA,
+    ],
+    hints: [
+      "Tài liệu của tổ chức A có id d-a*, tổ chức B có id d-b*.",
+      "404 thay vì 403 để không tiết lộ tài liệu có tồn tại hay không.",
+      "So sánh danh sách của erin trước và sau khi alice thử PATCH/DELETE d-b1, d-b2.",
+    ],
+    solution: `import { test, expect, type APIRequestContext } from "@playwright/test";
+
+const DOCS = "/api/lab/rbac/docs";
+const as = (user: string) => ({ Authorization: "Bearer " + user });
+const ids = async (request: APIRequestContext, user: string) =>
+  ((await (await request.get(DOCS, { headers: as(user) })).json()) as { data: { id: string }[] }).data.map((d) => d.id);
+
+test("không có token hoặc token lạ trả 401", async ({ request }) => {
+  expect((await request.get(DOCS)).status()).toBe(401);
+  expect((await request.get(DOCS, { headers: as("ai-do") })).status()).toBe(401);
+});
+
+test("mỗi tổ chức chỉ thấy tài liệu của mình", async ({ request }) => {
+  expect(await ids(request, "alice")).toEqual(["d-a1", "d-a2", "d-a3"]);
+  expect(await ids(request, "erin")).toEqual(["d-b1", "d-b2"]);
+});
+
+test("IDOR: tài liệu tổ chức khác trả 404 và không bị thay đổi", async ({ request }) => {
+  expect((await request.get(DOCS + "/d-a1", { headers: as("alice") })).status()).toBe(200);
+  expect((await request.get(DOCS + "/d-b1", { headers: as("alice") })).status()).toBe(404);
+  expect((await request.get(DOCS + "/d-a1", { headers: as("erin") })).status()).toBe(404);
+  expect((await request.patch(DOCS + "/d-b1", { headers: as("alice"), data: { title: "hack" } })).status()).toBe(404);
+  expect((await request.delete(DOCS + "/d-b2", { headers: as("alice") })).status()).toBe(404);
+  expect(await ids(request, "erin")).toEqual(["d-b1", "d-b2"]);
+});`,
+  },
+  {
+    id: "rbac-3",
+    title: "Giao diện theo vai trò với hai người dùng cùng lúc",
+    difficulty: 3,
+    task: "Mở hai tab trong cùng một context: alice (admin) và dave (guest). Chứng minh guest không thấy nút Tạo, Sửa, Xoá trong khi admin thấy; sau khi admin xoá d-a2, tải lại tab của guest chỉ còn 2 tài liệu. Thêm test carol (staff) chỉ có nút Sửa trên d-a3 và erin chỉ thấy tài liệu tổ chức B.",
+    criteria: [
+      "Dùng context.newPage() cho từng người dùng và đăng nhập bằng giao diện",
+      "Kiểm tra sự vắng mặt của nút bằng toHaveCount(0)",
+      "Admin xoá d-a2 và thấy thông báo thành công",
+      "Tải lại tab guest và kiểm tra số dòng giảm từ 3 xuống 2",
+      "Kiểm tra staff chỉ có một nút Sửa và erin chỉ thấy tài liệu tổ chức B",
+      ...COMMON_CRITERIA,
+    ],
+    hints: [
+      "Người dùng đang đăng nhập lưu theo từng tab (sessionStorage); dữ liệu dùng chung qua cookie của context.",
+      "Chọn người dùng bằng getByLabel('Người dùng', { exact: true }).selectOption('alice').",
+      "Nút có tên truy cập như Xoá d-a2 và Sửa d-a3.",
+    ],
+    solution: `import { test, expect, type Page } from "@playwright/test";
+
+async function signIn(page: Page, who: string) {
+  await page.goto("/lab/rbac");
+  await page.getByLabel("Người dùng", { exact: true }).selectOption(who);
+  await page.getByRole("button", { name: "Vào hệ thống" }).click();
+  await expect(page.getByTestId("rbac-me")).toBeVisible();
+}
+
+test("admin và guest cùng lúc ở hai tab", async ({ context }) => {
+  const adminTab = await context.newPage();
+  await signIn(adminTab, "alice");
+  await adminTab.getByTestId("reset-data").click();
+
+  const guestTab = await context.newPage();
+  await signIn(guestTab, "dave");
+  await expect(guestTab.getByTestId("doc-row")).toHaveCount(3);
+  await expect(guestTab.getByRole("button", { name: /^Sửa|^Xoá/ })).toHaveCount(0);
+  await expect(guestTab.getByRole("button", { name: "Tạo", exact: true })).toHaveCount(0);
+
+  await adminTab.getByRole("button", { name: "Xoá d-a2" }).click();
+  await expect(adminTab.getByTestId("rbac-message")).toHaveText("Xoá d-a2: thành công");
+
+  await guestTab.reload();
+  await expect(guestTab.getByTestId("doc-row")).toHaveCount(2);
+});
+
+test("staff chỉ sửa tài liệu của mình; erin chỉ thấy tổ chức B", async ({ context }) => {
+  const carol = await context.newPage();
+  await signIn(carol, "carol");
+  await expect(carol.getByRole("button", { name: /^Sửa/ })).toHaveCount(1);
+  await expect(carol.getByRole("button", { name: "Sửa d-a3" })).toBeVisible();
+
+  const erin = await context.newPage();
+  await signIn(erin, "erin");
+  await expect(erin.getByTestId("doc-row")).toHaveCount(2);
+  await expect(erin.getByTestId("doc-row").first()).toContainText("tổ chức B");
+});`,
+  },
+];
+
+export const EXERCISES: Record<string, Exercise[]> = { login, forms, cart, playground, api, otp, todo, table, leave, chat, totp, oauth, pay, orders, guard, webhooks, rbac };
