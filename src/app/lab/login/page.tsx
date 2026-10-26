@@ -2,6 +2,8 @@ import { Suspense } from "react";
 import { LoginApp } from "@/components/lab/login/login-app";
 import { SEED_USER } from "@/lib/labs/login-rules";
 
+import { TestCaseWorkshop } from "@/components/lab/test-case-workshop";
+
 export const metadata = { title: "LAB-01 Login" };
 
 export default function LoginLabPage() {
@@ -23,6 +25,7 @@ export default function LoginLabPage() {
           <LoginApp />
         </Suspense>
       </div>
+      <TestCaseWorkshop lab="login" />
     </div>
   );
 }
