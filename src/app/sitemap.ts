@@ -5,7 +5,7 @@ import { LABS } from "@/lib/labs/registry";
 const SITE = (process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000").replace(/\/$/, "");
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const pages = ["", "/learn", "/labs", "/starter", "/glossary", "/cheatsheet", "/stats"].map((p) => ({
+  const pages = ["", "/learn", "/labs", "/starter", "/glossary", "/cheatsheet", "/interview", "/placement", "/stats"].map((p) => ({
     url: SITE + p,
   }));
   const lessons = getLessons().map((l) => ({ url: `${SITE}/learn/${l.slug}` }));

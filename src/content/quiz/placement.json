@@ -1,0 +1,286 @@
+{
+  "questions": [
+    {
+      "id": "q1",
+      "type": "single",
+      "prompt": "Test case nào đáng được ưu tiên automate nhất?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Màn hình đang được thiết kế lại gần như mỗi ngày"
+        },
+        {
+          "id": "b",
+          "text": "Bài đánh giá cảm quan về độ hài hoà của màu sắc"
+        },
+        {
+          "id": "c",
+          "text": "Luồng đăng nhập chạy lặp lại trong mọi bản build"
+        },
+        {
+          "id": "d",
+          "text": "Kịch bản chỉ chạy đúng một lần khi di chuyển dữ liệu"
+        }
+      ],
+      "answer": [
+        "c"
+      ],
+      "explanation": "Automation đáng giá khi test lặp lại nhiều, chức năng ổn định và kết quả rõ ràng.",
+      "level": 0
+    },
+    {
+      "id": "q2",
+      "type": "single",
+      "prompt": "Kết quả của biểu thức 5 === \"5\" trong JavaScript là gì?",
+      "options": [
+        {
+          "id": "a",
+          "text": "false vì khác kiểu dữ liệu nên không bằng nhau"
+        },
+        {
+          "id": "b",
+          "text": "true vì giá trị số của hai vế hoàn toàn giống nhau"
+        },
+        {
+          "id": "c",
+          "text": "Lỗi cú pháp vì không so sánh được số với chuỗi"
+        },
+        {
+          "id": "d",
+          "text": "undefined vì phép so sánh này chưa được định nghĩa"
+        }
+      ],
+      "answer": [
+        "a"
+      ],
+      "explanation": "=== so sánh cả kiểu lẫn giá trị, không ép kiểu.",
+      "level": 1
+    },
+    {
+      "id": "q3",
+      "type": "multi",
+      "prompt": "Điều nào đúng về async/await? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "await chờ Promise có kết quả rồi mới chạy tiếp"
+        },
+        {
+          "id": "b",
+          "text": "Thiếu await thường không ảnh hưởng đến kết quả test"
+        },
+        {
+          "id": "c",
+          "text": "Hàm dùng await bên trong phải được khai báo async"
+        },
+        {
+          "id": "d",
+          "text": "await làm mọi thao tác chạy song song với nhau"
+        }
+      ],
+      "answer": [
+        "a",
+        "c"
+      ],
+      "explanation": "await chỉ dùng trong hàm async và chờ Promise hoàn tất; thiếu await làm test không chờ thao tác.",
+      "level": 1
+    },
+    {
+      "id": "q4",
+      "type": "single",
+      "prompt": "Lệnh Git nào tạo nhánh mới và chuyển sang nhánh đó?",
+      "options": [
+        {
+          "id": "a",
+          "text": "git checkout --new-only feat/login để chỉ tạo nhánh"
+        },
+        {
+          "id": "b",
+          "text": "git switch -c feat/login để tạo và chuyển nhánh"
+        },
+        {
+          "id": "c",
+          "text": "git branch --push feat/login để tạo rồi đẩy nhánh"
+        },
+        {
+          "id": "d",
+          "text": "git merge --create feat/login để hợp nhất và tạo nhánh"
+        }
+      ],
+      "answer": [
+        "b"
+      ],
+      "explanation": "git switch -c vừa tạo vừa chuyển sang nhánh mới. Các tuỳ chọn còn lại không tồn tại.",
+      "level": 1
+    },
+    {
+      "id": "q5",
+      "type": "single",
+      "prompt": "Loại locator nào được Playwright khuyến nghị ưu tiên trước tiên?",
+      "options": [
+        {
+          "id": "a",
+          "text": "CSS theo class sinh tự động vì thường rất ngắn gọn"
+        },
+        {
+          "id": "b",
+          "text": "getByRole vì dựa trên vai trò và tên người dùng thấy"
+        },
+        {
+          "id": "c",
+          "text": "XPath tuyệt đối vì nó chỉ ra đường đi đầy đủ"
+        },
+        {
+          "id": "d",
+          "text": "nth(0) vì thứ tự của phần tử xem như cố định"
+        }
+      ],
+      "answer": [
+        "b"
+      ],
+      "explanation": "Locator hướng người dùng bền hơn khi giao diện đổi và còn kiểm tra khả năng truy cập.",
+      "level": 2
+    },
+    {
+      "id": "q6",
+      "type": "single",
+      "prompt": "Trang tải dữ liệu chậm. Cách chờ nào đúng?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Dùng assertion tự thử lại như toBeVisible với timeout phù hợp"
+        },
+        {
+          "id": "b",
+          "text": "Thêm waitForTimeout 5000 trước mọi thao tác trong test"
+        },
+        {
+          "id": "c",
+          "text": "Chạy test vào lúc ít người truy cập hệ thống hơn"
+        },
+        {
+          "id": "d",
+          "text": "Tăng số lần retry lên thật cao để test có cơ hội xanh"
+        }
+      ],
+      "answer": [
+        "a"
+      ],
+      "explanation": "Chờ theo điều kiện vừa nhanh vừa ổn định; chờ cố định và retry chỉ che vấn đề.",
+      "level": 2
+    },
+    {
+      "id": "q7",
+      "type": "multi",
+      "prompt": "Để thao tác với phần tử nằm trong iframe, cách nào đúng? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Mở iframe thành tab mới rồi mới thao tác lên phần tử"
+        },
+        {
+          "id": "b",
+          "text": "Dùng page.frameLocator để chỉ rõ khung chứa phần tử"
+        },
+        {
+          "id": "c",
+          "text": "Dùng page.getByRole trực tiếp, Playwright tự chui vào iframe"
+        },
+        {
+          "id": "d",
+          "text": "Sau đó dùng getByRole hoặc getByLabel như bình thường"
+        }
+      ],
+      "answer": [
+        "b",
+        "d"
+      ],
+      "explanation": "iframe là tài liệu riêng nên cần frameLocator, sau đó các locator quen thuộc dùng được bên trong.",
+      "level": 2
+    },
+    {
+      "id": "q8",
+      "type": "single",
+      "prompt": "Trường tuổi hợp lệ 18–65. Bộ giá trị biên đầy đủ là gì?",
+      "options": [
+        {
+          "id": "a",
+          "text": "0, 18, 65 và 100 gồm biên và các giá trị cực đoan"
+        },
+        {
+          "id": "b",
+          "text": "18, 40 và 65 gồm hai biên và một giá trị giữa"
+        },
+        {
+          "id": "c",
+          "text": "19, 20, 63 và 64 gồm các giá trị bên trong khoảng"
+        },
+        {
+          "id": "d",
+          "text": "17, 18 ở biên dưới và 65, 66 ở biên trên"
+        }
+      ],
+      "answer": [
+        "d"
+      ],
+      "explanation": "BVA lấy giá trị đúng tại biên và giá trị ngay sát bên ngoài: 17, 18, 65, 66.",
+      "level": 3
+    },
+    {
+      "id": "q9",
+      "type": "single",
+      "prompt": "Kết quả phụ thuộc vào tổ hợp của nhiều điều kiện. Nên dùng kỹ thuật nào?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Bảng quyết định liệt kê mọi tổ hợp điều kiện"
+        },
+        {
+          "id": "b",
+          "text": "Chọn ngẫu nhiên vài tổ hợp rồi thử thật nhanh"
+        },
+        {
+          "id": "c",
+          "text": "Phân vùng tương đương áp dụng cho một trường duy nhất"
+        },
+        {
+          "id": "d",
+          "text": "Kiểm thử khám phá không có kế hoạch cụ thể từ trước"
+        }
+      ],
+      "answer": [
+        "a"
+      ],
+      "explanation": "Decision table liệt kê có hệ thống các tổ hợp điều kiện và kết quả tương ứng.",
+      "level": 3
+    },
+    {
+      "id": "q10",
+      "type": "single",
+      "prompt": "Fixture trong Playwright khác beforeEach ở điểm cốt lõi nào?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Hai khái niệm giống hệt nhau, chỉ khác cú pháp khai báo"
+        },
+        {
+          "id": "b",
+          "text": "Fixture chạy cho mọi test còn beforeEach chỉ chạy một lần"
+        },
+        {
+          "id": "c",
+          "text": "Fixture tạo theo nhu cầu, trao đối tượng và gom luôn bước dọn dẹp"
+        },
+        {
+          "id": "d",
+          "text": "Fixture chỉ dùng được cho test API còn hook cho giao diện"
+        }
+      ],
+      "answer": [
+        "c"
+      ],
+      "explanation": "Fixture được tạo khi test gọi tên, trao giá trị cho test và dọn dẹp sau đó.",
+      "level": 4
+    }
+  ]
+}

@@ -16,6 +16,13 @@ export default function LearnPage() {
         Học tuần tự từ Level 0 đến Level 5. Bài nào cũng có phần kiến thức cần nắm, giải thích dễ hiểu,
         bài tập và quiz.
       </p>
+      <p className="mt-3 text-sm">
+        Chưa biết bắt đầu từ đâu?{" "}
+        <Link href="/placement" className="font-medium underline" data-testid="placement-link">
+          Làm bài kiểm tra đầu vào
+        </Link>{" "}
+        (10 câu, 5 phút).
+      </p>
       <div className="mt-8 space-y-10">
         {levels.map((lv) => (
           <section key={lv} aria-label={`Level ${lv}`}>

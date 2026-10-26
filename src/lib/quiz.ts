@@ -13,6 +13,8 @@ export interface QuizQuestion {
   options: QuizOption[];
   answer: string[];
   explanation: string;
+  /** Level kiến thức mà câu hỏi kiểm tra (dùng cho bài kiểm tra đầu vào). */
+  level?: number;
 }
 
 export interface Quiz {

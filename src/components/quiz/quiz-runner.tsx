@@ -12,7 +12,7 @@ import { mulberry32, shuffle } from "@/lib/shuffle";
 import { storage } from "@/lib/storage";
 import type { Quiz, QuizQuestion } from "@/lib/quiz";
 
-type Answers = Record<string, string[]>;
+export type Answers = Record<string, string[]>;
 
 function prepare(quiz: Quiz, seed: number): QuizQuestion[] {
   const rand = mulberry32(seed);
@@ -24,7 +24,16 @@ function isCorrect(q: QuizQuestion, picked: string[] = []) {
 }
 
 /** Seed ngẫu nhiên mỗi lần làm; `?seed=n` cố định thứ tự để test tái lập. */
-export function QuizRunner({ quiz }: { quiz: Quiz }) {
+export function QuizRunner({
+  quiz,
+  onFinished,
+  onRetake,
+}: {
+  quiz: Quiz;
+  /** Gọi sau khi nộp bài với danh sách câu hỏi (đã xáo) và đáp án đã chọn. */
+  onFinished?: (questions: QuizQuestion[], answers: Answers) => void;
+  onRetake?: () => void;
+}) {
   const params = useSearchParams();
   const fixed = params.get("seed");
   const [seed, setSeed] = useState<number | null>(null);
@@ -55,6 +64,7 @@ export function QuizRunner({ quiz }: { quiz: Quiz }) {
 
   async function submit() {
     setSubmitted(true);
+    onFinished?.(questions, answers);
     await storage
       .saveAttempt({
         id: `${quiz.lessonSlug}-${Date.now()}`,
@@ -68,6 +78,7 @@ export function QuizRunner({ quiz }: { quiz: Quiz }) {
   }
 
   function retake() {
+    onRetake?.();
     setSeed(Math.floor(Math.random() * 2 ** 31));
     setAnswers({});
     setSubmitted(false);

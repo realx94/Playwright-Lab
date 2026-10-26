@@ -12,6 +12,8 @@ const PAGES = [
   "/starter",
   "/glossary",
   "/cheatsheet",
+  "/interview",
+  "/placement",
   "/lab/login",
   "/lab/forms",
   "/lab/cart",

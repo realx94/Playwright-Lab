@@ -3,6 +3,7 @@ import { FlaskConical } from "lucide-react";
 import { SearchPalette, type SearchItem } from "@/components/site/search-palette";
 import { ThemeToggle } from "@/components/site/theme-toggle";
 import { GLOSSARY } from "@/content/glossary";
+import { INTERVIEW } from "@/content/interview";
 import { getLessons } from "@/lib/content";
 import { LABS } from "@/lib/labs/registry";
 
@@ -10,6 +11,7 @@ const links = [
   { href: "/learn", label: "Bài học" },
   { href: "/labs", label: "Lab" },
   { href: "/starter", label: "Starter" },
+  { href: "/interview", label: "Phỏng vấn" },
   { href: "/glossary", label: "Thuật ngữ" },
   { href: "/cheatsheet", label: "Cheat sheet" },
   { href: "/stats", label: "Thống kê" },
@@ -38,6 +40,14 @@ function buildSearchItems(): SearchItem[] {
       subtitle: g.definition,
       href: g.lesson ? `/learn/${g.lesson}` : "/glossary",
     })),
+    ...INTERVIEW.map<SearchItem>((q) => ({
+      id: `interview-${q.id}`,
+      group: "Trang",
+      title: q.question,
+      subtitle: `Phỏng vấn · ${q.topic}`,
+      href: "/interview",
+    })),
+    { id: "page-/placement", group: "Trang", title: "Bài kiểm tra đầu vào", href: "/placement" },
     ...links.map<SearchItem>((l) => ({ id: `page-${l.href}`, group: "Trang", title: l.label, href: l.href })),
   ];
 }

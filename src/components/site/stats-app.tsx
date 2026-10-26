@@ -182,7 +182,7 @@ export function StatsApp({ lessons }: { lessons: LessonRef[] }) {
             {attempts.slice(0, 10).map((a) => (
               <li key={a.id} className="flex items-center justify-between p-3 text-sm">
                 <span>
-                  {lessons.find((l) => l.slug === a.quizId)?.title ?? a.quizId} ·{" "}
+                  {a.quizId === "placement" ? "Bài kiểm tra đầu vào" : (lessons.find((l) => l.slug === a.quizId)?.title ?? a.quizId)} ·{" "}
                   {new Date(a.takenAt).toLocaleString("vi-VN")}
                 </span>
                 <Badge variant={a.score === a.total ? "default" : "secondary"}>
