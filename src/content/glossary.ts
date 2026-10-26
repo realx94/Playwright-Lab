@@ -1,0 +1,52 @@
+export interface GlossaryTerm {
+  term: string;
+  /** Giải thích ngắn, dễ hiểu bằng ví dụ đời thường. */
+  definition: string;
+  /** Slug bài học liên quan (nếu có). */
+  lesson?: string;
+}
+
+export const GLOSSARY: GlossaryTerm[] = [
+  { term: "Assertion", definition: "Câu lệnh đối chiếu kết quả thực tế với kết quả mong đợi. Giống việc so tờ hoá đơn với số tiền bạn đã trả.", lesson: "2-08-assertions" },
+  { term: "Async/await", definition: "Cách viết code chờ một việc mất thời gian (mở trang, bấm nút) xong rồi mới đi tiếp, mà code vẫn đọc từ trên xuống dưới.", lesson: "1-10-async-await-promise" },
+  { term: "Auto-wait", definition: "Playwright tự chờ phần tử sẵn sàng (hiện ra, ổn định, bật) trước khi thao tác nên bạn không cần sleep.", lesson: "2-09-auto-wait-timeout" },
+  { term: "baseURL", definition: "Địa chỉ gốc của website cần test. Khai báo một lần trong cấu hình để chỉ cần viết page.goto(\"/lab/login\").", lesson: "0-3-chay-test-dau-tien" },
+  { term: "BDD", definition: "Behaviour Driven Development: mô tả hành vi bằng ngôn ngữ gần tự nhiên (Given/When/Then) để cả nhóm cùng hiểu." },
+  { term: "Boundary Value Analysis (BVA)", definition: "Kỹ thuật thiết kế test tập trung vào giá trị biên (ví dụ tuổi 17, 18, 65, 66) vì lỗi hay nằm ở biên." },
+  { term: "Branch (nhánh)", definition: "Dòng phát triển song song của mã nguồn, giúp làm việc độc lập mà không ảnh hưởng nhánh chính.", lesson: "1-02-git-nhanh-github" },
+  { term: "Browser context", definition: "Một hồ sơ trình duyệt ẩn danh, độc lập (cookie, localStorage riêng). Mỗi test thường chạy trong context riêng.", lesson: "2-12-browser-context-page" },
+  { term: "CI/CD", definition: "Hệ thống tự động build, chạy test và triển khai mỗi khi có thay đổi mã nguồn (ví dụ GitHub Actions)." },
+  { term: "Codegen", definition: "Công cụ của Playwright ghi lại thao tác của bạn thành code nháp.", lesson: "2-13-debug-trace" },
+  { term: "Commit", definition: "Ảnh chụp trạng thái dự án tại một thời điểm, kèm lời nhắn mô tả.", lesson: "1-01-git-co-ban" },
+  { term: "Conflict (xung đột)", definition: "Tình huống hai nhánh cùng sửa một vị trí nên Git nhờ bạn quyết định giữ phần nào.", lesson: "1-03-git-conflict-amend-review" },
+  { term: "CSS selector", definition: "Cú pháp chọn phần tử theo tag, class, id, thuộc tính, như địa chỉ nhà của phần tử.", lesson: "2-02-css-selector" },
+  { term: "data-testid", definition: "Thuộc tính HTML do nhóm phát triển thêm riêng để test tìm phần tử ổn định, không phụ thuộc giao diện.", lesson: "2-05-locator-huong-nguoi-dung" },
+  { term: "Decision table", definition: "Bảng liệt kê các tổ hợp điều kiện và hành động kết quả tương ứng, dùng để thiết kế test cho quy tắc phức tạp." },
+  { term: "DOM", definition: "Cây đối tượng mà trình duyệt dựng ra từ HTML; automation tìm và thao tác phần tử trên cây này.", lesson: "2-01-html-dom" },
+  { term: "Equivalence Partitioning (EP)", definition: "Chia dữ liệu thành các nhóm tương đương (hợp lệ/không hợp lệ), mỗi nhóm chỉ cần test đại diện." },
+  { term: "Fixture", definition: "Thành phần được Playwright chuẩn bị sẵn và đưa vào test (page, request…). Bạn có thể tự viết fixture riêng." },
+  { term: "Flaky test", definition: "Test lúc xanh lúc đỏ dù code không đổi, thường do chờ cố định hoặc dữ liệu dùng chung.", lesson: "0-1-tong-quan-automation" },
+  { term: "Headless / Headed", definition: "Headless: trình duyệt chạy ngầm không hiện cửa sổ. Headed: hiện cửa sổ để quan sát.", lesson: "0-3-chay-test-dau-tien" },
+  { term: "Hook", definition: "Đoạn code chạy tự động trước/sau test (beforeEach, afterEach) để chuẩn bị và dọn dẹp.", lesson: "2-11-hooks-nhom-test" },
+  { term: "iframe", definition: "Một trang web nhúng bên trong trang khác; phần tử bên trong cần chỉ rõ khung chứa.", lesson: "2-10-dialog-popup-iframe" },
+  { term: "Locator", definition: "Đối tượng mô tả cách tìm một phần tử trên trang (getByRole, getByLabel…).", lesson: "2-05-locator-huong-nguoi-dung" },
+  { term: "Merge", definition: "Hợp nhất thay đổi từ một nhánh vào nhánh khác.", lesson: "1-02-git-nhanh-github" },
+  { term: "Mock", definition: "Giả lập một phần phụ thuộc (ví dụ phản hồi API) để test không phụ thuộc dịch vụ thật." },
+  { term: "NVM", definition: "Công cụ cài và chuyển đổi nhiều phiên bản Node.js trên một máy.", lesson: "0-2-cai-dat-moi-truong" },
+  { term: "Page Object Model (POM)", definition: "Mẫu thiết kế: mỗi trang là một class chứa locator và hành động nghiệp vụ, giúp test gọn và dễ bảo trì." },
+  { term: "Pairwise testing", definition: "Kỹ thuật chọn tập test nhỏ nhưng phủ mọi cặp giá trị của các tham số, thay vì thử mọi tổ hợp." },
+  { term: "Promise", definition: "Đối tượng đại diện cho kết quả của một việc chưa xong (như phiếu hẹn lấy món).", lesson: "1-10-async-await-promise" },
+  { term: "Pull Request (PR)", definition: "Đề nghị hợp nhất nhánh, là nơi đồng đội review code.", lesson: "1-02-git-nhanh-github" },
+  { term: "Regression test", definition: "Chạy lại các test cũ để chắc chắn thay đổi mới không phá chức năng đang chạy tốt.", lesson: "0-1-tong-quan-automation" },
+  { term: "Selector", definition: "Chuỗi dùng để chọn phần tử (CSS, XPath, text…).", lesson: "2-02-css-selector" },
+  { term: "Sharding", definition: "Chia bộ test thành nhiều phần chạy trên nhiều máy song song để hoàn thành nhanh hơn." },
+  { term: "Shadow DOM", definition: "Cây DOM riêng được đóng gói bên trong một phần tử, giúp style/cấu trúc không lẫn với trang ngoài.", lesson: "2-01-html-dom" },
+  { term: "Smoke test", definition: "Bộ test nhỏ, chạy nhanh để kiểm tra các chức năng sống còn còn hoạt động.", lesson: "0-1-tong-quan-automation" },
+  { term: "State transition", definition: "Kỹ thuật thiết kế test dựa trên các trạng thái và sự kiện chuyển trạng thái (ví dụ vòng đời đơn hàng)." },
+  { term: "Strict mode", definition: "Quy tắc của Playwright: locator phải khớp đúng một phần tử khi thao tác, nếu không sẽ báo lỗi.", lesson: "2-06-locator-nang-cao" },
+  { term: "storageState", definition: "Tệp lưu cookie và localStorage sau khi đăng nhập để tái sử dụng cho nhiều test.", lesson: "2-12-browser-context-page" },
+  { term: "Trace", definition: "Bản ghi chi tiết của một lần chạy (DOM, mạng, ảnh) để xem lại và tìm lỗi.", lesson: "2-13-debug-trace" },
+  { term: "TypeScript", definition: "JavaScript có thêm kiểu dữ liệu, giúp phát hiện lỗi sớm ngay khi viết.", lesson: "1-09-typescript-co-ban" },
+  { term: "Web-first assertion", definition: "Assertion tự thử lại cho tới khi đúng hoặc hết thời gian chờ, ví dụ expect(locator).toBeVisible().", lesson: "2-08-assertions" },
+  { term: "XPath", definition: "Ngôn ngữ chọn phần tử theo đường dẫn và điều kiện trong cây DOM, đi được cả lên phần tử cha.", lesson: "2-03-xpath" },
+];

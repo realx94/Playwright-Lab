@@ -24,7 +24,7 @@ Quy trình mỗi lần triển khai:
 
 ## Quy ước kỹ thuật
 - **Một commit cho mỗi phần việc hoàn chỉnh**, chạy `npm run lint` và `npx playwright test` xanh trước khi commit. Thông điệp commit dạng `feat(lab): ...`, `feat(quiz): ...`, `docs: ...`.
-- Component UI dùng shadcn/ui (`src/components/ui`). shadcn bản này dựa trên `@base-ui/react`: **`Button` không có `asChild`** → dùng `buttonVariants` với `Link`. Radio/checkbox/switch có `<input>` ẩn nên trong test dùng `getByRole(...)`, không dùng `getByLabel`.
+- Component UI dùng shadcn/ui (`src/components/ui`). `CommandDialog` không tự bọc `<Command>`: phải tự bọc nội dung bằng `<Command>`. shadcn bản này dựa trên `@base-ui/react`: **`Button` không có `asChild`** → dùng `buttonVariants` với `Link`. Radio/checkbox/switch có `<input>` ẩn nên trong test dùng `getByRole(...)`, không dùng `getByLabel`.
 - `id` của phần tử (dùng cho `htmlFor`) **không chứa dấu cách hay ký tự có dấu**; dùng chỉ số hoặc slug.
 - Mọi truy cập lưu trữ đi qua `src/lib/storage` (`StorageAdapter`), không gọi IndexedDB/localStorage trực tiếp trong UI (trừ cấu hình nhỏ của từng lab).
 - Lab: có nút **Reset**, `data-testid` ổn định, bug bật bằng `?bugs=BUG-xx`, spec đáp án trong `e2e/<lab>-lab.spec.ts`, test case mẫu trong `src/lib/labs/testcases.ts`.
