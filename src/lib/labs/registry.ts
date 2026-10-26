@@ -23,4 +23,5 @@ export const LABS: LabInfo[] = [
   { slug: "oauth", id: "LAB-19", title: "Đăng nhập OAuth (Fake IdP)", domain: "Bên thứ 3", difficulty: 3, skills: ["redirect", "popup", "state/CSRF", "authorization code", "page.clock"], ready: true },
   { slug: "pay", id: "LAB-20", title: "Thanh toán thẻ (kiểu Stripe test mode)", domain: "Payment", difficulty: 3, skills: ["frameLocator", "thẻ test", "3D Secure", "webhook trễ", "hoàn tiền"], ready: true },
   { slug: "orders", id: "LAB-21", title: "Đơn hàng & xác minh DB", domain: "Data", difficulty: 3, skills: ["API + DB", "SELECT chỉ-đọc", "rollback", "idempotency", "xoá mềm", "UI ↔ API ↔ DB"], ready: true },
+  { slug: "guard", id: "LAB-24", title: "CAPTCHA & giới hạn tần suất", domain: "Security", difficulty: 3, skills: ["429 + Retry-After", "CAPTCHA test mode", "backoff", "expect.poll", "brute-force"], ready: true },
 ];

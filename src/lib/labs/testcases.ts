@@ -385,7 +385,29 @@ const orders: Workshop = {
   ],
 };
 
-export const WORKSHOPS: Record<string, Workshop> = { login, forms, cart, playground, api, otp, todo, table, leave, chat, totp, oauth, pay, orders };
+const guard: Workshop = {
+  techniques: ["State Transition", "Boundary Value Analysis", "Security", "Error Guessing"],
+  rules: [
+    { id: "BR-01", text: "Đăng nhập đúng email/mật khẩu thì thành công và xoá bộ đếm lần sai" },
+    { id: "BR-02", text: "Sai 2 lần liên tiếp thì lần thử kế tiếp bắt buộc có CAPTCHA, kể cả khi mật khẩu đúng (403 captcha_required)" },
+    { id: "BR-03", text: "CAPTCHA chế độ test (?captcha=test) tự động đạt; thực tế không giải CAPTCHA thật trong test" },
+    { id: "BR-04", text: "Sai 4 lần thì khóa 5 giây: 429 kèm header Retry-After; trong lúc khóa, mật khẩu đúng cũng bị từ chối" },
+    { id: "BR-05", text: "Sau khi hết khóa có thể đăng nhập lại; client phải chờ theo Retry-After thay vì thử dồn dập" },
+  ],
+  cases: [
+    { id: "TC-G-101", title: "Đăng nhập đúng", precondition: "Bộ đếm = 0", steps: "Gửi email và mật khẩu đúng", data: "user@lab.dev / Passw0rd!", expected: "200, hiện đăng nhập thành công", type: "Happy", priority: "P0", br: ["BR-01"] },
+    { id: "TC-G-102", title: "Sai lần 1", precondition: "Bộ đếm = 0", steps: "Gửi sai mật khẩu", data: "sai", expected: "401, báo còn 3 lần thử", type: "Negative", priority: "P1", br: ["BR-01"] },
+    { id: "TC-G-103", title: "Lần 3 không có CAPTCHA", precondition: "Đã sai 2 lần", steps: "Gửi mật khẩu đúng nhưng không kèm CAPTCHA", data: "đúng", expected: "403 captcha_required", type: "Security", priority: "P0", br: ["BR-02"] },
+    { id: "TC-G-104", title: "CAPTCHA token sai", precondition: "Đã sai 2 lần", steps: "Gửi mật khẩu đúng kèm token giả", data: "captcha=sai-token", expected: "403", type: "Security", priority: "P1", br: ["BR-02"] },
+    { id: "TC-G-105", title: "CAPTCHA hợp lệ", precondition: "Đã sai 2 lần", steps: "Gửi mật khẩu đúng kèm token hợp lệ", data: "captcha-ok", expected: "200", type: "Happy", priority: "P0", br: ["BR-02", "BR-03"] },
+    { id: "TC-G-106", title: "Lần sai thứ 4", precondition: "Đã sai 3 lần (có CAPTCHA)", steps: "Gửi sai mật khẩu lần 4", data: "sai", expected: "429 kèm Retry-After từ 1 đến 5", type: "BVA", priority: "P0", br: ["BR-04"] },
+    { id: "TC-G-107", title: "Mật khẩu đúng trong lúc khóa", precondition: "Đang bị khóa", steps: "Gửi mật khẩu đúng", data: "đúng", expected: "429, không đăng nhập", type: "Security", priority: "P0", br: ["BR-04"] },
+    { id: "TC-G-108", title: "Hết khóa", precondition: "Đã chờ đủ Retry-After", steps: "Gửi mật khẩu đúng", data: "đúng + CAPTCHA", expected: "200", type: "State", priority: "P1", br: ["BR-05"] },
+    { id: "TC-G-109", title: "UI khóa nút đăng nhập", precondition: "Bị khóa", steps: "Quan sát nút Đăng nhập và đếm ngược", data: "—", expected: "Nút bị vô hiệu, đếm ngược hiển thị, mở lại khi hết khóa", type: "State", priority: "P2", br: ["BR-05"] },
+  ],
+};
+
+export const WORKSHOPS: Record<string, Workshop> = { login, forms, cart, playground, api, otp, todo, table, leave, chat, totp, oauth, pay, orders, guard };
 
 export function toCsv(cases: TestCase[]): string {
   const head = ["ID", "Tiêu đề", "Tiền điều kiện", "Các bước", "Dữ liệu", "Kết quả mong đợi", "Loại", "Ưu tiên", "BR"];

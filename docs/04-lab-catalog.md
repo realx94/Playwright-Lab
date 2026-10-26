@@ -177,6 +177,16 @@ Kiểm tra email đơn hàng/reset mật khẩu: tiêu đề, người nhận, n
 ### LAB-26 RBAC & multi-tenant
 Vai trò Admin/Manager/Staff/Guest; ma trận quyền; thử IDOR (đổi id trong URL/API) phải nhận 403/404; dùng nhiều `browserContext` cho nhiều người dùng cùng lúc.
 
+### LAB-24 CAPTCHA & Rate limit (bản đã làm)
+Đăng nhập chống brute-force: `POST /api/lab/guard/login`; cookie phiên giữ bộ đếm.
+- BR-01 Đăng nhập đúng thì thành công, xoá bộ đếm.
+- BR-02 Sai 2 lần thì lần sau bắt buộc CAPTCHA (403 `captcha_required`), kể cả khi mật khẩu đúng.
+- BR-03 `?captcha=test` hoặc token `captcha-ok` là khoá test, không giải CAPTCHA thật.
+- BR-04 Sai 4 lần thì khóa 5 giây: 429 + `Retry-After`; mật khẩu đúng trong lúc khóa vẫn bị từ chối.
+- BR-05 Hết khóa thì đăng nhập lại được; client chờ theo `Retry-After` (backoff).
+- Bug: BUG-01 không đòi CAPTCHA; BUG-02 thiếu `Retry-After`; BUG-03 mật khẩu đúng vượt qua khóa.
+**Kỹ năng:** `request` + 429, `expect.poll` chờ hết khóa, khoá test CAPTCHA, trạng thái disabled/đếm ngược.
+
 ## Độ phủ kỹ năng theo lab (rà soát)
 | Kỹ năng | Lab |
 |---------|-----|
@@ -208,7 +218,8 @@ Vai trò Admin/Manager/Staff/Guest; ma trận quyền; thử IDOR (đổi id tro
 | LAB-19 Đăng nhập OAuth (Fake IdP) | `/lab/oauth`, `/lab/oauth/idp` | Đã làm (redirect + popup, state/CSRF, code một lần, hết hạn, tài khoản trùng) |
 | LAB-20 Thanh toán thẻ (Fake Payment) | `/lab/pay` | Đã làm (iframe nhập thẻ, 3D Secure, webhook trễ, hoàn tiền, idempotency) |
 | LAB-21 Đơn hàng & xác minh DB | `/lab/orders`, `/api/lab/orders`, `/api/lab/db/*` | Đã làm (DB mô phỏng chỉ-đọc, rollback, idempotency, xoá mềm, UI ↔ API ↔ DB) |
-| LAB-05, 06, 09..11, 15, 16, 22..28 | — | Chưa làm; các lab cần dịch vụ bên ngoài (OAuth, Stripe, DB, email thật) phụ thuộc mô hình BYO |
+| LAB-24 CAPTCHA & giới hạn tần suất | `/lab/guard` | Đã làm |
+| LAB-5, 6, 9, 10, 11, 15, 16, 22, 23, 25, 26, 27, 28 | — | Chưa làm |
 
 ### Quy tắc kỹ thuật của trang lab
 - `/lab/<slug>` là **ứng dụng thuần**: không header, không thanh tìm kiếm của site (chỉ một liên kết quay lại ở layout lab) để locator của người học không bị trùng.

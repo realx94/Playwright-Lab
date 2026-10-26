@@ -311,6 +311,26 @@
       "lab": "orders",
       "spec": "tests/exercises/orders/orders-3.spec.ts",
       "bugs": []
+    },
+    "guard-1": {
+      "lab": "guard",
+      "spec": "tests/exercises/guard/guard-1.spec.ts",
+      "bugs": [
+        "BUG-01"
+      ]
+    },
+    "guard-2": {
+      "lab": "guard",
+      "spec": "tests/exercises/guard/guard-2.spec.ts",
+      "bugs": [
+        "BUG-02",
+        "BUG-03"
+      ]
+    },
+    "guard-3": {
+      "lab": "guard",
+      "spec": "tests/exercises/guard/guard-3.spec.ts",
+      "bugs": []
     }
   }
 }

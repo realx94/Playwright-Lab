@@ -2628,4 +2628,138 @@ test("UI, API và DB cùng một tổng tiền", async ({ page }) => {
   },
 ];
 
-export const EXERCISES: Record<string, Exercise[]> = { login, forms, cart, playground, api, otp, todo, table, leave, chat, totp, oauth, pay, orders };
+const guard: Exercise[] = [
+  {
+    id: "guard-1",
+    title: "CAPTCHA bắt buộc sau nhiều lần đăng nhập sai",
+    difficulty: 3,
+    bugs: ["BUG-01"],
+    task: "Gọi API đăng nhập sai 2 lần, rồi chứng minh lần kế tiếp bị chặn nếu thiếu CAPTCHA kể cả khi mật khẩu đúng (403 captcha_required), token giả cũng bị từ chối, và token hợp lệ thì đăng nhập được. Test phải đỏ khi bật BUG-01.",
+    criteria: [
+      "Dùng request fixture, không mở trình duyệt",
+      "Kiểm tra 401 hai lần đầu và nội dung attemptsLeft",
+      "Kiểm tra 403 với mã captcha_required khi thiếu CAPTCHA",
+      "Kiểm tra token CAPTCHA giả bị từ chối và token captcha-ok được chấp nhận",
+      "Test đỏ với BUG-01",
+      ...COMMON_CRITERIA,
+    ],
+    hints: [
+      "Mỗi test có request context riêng nên bộ đếm lần sai bắt đầu từ 0.",
+      "Mật khẩu đúng là Passw0rd!; khoá CAPTCHA hợp lệ gửi trong trường captcha của body.",
+      "Không giải CAPTCHA thật: API chấp nhận token captcha-ok như khoá test.",
+    ],
+    solution: `import { test, expect, type APIRequestContext } from "@playwright/test";
+
+const URL = "/api/lab/guard/login";
+const wrong = { email: "user@lab.dev", password: "sai" };
+const right = { email: "user@lab.dev", password: "Passw0rd!" };
+
+async function failTwice(request: APIRequestContext) {
+  for (let i = 0; i < 2; i++) expect((await request.post(URL, { data: wrong })).status()).toBe(401);
+}
+
+test("CAPTCHA bắt buộc sau 2 lần sai", async ({ request }) => {
+  await failTwice(request);
+
+  const noCaptcha = await request.post(URL, { data: right });
+  expect(noCaptcha.status()).toBe(403);
+  expect((await noCaptcha.json()).code).toBe("captcha_required");
+
+  expect((await request.post(URL, { data: { ...right, captcha: "sai-token" } })).status()).toBe(403);
+  expect((await request.post(URL, { data: { ...right, captcha: "captcha-ok" } })).status()).toBe(200);
+});`,
+  },
+  {
+    id: "guard-2",
+    title: "429, Retry-After và chờ đúng cách",
+    difficulty: 3,
+    bugs: ["BUG-02", "BUG-03"],
+    task: "Làm bị khóa bằng 4 lần sai. Kiểm tra API trả 429 kèm Retry-After (1 đến 5 giây), mật khẩu đúng trong lúc khóa vẫn bị từ chối, rồi dùng expect.poll để chờ hết khóa thay vì chờ cố định. Test phải đỏ khi bật BUG-02 hoặc BUG-03.",
+    criteria: [
+      "Kiểm tra status 429 và đọc header retry-after",
+      "Kiểm tra Retry-After là số nằm trong khoảng 1 đến 5",
+      "Gửi mật khẩu đúng khi đang khóa và kiểm tra vẫn là 429",
+      "Dùng expect.poll với khoảng nghỉ để chờ đến khi đăng nhập được",
+      "Test đỏ với BUG-02 và với BUG-03",
+      ...COMMON_CRITERIA,
+    ],
+    hints: [
+      "Sau 2 lần sai các lần thử tiếp theo phải kèm captcha: 'captcha-ok'.",
+      "Tên header trong Playwright viết thường: headers()['retry-after'].",
+      "expect.poll(async () => status, { intervals: [500], timeout: 10000 }).toBe(200).",
+    ],
+    solution: `import { test, expect, type APIRequestContext } from "@playwright/test";
+
+const URL = "/api/lab/guard/login";
+const wrong = { email: "user@lab.dev", password: "sai" };
+const right = { email: "user@lab.dev", password: "Passw0rd!" };
+
+async function failTwice(request: APIRequestContext) {
+  for (let i = 0; i < 2; i++) expect((await request.post(URL, { data: wrong })).status()).toBe(401);
+}
+
+test("bị khóa trả 429 kèm Retry-After và mở lại sau khi chờ", async ({ request }) => {
+  await failTwice(request);
+  const captcha = { captcha: "captcha-ok" };
+  expect((await request.post(URL, { data: { ...wrong, ...captcha } })).status()).toBe(401);
+
+  const locked = await request.post(URL, { data: { ...wrong, ...captcha } });
+  expect(locked.status()).toBe(429);
+  const retryAfter = Number(locked.headers()["retry-after"]);
+  expect(retryAfter).toBeGreaterThan(0);
+  expect(retryAfter).toBeLessThanOrEqual(5);
+
+  expect((await request.post(URL, { data: { ...right, ...captcha } })).status()).toBe(429);
+
+  await expect
+    .poll(async () => (await request.post(URL, { data: { ...right, ...captcha } })).status(), { timeout: 10_000, intervals: [500] })
+    .toBe(200);
+});`,
+  },
+  {
+    id: "guard-3",
+    title: "Giao diện: CAPTCHA chế độ test và đếm ngược khóa",
+    difficulty: 3,
+    task: "Trên giao diện, mở trang với ?captcha=test để CAPTCHA tự đạt, nhập sai 4 lần và kiểm tra thông báo khóa, nút Đăng nhập bị vô hiệu cùng bộ đếm ngược. Chờ nút mở lại rồi đăng nhập đúng.",
+    criteria: [
+      "Mở trang với tham số ?captcha=test thay vì giải CAPTCHA",
+      "Kiểm tra thông báo còn bao nhiêu lần thử sau lần sai đầu",
+      "Kiểm tra nút bị vô hiệu và bộ đếm ngược khi bị khóa",
+      "Chờ nút được bật lại bằng assertion có timeout thích hợp, không dùng waitForTimeout",
+      ...COMMON_CRITERIA,
+    ],
+    hints: [
+      "Khoá test là cách chuẩn để vượt CAPTCHA trong môi trường kiểm thử; không dựng bot giải CAPTCHA.",
+      "expect(nút).toBeEnabled({ timeout: 10000 }) tự chờ đến khi hết khóa.",
+      "Nút Reset dữ liệu lab có data-testid reset-data để xoá bộ đếm giữa các lần chạy.",
+    ],
+    solution: `import { test, expect, type Page } from "@playwright/test";
+
+async function attempt(page: Page, password: string) {
+  await page.getByLabel("Mật khẩu").fill(password);
+  await page.getByRole("button", { name: "Đăng nhập" }).click();
+}
+
+test("khóa sau 4 lần sai rồi đăng nhập lại", async ({ page }) => {
+  await page.goto("/lab/guard?captcha=test");
+  await page.getByTestId("reset-data").click();
+
+  await attempt(page, "x1");
+  await expect(page.getByTestId("guard-message")).toHaveText("Sai email hoặc mật khẩu. Còn 3 lần thử");
+  await attempt(page, "x2");
+  await expect(page.getByTestId("captcha-status")).toHaveText("CAPTCHA: chế độ test, tự động đạt");
+  await attempt(page, "x3");
+  await attempt(page, "x4");
+
+  await expect(page.getByTestId("guard-message")).toContainText("Quá nhiều lần thử");
+  await expect(page.getByRole("button", { name: "Đăng nhập" })).toBeDisabled();
+  await expect(page.getByTestId("guard-countdown")).toBeVisible();
+
+  await expect(page.getByRole("button", { name: "Đăng nhập" })).toBeEnabled({ timeout: 10_000 });
+  await attempt(page, "Passw0rd!");
+  await expect(page.getByTestId("guard-welcome")).toBeVisible();
+});`,
+  },
+];
+
+export const EXERCISES: Record<string, Exercise[]> = { login, forms, cart, playground, api, otp, todo, table, leave, chat, totp, oauth, pay, orders, guard };
