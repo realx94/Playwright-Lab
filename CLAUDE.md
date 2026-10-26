@@ -29,12 +29,14 @@ Quy trình mỗi lần triển khai:
 - Mọi truy cập lưu trữ đi qua `src/lib/storage` (`StorageAdapter`), không gọi IndexedDB/localStorage trực tiếp trong UI (trừ cấu hình nhỏ của từng lab).
 - Lab: có nút **Reset**, `data-testid` ổn định, bug bật bằng `?bugs=BUG-xx`, spec đáp án trong `e2e/<lab>-lab.spec.ts`, test case mẫu trong `src/lib/labs/testcases.ts`.
 - Quiz: file `src/content/quiz/<slug>.json`; `e2e/quiz-bank.spec.ts` phải xanh.
+- Bài tập lab: dữ liệu ở `src/lib/labs/exercises.ts`; **đáp án mẫu phải chạy xanh** (`npm run verify:solutions`). Trang `/lab/<slug>` chỉ chứa ứng dụng; BR, workshop và bài tập đặt ở `/labs/<slug>` để không gây trùng locator.
 - Nội dung tiếng Việt, thuật ngữ kỹ thuật giữ tiếng Anh. Không sao chép nội dung của khoá học khác.
 - Không commit khoá/API key; `.env*` đã được git bỏ qua.
 
 ## Lệnh thường dùng
 - `npm run dev` – chạy dev; `npm run build` – build; `npm run lint`
 - `npx playwright test` – e2e (tự build và chạy `next start -p 3100`)
+- `npm run verify:solutions` – chạy thật mọi đáp án mẫu của bài tập
 
 ## Lưu ý với Bash trên Windows
 Không dán nội dung file lớn (tiếng Việt, nhiều dấu nháy) vào heredoc; dùng công cụ Write để tạo file.

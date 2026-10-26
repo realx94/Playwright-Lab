@@ -16,6 +16,17 @@ export interface QuizAttempt {
   durationSec: number;
 }
 
+export interface ExerciseAttempt {
+  id: string;
+  exerciseId: string;
+  labSlug: string;
+  checked: number;
+  total: number;
+  hintsUsed: number;
+  solutionViewed: boolean;
+  takenAt: number;
+}
+
 export interface AskAiEntry {
   term: string;
   askedAt: number;
@@ -27,6 +38,7 @@ export interface ExportData {
   lessonProgress: LessonProgress[];
   quizAttempts: QuizAttempt[];
   askAiHistory: AskAiEntry[];
+  exerciseAttempts?: ExerciseAttempt[];
 }
 
 /** Mọi truy cập lưu trữ đi qua interface này để thay bằng SupabaseAdapter sau. */
@@ -36,6 +48,8 @@ export interface StorageAdapter {
   saveProgress(p: LessonProgress): Promise<void>;
   saveAttempt(a: QuizAttempt): Promise<void>;
   listAttempts(): Promise<QuizAttempt[]>;
+  saveExercise(a: ExerciseAttempt): Promise<void>;
+  listExercises(): Promise<ExerciseAttempt[]>;
   addAsk(e: AskAiEntry): Promise<void>;
   listAsk(): Promise<AskAiEntry[]>;
   exportAll(): Promise<ExportData>;

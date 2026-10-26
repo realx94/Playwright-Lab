@@ -14,6 +14,7 @@ import {
   type ExportData,
   type LessonProgress,
   type QuizAttempt,
+  type ExerciseAttempt,
 } from "@/lib/storage";
 
 export interface LessonRef {
@@ -32,11 +33,13 @@ export function StatsApp({ lessons }: { lessons: LessonRef[] }) {
   const [progress, setProgress] = useState<LessonProgress[] | null>(null);
   const [asks, setAsks] = useState<AskAiEntry[]>([]);
   const [attempts, setAttempts] = useState<QuizAttempt[]>([]);
+  const [exercises, setExercises] = useState<ExerciseAttempt[]>([]);
   const fileRef = useRef<HTMLInputElement>(null);
 
   const refresh = useCallback(async () => {
     setProgress(await storage.listProgress());
     setAsks(await storage.listAsk());
+    setExercises((await storage.listExercises()).sort((a, b) => b.takenAt - a.takenAt));
     setAttempts((await storage.listAttempts()).sort((a, b) => b.takenAt - a.takenAt));
   }, []);
 
@@ -172,6 +175,27 @@ export function StatsApp({ lessons }: { lessons: LessonRef[] }) {
                 <Badge variant={a.score === a.total ? "default" : "secondary"}>
                   {a.score}/{a.total} · {fmt(a.durationSec)}
                 </Badge>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      {exercises.length > 0 && (
+        <section className="space-y-2">
+          <h2 className="text-lg font-semibold">Bài tập lab đã nộp</h2>
+          <ul className="divide-y rounded-xl border" data-testid="exercise-history">
+            {exercises.slice(0, 10).map((a) => (
+              <li key={a.id} className="flex items-center justify-between p-3 text-sm">
+                <span>
+                  {a.labSlug} · {a.exerciseId} · {new Date(a.takenAt).toLocaleString("vi-VN")}
+                </span>
+                <span className="flex items-center gap-2">
+                  {a.solutionViewed && <Badge variant="outline">Đã xem đáp án</Badge>}
+                  <Badge variant={a.checked === a.total ? "default" : "secondary"}>
+                    {a.checked}/{a.total}
+                  </Badge>
+                </span>
               </li>
             ))}
           </ul>

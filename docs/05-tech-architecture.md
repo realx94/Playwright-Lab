@@ -25,7 +25,8 @@ Quy tắc: tự viết component chỉ khi shadcn không có (vd. `AskAIPopover`
     /(site)                # trang học
       /learn/[level]/[slug]
       /labs, /cheatsheet, /glossary, /interview
-    /lab/[slug]            # Lab App (layout riêng, không chrome của site)
+    /labs/[slug]           # Trang hướng dẫn lab: BR, Test Case Workshop, bài tập
+    /lab/[slug]            # Lab App thuần (không thành phần phụ, locator sạch)
     /api/lab/[slug]/...    # mock API, reset
     /api/openapi
     /api/byo/*             # proxy stateless (allowlist host)

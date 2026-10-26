@@ -28,7 +28,7 @@ export default function LabsPage() {
             </Card>
           );
           return l.ready ? (
-            <Link key={l.slug} href={`/lab/${l.slug}`}>{card}</Link>
+            <Link key={l.slug} href={`/labs/${l.slug}`}>{card}</Link>
           ) : (
             <div key={l.slug}>{card}</div>
           );

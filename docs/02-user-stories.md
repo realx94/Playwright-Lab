@@ -106,6 +106,9 @@ Persona: **L** = Learner (QA), **M** = Mentor, **A** = Admin/Content author.
 
 **US-06.02 (P0)** – Là L, tôi muốn bài tập có đề, tiêu chí đạt, gợi ý, đáp án mẫu để tự học.
 - AC: đáp án ẩn mặc định; có nhãn độ khó.
+- AC (đã chốt, giai đoạn 1 – tự đánh giá): tiêu chí đạt là checklist khách quan, người học tự kiểm chứng rồi bấm Nộp; gợi ý mở dần từng cái; xem đáp án cần xác nhận và được ghi cờ “đã xem đáp án”; mỗi lần nộp lưu (số tiêu chí đạt/tổng, số gợi ý đã mở, cờ xem đáp án) vào lịch sử và hiện ở trang Thống kê.
+- AC: mỗi đáp án mẫu phải chạy xanh trên lab sạch (`npm run verify:solutions`).
+- AC: bài tập và test case nằm ở trang hướng dẫn `/labs/<slug>`, trang ứng dụng `/lab/<slug>` không chứa thành phần phụ để locator của người học không bị trùng.
 
 **US-06.03 (P0)** – Là L, tôi muốn học tuần tự: locator → action → assertion → auto-wait → hooks → POM → fixture → config → report.
 
@@ -116,6 +119,11 @@ Persona: **L** = Learner (QA), **M** = Mentor, **A** = Admin/Content author.
 **US-06.06 (P1)** – Là L, tôi muốn học visual comparison, screenshot, video, emulation (mobile, geolocation, locale) để test đa dạng.
 
 **US-06.07 (P1)** – Là L, tôi muốn học BDD (Gherkin + playwright-bdd/Cucumber) để dùng khi dự án yêu cầu.
+
+**US-06.09 (P2)** – Là L, tôi muốn chấm điểm tự động spec của mình bằng mutation grading để biết test có thật sự bắt được lỗi.
+- AC: lệnh `npm run grade -- --lab <slug> --spec <file>` trong starter repo chạy spec trên lab sạch (phải xanh) rồi lần lượt với từng bug `?bugs=BUG-xx` (phải đỏ); điểm = số bug bắt được / tổng số bug, trừ điểm nếu đỏ do timeout/locator sai.
+- AC: xuất file JSON kết quả; người học tải lên site để lưu vào lịch sử (không có server chấm nên chỉ để tự học, không cấp chứng chỉ).
+- Phụ thuộc: starter repo (US-11.01); lab đọc bug từ cookie `lab_bugs` ngoài query để cấu hình runner tiêm bug được.
 
 **US-06.08 (P2)** – Là L, tôi muốn học dùng AI (Copilot/Claude, Playwright MCP, agents) để tăng tốc viết test mà vẫn kiểm soát chất lượng.
 

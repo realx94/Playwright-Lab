@@ -1,7 +1,5 @@
 import { FormsApp } from "@/components/lab/forms/forms-app";
 
-import { TestCaseWorkshop } from "@/components/lab/test-case-workshop";
-
 export const metadata = { title: "LAB-02 Form đa dạng" };
 
 export default function FormsLabPage() {
@@ -23,7 +21,6 @@ export default function FormsLabPage() {
       <div className="mt-8">
         <FormsApp />
       </div>
-      <TestCaseWorkshop lab="forms" />
     </div>
   );
 }

@@ -1,8 +1,6 @@
 import { Suspense } from "react";
 import { CartApp } from "@/components/lab/cart/cart-app";
 
-import { TestCaseWorkshop } from "@/components/lab/test-case-workshop";
-
 export const metadata = { title: "LAB-03 Giỏ hàng & Checkout" };
 
 export default function CartLabPage() {
@@ -25,7 +23,6 @@ export default function CartLabPage() {
           <CartApp />
         </Suspense>
       </div>
-      <TestCaseWorkshop lab="cart" />
     </div>
   );
 }
