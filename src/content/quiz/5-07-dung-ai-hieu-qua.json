@@ -1,0 +1,168 @@
+{
+  "questions": [
+    {
+      "id": "q1",
+      "type": "single",
+      "prompt": "AI mạnh nhất ở việc nào trong automation?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Viết nháp test, giải thích code và gợi ý dữ liệu biên"
+        },
+        {
+          "id": "b",
+          "text": "Thay thế hoàn toàn việc hiểu nghiệp vụ của QA"
+        },
+        {
+          "id": "c",
+          "text": "Đảm bảo mọi test do nó viết ra đều đúng ngay từ lần đầu tiên"
+        },
+        {
+          "id": "d",
+          "text": "Tự biết bug thật của ứng dụng bạn đang test"
+        }
+      ],
+      "answer": [
+        "a"
+      ],
+      "explanation": "AI hỗ trợ tốt phần nháp và giải thích, nhưng không biết nghiệp vụ riêng và không đảm bảo đúng."
+    },
+    {
+      "id": "q2",
+      "type": "single",
+      "prompt": "Điều gì cần làm với test do AI viết trước khi commit?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Commit ngay vì AI hiếm khi viết code sai"
+        },
+        {
+          "id": "b",
+          "text": "Xoá các assertion để test dễ chạy xanh"
+        },
+        {
+          "id": "c",
+          "text": "Chỉ chạy một lần và bỏ qua phần đọc code"
+        },
+        {
+          "id": "d",
+          "text": "Đọc, chạy và hiểu được từng phần của nó"
+        }
+      ],
+      "answer": [
+        "d"
+      ],
+      "explanation": "Bạn chịu trách nhiệm về mọi dòng code, nên phải đọc, chạy và hiểu."
+    },
+    {
+      "id": "q3",
+      "type": "multi",
+      "prompt": "Một prompt tốt cho tester nên có gì? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Một câu thật ngắn như hãy viết test cho tôi"
+        },
+        {
+          "id": "b",
+          "text": "Toàn bộ mật khẩu thật của hệ thống mà bạn đang test"
+        },
+        {
+          "id": "c",
+          "text": "Ngữ cảnh và các quy tắc nghiệp vụ cụ thể của lab"
+        },
+        {
+          "id": "d",
+          "text": "Ràng buộc như dùng getByRole, không chờ cố định"
+        }
+      ],
+      "answer": [
+        "c",
+        "d"
+      ],
+      "explanation": "Ngữ cảnh và ràng buộc rõ ràng cho kết quả tốt hơn. Không bao giờ đưa thông tin nhạy cảm vào prompt."
+    },
+    {
+      "id": "q4",
+      "type": "single",
+      "prompt": "AI sinh test và đề nghị nới assertion để test xanh. Bạn nên làm gì?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Từ chối, vì như vậy che lỗi thay vì sửa nguyên nhân"
+        },
+        {
+          "id": "b",
+          "text": "Xoá luôn test đó để khỏi phải suy nghĩ thêm"
+        },
+        {
+          "id": "c",
+          "text": "Chấp nhận nhưng chỉ khi test được chạy ở môi trường CI"
+        },
+        {
+          "id": "d",
+          "text": "Chấp nhận vì mục tiêu là làm cho test xanh"
+        }
+      ],
+      "answer": [
+        "a"
+      ],
+      "explanation": "Nới assertion làm test mất khả năng phát hiện lỗi. Mục tiêu là test đúng, không chỉ xanh."
+    },
+    {
+      "id": "q5",
+      "type": "multi",
+      "prompt": "Cách kiểm tra test do AI viết có thật sự hữu ích? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Tin vào lời giải thích tự tin của AI về test"
+        },
+        {
+          "id": "b",
+          "text": "Đối chiếu kỳ vọng với tài liệu yêu cầu, không với giao diện"
+        },
+        {
+          "id": "c",
+          "text": "Bật bug có chủ đích và xem test có thật sự đỏ không"
+        },
+        {
+          "id": "d",
+          "text": "Chỉ xem test có chạy xanh trên lab sạch hay không"
+        }
+      ],
+      "answer": [
+        "b",
+        "c"
+      ],
+      "explanation": "Test hữu ích phải bắt được bug khi bật lỗi và có kỳ vọng độc lập với ứng dụng."
+    },
+    {
+      "id": "q6",
+      "type": "single",
+      "prompt": "Không nên dán thông tin nào vào dịch vụ AI bên ngoài?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Khoá API, dữ liệu khách hàng thật và mã nguồn nhạy cảm"
+        },
+        {
+          "id": "b",
+          "text": "Câu hỏi chung về cách dùng getByRole trong test"
+        },
+        {
+          "id": "c",
+          "text": "Mô tả quy tắc nghiệp vụ của lab học tập"
+        },
+        {
+          "id": "d",
+          "text": "Đoạn code mẫu công khai trong tài liệu"
+        }
+      ],
+      "answer": [
+        "a"
+      ],
+      "explanation": "Bí mật và dữ liệu thật không được đưa ra ngoài; câu hỏi chung và mã công khai thì an toàn."
+    }
+  ]
+}

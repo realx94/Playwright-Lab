@@ -1,0 +1,168 @@
+{
+  "questions": [
+    {
+      "id": "q1",
+      "type": "single",
+      "prompt": "Reporter nào phù hợp để hệ thống CI hiển thị kết quả theo định dạng chung?",
+      "options": [
+        {
+          "id": "a",
+          "text": "line ghi kết quả của mỗi test vào ảnh chụp màn hình"
+        },
+        {
+          "id": "b",
+          "text": "junit xuất XML mà nhiều hệ thống CI đọc được"
+        },
+        {
+          "id": "c",
+          "text": "dot chỉ in dấu chấm cho mỗi test đã chạy"
+        },
+        {
+          "id": "d",
+          "text": "list in danh sách test ra màn hình terminal"
+        }
+      ],
+      "answer": [
+        "b"
+      ],
+      "explanation": "JUnit XML là định dạng phổ biến mà các công cụ CI hiểu và hiển thị."
+    },
+    {
+      "id": "q2",
+      "type": "single",
+      "prompt": "Vì sao nên gửi tóm tắt kết quả vào kênh chat của nhóm?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Để thay thế hoàn toàn báo cáo HTML chi tiết"
+        },
+        {
+          "id": "b",
+          "text": "Để Playwright biết người nào đang online"
+        },
+        {
+          "id": "c",
+          "text": "Để cả nhóm thấy nhanh kết quả mà không cần mở CI"
+        },
+        {
+          "id": "d",
+          "text": "Để test tự động chạy lại mỗi khi có người nhắn tin mới"
+        }
+      ],
+      "answer": [
+        "c"
+      ],
+      "explanation": "Tóm tắt giúp cả nhóm nắm kết quả nhanh; báo cáo chi tiết vẫn cần cho người điều tra."
+    },
+    {
+      "id": "q3",
+      "type": "multi",
+      "prompt": "Số liệu nào nên theo dõi? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Danh sách các test đang chạy chậm nhất bộ"
+        },
+        {
+          "id": "b",
+          "text": "Tỉ lệ test đạt và tỉ lệ flaky theo thời gian"
+        },
+        {
+          "id": "c",
+          "text": "Số dòng comment có trong mỗi file test"
+        },
+        {
+          "id": "d",
+          "text": "Độ dài trung bình của tên các biến"
+        }
+      ],
+      "answer": [
+        "a",
+        "b"
+      ],
+      "explanation": "Tỉ lệ đạt/flaky và test chậm giúp cải thiện bộ test; các số liệu hình thức thì không."
+    },
+    {
+      "id": "q4",
+      "type": "single",
+      "prompt": "Tỉ lệ flaky tăng dần theo tuần cho thấy điều gì?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Cần tăng số retry lên cao hơn để che lỗi"
+        },
+        {
+          "id": "b",
+          "text": "Cần xoá toàn bộ báo cáo cũ để số liệu hiển thị đẹp hơn"
+        },
+        {
+          "id": "c",
+          "text": "Bộ test đang mất ổn định và cần điều tra nguyên nhân"
+        },
+        {
+          "id": "d",
+          "text": "Ứng dụng đang có ngày càng ít lỗi hơn trước"
+        }
+      ],
+      "answer": [
+        "c"
+      ],
+      "explanation": "Flaky tăng nghĩa là độ tin cậy giảm; phải tìm gốc rễ thay vì che bằng retry."
+    },
+    {
+      "id": "q5",
+      "type": "multi",
+      "prompt": "Điều nào đúng về Allure? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Chỉ chạy được khi không dùng bất kỳ hệ thống CI"
+        },
+        {
+          "id": "b",
+          "text": "Là reporter mặc định đi kèm sẵn trong bộ cài Playwright"
+        },
+        {
+          "id": "c",
+          "text": "Cần cài thêm gói bổ sung ngoài Playwright"
+        },
+        {
+          "id": "d",
+          "text": "Cho báo cáo giàu tính năng với lịch sử và xu hướng"
+        }
+      ],
+      "answer": [
+        "c",
+        "d"
+      ],
+      "explanation": "Allure là gói bên ngoài, mạnh về lịch sử và xu hướng, dùng tốt trên CI."
+    },
+    {
+      "id": "q6",
+      "type": "single",
+      "prompt": "Báo cáo dành cho quản lý nên có nội dung nào?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Toàn bộ log chi tiết của từng lần gọi mạng"
+        },
+        {
+          "id": "b",
+          "text": "Ảnh chụp màn hình của mọi bước trong mọi test"
+        },
+        {
+          "id": "c",
+          "text": "Tóm tắt ngắn gọn như tỉ lệ đạt và lỗi nghiêm trọng"
+        },
+        {
+          "id": "d",
+          "text": "Dòng code đã thay đổi trong từng lần commit"
+        }
+      ],
+      "answer": [
+        "c"
+      ],
+      "explanation": "Mỗi đối tượng đọc cần mức chi tiết khác nhau; quản lý cần tóm tắt, dev cần trace và log."
+    }
+  ]
+}

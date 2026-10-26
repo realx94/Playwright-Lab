@@ -1,0 +1,168 @@
+{
+  "questions": [
+    {
+      "id": "q1",
+      "type": "single",
+      "prompt": "Trong Gherkin, từ khoá Given dùng để làm gì?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Mô tả bối cảnh hoặc điều kiện ban đầu"
+        },
+        {
+          "id": "b",
+          "text": "Mô tả hành động người dùng thực hiện"
+        },
+        {
+          "id": "c",
+          "text": "Mô tả kết quả mong đợi sau hành động"
+        },
+        {
+          "id": "d",
+          "text": "Mô tả danh sách dữ liệu của nhiều kịch bản"
+        }
+      ],
+      "answer": [
+        "a"
+      ],
+      "explanation": "Given là bối cảnh, When là hành động, Then là kết quả mong đợi."
+    },
+    {
+      "id": "q2",
+      "type": "single",
+      "prompt": "Scenario Outline kèm Examples dùng khi nào?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Cùng một kịch bản cần chạy với nhiều bộ dữ liệu"
+        },
+        {
+          "id": "b",
+          "text": "Cần gộp nhiều Feature vào một file"
+        },
+        {
+          "id": "c",
+          "text": "Cần chạy một kịch bản đúng một lần duy nhất"
+        },
+        {
+          "id": "d",
+          "text": "Cần viết kịch bản không có bước Then"
+        }
+      ],
+      "answer": [
+        "a"
+      ],
+      "explanation": "Scenario Outline là mẫu kịch bản, mỗi dòng trong Examples sinh ra một lần chạy."
+    },
+    {
+      "id": "q3",
+      "type": "multi",
+      "prompt": "Kịch bản BDD viết tốt có đặc điểm nào? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Liệt kê từng lần bấm chuột và vị trí của từng nút"
+        },
+        {
+          "id": "b",
+          "text": "Mô tả hành vi người dùng, không mô tả thao tác giao diện"
+        },
+        {
+          "id": "c",
+          "text": "Mỗi scenario chỉ kiểm tra đúng một hành vi"
+        },
+        {
+          "id": "d",
+          "text": "Dài vài chục bước để bao phủ cả luồng nghiệp vụ"
+        }
+      ],
+      "answer": [
+        "b",
+        "c"
+      ],
+      "explanation": "Kịch bản nên nói về hành vi và ngắn gọn; liệt kê thao tác giao diện làm nó mong manh và khó đọc."
+    },
+    {
+      "id": "q4",
+      "type": "single",
+      "prompt": "BDD mang lại lợi ích lớn nhất khi nào?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Khi nghiệp vụ, dev và QA cùng viết và đọc kịch bản"
+        },
+        {
+          "id": "b",
+          "text": "Khi cần kiểm thử API thuần mà không có giao diện"
+        },
+        {
+          "id": "c",
+          "text": "Khi chỉ QA tự viết và tự đọc các kịch bản"
+        },
+        {
+          "id": "d",
+          "text": "Khi muốn test chạy nhanh hơn bằng Playwright thuần"
+        }
+      ],
+      "answer": [
+        "a"
+      ],
+      "explanation": "Giá trị của BDD là ngôn ngữ chung giữa các vai trò. Nếu chỉ QA dùng thì nó thêm chi phí mà ít lợi ích."
+    },
+    {
+      "id": "q5",
+      "type": "multi",
+      "prompt": "Step definition có vai trò nào? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Thay thế hoàn toàn các file feature của dự án"
+        },
+        {
+          "id": "b",
+          "text": "Chỉ được phép chạy đúng một lần trong cả dự án"
+        },
+        {
+          "id": "c",
+          "text": "Có thể dùng lại giữa nhiều scenario khác nhau"
+        },
+        {
+          "id": "d",
+          "text": "Ánh xạ mỗi câu Gherkin thành thao tác thật"
+        }
+      ],
+      "answer": [
+        "c",
+        "d"
+      ],
+      "explanation": "Step definition là phần code ứng với câu Gherkin và có thể tái sử dụng."
+    },
+    {
+      "id": "q6",
+      "type": "single",
+      "prompt": "Khi nào không nên dùng BDD?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Nhóm có nhiều người tham gia vào việc review"
+        },
+        {
+          "id": "b",
+          "text": "Nhóm không có người nghiệp vụ tham gia viết kịch bản"
+        },
+        {
+          "id": "c",
+          "text": "Nhóm muốn thống nhất ngôn ngữ giữa các vai trò"
+        },
+        {
+          "id": "d",
+          "text": "Nhóm cần tài liệu hành vi dễ đọc cho mọi người"
+        }
+      ],
+      "answer": [
+        "b"
+      ],
+      "explanation": "Không có người nghiệp vụ thì BDD mất ý nghĩa chính; ba lựa chọn còn lại là lý do nên dùng BDD."
+    }
+  ]
+}

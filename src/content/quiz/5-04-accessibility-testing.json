@@ -1,0 +1,168 @@
+{
+  "questions": [
+    {
+      "id": "q1",
+      "type": "single",
+      "prompt": "axe-core giúp được gì trong kiểm thử accessibility?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Phát hiện tự động nhiều lỗi truy cập phổ biến trên trang"
+        },
+        {
+          "id": "b",
+          "text": "Chứng nhận trang đã đạt đầy đủ các tiêu chuẩn WCAG"
+        },
+        {
+          "id": "c",
+          "text": "Thay thế hoàn toàn việc kiểm tra thủ công bằng tay"
+        },
+        {
+          "id": "d",
+          "text": "Tự động sửa toàn bộ mã nguồn của trang web cho đúng chuẩn"
+        }
+      ],
+      "answer": [
+        "a"
+      ],
+      "explanation": "axe phát hiện một phần các lỗi phổ biến nhưng không thể chứng nhận đạt chuẩn hay thay thế kiểm tra thủ công."
+    },
+    {
+      "id": "q2",
+      "type": "single",
+      "prompt": "Ví dụ lỗi a11y mà axe-core thường phát hiện là gì?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Trang tải chậm hơn ba giây trên mạng yếu"
+        },
+        {
+          "id": "b",
+          "text": "Bố cục kém hài hoà về mặt thẩm mỹ chung"
+        },
+        {
+          "id": "c",
+          "text": "Câu chữ trên trang bị sai chính tả tiếng Việt ở vài chỗ"
+        },
+        {
+          "id": "d",
+          "text": "Nút bấm không có tên mà trình đọc màn hình đọc được"
+        }
+      ],
+      "answer": [
+        "d"
+      ],
+      "explanation": "axe tập trung vào lỗi truy cập như thiếu tên, thiếu nhãn, tương phản; không đánh giá tốc độ hay thẩm mỹ."
+    },
+    {
+      "id": "q3",
+      "type": "multi",
+      "prompt": "Việc nào cần kiểm tra thủ công dù đã chạy axe? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Tên các hàm trong mã nguồn JavaScript của trang"
+        },
+        {
+          "id": "b",
+          "text": "Số lượng thẻ div có trong mỗi trang web"
+        },
+        {
+          "id": "c",
+          "text": "Nội dung có dễ hiểu khi đọc bằng screen reader"
+        },
+        {
+          "id": "d",
+          "text": "Thứ tự focus khi dùng bàn phím có hợp lý không"
+        }
+      ],
+      "answer": [
+        "c",
+        "d"
+      ],
+      "explanation": "Thứ tự focus và trải nghiệm đọc bằng screen reader cần con người đánh giá."
+    },
+    {
+      "id": "q4",
+      "type": "single",
+      "prompt": "Vì sao getByLabel và getByRole liên quan tới accessibility?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Chúng chỉ hoạt động trên trình duyệt có hỗ trợ giọng nói"
+        },
+        {
+          "id": "b",
+          "text": "Chúng chỉ tìm được phần tử có nhãn và vai trò đúng"
+        },
+        {
+          "id": "c",
+          "text": "Chúng tự động thêm nhãn vào mọi phần tử còn thiếu"
+        },
+        {
+          "id": "d",
+          "text": "Chúng làm trang tải nhanh hơn cho người dùng"
+        }
+      ],
+      "answer": [
+        "b"
+      ],
+      "explanation": "Locator hướng người dùng dựa trên cây truy cập, nên phần tử thiếu nhãn/vai trò sẽ không tìm được."
+    },
+    {
+      "id": "q5",
+      "type": "multi",
+      "prompt": "Điều nào đúng về các mức WCAG? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Mức AAA bắt buộc phải đạt cho mọi trang web"
+        },
+        {
+          "id": "b",
+          "text": "Mức B là mức mà hầu hết trang web đang dùng"
+        },
+        {
+          "id": "c",
+          "text": "Mức AA là mục tiêu phổ biến cho phần lớn website"
+        },
+        {
+          "id": "d",
+          "text": "Mức A là mức tối thiểu cơ bản nhất của chuẩn"
+        }
+      ],
+      "answer": [
+        "c",
+        "d"
+      ],
+      "explanation": "WCAG có ba mức A, AA, AAA; AA là mục tiêu phổ biến, AAA không bắt buộc cho mọi trang."
+    },
+    {
+      "id": "q6",
+      "type": "single",
+      "prompt": "Dùng phím Tab đi qua form nhằm kiểm tra điều gì?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Số lượng ký tự tối đa có thể nhập vào ô"
+        },
+        {
+          "id": "b",
+          "text": "Màu sắc của các thông báo lỗi hiển thị"
+        },
+        {
+          "id": "c",
+          "text": "Thứ tự focus hợp lý và thấy rõ phần tử đang chọn"
+        },
+        {
+          "id": "d",
+          "text": "Tốc độ phản hồi của máy chủ khi gửi form"
+        }
+      ],
+      "answer": [
+        "c"
+      ],
+      "explanation": "Điều hướng bằng bàn phím là kiểm tra a11y cơ bản: thứ tự focus và dấu hiệu nhìn thấy."
+    }
+  ]
+}

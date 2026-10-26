@@ -1,0 +1,168 @@
+{
+  "questions": [
+    {
+      "id": "q1",
+      "type": "single",
+      "prompt": "Flaky test là gì?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Test chạy rất chậm so với phần lớn các test khác"
+        },
+        {
+          "id": "b",
+          "text": "Test lúc xanh lúc đỏ dù code không thay đổi"
+        },
+        {
+          "id": "c",
+          "text": "Test luôn đỏ vì ứng dụng có lỗi thật"
+        },
+        {
+          "id": "d",
+          "text": "Test bị bỏ qua bằng test.skip trong mã"
+        }
+      ],
+      "answer": [
+        "b"
+      ],
+      "explanation": "Đặc trưng của flaky là kết quả không nhất quán dù không có thay đổi nào."
+    },
+    {
+      "id": "q2",
+      "type": "single",
+      "prompt": "Lệnh nào giúp tái lập một test chập chờn?",
+      "options": [
+        {
+          "id": "a",
+          "text": "npx playwright test login --reporter=dot"
+        },
+        {
+          "id": "b",
+          "text": "npx playwright test login --update-snapshots"
+        },
+        {
+          "id": "c",
+          "text": "npx playwright test login --list --workers=1"
+        },
+        {
+          "id": "d",
+          "text": "npx playwright test login --repeat-each=30"
+        }
+      ],
+      "answer": [
+        "d"
+      ],
+      "explanation": "--repeat-each chạy lặp lại nhiều lần để thấy tỉ lệ lỗi."
+    },
+    {
+      "id": "q3",
+      "type": "multi",
+      "prompt": "Nguyên nhân phổ biến của flaky test? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Báo cáo được xuất ra định dạng HTML"
+        },
+        {
+          "id": "b",
+          "text": "Chờ cố định thay vì chờ theo điều kiện"
+        },
+        {
+          "id": "c",
+          "text": "Tên test được viết bằng tiếng Việt có dấu"
+        },
+        {
+          "id": "d",
+          "text": "Các test dùng chung dữ liệu khi chạy song song"
+        }
+      ],
+      "answer": [
+        "b",
+        "d"
+      ],
+      "explanation": "Chờ cố định (race) và dữ liệu dùng chung là hai nguyên nhân hàng đầu."
+    },
+    {
+      "id": "q4",
+      "type": "single",
+      "prompt": "Test đỏ khi chạy song song nhưng xanh khi chạy một mình. Nhóm nguyên nhân nào đáng nghi nhất?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Tên file test quá dài so với giới hạn"
+        },
+        {
+          "id": "b",
+          "text": "Trình duyệt không hỗ trợ chạy song song"
+        },
+        {
+          "id": "c",
+          "text": "Dữ liệu hoặc trạng thái dùng chung giữa các test"
+        },
+        {
+          "id": "d",
+          "text": "Phiên bản Node.js quá cũ trên máy đang chạy bộ test"
+        }
+      ],
+      "answer": [
+        "c"
+      ],
+      "explanation": "Chạy song song làm lộ sự phụ thuộc dữ liệu hoặc trạng thái chung."
+    },
+    {
+      "id": "q5",
+      "type": "multi",
+      "prompt": "Cách phòng ngừa flaky đúng? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Tắt các test chập chờn mà không ghi lại"
+        },
+        {
+          "id": "b",
+          "text": "Dùng web-first assertion thay cho chờ cố định"
+        },
+        {
+          "id": "c",
+          "text": "Mock các phụ thuộc không ổn định như dịch vụ ngoài"
+        },
+        {
+          "id": "d",
+          "text": "Tăng retries lên thật cao ở mọi môi trường"
+        }
+      ],
+      "answer": [
+        "b",
+        "c"
+      ],
+      "explanation": "Phòng ngừa là chờ theo điều kiện và cô lập phụ thuộc, không phải che bằng retry hay tắt test."
+    },
+    {
+      "id": "q6",
+      "type": "single",
+      "prompt": "Vì sao không nên chỉ dựa vào retry để xử lý test chập chờn?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Nó chỉ hoạt động được trên máy cá nhân"
+        },
+        {
+          "id": "b",
+          "text": "Nó che giấu nguyên nhân thật của lỗi chập chờn"
+        },
+        {
+          "id": "c",
+          "text": "Nó xoá lịch sử của các lần chạy trước"
+        },
+        {
+          "id": "d",
+          "text": "Nó làm Playwright chạy sai các assertion trong test"
+        }
+      ],
+      "answer": [
+        "b"
+      ],
+      "explanation": "Retry chỉ làm báo cáo xanh hơn mà lỗi gốc vẫn còn, làm giảm niềm tin vào bộ test."
+    }
+  ]
+}

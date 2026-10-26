@@ -1,0 +1,168 @@
+{
+  "questions": [
+    {
+      "id": "q1",
+      "type": "single",
+      "prompt": "Tiêu chí ổn định của capstone là gì?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Chạy xanh sau khi tắt các test chập chờn"
+        },
+        {
+          "id": "b",
+          "text": "Chạy xanh liên tiếp 10 lần với --repeat-each=10"
+        },
+        {
+          "id": "c",
+          "text": "Chạy xanh khi có dùng retries ở mức cao"
+        },
+        {
+          "id": "d",
+          "text": "Chạy xanh đúng một lần duy nhất trên máy của chính mình"
+        }
+      ],
+      "answer": [
+        "b"
+      ],
+      "explanation": "Ổn định nghĩa là lặp lại nhiều lần đều xanh, không dựa vào retry hay tắt test."
+    },
+    {
+      "id": "q2",
+      "type": "single",
+      "prompt": "Việc test bắt được các bug bật bằng ?bugs= chứng tỏ điều gì?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Test có khả năng phát hiện lỗi thật khi lỗi xuất hiện"
+        },
+        {
+          "id": "b",
+          "text": "Ứng dụng đã được sửa hết mọi lỗi tồn tại"
+        },
+        {
+          "id": "c",
+          "text": "Bộ test chạy nhanh hơn so với trước đó"
+        },
+        {
+          "id": "d",
+          "text": "Báo cáo hiển thị đẹp mắt hơn trước đây"
+        }
+      ],
+      "answer": [
+        "a"
+      ],
+      "explanation": "Một test chỉ có giá trị khi nó đỏ lúc có lỗi; bật bug có chủ đích là cách kiểm chứng điều đó."
+    },
+    {
+      "id": "q3",
+      "type": "multi",
+      "prompt": "Câu trả lời phỏng vấn tốt có đặc điểm nào? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Nêu rõ đánh đổi của giải pháp thay vì nói tuyệt đối"
+        },
+        {
+          "id": "b",
+          "text": "Trả lời ngắn gọn trước rồi mới nêu ví dụ cụ thể"
+        },
+        {
+          "id": "c",
+          "text": "Luôn khẳng định mình biết mọi công cụ trên thị trường"
+        },
+        {
+          "id": "d",
+          "text": "Học thuộc lòng định nghĩa mà không cần ví dụ"
+        }
+      ],
+      "answer": [
+        "a",
+        "b"
+      ],
+      "explanation": "Ngắn gọn, có ví dụ thật và nêu đánh đổi thể hiện hiểu sâu; học vẹt hay khoe khoang thì không."
+    },
+    {
+      "id": "q4",
+      "type": "single",
+      "prompt": "Phỏng vấn hỏi Fixture khác beforeEach ở đâu. Ý chính nên nêu là gì?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Fixture chỉ dùng cho API còn beforeEach cho giao diện"
+        },
+        {
+          "id": "b",
+          "text": "Fixture tạo theo nhu cầu và trao đối tượng vào test"
+        },
+        {
+          "id": "c",
+          "text": "Hai thứ giống nhau về chức năng và chỉ khác tên gọi"
+        },
+        {
+          "id": "d",
+          "text": "Fixture chạy cho mọi test còn beforeEach chỉ chạy một lần"
+        }
+      ],
+      "answer": [
+        "b"
+      ],
+      "explanation": "Fixture được tạo khi test gọi tên, trao đối tượng cho test và gom luôn bước dọn dẹp."
+    },
+    {
+      "id": "q5",
+      "type": "multi",
+      "prompt": "Khi trả lời câu hỏi điều tra flaky, ý nào là cốt lõi? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Tăng timeout toàn cục lên gấp nhiều lần"
+        },
+        {
+          "id": "b",
+          "text": "Xem trace của lần đỏ để tìm nguyên nhân"
+        },
+        {
+          "id": "c",
+          "text": "Tái lập lỗi bằng cách chạy lặp lại nhiều lần"
+        },
+        {
+          "id": "d",
+          "text": "Xoá test đó khỏi bộ test để báo cáo luôn hiển thị xanh"
+        }
+      ],
+      "answer": [
+        "b",
+        "c"
+      ],
+      "explanation": "Quy trình chuẩn là tái lập, cô lập và đọc trace; xoá test hay tăng timeout chỉ che vấn đề."
+    },
+    {
+      "id": "q6",
+      "type": "single",
+      "prompt": "Khi chọn test để automate, tiêu chí nào đúng nhất?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Mức độ thích thú của chính người viết ra test"
+        },
+        {
+          "id": "b",
+          "text": "Thứ tự chữ cái tên của từng test case trong cùng một file"
+        },
+        {
+          "id": "c",
+          "text": "Số dòng code mà test sẽ cần để viết xong hết"
+        },
+        {
+          "id": "d",
+          "text": "Tần suất chạy, độ ổn định, rủi ro và chi phí bảo trì"
+        }
+      ],
+      "answer": [
+        "d"
+      ],
+      "explanation": "Giá trị automation đến từ tần suất, ổn định, rủi ro và chi phí; các tiêu chí còn lại không liên quan."
+    }
+  ]
+}

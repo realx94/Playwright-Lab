@@ -1,0 +1,168 @@
+{
+  "questions": [
+    {
+      "id": "q1",
+      "type": "single",
+      "prompt": "Mục đích chính của CI trong automation là gì?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Giúp lập trình viên viết code nhanh hơn nhiều lần"
+        },
+        {
+          "id": "b",
+          "text": "Thay thế hoàn toàn việc viết test thủ công"
+        },
+        {
+          "id": "c",
+          "text": "Tự động chạy test mỗi khi có thay đổi mã nguồn"
+        },
+        {
+          "id": "d",
+          "text": "Tự động sửa các test bị lỗi khi chạy trên máy chủ"
+        }
+      ],
+      "answer": [
+        "c"
+      ],
+      "explanation": "CI chạy build và test tự động ở mỗi thay đổi để phát hiện lỗi sớm."
+    },
+    {
+      "id": "q2",
+      "type": "single",
+      "prompt": "Lịch cron 0 23 * * * trong workflow GitHub Actions chạy vào lúc nào?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Hằng ngày lúc 23:00 theo giờ Việt Nam ở máy chủ"
+        },
+        {
+          "id": "b",
+          "text": "Hằng ngày lúc 23:00 UTC, tức 6:00 sáng giờ Việt Nam"
+        },
+        {
+          "id": "c",
+          "text": "Mỗi giờ một lần vào đúng phút thứ 23 của giờ đó"
+        },
+        {
+          "id": "d",
+          "text": "Vào ngày 23 mỗi tháng đúng lúc nửa đêm theo giờ UTC"
+        }
+      ],
+      "answer": [
+        "b"
+      ],
+      "explanation": "Cron của GitHub dùng giờ UTC. 23:00 UTC cộng 7 giờ là 6:00 sáng hôm sau ở Việt Nam."
+    },
+    {
+      "id": "q3",
+      "type": "multi",
+      "prompt": "Bước nào nên có trong workflow chạy Playwright? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "npx playwright install --with-deps để cài trình duyệt"
+        },
+        {
+          "id": "b",
+          "text": "npm start để mở trình duyệt lên cho người xem"
+        },
+        {
+          "id": "c",
+          "text": "npm ci để cài thư viện đúng theo lockfile"
+        },
+        {
+          "id": "d",
+          "text": "git push --force để tránh xung đột với nhánh khác"
+        }
+      ],
+      "answer": [
+        "a",
+        "c"
+      ],
+      "explanation": "Cần cài thư viện và trình duyệt trên runner. Mở trình duyệt cho người xem hay ép push không thuộc workflow test."
+    },
+    {
+      "id": "q4",
+      "type": "single",
+      "prompt": "Vì sao nên upload báo cáo kể cả khi test đỏ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Để có bằng chứng điều tra nguyên nhân thất bại"
+        },
+        {
+          "id": "b",
+          "text": "Để GitHub tự động sửa lại test cho đúng"
+        },
+        {
+          "id": "c",
+          "text": "Để runner giải phóng bộ nhớ nhanh hơn sau khi chạy"
+        },
+        {
+          "id": "d",
+          "text": "Để trạng thái của workflow hiển thị là thành công"
+        }
+      ],
+      "answer": [
+        "a"
+      ],
+      "explanation": "Báo cáo và trace chính là thứ cần nhất khi test đỏ; vì vậy dùng điều kiện if: !cancelled() cho bước upload."
+    },
+    {
+      "id": "q5",
+      "type": "multi",
+      "prompt": "Điều nào đúng về sharding bằng matrix trong CI? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Mỗi job trong matrix chạy một phần của bộ test"
+        },
+        {
+          "id": "b",
+          "text": "Tổng thời gian giảm vì các phần chạy song song"
+        },
+        {
+          "id": "c",
+          "text": "Cần viết lại test thành nhiều file cho từng job"
+        },
+        {
+          "id": "d",
+          "text": "Mỗi job chạy toàn bộ bộ test để so sánh kết quả"
+        }
+      ],
+      "answer": [
+        "a",
+        "b"
+      ],
+      "explanation": "--shard=i/n chia bộ test thành n phần, mỗi job chạy một phần; không cần sửa test."
+    },
+    {
+      "id": "q6",
+      "type": "single",
+      "prompt": "Test xanh ở máy nhưng đỏ trên CI. Nguyên nhân khả dĩ nhất là gì?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Runner của CI không biết chạy test viết bằng TypeScript"
+        },
+        {
+          "id": "b",
+          "text": "Mã nguồn bị đổi sang ngôn ngữ khác khi đẩy lên GitHub"
+        },
+        {
+          "id": "c",
+          "text": "Khác môi trường như hệ điều hành, font, tốc độ hoặc múi giờ"
+        },
+        {
+          "id": "d",
+          "text": "CI luôn dùng phiên bản Playwright cũ hơn bản trên máy"
+        }
+      ],
+      "answer": [
+        "c"
+      ],
+      "explanation": "Khác biệt môi trường (tốc độ, font, múi giờ, dữ liệu) là nguồn gốc phổ biến nhất; cần cố định môi trường."
+    }
+  ]
+}

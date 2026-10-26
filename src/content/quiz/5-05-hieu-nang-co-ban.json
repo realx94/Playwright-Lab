@@ -1,0 +1,168 @@
+{
+  "questions": [
+    {
+      "id": "q1",
+      "type": "single",
+      "prompt": "LCP (Largest Contentful Paint) đo điều gì?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Tổng dung lượng toàn bộ tài nguyên đã tải"
+        },
+        {
+          "id": "b",
+          "text": "Thời điểm nội dung lớn nhất của trang hiển thị xong"
+        },
+        {
+          "id": "c",
+          "text": "Mức nhảy bố cục ngoài ý muốn của trang"
+        },
+        {
+          "id": "d",
+          "text": "Độ trễ phản hồi khi người dùng bấm vào trang"
+        }
+      ],
+      "answer": [
+        "b"
+      ],
+      "explanation": "LCP đo thời điểm phần nội dung chính hiện ra. Độ trễ tương tác là INP, nhảy bố cục là CLS."
+    },
+    {
+      "id": "q2",
+      "type": "single",
+      "prompt": "Chỉ số CLS cao nghĩa là gì?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Bố cục trang bị xê dịch ngoài ý muốn khi đang tải"
+        },
+        {
+          "id": "b",
+          "text": "Máy chủ trả về nhiều lỗi 5xx cho các yêu cầu"
+        },
+        {
+          "id": "c",
+          "text": "Trang tải rất chậm khi người dùng mở lần đầu tiên"
+        },
+        {
+          "id": "d",
+          "text": "Trang dùng quá nhiều bộ nhớ trên máy người dùng"
+        }
+      ],
+      "answer": [
+        "a"
+      ],
+      "explanation": "CLS đo mức dịch chuyển bố cục không mong muốn; càng thấp càng tốt (mục tiêu ≤ 0,1)."
+    },
+    {
+      "id": "q3",
+      "type": "multi",
+      "prompt": "Lưu ý khi đưa kiểm tra hiệu năng vào test? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Đặt ngưỡng thật sát để phát hiện mọi thay đổi nhỏ"
+        },
+        {
+          "id": "b",
+          "text": "So sánh số đo giữa máy cá nhân và máy CI"
+        },
+        {
+          "id": "c",
+          "text": "Dùng ngưỡng rộng và đo nhiều lần để giảm nhiễu"
+        },
+        {
+          "id": "d",
+          "text": "Chạy trong môi trường ổn định, cấu hình cố định"
+        }
+      ],
+      "answer": [
+        "c",
+        "d"
+      ],
+      "explanation": "Số đo hiệu năng dao động, nên cần ngưỡng rộng, nhiều lần đo và môi trường cố định."
+    },
+    {
+      "id": "q4",
+      "type": "single",
+      "prompt": "Load test với hàng nghìn người dùng đồng thời nên dùng gì?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Dùng nhiều lần page.reload() liên tiếp trong một test"
+        },
+        {
+          "id": "b",
+          "text": "Công cụ chuyên dụng cho kiểm thử tải như k6 hoặc JMeter"
+        },
+        {
+          "id": "c",
+          "text": "Chạy hàng nghìn tab Playwright cùng lúc trên một máy"
+        },
+        {
+          "id": "d",
+          "text": "Tăng số workers lên tới hàng nghìn tiến trình"
+        }
+      ],
+      "answer": [
+        "b"
+      ],
+      "explanation": "Playwright điều khiển trình duyệt thật nên quá nặng cho load test; hãy dùng công cụ chuyên dụng."
+    },
+    {
+      "id": "q5",
+      "type": "multi",
+      "prompt": "Điều nào đúng về chỉ số hiệu năng? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Xu hướng theo thời gian quan trọng hơn một số đo"
+        },
+        {
+          "id": "b",
+          "text": "INP đo độ trễ phản hồi khi người dùng tương tác"
+        },
+        {
+          "id": "c",
+          "text": "Số đo trên mọi máy luôn giống hệt nhau"
+        },
+        {
+          "id": "d",
+          "text": "Một lần chạy duy nhất đã đủ để kết luận"
+        }
+      ],
+      "answer": [
+        "a",
+        "b"
+      ],
+      "explanation": "INP đo độ phản hồi; theo dõi xu hướng đáng tin hơn một lần đo vì kết quả phụ thuộc máy và mạng."
+    },
+    {
+      "id": "q6",
+      "type": "single",
+      "prompt": "Công cụ nào dùng để chấm điểm hiệu năng tổng quan của một trang?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Prettier, kèm các quy tắc định dạng mã nguồn"
+        },
+        {
+          "id": "b",
+          "text": "Git, kèm các lệnh quản lý phiên bản"
+        },
+        {
+          "id": "c",
+          "text": "Docker, kèm các tệp cấu hình môi trường"
+        },
+        {
+          "id": "d",
+          "text": "Lighthouse, kèm các chỉ số như LCP và CLS"
+        }
+      ],
+      "answer": [
+        "d"
+      ],
+      "explanation": "Lighthouse đánh giá hiệu năng, a11y, SEO của trang. Các công cụ còn lại phục vụ mục đích khác."
+    }
+  ]
+}
