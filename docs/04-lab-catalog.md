@@ -251,6 +251,13 @@ Vai trò Admin/Manager/Staff/Guest; ma trận quyền; thử IDOR (đổi id tro
 - BR-05 biểu đồ/bảng/KPI cùng số liệu, lọc danh mục đổi tất cả; BR-06 nút đặt nhanh.
 - Bug: BUG-01 TB/đơn chia cho số ngày; BUG-02 tăng trưởng chia cho kỳ hiện tại; BUG-03 mất ngày cuối của khoảng.
 
+### LAB-10 Y tế: đặt lịch khám (bản đã làm)
+`/lab/clinic`: 2 bác sĩ, 12 khung giờ/ngày (giờ UTC), form đặt lịch, danh sách và huỷ lịch; dùng `page.clock` cố định "bây giờ".
+- BR-01 khung đã có hẹn thì kín (2026-03-02: An kín 08:00/09:00, Bình kín cả ngày); BR-02 ngày không quá khứ, tối đa 30 ngày, không Chủ nhật.
+- BR-03 khung phải cách bây giờ ≥ 2 giờ (đúng 2 giờ còn đặt được); BR-04 họ tên 2–50, điện thoại 10 số bắt đầu bằng 0, lý do ≤ 200 (có bộ đếm).
+- BR-05 huỷ khi còn ≥ 24 giờ; BR-06 tối đa 3 lịch mỗi số điện thoại, mã KHnnnn.
+- Bug: BUG-01 cho đặt trùng khung giờ; BUG-02 nhận ngày Chủ nhật; BUG-03 bỏ kiểm tra họ tên và số điện thoại.
+
 ## Độ phủ kỹ năng theo lab (rà soát)
 | Kỹ năng | Lab |
 |---------|-----|
@@ -292,7 +299,8 @@ Vai trò Admin/Manager/Staff/Guest; ma trận quyền; thử IDOR (đổi id tro
 | LAB-05 Ngân hàng: chuyển tiền nhiều bước | `/lab/bank` | Đã làm |
 | LAB-06 Đặt vé xem phim (sơ đồ ghế & giữ chỗ) | `/lab/booking` | Đã làm |
 | LAB-15 Dashboard doanh thu & biểu đồ | `/lab/dashboard` | Đã làm |
-| LAB-9, 10, 11, 16 | — | Chưa làm |
+| LAB-10 Y tế: đặt lịch khám | `/lab/clinic` | Đã làm |
+| LAB-9, 11, 16 | — | Chưa làm |
 
 ### Quy tắc kỹ thuật của trang lab
 - `/lab/<slug>` là **ứng dụng thuần**: không header, không thanh tìm kiếm của site (chỉ một liên kết quay lại ở layout lab) để locator của người học không bị trùng.

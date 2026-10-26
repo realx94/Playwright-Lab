@@ -46,3 +46,4 @@ next-env.d.ts
 /.tmp-solutions/
 /.tmp-solutions.config.ts
 /public/starter-repo.zip
+playwright.dev.config.ts

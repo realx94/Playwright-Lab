@@ -639,7 +639,36 @@ const dashboard: Workshop = {
   ],
 };
 
-export const WORKSHOPS: Record<string, Workshop> = { login, forms, cart, playground, api, otp, todo, table, leave, chat, totp, oauth, pay, orders, guard, webhooks, rbac, timezone, csv, mail, upload, bank, booking, dashboard };
+const clinic: Workshop = {
+  techniques: ["Boundary Value Analysis", "State Transition", "Equivalence Partitioning", "Decision Table"],
+  rules: [
+    { id: "BR-01", text: "Có 12 khung giờ mỗi ngày cho từng bác sĩ; khung đã có hẹn (dữ liệu sẵn có hoặc vừa đặt) hiển thị kín và không chọn được; ngày 2026-03-02 bác sĩ An kín 08:00 và 09:00, bác sĩ Bình kín cả ngày" },
+    { id: "BR-02", text: "Ngày khám không quá khứ, tối đa 30 ngày kể từ hôm nay (đúng 30 ngày hợp lệ) và không phải Chủ nhật" },
+    { id: "BR-03", text: "Khung giờ phải bắt đầu sau bây giờ ít nhất 2 giờ: đúng 2 giờ còn đặt được, ít hơn thì không chọn được" },
+    { id: "BR-04", text: "Họ tên 2–50 ký tự; số điện thoại 10 chữ số bắt đầu bằng 0; lý do tối đa 200 ký tự (có bộ đếm); phải chọn ngày và khung giờ" },
+    { id: "BR-05", text: "Huỷ lịch chỉ được khi còn từ 24 giờ trở lên trước giờ khám (đúng 24 giờ vẫn được huỷ)" },
+    { id: "BR-06", text: "Mỗi số điện thoại có tối đa 3 lịch; đặt thành công sinh mã KHnnnn và hiển thị trong danh sách" },
+  ],
+  cases: [
+    { id: "TC-H-101", title: "Đặt lịch thành công", precondition: "Hôm nay 2026-03-02 06:00 UTC", steps: "Chọn An, 03-03, 10:00, nhập thông tin hợp lệ", data: "10:00", expected: "Mã KH0001, lịch hiện trong danh sách, khung 10:00 chuyển kín", type: "Happy", priority: "P0", br: ["BR-01", "BR-06"] },
+    { id: "TC-H-102", title: "Khung đã có hẹn sẵn", precondition: "—", steps: "Chọn An, ngày 2026-03-02", data: "08:00, 09:00", expected: "Hai khung kín, 08:30 còn trống", type: "Decision", priority: "P1", br: ["BR-01"] },
+    { id: "TC-H-103", title: "Bác sĩ kín cả ngày", precondition: "—", steps: "Chọn Bình, ngày 2026-03-02", data: "12 khung", expected: "Cả 12 khung đều kín", type: "Decision", priority: "P2", br: ["BR-01"] },
+    { id: "TC-H-104", title: "Đúng 2 giờ trước giờ khám", precondition: "Bây giờ 06:00:00", steps: "Xem khung 08:00 cùng ngày", data: "08:00", expected: "Còn trống", type: "BVA", priority: "P0", br: ["BR-03"] },
+    { id: "TC-H-105", title: "Chưa đủ 2 giờ", precondition: "Bây giờ 06:00:01", steps: "Xem khung 08:00 cùng ngày", data: "08:00", expected: "Không chọn được, 08:30 còn trống", type: "BVA", priority: "P0", br: ["BR-03"] },
+    { id: "TC-H-106", title: "Ngày đã qua", precondition: "Hôm nay 03-02", steps: "Chọn 2026-03-01", data: "03-01", expected: "Không thể đặt lịch cho ngày đã qua", type: "Negative", priority: "P1", br: ["BR-02"] },
+    { id: "TC-H-107", title: "Chủ nhật", precondition: "—", steps: "Chọn 2026-03-08", data: "Chủ nhật", expected: "Phòng khám nghỉ Chủ nhật", type: "Negative", priority: "P0", br: ["BR-02"] },
+    { id: "TC-H-108", title: "Đúng 30 ngày", precondition: "Hôm nay 03-02", steps: "Chọn 2026-04-01", data: "+30 ngày", expected: "Hợp lệ", type: "BVA", priority: "P0", br: ["BR-02"] },
+    { id: "TC-H-109", title: "31 ngày", precondition: "Hôm nay 03-02", steps: "Chọn 2026-04-02", data: "+31 ngày", expected: "Chỉ đặt trước tối đa 30 ngày", type: "BVA", priority: "P0", br: ["BR-02"] },
+    { id: "TC-H-110", title: "Họ tên 1 ký tự và 51 ký tự", precondition: "—", steps: "Nhập tên A rồi 51 chữ B", data: "1 / 51", expected: "Họ tên từ 2 đến 50 ký tự", type: "BVA", priority: "P1", br: ["BR-04"] },
+    { id: "TC-H-111", title: "Số điện thoại sai", precondition: "—", steps: "Nhập 090123456 và 1901234567", data: "9 số / đầu 1", expected: "Số điện thoại gồm 10 chữ số, bắt đầu bằng 0", type: "EP", priority: "P1", br: ["BR-04"] },
+    { id: "TC-H-112", title: "Lý do 201 ký tự", precondition: "—", steps: "Nhập 201 ký tự", data: "201", expected: "Bộ đếm 201/200 và báo tối đa 200 ký tự", type: "BVA", priority: "P2", br: ["BR-04"] },
+    { id: "TC-H-113", title: "Huỷ trước đúng 24 giờ", precondition: "Lịch 03-03 10:00, bây giờ 03-02 10:00:00", steps: "Bấm Huỷ", data: "24h", expected: "Huỷ thành công", type: "BVA", priority: "P0", br: ["BR-05"] },
+    { id: "TC-H-114", title: "Huỷ khi còn dưới 24 giờ", precondition: "Bây giờ 03-02 10:00:01", steps: "Bấm Huỷ", data: "23:59:59", expected: "Không thể huỷ trong vòng 24 giờ", type: "BVA", priority: "P0", br: ["BR-05"] },
+    { id: "TC-H-115", title: "Lịch thứ 4 cùng số điện thoại", precondition: "Đã có 3 lịch", steps: "Đặt thêm một lịch", data: "4 lịch", expected: "Mỗi số điện thoại chỉ có tối đa 3 lịch", type: "BVA", priority: "P1", br: ["BR-06"] },
+  ],
+};
+
+export const WORKSHOPS: Record<string, Workshop> = { login, forms, cart, playground, api, otp, todo, table, leave, chat, totp, oauth, pay, orders, guard, webhooks, rbac, timezone, csv, mail, upload, bank, booking, dashboard, clinic };
 
 export function toCsv(cases: TestCase[]): string {
   const head = ["ID", "Tiêu đề", "Tiền điều kiện", "Các bước", "Dữ liệu", "Kết quả mong đợi", "Loại", "Ưu tiên", "BR"];

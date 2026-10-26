@@ -4552,4 +4552,221 @@ test("kiểm tra khoảng ngày và biên 31/32 ngày", async ({ page }) => {
   },
 ];
 
-export const EXERCISES: Record<string, Exercise[]> = { login, forms, cart, playground, api, otp, todo, table, leave, chat, totp, oauth, pay, orders, guard, webhooks, rbac, timezone, csv, mail, upload, bank, booking, dashboard };
+const clinic: Exercise[] = [
+  {
+    id: "clinic-1",
+    title: "Đặt lịch thành công và trạng thái khung giờ",
+    difficulty: 2,
+    bugs: ["BUG-01"],
+    task: "Đặt lịch cho bác sĩ An ngày 2026-03-03 khung 10:00 và kiểm tra mã lịch, dòng trong danh sách, khung chuyển sang kín (không chọn được). Kiểm tra dữ liệu có sẵn của ngày 2026-03-02: An kín 08:00 và 09:00, Bình kín cả 12 khung. Test phải đỏ khi bật BUG-01.",
+    criteria: [
+      "Cố định giờ giả bằng context.clock.setFixedTime trước khi mở trang",
+      "Kiểm tra mã lịch KH0001 và nội dung dòng lịch hẹn",
+      "Kiểm tra data-state của khung vừa đặt là taken và nút bị vô hiệu",
+      "Kiểm tra các khung kín có sẵn và đếm 12 khung kín của bác sĩ Bình",
+      "Test đỏ với BUG-01",
+      ...COMMON_CRITERIA,
+    ],
+    hints: [
+      "Mỗi khung giờ có data-testid slot-<HH:MM> và thuộc tính data-state: free, taken, late.",
+      "Chọn bác sĩ bằng getByLabel('Bác sĩ').selectOption('bs-binh').",
+      "Khi đổi ngày, khung giờ đang chọn bị bỏ chọn; hãy chọn ngày trước rồi mới chọn khung.",
+    ],
+    solution: `import { test, expect, type BrowserContext, type Page } from "@playwright/test";
+
+const slot = (page: Page, t: string) => page.getByTestId("slot-" + t);
+const at = (iso: string) => new Date(iso);
+
+// Cố định "bây giờ" trước khi mở trang để mọi quy tắc theo giờ đều xác định.
+async function open(page: Page, context: BrowserContext, now = "2026-03-02T06:00:00Z") {
+  await context.clock.setFixedTime(at(now));
+  await page.goto("/lab/clinic");
+  await page.getByTestId("reset-data").click();
+}
+
+async function form(page: Page, f: { date?: string; doctor?: string; time?: string; name?: string; phone?: string; reason?: string } = {}) {
+  if (f.doctor) await page.getByLabel("Bác sĩ").selectOption(f.doctor);
+  await page.getByLabel("Ngày khám").fill(f.date ?? "2026-03-03");
+  if (f.time) await slot(page, f.time).click();
+  await page.getByLabel("Họ tên bệnh nhân").fill(f.name ?? "Lê Văn C");
+  await page.getByLabel("Số điện thoại").fill(f.phone ?? "0901234567");
+  if (f.reason !== undefined) await page.getByLabel("Lý do khám").fill(f.reason);
+  await page.getByRole("button", { name: "Đặt lịch" }).click();
+}
+
+test("đặt lịch thành công và khung giờ chuyển sang đã kín", async ({ page, context }) => {
+  await open(page, context);
+  await form(page, { time: "10:00", reason: "Đau đầu" });
+  await expect(page.getByTestId("clinic-message")).toHaveText("Đặt lịch thành công. Mã lịch hẹn KH0001");
+  await expect(page.getByTestId("appointment")).toHaveText(/KH0001 · BS\\. Nguyễn An · 2026-03-03 10:00 · Lê Văn C/);
+  await expect(slot(page, "10:00")).toHaveAttribute("data-state", "taken");
+  await expect(slot(page, "10:00")).toBeDisabled();
+});
+
+test("lịch có sẵn: bác sĩ An kín 08:00 và 09:00, bác sĩ Bình kín cả ngày", async ({ page, context }) => {
+  await open(page, context, "2026-03-02T00:00:00Z");
+  await page.getByLabel("Ngày khám").fill("2026-03-02");
+  await expect(slot(page, "08:00")).toHaveAttribute("data-state", "taken");
+  await expect(slot(page, "09:00")).toHaveAttribute("data-state", "taken");
+  await expect(slot(page, "08:30")).toHaveAttribute("data-state", "free");
+
+  await page.getByLabel("Bác sĩ").selectOption("bs-binh");
+  await expect(page.locator('[data-state="taken"]')).toHaveCount(12);
+});`,
+  },
+  {
+    id: "clinic-2",
+    title: "Quy tắc ngày khám và biên 2 giờ",
+    difficulty: 3,
+    bugs: ["BUG-02"],
+    task: "Kiểm tra ba kiểu ngày bị từ chối (đã qua, Chủ nhật, quá 30 ngày), đúng 30 ngày vẫn hợp lệ, và biên 2 giờ: lúc 06:00:00 khung 08:00 còn trống, lúc 06:00:01 khung 08:00 không chọn được còn 08:30 thì được. Test phải đỏ khi bật BUG-02.",
+    criteria: [
+      "Sinh test cho các ngày không hợp lệ từ một bảng dữ liệu",
+      "Kiểm tra thông báo lỗi ngày đúng nội dung",
+      "Kiểm tra biên đúng 30 ngày hợp lệ và 31 ngày bị từ chối",
+      "Kiểm tra biên 2 giờ bằng cách đổi giờ giả thêm một giây",
+      "Test đỏ với BUG-02",
+      ...COMMON_CRITERIA,
+    ],
+    hints: [
+      "2026-03-08 là Chủ nhật; 2026-03-02 là thứ hai.",
+      "Đặt giờ giả 2026-03-03T06:00:00Z rồi 06:00:01Z.",
+      "Lỗi ngày hiện ở data-testid error-date sau khi bấm Đặt lịch.",
+    ],
+    solution: `import { test, expect, type BrowserContext, type Page } from "@playwright/test";
+
+const slot = (page: Page, t: string) => page.getByTestId("slot-" + t);
+const at = (iso: string) => new Date(iso);
+
+// Cố định "bây giờ" trước khi mở trang để mọi quy tắc theo giờ đều xác định.
+async function open(page: Page, context: BrowserContext, now = "2026-03-02T06:00:00Z") {
+  await context.clock.setFixedTime(at(now));
+  await page.goto("/lab/clinic");
+  await page.getByTestId("reset-data").click();
+}
+
+async function form(page: Page, f: { date?: string; doctor?: string; time?: string; name?: string; phone?: string; reason?: string } = {}) {
+  if (f.doctor) await page.getByLabel("Bác sĩ").selectOption(f.doctor);
+  await page.getByLabel("Ngày khám").fill(f.date ?? "2026-03-03");
+  if (f.time) await slot(page, f.time).click();
+  await page.getByLabel("Họ tên bệnh nhân").fill(f.name ?? "Lê Văn C");
+  await page.getByLabel("Số điện thoại").fill(f.phone ?? "0901234567");
+  if (f.reason !== undefined) await page.getByLabel("Lý do khám").fill(f.reason);
+  await page.getByRole("button", { name: "Đặt lịch" }).click();
+}
+
+const dateRules: [string, string, string][] = [
+  ["ngày đã qua", "2026-03-01", "Không thể đặt lịch cho ngày đã qua"],
+  ["Chủ nhật", "2026-03-08", "Phòng khám nghỉ Chủ nhật"],
+  ["quá 30 ngày", "2026-04-02", "Chỉ đặt trước tối đa 30 ngày"],
+];
+for (const [name, date, message] of dateRules) {
+  test("từ chối ngày: " + name, async ({ page, context }) => {
+    await open(page, context);
+    await form(page, { date });
+    await expect(page.getByTestId("error-date")).toHaveText(message);
+    await expect(page.getByTestId("appointment")).toHaveCount(0);
+  });
+}
+
+test("đúng 30 ngày tới vẫn hợp lệ", async ({ page, context }) => {
+  await open(page, context);
+  await form(page, { date: "2026-04-01", time: "10:00" });
+  await expect(page.getByTestId("clinic-message")).toContainText("Đặt lịch thành công");
+});
+
+test("khung giờ phải cách bây giờ ít nhất 2 giờ (biên đúng 2 giờ)", async ({ page, context }) => {
+  await open(page, context, "2026-03-03T06:00:00Z");
+  await page.getByLabel("Ngày khám").fill("2026-03-03");
+  await expect(slot(page, "08:00")).toHaveAttribute("data-state", "free");
+
+  await context.clock.setFixedTime(at("2026-03-03T06:00:01Z"));
+  await expect(slot(page, "08:00")).toHaveAttribute("data-state", "late");
+  await expect(slot(page, "08:30")).toHaveAttribute("data-state", "free");
+});`,
+  },
+  {
+    id: "clinic-3",
+    title: "Kiểm tra dữ liệu bệnh nhân, huỷ lịch 24 giờ và giới hạn 3 lịch",
+    difficulty: 3,
+    bugs: ["BUG-03"],
+    task: "Kiểm tra họ tên (1 và 51 ký tự bị từ chối, 2 ký tự hợp lệ), số điện thoại, lý do 201 ký tự và việc phải chọn khung giờ. Dùng đồng hồ giả để chứng minh huỷ lịch đúng 24 giờ được còn quá một giây thì không, và số điện thoại thứ tư không đặt được lịch thứ 4. Test phải đỏ khi bật BUG-03.",
+    criteria: [
+      "Kiểm tra từng thông báo lỗi bằng data-testid error-*",
+      "Kiểm tra bộ đếm lý do hiển thị 201/200",
+      "Kiểm tra biên tên 2 ký tự hợp lệ",
+      "Kiểm tra huỷ lịch ở hai mốc thời gian bằng setFixedTime",
+      "Kiểm tra giới hạn 3 lịch cho một số điện thoại",
+      "Test đỏ với BUG-03",
+      ...COMMON_CRITERIA,
+    ],
+    hints: [
+      "Khi gọi lại form() nhớ truyền reason rỗng để xoá lý do 201 ký tự.",
+      "Đặt lịch lúc 2026-03-02T10:00:00Z cho 2026-03-03 10:00, rồi đổi giờ giả để thử huỷ.",
+      "Nút huỷ có tên truy cập Huỷ KH0001.",
+    ],
+    solution: `import { test, expect, type BrowserContext, type Page } from "@playwright/test";
+
+const slot = (page: Page, t: string) => page.getByTestId("slot-" + t);
+const at = (iso: string) => new Date(iso);
+
+// Cố định "bây giờ" trước khi mở trang để mọi quy tắc theo giờ đều xác định.
+async function open(page: Page, context: BrowserContext, now = "2026-03-02T06:00:00Z") {
+  await context.clock.setFixedTime(at(now));
+  await page.goto("/lab/clinic");
+  await page.getByTestId("reset-data").click();
+}
+
+async function form(page: Page, f: { date?: string; doctor?: string; time?: string; name?: string; phone?: string; reason?: string } = {}) {
+  if (f.doctor) await page.getByLabel("Bác sĩ").selectOption(f.doctor);
+  await page.getByLabel("Ngày khám").fill(f.date ?? "2026-03-03");
+  if (f.time) await slot(page, f.time).click();
+  await page.getByLabel("Họ tên bệnh nhân").fill(f.name ?? "Lê Văn C");
+  await page.getByLabel("Số điện thoại").fill(f.phone ?? "0901234567");
+  if (f.reason !== undefined) await page.getByLabel("Lý do khám").fill(f.reason);
+  await page.getByRole("button", { name: "Đặt lịch" }).click();
+}
+
+test("kiểm tra họ tên, số điện thoại, lý do và khung giờ", async ({ page, context }) => {
+  await open(page, context);
+  await form(page, { name: "A", phone: "090123456", reason: "x".repeat(201) });
+  await expect(page.getByTestId("error-name")).toHaveText("Họ tên từ 2 đến 50 ký tự");
+  await expect(page.getByTestId("error-phone")).toHaveText("Số điện thoại gồm 10 chữ số, bắt đầu bằng 0");
+  await expect(page.getByTestId("error-reason")).toHaveText("Lý do tối đa 200 ký tự");
+  await expect(page.getByTestId("reason-count")).toHaveText("201/200");
+  await expect(page.getByTestId("error-time")).toHaveText("Hãy chọn khung giờ");
+
+  await form(page, { name: "B".repeat(51), phone: "1901234567", time: "10:00" });
+  await expect(page.getByTestId("error-name")).toHaveText("Họ tên từ 2 đến 50 ký tự");
+
+  await form(page, { name: "Bé", phone: "0901234567", time: "10:00", reason: "" });
+  await expect(page.getByTestId("clinic-message")).toContainText("Đặt lịch thành công");
+});
+
+test("huỷ lịch: đúng 24 giờ được huỷ, quá một giây thì không", async ({ page, context }) => {
+  await open(page, context, "2026-03-02T10:00:00Z");
+  await form(page, { date: "2026-03-03", time: "10:00" });
+
+  await context.clock.setFixedTime(at("2026-03-02T10:00:01Z"));
+  await page.getByRole("button", { name: "Huỷ KH0001" }).click();
+  await expect(page.getByTestId("clinic-message")).toHaveText("Không thể huỷ lịch trong vòng 24 giờ trước giờ khám");
+
+  await context.clock.setFixedTime(at("2026-03-02T10:00:00Z"));
+  await page.getByRole("button", { name: "Huỷ KH0001" }).click();
+  await expect(page.getByTestId("clinic-message")).toHaveText("Đã huỷ lịch KH0001");
+  await expect(page.getByTestId("appointment")).toHaveCount(0);
+});
+
+test("mỗi số điện thoại tối đa 3 lịch", async ({ page, context }) => {
+  await open(page, context);
+  for (const t of ["10:00", "10:30", "11:00"]) {
+    await form(page, { time: t });
+    await expect(page.getByTestId("clinic-message")).toContainText("Đặt lịch thành công");
+  }
+  await form(page, { time: "13:30" });
+  await expect(page.getByTestId("clinic-message")).toHaveText("Mỗi số điện thoại chỉ có tối đa 3 lịch");
+});`,
+  },
+];
+
+export const EXERCISES: Record<string, Exercise[]> = { login, forms, cart, playground, api, otp, todo, table, leave, chat, totp, oauth, pay, orders, guard, webhooks, rbac, timezone, csv, mail, upload, bank, booking, dashboard, clinic };
