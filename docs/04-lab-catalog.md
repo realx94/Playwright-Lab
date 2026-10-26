@@ -265,6 +265,13 @@ Vai trò Admin/Manager/Staff/Guest; ma trận quyền; thử IDOR (đổi id tro
 - BR-04 quá hạn khi bây giờ > hạn; đã giải quyết ghi đúng/trễ hạn; BR-05 giải quyết cần ≥ 1 bình luận; BR-06 ticket đóng không bình luận.
 - Bug: BUG-01 ưu tiên Cao có hạn 8 giờ; BUG-02 tính quá hạn khi bằng hạn; BUG-03 ticket đóng vẫn nhận bình luận.
 
+### LAB-16 Đa ngôn ngữ & responsive (bản đã làm)
+`/lab/i18n`: cửa hàng mẫu vi/en, điểm gãy bố cục 640 px (Tailwind `sm`).
+- BR-01 ngôn ngữ mặc định theo `navigator.language` (vi* → vi, còn lại en), chọn thủ công được nhớ; BR-02 chuỗi và `html lang` đổi theo.
+- BR-03 định dạng số/tiền/ngày theo `Intl` (kết quả phụ thuộc ICU của trình duyệt); BR-04 số nhiều.
+- BR-05 ≥ 640 px: điều hướng đủ + bảng; < 640 px: nút menu (`aria-expanded`) + thẻ; BR-06 không cuộn ngang ở mọi bề rộng.
+- Bug: BUG-01 bỏ qua ngôn ngữ trình duyệt; BUG-02 ngày không theo ngôn ngữ; BUG-03 bảng có `min-width` gây cuộn ngang ở 640 px.
+
 ## Độ phủ kỹ năng theo lab (rà soát)
 | Kỹ năng | Lab |
 |---------|-----|
@@ -308,7 +315,8 @@ Vai trò Admin/Manager/Staff/Guest; ma trận quyền; thử IDOR (đổi id tro
 | LAB-15 Dashboard doanh thu & biểu đồ | `/lab/dashboard` | Đã làm |
 | LAB-10 Y tế: đặt lịch khám | `/lab/clinic` | Đã làm |
 | LAB-11 Hỗ trợ khách hàng (ticket & SLA) | `/lab/tickets` | Đã làm |
-| LAB-9, 16 | — | Chưa làm |
+| LAB-16 Đa ngôn ngữ & responsive | `/lab/i18n` | Đã làm |
+| LAB-9 | — | Chưa làm |
 
 ### Quy tắc kỹ thuật của trang lab
 - `/lab/<slug>` là **ứng dụng thuần**: không header, không thanh tìm kiếm của site (chỉ một liên kết quay lại ở layout lab) để locator của người học không bị trùng.

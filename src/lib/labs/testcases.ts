@@ -695,7 +695,32 @@ const tickets: Workshop = {
   ],
 };
 
-export const WORKSHOPS: Record<string, Workshop> = { login, forms, cart, playground, api, otp, todo, table, leave, chat, totp, oauth, pay, orders, guard, webhooks, rbac, timezone, csv, mail, upload, bank, booking, dashboard, clinic, tickets };
+const i18n: Workshop = {
+  techniques: ["Compatibility", "Boundary Value Analysis", "Equivalence Partitioning", "Cross-browser/Device"],
+  rules: [
+    { id: "BR-01", text: "Ngôn ngữ mặc định theo navigator.language: vi* → Tiếng Việt, mọi ngôn ngữ khác → English; chọn thủ công thì ghi đè và được nhớ sau khi tải lại" },
+    { id: "BR-02", text: "Mọi chuỗi giao diện đổi theo ngôn ngữ; thuộc tính lang của thẻ html cập nhật theo" },
+    { id: "BR-03", text: "Số, tiền tệ, ngày theo ngôn ngữ: 1.234.567,891 và 199.000 ₫ (vi); 1,234,567.891 và ₫199,000 (en); ngày dài đúng ngôn ngữ" },
+    { id: "BR-04", text: "Số nhiều theo ngôn ngữ: 1 mục / 2 mục; 1 item / 2 items" },
+    { id: "BR-05", text: "Từ 640 px trở lên: thanh điều hướng hiện đủ, sản phẩm dạng bảng, không có nút menu; dưới 640 px: có nút menu (aria-expanded) mở/đóng thanh điều hướng, sản phẩm dạng thẻ" },
+    { id: "BR-06", text: "Không có cuộn ngang ở mọi bề rộng, kể cả 320 px" },
+  ],
+  cases: [
+    { id: "TC-L-101", title: "Trình duyệt vi-VN", precondition: "locale vi-VN", steps: "Mở trang", data: "vi-VN", expected: "Giao diện tiếng Việt, html lang=vi", type: "Happy", priority: "P0", br: ["BR-01", "BR-02"] },
+    { id: "TC-L-102", title: "Trình duyệt en-US", precondition: "locale en-US", steps: "Mở trang", data: "en-US", expected: "Giao diện English, html lang=en", type: "Happy", priority: "P0", br: ["BR-01", "BR-02"] },
+    { id: "TC-L-103", title: "Ngôn ngữ khác", precondition: "locale fr-FR", steps: "Mở trang", data: "fr-FR", expected: "Rơi về English", type: "EP", priority: "P1", br: ["BR-01"] },
+    { id: "TC-L-104", title: "Chọn thủ công thắng trình duyệt", precondition: "locale vi-VN", steps: "Chọn English rồi tải lại", data: "en", expected: "Vẫn là English", type: "State", priority: "P0", br: ["BR-01"] },
+    { id: "TC-L-105", title: "Định dạng tiếng Việt", precondition: "vi", steps: "Đọc giá, số lớn, ngày", data: "1250000; 1234567.891", expected: "1.250.000 ₫; 1.234.567,891; 8/3/26", type: "Happy", priority: "P1", br: ["BR-03"] },
+    { id: "TC-L-106", title: "Định dạng English", precondition: "en", steps: "Đọc giá, số lớn, ngày", data: "1250000; 1234567.891", expected: "₫1,250,000; 1,234,567.891; 3/8/26", type: "Happy", priority: "P0", br: ["BR-03"] },
+    { id: "TC-L-107", title: "Ngày dài", precondition: "Chọn từng ngôn ngữ", steps: "Đọc ngày đầy đủ", data: "2026-03-08", expected: "Chủ Nhật, 8 tháng 3, 2026 / Sunday, March 8, 2026", type: "EP", priority: "P1", br: ["BR-03"] },
+    { id: "TC-L-108", title: "Số nhiều", precondition: "vi và en", steps: "Tăng và giảm số lượng", data: "1, 2", expected: "1 mục, 2 mục / 1 item, 2 items", type: "BVA", priority: "P1", br: ["BR-04"] },
+    { id: "TC-L-109", title: "Rộng đúng 640 px", precondition: "viewport 640", steps: "Mở trang", data: "640", expected: "Thanh điều hướng hiện, bảng, không có nút menu", type: "BVA", priority: "P0", br: ["BR-05"] },
+    { id: "TC-L-110", title: "Hẹp 639 px", precondition: "viewport 639", steps: "Mở trang, bấm menu", data: "639", expected: "Có nút menu, mở/đóng được; sản phẩm dạng thẻ", type: "BVA", priority: "P0", br: ["BR-05"] },
+    { id: "TC-L-111", title: "Điện thoại 320 px", precondition: "viewport 320", steps: "Đo scrollWidth", data: "320", expected: "Không cuộn ngang", type: "BVA", priority: "P0", br: ["BR-06"] },
+  ],
+};
+
+export const WORKSHOPS: Record<string, Workshop> = { login, forms, cart, playground, api, otp, todo, table, leave, chat, totp, oauth, pay, orders, guard, webhooks, rbac, timezone, csv, mail, upload, bank, booking, dashboard, clinic, tickets, i18n };
 
 export function toCsv(cases: TestCase[]): string {
   const head = ["ID", "Tiêu đề", "Tiền điều kiện", "Các bước", "Dữ liệu", "Kết quả mong đợi", "Loại", "Ưu tiên", "BR"];
