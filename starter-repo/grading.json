@@ -392,6 +392,26 @@
       "bugs": [
         "BUG-02"
       ]
+    },
+    "csv-1": {
+      "lab": "csv",
+      "spec": "tests/exercises/csv/csv-1.spec.ts",
+      "bugs": [
+        "BUG-02",
+        "BUG-03"
+      ]
+    },
+    "csv-2": {
+      "lab": "csv",
+      "spec": "tests/exercises/csv/csv-2.spec.ts",
+      "bugs": []
+    },
+    "csv-3": {
+      "lab": "csv",
+      "spec": "tests/exercises/csv/csv-3.spec.ts",
+      "bugs": [
+        "BUG-01"
+      ]
     }
   }
 }

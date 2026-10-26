@@ -479,7 +479,31 @@ const timezone: Workshop = {
   ],
 };
 
-export const WORKSHOPS: Record<string, Workshop> = { login, forms, cart, playground, api, otp, todo, table, leave, chat, totp, oauth, pay, orders, guard, webhooks, rbac, timezone };
+const csv: Workshop = {
+  techniques: ["Equivalence Partitioning", "Boundary Value Analysis", "Data Validation", "Error Guessing"],
+  rules: [
+    { id: "BR-01", text: "Tệp phải có tiêu đề đúng name,email,phone; thiếu cột hoặc tệp rỗng thì từ chối cả tệp" },
+    { id: "BR-02", text: "Mỗi dòng: tên 1–50 ký tự, email hợp lệ, điện thoại 10 chữ số bắt đầu bằng 0, email không trùng (không phân biệt hoa thường) với dữ liệu hiện có hoặc dòng trước đó" },
+    { id: "BR-03", text: "Dòng hợp lệ vẫn được nhập; dòng lỗi được báo theo số dòng trong tệp (dòng tiêu đề là dòng 1) cùng nguyên nhân" },
+    { id: "BR-04", text: "Chỉ nhận .csv tối đa 100 KB và tối đa 100 dòng dữ liệu" },
+    { id: "BR-05", text: "Xuất customers.csv theo RFC 4180: tiêu đề name,email,phone, CRLF, trường có dấu phẩy/nháy/xuống dòng được bao nháy kép và nhân đôi dấu nháy" },
+  ],
+  cases: [
+    { id: "TC-C-201", title: "Nhập tệp hợp lệ", precondition: "Danh sách trống", steps: "Tải lên tệp 3 dòng đúng", data: "3 khách hàng", expected: "Đã nhập 3 dòng, bỏ qua 0 dòng lỗi; bảng có 3 dòng", type: "Happy", priority: "P0", br: ["BR-01", "BR-02"] },
+    { id: "TC-C-202", title: "Thiếu cột tiêu đề", precondition: "—", steps: "Tải lên tệp chỉ có name,email", data: "thiếu phone", expected: "Thiếu cột bắt buộc, không nhập dòng nào", type: "Negative", priority: "P0", br: ["BR-01"] },
+    { id: "TC-C-203", title: "Tệp rỗng", precondition: "—", steps: "Tải lên tệp 0 byte", data: "(rỗng)", expected: "Tệp rỗng", type: "BVA", priority: "P1", br: ["BR-01"] },
+    { id: "TC-C-204", title: "Email sai định dạng", precondition: "—", steps: "Dòng 3 có email khong-phai-email", data: "dòng 3", expected: "Dòng 3: Email không hợp lệ; các dòng khác vẫn nhập", type: "EP", priority: "P0", br: ["BR-02", "BR-03"] },
+    { id: "TC-C-205", title: "Điện thoại sai", precondition: "—", steps: "Dòng có số 12345", data: "12345", expected: "Số điện thoại gồm 10 chữ số, bắt đầu bằng 0", type: "EP", priority: "P1", br: ["BR-02"] },
+    { id: "TC-C-206", title: "Email trùng khác hoa thường", precondition: "Đã có an@lab.dev", steps: "Dòng có AN@lab.dev", data: "AN@lab.dev", expected: "Email đã tồn tại", type: "EP", priority: "P1", br: ["BR-02"] },
+    { id: "TC-C-207", title: "Tên rỗng", precondition: "—", steps: "Dòng bắt đầu bằng dấu phẩy", data: ",e@lab.dev,...", expected: "Tên bắt buộc, tối đa 50 ký tự", type: "BVA", priority: "P2", br: ["BR-02"] },
+    { id: "TC-C-208", title: "Sai đuôi tệp", precondition: "—", steps: "Tải lên khach-hang.txt", data: ".txt", expected: "Chỉ chấp nhận tệp .csv tối đa 100 KB", type: "EP", priority: "P1", br: ["BR-04"] },
+    { id: "TC-C-209", title: "101 dòng dữ liệu", precondition: "—", steps: "Tải lên tệp 101 dòng", data: "101", expected: "Tối đa 100 dòng dữ liệu", type: "BVA", priority: "P1", br: ["BR-04"] },
+    { id: "TC-C-210", title: "Trường có dấu phẩy và nháy", precondition: "—", steps: "Tải lên dòng có tên Nguyễn, Văn \"A\"", data: "trường được bao nháy", expected: "Tên hiển thị đúng, không bị tách cột", type: "EP", priority: "P1", br: ["BR-02", "BR-05"] },
+    { id: "TC-C-211", title: "Xuất và nhập lại", precondition: "Có khách hàng, một tên chứa dấu phẩy", steps: "Xuất CSV, xoá dữ liệu, nhập lại tệp vừa xuất", data: "customers.csv", expected: "Nội dung xuất đúng RFC 4180 và nhập lại đủ dòng", type: "Happy", priority: "P0", br: ["BR-05"] },
+  ],
+};
+
+export const WORKSHOPS: Record<string, Workshop> = { login, forms, cart, playground, api, otp, todo, table, leave, chat, totp, oauth, pay, orders, guard, webhooks, rbac, timezone, csv };
 
 export function toCsv(cases: TestCase[]): string {
   const head = ["ID", "Tiêu đề", "Tiền điều kiện", "Các bước", "Dữ liệu", "Kết quả mong đợi", "Loại", "Ưu tiên", "BR"];

@@ -3252,4 +3252,162 @@ test("đặt lịch và đếm ngược theo đồng hồ", async ({ page, conte
   },
 ];
 
-export const EXERCISES: Record<string, Exercise[]> = { login, forms, cart, playground, api, otp, todo, table, leave, chat, totp, oauth, pay, orders, guard, webhooks, rbac, timezone };
+const csv: Exercise[] = [
+  {
+    id: "csv-1",
+    title: "Kiểm tra từng dòng khi nhập CSV",
+    difficulty: 2,
+    bugs: ["BUG-02", "BUG-03"],
+    task: "Tải lên tệp 5 dòng gồm một dòng hợp lệ và bốn dòng lỗi (email sai, điện thoại sai, email trùng khác hoa thường, tên rỗng). Kiểm tra bản tóm tắt, từng thông báo lỗi với đúng số dòng (dòng tiêu đề là dòng 1) và chỉ dòng hợp lệ được nhập. Test phải đỏ khi bật BUG-02 hoặc BUG-03.",
+    criteria: [
+      "Dùng setInputFiles với buffer thay vì tạo tệp trên đĩa",
+      "Kiểm tra bản tóm tắt Đã nhập 1 dòng, bỏ qua 4 dòng lỗi",
+      "Kiểm tra toàn bộ danh sách lỗi theo đúng thứ tự và số dòng",
+      "Kiểm tra bảng chỉ có 1 khách hàng",
+      "Test đỏ với BUG-02 và với BUG-03",
+      ...COMMON_CRITERIA,
+    ],
+    hints: [
+      "Nối các dòng bằng \\n; dòng tiêu đề name,email,phone là dòng số 1.",
+      "Email trùng không phân biệt hoa thường: an@lab.dev và AN@lab.dev là một.",
+      "expect(locator).toHaveText([...]) so sánh cả mảng nội dung các phần tử khớp.",
+    ],
+    solution: `import { test, expect, type Page } from "@playwright/test";
+import { readFile } from "node:fs/promises";
+
+const HEADER = "name,email,phone";
+
+async function open(page: Page) {
+  await page.goto("/lab/csv");
+  await page.getByTestId("reset-data").click();
+}
+
+// Không cần tạo tệp trên đĩa: setInputFiles nhận trực tiếp tên, loại và nội dung.
+const upload = (page: Page, content: string, name = "khach-hang.csv") =>
+  page.getByLabel("Chọn tệp CSV").setInputFiles({ name, mimeType: "text/csv", buffer: Buffer.from(content, "utf8") });
+
+test("báo lỗi đúng số dòng và nguyên nhân", async ({ page }) => {
+  await open(page);
+  await upload(
+    page,
+    [HEADER, "An,an@lab.dev,0901234567", "Bình,khong-phai-email,0912345678", "Cường,cuong@lab.dev,12345", "Dũng,AN@lab.dev,0934567890", ",e@lab.dev,0901234567"].join("\\n"),
+  );
+  await expect(page.getByTestId("csv-summary")).toHaveText("Đã nhập 1 dòng, bỏ qua 4 dòng lỗi");
+  await expect(page.getByTestId("csv-error")).toHaveText([
+    "Dòng 3: Email không hợp lệ",
+    "Dòng 4: Số điện thoại gồm 10 chữ số, bắt đầu bằng 0",
+    "Dòng 5: Email đã tồn tại",
+    "Dòng 6: Tên bắt buộc, tối đa 50 ký tự",
+  ]);
+  await expect(page.getByTestId("customer-row")).toHaveCount(1);
+});`,
+  },
+  {
+    id: "csv-2",
+    title: "Tệp sai định dạng và trường có dấu phẩy",
+    difficulty: 2,
+    task: "Kiểm tra bốn kiểu tệp bị từ chối nguyên cả tệp (thiếu cột, rỗng, sai đuôi .txt, vượt 100 dòng) và kiểm tra trường có dấu phẩy, dấu nháy kép được đọc đúng khi được bao trong dấu nháy.",
+    criteria: [
+      "Mỗi kiểu tệp lỗi có thông báo csv-fatal đúng nội dung",
+      "Kiểm tra sau khi bị từ chối bảng vẫn không có khách hàng",
+      "Tạo tệp 101 dòng bằng Array.from thay vì gõ tay",
+      "Kiểm tra tên Nguyễn, Văn \"A\" hiển thị đúng trong một ô, không bị tách cột",
+      ...COMMON_CRITERIA,
+    ],
+    hints: [
+      "Trong CSV, dấu nháy kép trong trường được viết thành hai dấu nháy: \"Nguyễn, Văn \"\"A\"\"\".",
+      "Tệp rỗng dùng buffer của chuỗi rỗng; sai đuôi chỉ cần đổi name thành khach-hang.txt.",
+      "Thông báo lỗi tệp có data-testid là csv-fatal.",
+    ],
+    solution: `import { test, expect, type Page } from "@playwright/test";
+import { readFile } from "node:fs/promises";
+
+const HEADER = "name,email,phone";
+
+async function open(page: Page) {
+  await page.goto("/lab/csv");
+  await page.getByTestId("reset-data").click();
+}
+
+// Không cần tạo tệp trên đĩa: setInputFiles nhận trực tiếp tên, loại và nội dung.
+const upload = (page: Page, content: string, name = "khach-hang.csv") =>
+  page.getByLabel("Chọn tệp CSV").setInputFiles({ name, mimeType: "text/csv", buffer: Buffer.from(content, "utf8") });
+
+test("tệp sai định dạng bị từ chối", async ({ page }) => {
+  await open(page);
+  await upload(page, "name,email\\nAn,an@lab.dev\\n");
+  await expect(page.getByTestId("csv-fatal")).toHaveText("Thiếu cột bắt buộc: name,email,phone");
+
+  await upload(page, "");
+  await expect(page.getByTestId("csv-fatal")).toHaveText("Tệp rỗng");
+
+  await upload(page, HEADER + "\\nAn,an@lab.dev,0901234567\\n", "khach-hang.txt");
+  await expect(page.getByTestId("csv-fatal")).toHaveText("Chỉ chấp nhận tệp .csv tối đa 100 KB");
+
+  const many = Array.from({ length: 101 }, (_, i) => "N" + i + ",u" + i + "@lab.dev,0901234567");
+  await upload(page, HEADER + "\\n" + many.join("\\n"));
+  await expect(page.getByTestId("csv-fatal")).toHaveText("Tối đa 100 dòng dữ liệu");
+  await expect(page.getByTestId("customer-row")).toHaveCount(0);
+});
+
+test("trường có dấu phẩy và nháy kép được đọc đúng", async ({ page }) => {
+  await open(page);
+  await upload(page, HEADER + "\\r\\n" + '"Nguyễn, Văn ""A""",a@lab.dev,0901234567\\r\\n');
+  await expect(page.getByTestId("customer-row")).toHaveCount(1);
+  await expect(page.getByTestId("customer-row").first()).toContainText('Nguyễn, Văn "A"');
+});`,
+  },
+  {
+    id: "csv-3",
+    title: "Xuất CSV đúng chuẩn và nhập lại (round trip)",
+    difficulty: 2,
+    bugs: ["BUG-01"],
+    task: "Nhập hai khách hàng (một tên chứa dấu phẩy và dấu nháy), bấm Xuất CSV, đọc nội dung tệp tải về và kiểm tra đúng RFC 4180 (tiêu đề, CRLF, bao nháy kép). Sau đó xoá dữ liệu và nhập lại chính tệp vừa xuất để chứng minh dữ liệu không đổi. Test phải đỏ khi bật BUG-01.",
+    criteria: [
+      "Dùng page.waitForEvent('download') song song với thao tác bấm nút",
+      "Kiểm tra tên tệp gợi ý là customers.csv",
+      "Đọc tệp tải về bằng download.path() và so sánh từng byte nội dung mong đợi",
+      "Xoá dữ liệu, nhập lại tệp vừa xuất và kiểm tra đủ dòng, tên còn nguyên dấu phẩy và nháy",
+      "Test đỏ với BUG-01",
+      ...COMMON_CRITERIA,
+    ],
+    hints: [
+      "Hãy bắt sự kiện download trước khi click: Promise.all([page.waitForEvent('download'), click()]).",
+      "Mỗi dòng kết thúc bằng CRLF, kể cả dòng cuối.",
+      "Round trip: nội dung xuất ra phải nhập lại được mà không lỗi nào.",
+    ],
+    solution: `import { test, expect, type Page } from "@playwright/test";
+import { readFile } from "node:fs/promises";
+
+const HEADER = "name,email,phone";
+
+async function open(page: Page) {
+  await page.goto("/lab/csv");
+  await page.getByTestId("reset-data").click();
+}
+
+// Không cần tạo tệp trên đĩa: setInputFiles nhận trực tiếp tên, loại và nội dung.
+const upload = (page: Page, content: string, name = "khach-hang.csv") =>
+  page.getByLabel("Chọn tệp CSV").setInputFiles({ name, mimeType: "text/csv", buffer: Buffer.from(content, "utf8") });
+
+test("xuất CSV đúng chuẩn và nhập lại", async ({ page }) => {
+  await open(page);
+  await upload(page, HEADER + "\\n" + '"Nguyễn, Văn ""A""",a@lab.dev,0901234567\\nBình,binh@lab.dev,0912345678\\n');
+  await expect(page.getByTestId("customer-row")).toHaveCount(2);
+
+  const [download] = await Promise.all([page.waitForEvent("download"), page.getByRole("button", { name: "Xuất CSV" }).click()]);
+  expect(download.suggestedFilename()).toBe("customers.csv");
+  const content = await readFile((await download.path())!, "utf8");
+  expect(content).toBe(
+    [HEADER, '"Nguyễn, Văn ""A""",a@lab.dev,0901234567', "Bình,binh@lab.dev,0912345678", ""].join("\\r\\n"),
+  );
+
+  await page.getByTestId("reset-data").click();
+  await upload(page, content);
+  await expect(page.getByTestId("csv-summary")).toHaveText("Đã nhập 2 dòng, bỏ qua 0 dòng lỗi");
+  await expect(page.getByTestId("customer-row").first()).toContainText('Nguyễn, Văn "A"');
+});`,
+  },
+];
+
+export const EXERCISES: Record<string, Exercise[]> = { login, forms, cart, playground, api, otp, todo, table, leave, chat, totp, oauth, pay, orders, guard, webhooks, rbac, timezone, csv };

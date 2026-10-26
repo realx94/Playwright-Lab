@@ -206,6 +206,15 @@ Vai trò Admin/Manager/Staff/Guest; ma trận quyền; thử IDOR (đổi id tro
 - Bug: BUG-01 bỏ qua múi giờ đã chọn; BUG-02 đặt được khung đã qua; BUG-03 sai giờ sau thời điểm chuyển giờ mùa hè.
 - Lưu ý thực tế: Chromium có thể báo `Asia/Saigon` thay cho `Asia/Ho_Chi_Minh`; lab chuẩn hoá tên.
 
+### LAB-27 Import/Export CSV & báo cáo (bản đã làm)
+`/lab/csv`: nhập danh bạ khách hàng từ CSV, báo lỗi theo số dòng, xuất `customers.csv`.
+- BR-01 tiêu đề đúng `name,email,phone`, thiếu cột/tệp rỗng → từ chối cả tệp.
+- BR-02 tên 1–50 ký tự, email hợp lệ và không trùng (không phân biệt hoa thường), điện thoại 10 số bắt đầu bằng 0.
+- BR-03 dòng hợp lệ vẫn nhập; dòng lỗi báo "Dòng N: nguyên nhân" (tiêu đề là dòng 1).
+- BR-04 chỉ nhận `.csv` ≤ 100 KB, tối đa 100 dòng dữ liệu.
+- BR-05 xuất theo RFC 4180 (CRLF, bao nháy kép, nhân đôi dấu nháy).
+- Bug: BUG-01 xuất không escape; BUG-02 nhận email trùng; BUG-03 số dòng lỗi lệch một.
+
 ## Độ phủ kỹ năng theo lab (rà soát)
 | Kỹ năng | Lab |
 |---------|-----|
@@ -241,7 +250,8 @@ Vai trò Admin/Manager/Staff/Guest; ma trận quyền; thử IDOR (đổi id tro
 | LAB-22 Webhook & sự kiện bất đồng bộ | `/lab/webhooks` | Đã làm |
 | LAB-26 Phân quyền RBAC & multi-tenant | `/lab/rbac` | Đã làm |
 | LAB-28 Đặt lịch theo múi giờ & đồng hồ | `/lab/timezone` | Đã làm |
-| LAB-5, 6, 9, 10, 11, 15, 16, 23, 25, 27 | — | Chưa làm |
+| LAB-27 Nhập/xuất CSV & đối chiếu dữ liệu | `/lab/csv` | Đã làm |
+| LAB-5, 6, 9, 10, 11, 15, 16, 23, 25 | — | Chưa làm |
 
 ### Quy tắc kỹ thuật của trang lab
 - `/lab/<slug>` là **ứng dụng thuần**: không header, không thanh tìm kiếm của site (chỉ một liên kết quay lại ở layout lab) để locator của người học không bị trùng.
