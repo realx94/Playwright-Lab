@@ -47,8 +47,9 @@ test("đăng nhập bằng popup và popup tự đóng", async ({ page }) => {
   await page.getByRole("button", { name: "Đăng nhập bằng popup" }).click();
   const popup = await popupPromise;
   await popup.getByRole("radio", { name: /Bob/ }).check();
+  const closed = popup.waitForEvent("close");
   await popup.getByRole("button", { name: "Cho phép" }).click();
-  await popup.waitForEvent("close");
+  await closed;
   await expect(page.getByTestId("oauth-welcome")).toContainText("bob@lab.dev");
 });
 

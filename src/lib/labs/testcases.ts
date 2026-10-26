@@ -358,7 +358,34 @@ const pay: Workshop = {
   ],
 };
 
-export const WORKSHOPS: Record<string, Workshop> = { login, forms, cart, playground, api, otp, todo, table, leave, chat, totp, oauth, pay };
+const orders: Workshop = {
+  techniques: ["Equivalence Partitioning", "State Transition", "Data Integrity", "Error Guessing"],
+  rules: [
+    { id: "BR-01", text: "POST /orders hợp lệ trả 201 kèm Location; dữ liệu: khách hàng 1–50 ký tự, 1–3 dòng, SKU có trong danh mục, số lượng 1–10" },
+    { id: "BR-02", text: "Tổng tiền = Σ (số lượng × đơn giá); tổng trong DB phải bằng tổng trong response" },
+    { id: "BR-03", text: "Mỗi đơn tạo mới ghi 1 dòng orders, một dòng order_items cho mỗi dòng hàng, 1 bản ghi audit_log (order.created) và trừ tồn kho" },
+    { id: "BR-04", text: "Cùng Idempotency-Key thì trả lại đơn cũ (200), không tạo đơn hay trừ tồn kho lần nữa" },
+    { id: "BR-05", text: "Không đủ tồn kho trả 409 và không ghi bất kỳ dòng nào (rollback toàn bộ)" },
+    { id: "BR-06", text: "DELETE là xoá mềm: API không còn trả đơn (404), DB giữ dòng với deleted_at, hoàn tồn kho và ghi audit order.deleted" },
+    { id: "BR-07", text: "Ghi dữ liệu chỉ qua API; DB chỉ đọc qua /api/lab/db/{bảng} với x-db-token" },
+  ],
+  cases: [
+    { id: "TC-D-101", title: "Tạo đơn hợp lệ", precondition: "DB trống", steps: "POST đơn 2×SKU-A + 1×SKU-B", data: "customer, 2 dòng", expected: "201, Location, total 450000", type: "Happy", priority: "P0", br: ["BR-01", "BR-02"] },
+    { id: "TC-D-102", title: "DB phản ánh đơn vừa tạo", precondition: "Đã tạo đơn", steps: "SELECT orders, order_items, audit_log theo id", data: "id đơn", expected: "1 dòng orders, 2 dòng order_items, 1 audit order.created", type: "State", priority: "P0", br: ["BR-03"] },
+    { id: "TC-D-103", title: "Tổng tiền DB khớp response", precondition: "Đã tạo đơn", steps: "So sánh total trong response và orders.total", data: "450000", expected: "Hai giá trị bằng nhau", type: "State", priority: "P0", br: ["BR-02"] },
+    { id: "TC-D-104", title: "Trừ tồn kho", precondition: "Tồn SKU-A là 20", steps: "Tạo đơn 2×SKU-A rồi SELECT products", data: "SKU-A", expected: "stock giảm còn 18", type: "State", priority: "P1", br: ["BR-03"] },
+    { id: "TC-D-105", title: "Khách hàng rỗng", precondition: "—", steps: "POST với customer toàn khoảng trắng", data: "\" \"", expected: "422 kèm lỗi trường customer; DB không có dòng nào", type: "EP", priority: "P1", br: ["BR-01"] },
+    { id: "TC-D-106", title: "SKU không tồn tại, số lượng 0", precondition: "—", steps: "POST với SKU-X, qty 0", data: "SKU-X, 0", expected: "422 liệt kê items[0].sku và items[0].qty", type: "EP", priority: "P1", br: ["BR-01"] },
+    { id: "TC-D-107", title: "Hết hàng", precondition: "Tồn SKU-C là 3", steps: "POST đơn có SKU-A và 4×SKU-C", data: "SKU-C qty 4", expected: "409; orders, order_items trống; tồn SKU-A vẫn 20", type: "Negative", priority: "P0", br: ["BR-05"] },
+    { id: "TC-D-108", title: "Gửi lại với cùng Idempotency-Key", precondition: "Đã tạo đơn với key-123", steps: "POST lại cùng key và body", data: "key-123", expected: "200, cùng id; DB vẫn 1 đơn; tồn kho chỉ trừ một lần", type: "State", priority: "P0", br: ["BR-04"] },
+    { id: "TC-D-109", title: "Xoá mềm", precondition: "Có một đơn", steps: "DELETE đơn đó rồi GET", data: "id đơn", expected: "204; GET 404; DB vẫn có dòng với deleted_at, status cancelled", type: "State", priority: "P0", br: ["BR-06"] },
+    { id: "TC-D-110", title: "Hoàn tồn kho khi xoá", precondition: "Đã xoá đơn 2×SKU-A", steps: "SELECT products", data: "SKU-A", expected: "stock trở lại 20; audit có order.deleted", type: "State", priority: "P1", br: ["BR-06"] },
+    { id: "TC-D-111", title: "Xoá đơn đã xoá", precondition: "Đơn đã xoá mềm", steps: "DELETE lần hai", data: "id đơn", expected: "404", type: "Negative", priority: "P2", br: ["BR-06"] },
+    { id: "TC-D-112", title: "Đọc DB không token", precondition: "—", steps: "GET /api/lab/db/orders không có header", data: "(không)", expected: "401", type: "Security", priority: "P1", br: ["BR-07"] },
+  ],
+};
+
+export const WORKSHOPS: Record<string, Workshop> = { login, forms, cart, playground, api, otp, todo, table, leave, chat, totp, oauth, pay, orders };
 
 export function toCsv(cases: TestCase[]): string {
   const head = ["ID", "Tiêu đề", "Tiền điều kiện", "Các bước", "Dữ liệu", "Kết quả mong đợi", "Loại", "Ưu tiên", "BR"];

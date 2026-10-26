@@ -290,6 +290,27 @@
         "BUG-02",
         "BUG-03"
       ]
+    },
+    "orders-1": {
+      "lab": "orders",
+      "spec": "tests/exercises/orders/orders-1.spec.ts",
+      "bugs": [
+        "BUG-01",
+        "BUG-02"
+      ]
+    },
+    "orders-2": {
+      "lab": "orders",
+      "spec": "tests/exercises/orders/orders-2.spec.ts",
+      "bugs": [
+        "BUG-03",
+        "BUG-04"
+      ]
+    },
+    "orders-3": {
+      "lab": "orders",
+      "spec": "tests/exercises/orders/orders-3.spec.ts",
+      "bugs": []
     }
   }
 }

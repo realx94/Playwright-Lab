@@ -2035,8 +2035,9 @@ test("đăng nhập bằng popup", async ({ page }) => {
   await page.getByRole("button", { name: "Đăng nhập bằng popup" }).click();
   const popup = await popupPromise;
   await popup.getByRole("radio", { name: /Bob/ }).check();
+  const closed = popup.waitForEvent("close"); // đăng ký trước khi bấm vì popup đóng rất nhanh
   await popup.getByRole("button", { name: "Cho phép" }).click();
-  await popup.waitForEvent("close");
+  await closed;
   await expect(page.getByTestId("oauth-welcome")).toContainText("bob@lab.dev");
 });`,
   },
@@ -2414,4 +2415,217 @@ test("webhook gửi lại không cộng doanh thu lần hai", async ({ page }) =
   },
 ];
 
-export const EXERCISES: Record<string, Exercise[]> = { login, forms, cart, playground, api, otp, todo, table, leave, chat, totp, oauth, pay };
+const orders: Exercise[] = [
+  {
+    id: "orders-1",
+    title: "POST /orders rồi kiểm tra DB: ba bảng, tổng tiền và tồn kho",
+    difficulty: 3,
+    bugs: ["BUG-01", "BUG-02"],
+    task: "Tạo đơn 2×SKU-A + 1×SKU-B bằng API, kiểm tra response (201, Location, total) rồi đọc DB để xác nhận orders, order_items, audit_log và tồn kho. Tổng tiền trong DB phải bằng response. Test phải đỏ khi bật BUG-01 hoặc BUG-02.",
+    criteria: [
+      "Kiểm tra status 201, header Location và total trong response",
+      "Đọc bảng orders theo id và so sánh total, status, deleted_at, created_at gần với hiện tại",
+      "Đọc order_items và kiểm tra từng dòng sku/qty/price",
+      "Đọc audit_log và kiểm tra có đúng một bản ghi order.created",
+      "Kiểm tra tồn kho trong bảng products đã bị trừ",
+      "Test đỏ với BUG-01 và với BUG-02",
+      ...COMMON_CRITERIA,
+    ],
+    hints: [
+      "DB đọc được qua GET /api/lab/db/{bảng} kèm header x-db-token: readonly; lọc bằng query như ?id=o-1001.",
+      "Response và DB là hai nguồn khác nhau: hãy so sánh total của cả hai, đừng chỉ tin response.",
+      "Dùng created_at: kiểm tra chênh lệch với Date.now() nhỏ hơn 60 giây thay vì so sánh bằng.",
+    ],
+    solution: `import { test, expect, type APIRequestContext } from "@playwright/test";
+
+const auth = { Authorization: "Bearer admin-token" };
+const DB = { "x-db-token": "readonly" };
+
+const order = (over: Record<string, unknown> = {}) => ({
+  customer: "Nguyễn An",
+  items: [
+    { sku: "SKU-A", qty: 2 },
+    { sku: "SKU-B", qty: 1 },
+  ],
+  ...over,
+});
+
+// Tương đương SELECT * FROM bảng WHERE cột = giá trị (kết nối chỉ-đọc của lab).
+async function select(request: APIRequestContext, table: string, where: Record<string, string> = {}) {
+  const qs = new URLSearchParams(where).toString();
+  const res = await request.get("/api/lab/db/" + table + (qs ? "?" + qs : ""), { headers: DB });
+  expect(res.status()).toBe(200);
+  return (await res.json()) as { count: number; rows: Record<string, unknown>[] };
+}
+
+test("POST /orders ghi đúng vào DB", async ({ request }) => {
+  const res = await request.post("/api/lab/orders", { headers: auth, data: order() });
+  expect(res.status()).toBe(201);
+  const created = await res.json();
+  expect(res.headers()["location"]).toBe("/api/lab/orders/" + created.id);
+  expect(created.total).toBe(450_000);
+
+  const orders = await select(request, "orders", { id: created.id });
+  expect(orders.count).toBe(1);
+  expect(orders.rows[0]).toMatchObject({ total: created.total, status: "pending", deleted_at: null });
+  expect(Math.abs(Date.now() - Date.parse(orders.rows[0].created_at as string))).toBeLessThan(60_000);
+
+  const items = await select(request, "order_items", { order_id: created.id });
+  expect(items.rows.map((r) => [r.sku, r.qty, r.price])).toEqual([
+    ["SKU-A", 2, 100_000],
+    ["SKU-B", 1, 250_000],
+  ]);
+
+  const audit = await select(request, "audit_log", { order_id: created.id });
+  expect(audit.rows.map((r) => r.action)).toEqual(["order.created"]);
+
+  const stock = Object.fromEntries((await select(request, "products")).rows.map((r) => [r.sku, r.stock]));
+  expect(stock).toEqual({ "SKU-A": 18, "SKU-B": 4, "SKU-C": 3 });
+});`,
+  },
+  {
+    id: "orders-2",
+    title: "Rollback khi lỗi và Idempotency-Key",
+    difficulty: 3,
+    bugs: ["BUG-03", "BUG-04"],
+    task: "Chứng minh lỗi không để lại dữ liệu nửa chừng: dữ liệu sai trả 422 và hết hàng trả 409, cả hai đều không tạo dòng nào trong DB. Sau đó gửi cùng Idempotency-Key hai lần và chứng minh chỉ có một đơn, tồn kho chỉ trừ một lần. Test phải đỏ khi bật BUG-03 hoặc BUG-04.",
+    criteria: [
+      "Kiểm tra 422 liệt kê đúng các trường lỗi và DB không có đơn nào",
+      "Kiểm tra 409 khi hết hàng, rồi đếm lại orders, order_items và tồn kho",
+      "Gửi hai lần cùng Idempotency-Key và kiểm tra status 201 rồi 200 cùng id",
+      "Đếm số dòng orders và kiểm tra tồn kho chỉ trừ một lần",
+      "Test đỏ với BUG-03 và với BUG-04",
+      ...COMMON_CRITERIA,
+    ],
+    hints: [
+      "Mỗi test dùng request context mới nên DB bắt đầu trống.",
+      "Đơn có 4×SKU-C sẽ hết hàng vì tồn kho SKU-C chỉ có 3; hãy thêm cả một dòng hợp lệ để chứng minh rollback toàn bộ.",
+      "Header cần dùng là Idempotency-Key; body của hai lần gửi giống nhau.",
+    ],
+    solution: `import { test, expect, type APIRequestContext } from "@playwright/test";
+
+const auth = { Authorization: "Bearer admin-token" };
+const DB = { "x-db-token": "readonly" };
+
+const order = (over: Record<string, unknown> = {}) => ({
+  customer: "Nguyễn An",
+  items: [
+    { sku: "SKU-A", qty: 2 },
+    { sku: "SKU-B", qty: 1 },
+  ],
+  ...over,
+});
+
+// Tương đương SELECT * FROM bảng WHERE cột = giá trị (kết nối chỉ-đọc của lab).
+async function select(request: APIRequestContext, table: string, where: Record<string, string> = {}) {
+  const qs = new URLSearchParams(where).toString();
+  const res = await request.get("/api/lab/db/" + table + (qs ? "?" + qs : ""), { headers: DB });
+  expect(res.status()).toBe(200);
+  return (await res.json()) as { count: number; rows: Record<string, unknown>[] };
+}
+
+test("dữ liệu sai trả 422 và không ghi gì", async ({ request }) => {
+  const res = await request.post("/api/lab/orders", { headers: auth, data: order({ customer: " ", items: [{ sku: "SKU-X", qty: 0 }] }) });
+  expect(res.status()).toBe(422);
+  const fields = (await res.json()).errors.map((e: { field: string }) => e.field);
+  expect(fields).toEqual(expect.arrayContaining(["customer", "items[0].sku", "items[0].qty"]));
+  expect((await select(request, "orders")).count).toBe(0);
+});
+
+test("hết hàng trả 409 và rollback toàn bộ", async ({ request }) => {
+  const res = await request.post("/api/lab/orders", {
+    headers: auth,
+    data: order({ items: [{ sku: "SKU-A", qty: 1 }, { sku: "SKU-C", qty: 4 }] }),
+  });
+  expect(res.status()).toBe(409);
+  expect((await select(request, "orders")).count).toBe(0);
+  expect((await select(request, "order_items")).count).toBe(0);
+  expect((await select(request, "products", { sku: "SKU-A" })).rows[0].stock).toBe(20);
+});
+
+test("Idempotency-Key chống tạo đơn trùng", async ({ request }) => {
+  const headers = { ...auth, "Idempotency-Key": "key-123" };
+  const first = await request.post("/api/lab/orders", { headers, data: order() });
+  const retry = await request.post("/api/lab/orders", { headers, data: order() });
+  expect(first.status()).toBe(201);
+  expect(retry.status()).toBe(200);
+  expect((await retry.json()).id).toBe((await first.json()).id);
+
+  expect((await select(request, "orders")).count).toBe(1);
+  expect((await select(request, "products", { sku: "SKU-A" })).rows[0].stock).toBe(18);
+});`,
+  },
+  {
+    id: "orders-3",
+    title: "Xoá mềm và so sánh ba nguồn UI, API, DB",
+    difficulty: 3,
+    task: "Xoá một đơn qua API và chứng minh đó là xoá mềm: API trả 404 nhưng DB vẫn còn dòng với deleted_at, tồn kho được hoàn và audit có order.deleted. Thêm một test tạo đơn qua giao diện rồi so sánh con số hiển thị trên UI, trong API và trong DB.",
+    criteria: [
+      "Kiểm tra DELETE trả 204, GET trả 404 và danh sách không còn đơn",
+      "Kiểm tra dòng orders vẫn còn với status cancelled và deleted_at khác null",
+      "Kiểm tra tồn kho được hoàn và audit_log có thứ tự order.created, order.deleted",
+      "Tạo đơn bằng giao diện, lấy tổng tiền từ UI, API và DB rồi so sánh",
+      ...COMMON_CRITERIA,
+    ],
+    hints: [
+      "Trong test UI dùng page.request để gọi API cùng cookie phiên với trình duyệt.",
+      "Chọn SKU bằng getByLabel('SKU dòng 1').selectOption(...) và số lượng bằng getByLabel('Số lượng dòng 1').",
+      "Đơn đầu tiên của phiên có id là o-1001.",
+    ],
+    solution: `import { test, expect, type APIRequestContext } from "@playwright/test";
+
+const auth = { Authorization: "Bearer admin-token" };
+const DB = { "x-db-token": "readonly" };
+
+const order = (over: Record<string, unknown> = {}) => ({
+  customer: "Nguyễn An",
+  items: [
+    { sku: "SKU-A", qty: 2 },
+    { sku: "SKU-B", qty: 1 },
+  ],
+  ...over,
+});
+
+// Tương đương SELECT * FROM bảng WHERE cột = giá trị (kết nối chỉ-đọc của lab).
+async function select(request: APIRequestContext, table: string, where: Record<string, string> = {}) {
+  const qs = new URLSearchParams(where).toString();
+  const res = await request.get("/api/lab/db/" + table + (qs ? "?" + qs : ""), { headers: DB });
+  expect(res.status()).toBe(200);
+  return (await res.json()) as { count: number; rows: Record<string, unknown>[] };
+}
+
+test("xoá mềm: API không thấy nhưng DB còn dòng", async ({ request }) => {
+  const created = await (await request.post("/api/lab/orders", { headers: auth, data: order() })).json();
+
+  expect((await request.delete("/api/lab/orders/" + created.id, { headers: auth })).status()).toBe(204);
+  expect((await request.get("/api/lab/orders/" + created.id)).status()).toBe(404);
+  expect((await (await request.get("/api/lab/orders")).json()).total).toBe(0);
+
+  const row = (await select(request, "orders", { id: created.id })).rows[0];
+  expect(row.status).toBe("cancelled");
+  expect(row.deleted_at).not.toBeNull();
+  expect((await select(request, "products", { sku: "SKU-A" })).rows[0].stock).toBe(20);
+  expect((await select(request, "audit_log", { order_id: created.id })).rows.map((r) => r.action)).toEqual([
+    "order.created",
+    "order.deleted",
+  ]);
+});
+
+test("UI, API và DB cùng một tổng tiền", async ({ page }) => {
+  await page.goto("/lab/orders");
+  await page.getByTestId("reset-data").click();
+  await page.getByLabel("Khách hàng").fill("Trần Bình");
+  await page.getByLabel("SKU dòng 1").selectOption("SKU-B");
+  await page.getByLabel("Số lượng dòng 1").fill("2");
+  await page.getByRole("button", { name: "Tạo đơn" }).click();
+
+  await expect(page.getByTestId("order-row")).toContainText("500.000 ₫");
+  const api = await (await page.request.get("/api/lab/orders/o-1001")).json();
+  expect(api.total).toBe(500_000);
+  const dbRows = await (await page.request.get("/api/lab/db/orders?id=o-1001", { headers: DB })).json();
+  expect(dbRows.rows[0].total).toBe(500_000);
+});`,
+  },
+];
+
+export const EXERCISES: Record<string, Exercise[]> = { login, forms, cart, playground, api, otp, todo, table, leave, chat, totp, oauth, pay, orders };

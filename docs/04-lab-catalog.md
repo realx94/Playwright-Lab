@@ -156,6 +156,15 @@ Tạo hai chế độ: **Fake IdP** (trang đồng ý giả trong site, ổn đ�
 - Kiểm tra: tính nhất quán (không ghi nửa chừng khi lỗi, transaction rollback), soft delete, trigger audit, unique constraint (409).
 - Kỹ năng: fixture `db` dùng `pg`, `test.afterEach` dọn theo `tenant_id`, so sánh API ↔ DB ↔ UI (ba nguồn).
 **Bug gợi ý:** API trả 200 nhưng không ghi DB; ghi trùng khi retry (thiếu idempotency key); tổng tiền DB lệch so với response.
+**Bản đã làm (DB mô phỏng, không cần Postgres):** “DB” là các bảng `products`, `orders`, `order_items`, `audit_log` lưu theo phiên (cookie nén, tối đa 8 đơn); đọc chỉ-đọc qua `GET /api/lab/db/{bảng}` (header `x-db-token: readonly`, lọc `?cột=giá trị`). Người học không cần cài driver `pg`, nhưng kỹ thuật giống: ghi qua API, SELECT để xác nhận.
+- BR-01 Tạo đơn hợp lệ → 201 + Location (khách 1–50 ký tự, 1–3 dòng, SKU trong danh mục, số lượng 1–10).
+- BR-02 Tổng tiền = Σ số lượng × đơn giá; tổng trong DB bằng tổng trong response.
+- BR-03 Mỗi đơn ghi orders, order_items, audit_log (`order.created`) và trừ tồn kho.
+- BR-04 Cùng `Idempotency-Key` trả đơn cũ (200), không tạo thêm.
+- BR-05 Hết hàng → 409 và rollback toàn bộ.
+- BR-06 DELETE là xoá mềm (`deleted_at`), hoàn tồn kho, ghi audit `order.deleted`.
+- BR-07 Ghi chỉ qua API; DB chỉ đọc qua endpoint có token.
+- Bug: BUG-01 thiếu audit_log; BUG-02 tổng trong DB lệch; BUG-03 bỏ qua Idempotency-Key; BUG-04 ghi nửa chừng khi hết hàng.
 
 ### LAB-22 Webhook & Event
 - Hệ thống giả lập đối tác gọi `POST /api/lab/webhook` kèm chữ ký HMAC-SHA256.
@@ -198,7 +207,8 @@ Vai trò Admin/Manager/Staff/Guest; ma trận quyền; thử IDOR (đổi id tro
 | LAB-18 Đăng nhập 2FA (TOTP) | `/lab/totp` | Đã làm (TOTP RFC 6238, cửa sổ ±1, mã khôi phục, khóa tài khoản, chống replay; chưa có SMS OTP) |
 | LAB-19 Đăng nhập OAuth (Fake IdP) | `/lab/oauth`, `/lab/oauth/idp` | Đã làm (redirect + popup, state/CSRF, code một lần, hết hạn, tài khoản trùng) |
 | LAB-20 Thanh toán thẻ (Fake Payment) | `/lab/pay` | Đã làm (iframe nhập thẻ, 3D Secure, webhook trễ, hoàn tiền, idempotency) |
-| LAB-05, 06, 09..11, 15, 16, 21..28 | — | Chưa làm; các lab cần dịch vụ bên ngoài (OAuth, Stripe, DB, email thật) phụ thuộc mô hình BYO |
+| LAB-21 Đơn hàng & xác minh DB | `/lab/orders`, `/api/lab/orders`, `/api/lab/db/*` | Đã làm (DB mô phỏng chỉ-đọc, rollback, idempotency, xoá mềm, UI ↔ API ↔ DB) |
+| LAB-05, 06, 09..11, 15, 16, 22..28 | — | Chưa làm; các lab cần dịch vụ bên ngoài (OAuth, Stripe, DB, email thật) phụ thuộc mô hình BYO |
 
 ### Quy tắc kỹ thuật của trang lab
 - `/lab/<slug>` là **ứng dụng thuần**: không header, không thanh tìm kiếm của site (chỉ một liên kết quay lại ở layout lab) để locator của người học không bị trùng.
