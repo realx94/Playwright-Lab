@@ -20,4 +20,5 @@ export const LABS: LabInfo[] = [
   { slug: "leave", id: "LAB-07", title: "Nghỉ phép & duyệt đơn (HR)", domain: "HR", difficulty: 3, skills: ["nhiều vai trò", "hai tab", "trạng thái đơn", "ngày tháng", "phân quyền"], ready: true },
   { slug: "chat", id: "LAB-12", title: "Chat thời gian thực giữa các tab", domain: "Realtime", difficulty: 3, skills: ["nhiều tab", "BroadcastChannel", "auto-wait", "visibilitychange"], ready: true },
   { slug: "totp", id: "LAB-18", title: "Đăng nhập 2FA (TOTP)", domain: "Auth nâng cao", difficulty: 3, skills: ["TOTP", "page.clock", "mã khôi phục", "replay", "khóa tài khoản"], ready: true },
+  { slug: "oauth", id: "LAB-19", title: "Đăng nhập OAuth (Fake IdP)", domain: "Bên thứ 3", difficulty: 3, skills: ["redirect", "popup", "state/CSRF", "authorization code", "page.clock"], ready: true },
 ];

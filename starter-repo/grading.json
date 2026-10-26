@@ -250,6 +250,26 @@
       "bugs": [
         "BUG-02"
       ]
+    },
+    "oauth-1": {
+      "lab": "oauth",
+      "spec": "tests/exercises/oauth/oauth-1.spec.ts",
+      "bugs": []
+    },
+    "oauth-2": {
+      "lab": "oauth",
+      "spec": "tests/exercises/oauth/oauth-2.spec.ts",
+      "bugs": [
+        "BUG-01",
+        "BUG-02"
+      ]
+    },
+    "oauth-3": {
+      "lab": "oauth",
+      "spec": "tests/exercises/oauth/oauth-3.spec.ts",
+      "bugs": [
+        "BUG-03"
+      ]
     }
   }
 }

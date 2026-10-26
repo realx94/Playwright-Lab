@@ -20,6 +20,7 @@ test("xuất rồi nhập lại dữ liệu", async ({ page }) => {
   await expect(page.getByRole("button", { name: "Đã hoàn thành" })).toBeVisible();
 
   await page.goto("/stats");
+  await expect(page.getByTestId("stat-done")).toContainText(/^1\/\d+ bài/); // chờ dữ liệu đã ghi xong trước khi xuất
   const [download] = await Promise.all([
     page.waitForEvent("download"),
     page.getByRole("button", { name: "Xuất JSON" }).click(),

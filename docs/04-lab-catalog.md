@@ -125,6 +125,15 @@ Xem dịch vụ và cách cấu hình tại [06-integrations.md](06-integrations
 ### LAB-19 OAuth / Social login
 Tạo hai chế độ: **Fake IdP** (trang đồng ý giả trong site, ổn định) và **GitHub/Google thật** (chỉ để quan sát luồng).
 - Test: popup/redirect, nút Cho phép/Từ chối, token hết hạn, tài khoản liên kết trùng email.
+- **Bản đã làm (Fake IdP, Authorization Code):**
+  - BR-01 `state` ngẫu nhiên, không khớp thì từ chối.
+  - BR-02 code hợp lệ 60 giây, dùng một lần.
+  - BR-03 Từ chối thì không đăng nhập.
+  - BR-04 IdP chỉ chuyển hướng tới redirect_uri đã đăng ký (sai redirect_uri hoặc client_id thì báo lỗi).
+  - BR-05 Phiên hết hạn sau 1 giờ.
+  - BR-06 Cùng email chỉ có một tài khoản.
+  - Bug: BUG-01 bỏ kiểm tra state; BUG-02 code dùng lại được; BUG-03 tạo tài khoản trùng.
+  - Chế độ GitHub/Google thật không làm (không nên automate IdP thật).
 - Bài học then chốt: không automate đăng nhập Google/GitHub thật trong CI → dùng `storageState` hoặc Fake IdP.
 
 ### LAB-20 Thanh toán Stripe test mode
@@ -179,7 +188,8 @@ Vai trò Admin/Manager/Staff/Guest; ma trận quyền; thử IDOR (đổi id tro
 | LAB-14 Mock REST API (Sách) | `/lab/api`, `/api/lab/*` | Đã làm (trạng thái theo cookie, 401/403/409/422, bug toggle) |
 | LAB-17 Đăng nhập Email OTP | `/lab/otp`, `/lab/inbox` | Đã làm (hộp thư giả, page.clock, bug toggle) |
 | LAB-18 Đăng nhập 2FA (TOTP) | `/lab/totp` | Đã làm (TOTP RFC 6238, cửa sổ ±1, mã khôi phục, khóa tài khoản, chống replay; chưa có SMS OTP) |
-| LAB-05, 06, 09..11, 15, 16, 19..28 | — | Chưa làm; các lab cần dịch vụ bên ngoài (OAuth, Stripe, DB, email thật) phụ thuộc mô hình BYO |
+| LAB-19 Đăng nhập OAuth (Fake IdP) | `/lab/oauth`, `/lab/oauth/idp` | Đã làm (redirect + popup, state/CSRF, code một lần, hết hạn, tài khoản trùng) |
+| LAB-05, 06, 09..11, 15, 16, 20..28 | — | Chưa làm; các lab cần dịch vụ bên ngoài (OAuth, Stripe, DB, email thật) phụ thuộc mô hình BYO |
 
 ### Quy tắc kỹ thuật của trang lab
 - `/lab/<slug>` là **ứng dụng thuần**: không header, không thanh tìm kiếm của site (chỉ một liên kết quay lại ở layout lab) để locator của người học không bị trùng.

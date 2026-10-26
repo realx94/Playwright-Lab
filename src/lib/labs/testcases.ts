@@ -306,7 +306,32 @@ const totp: Workshop = {
   ],
 };
 
-export const WORKSHOPS: Record<string, Workshop> = { login, forms, cart, playground, api, otp, todo, table, leave, chat, totp };
+const oauth: Workshop = {
+  techniques: ["State Transition", "Security", "Boundary Value Analysis", "Error Guessing"],
+  rules: [
+    { id: "BR-01", text: "Ứng dụng tạo tham số state ngẫu nhiên; nếu state trả về không khớp thì từ chối đăng nhập" },
+    { id: "BR-02", text: "Chọn tài khoản và Cho phép thì nhận authorization code hợp lệ 60 giây, dùng một lần" },
+    { id: "BR-03", text: "Từ chối cấp quyền thì quay về ứng dụng với thông báo và không đăng nhập" },
+    { id: "BR-04", text: "IdP chỉ chuyển hướng tới redirect_uri đã đăng ký; sai redirect_uri hoặc client_id thì báo lỗi, không chuyển hướng" },
+    { id: "BR-05", text: "Phiên đăng nhập hết hạn sau 1 giờ và yêu cầu đăng nhập lại" },
+    { id: "BR-06", text: "Cùng một email đăng nhập nhiều lần chỉ có một tài khoản trong hệ thống" },
+  ],
+  cases: [
+    { id: "TC-O-101", title: "Đăng nhập thành công bằng redirect", precondition: "Chưa đăng nhập", steps: "Bấm Đăng nhập bằng LabID, chọn Alice, Cho phép", data: "alice@lab.dev", expected: "Quay về ứng dụng, hiện tên và email", type: "Happy", priority: "P0", br: ["BR-02"] },
+    { id: "TC-O-102", title: "Cho phép khi chưa chọn tài khoản", precondition: "Đang ở trang đồng ý", steps: "Bấm Cho phép", data: "(không chọn)", expected: "Báo vui lòng chọn một tài khoản", type: "Negative", priority: "P1", br: ["BR-02"] },
+    { id: "TC-O-103", title: "Từ chối cấp quyền", precondition: "Đang ở trang đồng ý", steps: "Bấm Từ chối", data: "—", expected: "Báo đã từ chối, không đăng nhập", type: "Negative", priority: "P0", br: ["BR-03"] },
+    { id: "TC-O-104", title: "Đăng nhập bằng popup", precondition: "Chưa đăng nhập", steps: "Bấm Đăng nhập bằng popup, Cho phép trong popup", data: "bob@lab.dev", expected: "Popup tự đóng, cửa sổ gốc đã đăng nhập", type: "Happy", priority: "P1", br: ["BR-02"] },
+    { id: "TC-O-105", title: "redirect_uri không đăng ký", precondition: "—", steps: "Mở trang đồng ý với redirect_uri lạ", data: "https://evil.example/cb", expected: "Báo lỗi, không có nút Cho phép", type: "Security", priority: "P0", br: ["BR-04"] },
+    { id: "TC-O-106", title: "state không khớp", precondition: "Có một code hợp lệ", steps: "Mở callback với state giả", data: "state=gia-mao", expected: "Từ chối, không đăng nhập", type: "Security", priority: "P0", br: ["BR-01"] },
+    { id: "TC-O-107", title: "Dùng lại authorization code", precondition: "Code đã đổi thành công", steps: "Mở lại callback với code đó", data: "code đã dùng", expected: "Báo mã đã được sử dụng", type: "Security", priority: "P0", br: ["BR-02"] },
+    { id: "TC-O-108", title: "Code ở giây thứ 60", precondition: "Code vừa được cấp", steps: "Đổi code sau 60 giây", data: "60s", expected: "Còn hiệu lực", type: "BVA", priority: "P0", br: ["BR-02"] },
+    { id: "TC-O-109", title: "Code ở giây thứ 61", precondition: "Code vừa được cấp", steps: "Đổi code sau 61 giây", data: "61s", expected: "Báo mã đã hết hạn", type: "BVA", priority: "P0", br: ["BR-02"] },
+    { id: "TC-O-110", title: "Phiên hết hạn sau 1 giờ", precondition: "Đã đăng nhập", steps: "Tải lại trang sau 61 phút", data: "61 phút", expected: "Báo phiên hết hạn, yêu cầu đăng nhập lại", type: "State", priority: "P1", br: ["BR-05"] },
+    { id: "TC-O-111", title: "Đăng nhập lại cùng email", precondition: "Alice đã đăng nhập một lần", steps: "Đăng xuất rồi đăng nhập lại bằng Alice", data: "alice@lab.dev", expected: "Vẫn chỉ có 1 tài khoản", type: "State", priority: "P1", br: ["BR-06"] },
+  ],
+};
+
+export const WORKSHOPS: Record<string, Workshop> = { login, forms, cart, playground, api, otp, todo, table, leave, chat, totp, oauth };
 
 export function toCsv(cases: TestCase[]): string {
   const head = ["ID", "Tiêu đề", "Tiền điều kiện", "Các bước", "Dữ liệu", "Kết quả mong đợi", "Loại", "Ưu tiên", "BR"];

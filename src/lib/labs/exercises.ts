@@ -1975,4 +1975,219 @@ test("sai ba lần thì khóa tài khoản", async ({ page, context }) => {
   },
 ];
 
-export const EXERCISES: Record<string, Exercise[]> = { login, forms, cart, playground, api, otp, todo, table, leave, chat, totp };
+const oauth: Exercise[] = [
+  {
+    id: "oauth-1",
+    title: "Đăng nhập OAuth: chuyển hướng, từ chối và popup",
+    difficulty: 3,
+    task: "Tự động hoá ba luồng: đăng nhập bằng chuyển hướng (chọn tài khoản rồi Cho phép), bấm Từ chối và đăng nhập bằng popup. Không đăng nhập vào Google/GitHub thật; luôn dùng IdP giả của lab.",
+    criteria: [
+      "Chờ chuyển hướng sang trang IdP bằng waitForURL",
+      "Kiểm tra thông báo khi chưa chọn tài khoản và khi Từ chối",
+      "Dùng page.waitForEvent('popup') và thao tác trong popup, chờ popup đóng",
+      "Kiểm tra cửa sổ gốc đã đăng nhập sau khi popup đóng",
+      ...COMMON_CRITERIA,
+    ],
+    hints: [
+      "Bắt sự kiện popup trước khi bấm nút mở popup: tạo promise rồi mới click.",
+      "Nút radio chọn tài khoản có tên chứa tên người dùng, dùng getByRole('radio', { name: /Bob/ }).",
+      "popup.waitForEvent('close') chờ popup tự đóng sau khi Cho phép.",
+    ],
+    solution: `import { test, expect, type Page } from "@playwright/test";
+
+async function start(page: Page) {
+  await page.goto("/lab/oauth");
+  await page.getByTestId("reset-data").click();
+}
+
+async function login(page: Page, who: "Alice" | "Bob" = "Alice") {
+  await page.getByRole("button", { name: "Đăng nhập bằng LabID" }).click();
+  await page.waitForURL("**/lab/oauth/idp*");
+  await page.getByRole("radio", { name: new RegExp(who) }).check();
+  await page.getByRole("button", { name: "Cho phép" }).click();
+  await expect(page.getByTestId("oauth-welcome")).toContainText(who);
+}
+
+// Code và state không có trên giao diện: đọc từ lưu trữ của trình duyệt.
+const readCode = (page: Page) =>
+  page.evaluate(() => Object.keys(JSON.parse(localStorage.getItem("lab:oauth:codes") ?? "{}"))[0]);
+const readState = (page: Page) => page.evaluate(() => sessionStorage.getItem("lab:oauth:state"));
+
+test("đăng nhập bằng chuyển hướng", async ({ page }) => {
+  await start(page);
+  await login(page);
+  await expect(page.getByTestId("oauth-welcome")).toContainText("alice@lab.dev");
+});
+
+test("Từ chối thì không đăng nhập", async ({ page }) => {
+  await start(page);
+  await page.getByRole("button", { name: "Đăng nhập bằng LabID" }).click();
+  await page.getByRole("button", { name: "Cho phép" }).click();
+  await expect(page.getByTestId("idp-message")).toHaveText("Vui lòng chọn một tài khoản");
+  await page.getByRole("button", { name: "Từ chối" }).click();
+  await expect(page.getByTestId("oauth-message")).toHaveText("Bạn đã từ chối cấp quyền");
+  await expect(page.getByTestId("oauth-welcome")).toHaveCount(0);
+});
+
+test("đăng nhập bằng popup", async ({ page }) => {
+  await start(page);
+  const popupPromise = page.waitForEvent("popup");
+  await page.getByRole("button", { name: "Đăng nhập bằng popup" }).click();
+  const popup = await popupPromise;
+  await popup.getByRole("radio", { name: /Bob/ }).check();
+  await popup.getByRole("button", { name: "Cho phép" }).click();
+  await popup.waitForEvent("close");
+  await expect(page.getByTestId("oauth-welcome")).toContainText("bob@lab.dev");
+});`,
+  },
+  {
+    id: "oauth-2",
+    title: "Bảo mật luồng OAuth: state, code dùng một lần, redirect_uri",
+    difficulty: 3,
+    bugs: ["BUG-01", "BUG-02"],
+    task: "Chứng minh ba lớp bảo vệ: state giả bị từ chối (CSRF), authorization code đã dùng không dùng lại được, và IdP từ chối redirect_uri lạ. Test phải đỏ khi bật BUG-01 hoặc BUG-02.",
+    criteria: [
+      "Lấy code và state thật từ lưu trữ của trình duyệt sau một lần đăng nhập",
+      "Mở lại callback với state giả và kiểm tra bị từ chối",
+      "Mở lại callback với code cũ và state đúng, kiểm tra báo đã sử dụng",
+      "Mở trang IdP với redirect_uri lạ và kiểm tra không có nút Cho phép",
+      "Test đỏ với BUG-01 và với BUG-02",
+      ...COMMON_CRITERIA,
+    ],
+    hints: [
+      "Code nằm trong localStorage khoá lab:oauth:codes, state nằm trong sessionStorage khoá lab:oauth:state.",
+      "Đăng xuất trước khi mở lại callback để thấy rõ kết quả đăng nhập.",
+      "Callback của ứng dụng là /lab/oauth?code=...&state=...",
+    ],
+    solution: `import { test, expect, type Page } from "@playwright/test";
+
+async function start(page: Page) {
+  await page.goto("/lab/oauth");
+  await page.getByTestId("reset-data").click();
+}
+
+async function login(page: Page, who: "Alice" | "Bob" = "Alice") {
+  await page.getByRole("button", { name: "Đăng nhập bằng LabID" }).click();
+  await page.waitForURL("**/lab/oauth/idp*");
+  await page.getByRole("radio", { name: new RegExp(who) }).check();
+  await page.getByRole("button", { name: "Cho phép" }).click();
+  await expect(page.getByTestId("oauth-welcome")).toContainText(who);
+}
+
+// Code và state không có trên giao diện: đọc từ lưu trữ của trình duyệt.
+const readCode = (page: Page) =>
+  page.evaluate(() => Object.keys(JSON.parse(localStorage.getItem("lab:oauth:codes") ?? "{}"))[0]);
+const readState = (page: Page) => page.evaluate(() => sessionStorage.getItem("lab:oauth:state"));
+
+test("state giả bị từ chối", async ({ page }) => {
+  await start(page);
+  await login(page);
+  const code = await readCode(page);
+  await page.getByRole("button", { name: "Đăng xuất" }).click();
+
+  await page.goto("/lab/oauth?code=" + code + "&state=gia-mao");
+  await expect(page.getByTestId("oauth-message")).toHaveText("State không khớp, yêu cầu bị từ chối");
+  await expect(page.getByTestId("oauth-welcome")).toHaveCount(0);
+});
+
+test("authorization code chỉ dùng một lần", async ({ page }) => {
+  await start(page);
+  await login(page);
+  const code = await readCode(page);
+  const state = await readState(page);
+  await page.getByRole("button", { name: "Đăng xuất" }).click();
+
+  await page.goto("/lab/oauth?code=" + code + "&state=" + state);
+  await expect(page.getByTestId("oauth-message")).toHaveText("Mã xác thực đã được sử dụng");
+  await expect(page.getByTestId("oauth-welcome")).toHaveCount(0);
+});
+
+test("IdP từ chối redirect_uri lạ", async ({ page }) => {
+  await page.goto("/lab/oauth/idp?client_id=lab-app&redirect_uri=https://evil.example/cb&state=x");
+  await expect(page.getByTestId("idp-error")).toContainText("redirect_uri không khớp");
+  await expect(page.getByRole("button", { name: "Cho phép" })).toHaveCount(0);
+});`,
+  },
+  {
+    id: "oauth-3",
+    title: "Thời gian sống của code và phiên; tài khoản trùng",
+    difficulty: 3,
+    bugs: ["BUG-03"],
+    task: "Dùng đồng hồ giả để kiểm tra biên 60 giây của authorization code và biên 1 giờ của phiên. Thêm test đăng nhập lại cùng một email không tạo tài khoản trùng. Test phải đỏ khi bật BUG-03.",
+    criteria: [
+      "Cố định thời gian bằng context.clock.setFixedTime",
+      "Chặn trang callback để giữ lại code chưa đổi, rồi đổi code ở giây 60 và 61",
+      "Kiểm tra phiên còn ở phút 59 và hết ở phút 61",
+      "Đăng nhập cùng email hai lần và kiểm tra số tài khoản vẫn là 1",
+      "Test đỏ với BUG-03",
+      ...COMMON_CRITERIA,
+    ],
+    hints: [
+      "page.route cho phép trả về trang giả thay cho callback, nên code được cấp mà chưa bị đổi.",
+      "Nhớ gỡ route bằng page.unroute trước khi mở lại callback thật.",
+      "Số tài khoản có data-testid là oauth-user-count.",
+    ],
+    solution: `import { test, expect, type Page } from "@playwright/test";
+
+async function start(page: Page) {
+  await page.goto("/lab/oauth");
+  await page.getByTestId("reset-data").click();
+}
+
+async function login(page: Page, who: "Alice" | "Bob" = "Alice") {
+  await page.getByRole("button", { name: "Đăng nhập bằng LabID" }).click();
+  await page.waitForURL("**/lab/oauth/idp*");
+  await page.getByRole("radio", { name: new RegExp(who) }).check();
+  await page.getByRole("button", { name: "Cho phép" }).click();
+  await expect(page.getByTestId("oauth-welcome")).toContainText(who);
+}
+
+// Code và state không có trên giao diện: đọc từ lưu trữ của trình duyệt.
+const readCode = (page: Page) =>
+  page.evaluate(() => Object.keys(JSON.parse(localStorage.getItem("lab:oauth:codes") ?? "{}"))[0]);
+const readState = (page: Page) => page.evaluate(() => sessionStorage.getItem("lab:oauth:state"));
+
+test("code hết hạn sau 60 giây", async ({ page, context }) => {
+  const T0 = new Date("2026-03-01T10:00:00Z");
+  await context.clock.setFixedTime(T0);
+  await start(page);
+  await page.route("**/lab/oauth/callback*", (r) => r.fulfill({ contentType: "text/html", body: "<p>blocked</p>" }));
+  await page.getByRole("button", { name: "Đăng nhập bằng LabID" }).click();
+  await page.getByRole("radio", { name: /Alice/ }).check();
+  await page.getByRole("button", { name: "Cho phép" }).click();
+  await expect(page.getByText("blocked")).toBeVisible();
+  await page.unroute("**/lab/oauth/callback*");
+
+  const code = await readCode(page);
+  const state = await readState(page);
+  await context.clock.setFixedTime(new Date(T0.getTime() + 61_000));
+  await page.goto("/lab/oauth?code=" + code + "&state=" + state);
+  await expect(page.getByTestId("oauth-message")).toHaveText("Mã xác thực đã hết hạn");
+});
+
+test("phiên hết hạn sau 1 giờ", async ({ page, context }) => {
+  const T0 = new Date("2026-03-01T10:00:00Z");
+  await context.clock.setFixedTime(T0);
+  await start(page);
+  await login(page);
+
+  await context.clock.setFixedTime(new Date(T0.getTime() + 59 * 60_000));
+  await page.reload();
+  await expect(page.getByTestId("oauth-welcome")).toBeVisible();
+
+  await context.clock.setFixedTime(new Date(T0.getTime() + 61 * 60_000));
+  await page.reload();
+  await expect(page.getByTestId("oauth-message")).toHaveText("Phiên đã hết hạn, vui lòng đăng nhập lại");
+});
+
+test("đăng nhập lại cùng email không tạo tài khoản trùng", async ({ page }) => {
+  await start(page);
+  await login(page);
+  await page.getByRole("button", { name: "Đăng xuất" }).click();
+  await login(page);
+  await expect(page.getByTestId("oauth-user-count")).toHaveText("Tài khoản trong hệ thống: 1");
+});`,
+  },
+];
+
+export const EXERCISES: Record<string, Exercise[]> = { login, forms, cart, playground, api, otp, todo, table, leave, chat, totp, oauth };
