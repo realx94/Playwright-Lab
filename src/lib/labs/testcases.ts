@@ -257,7 +257,32 @@ const leave: Workshop = {
   ],
 };
 
-export const WORKSHOPS: Record<string, Workshop> = { login, forms, cart, playground, api, otp, todo, table, leave };
+const chat: Workshop = {
+  techniques: ["Boundary Value Analysis", "State Transition", "Exploratory", "Concurrency"],
+  rules: [
+    { id: "BR-01", text: "Phải nhập tên hiển thị trước khi vào phòng chat" },
+    { id: "BR-02", text: "Tin nhắn 1–200 ký tự sau khi cắt khoảng trắng hai đầu" },
+    { id: "BR-03", text: "Tin nhắn đến các tab khác theo thời gian thực" },
+    { id: "BR-04", text: "Người khác đang gõ thì hiện “<tên> đang nhập…” rồi tự biến mất" },
+    { id: "BR-05", text: "Bộ đếm chưa đọc chỉ tăng khi tab bị ẩn và về 0 khi quay lại" },
+    { id: "BR-06", text: "Lịch sử giữ lại khi tải lại trang (tối đa 50 tin)" },
+  ],
+  cases: [
+    { id: "TC-C-101", title: "Vào phòng không nhập tên", precondition: "Mở phòng chat", steps: "Bấm Vào phòng khi để trống tên", data: "(rỗng)", expected: "Báo vui lòng nhập tên hiển thị", type: "Negative", priority: "P0", br: ["BR-01"] },
+    { id: "TC-C-102", title: "Gửi tin hợp lệ", precondition: "Hai tab An và Bình", steps: "An gửi Xin chào", data: "Xin chào", expected: "Bình thấy tin ngay, không tải lại", type: "Happy", priority: "P0", br: ["BR-02", "BR-03"] },
+    { id: "TC-C-103", title: "Tin nhắn rỗng/khoảng trắng", precondition: "Đã vào phòng", steps: "Gửi ba dấu cách", data: "   ", expected: "Báo không được để trống, không có tin mới", type: "EP", priority: "P1", br: ["BR-02"] },
+    { id: "TC-C-104", title: "Tin dài 200 ký tự", precondition: "Đã vào phòng", steps: "Gửi 200 ký tự", data: "a × 200", expected: "Gửi thành công", type: "BVA", priority: "P0", br: ["BR-02"] },
+    { id: "TC-C-105", title: "Tin dài 201 ký tự", precondition: "Đã vào phòng", steps: "Gửi 201 ký tự", data: "a × 201", expected: "Báo tối đa 200, không có tin mới", type: "BVA", priority: "P0", br: ["BR-02"] },
+    { id: "TC-C-106", title: "Cắt khoảng trắng hai đầu", precondition: "Đã vào phòng", steps: "Gửi “  chào  ”", data: "  chào  ", expected: "Nội dung hiển thị là chào", type: "EP", priority: "P1", br: ["BR-02"] },
+    { id: "TC-C-107", title: "Chỉ báo đang nhập", precondition: "Hai tab", steps: "An gõ dở một câu", data: "Xin ch", expected: "Tab Bình hiện An đang nhập…; mất sau khi An gửi", type: "State", priority: "P1", br: ["BR-04"] },
+    { id: "TC-C-108", title: "Chưa đọc khi tab ẩn", precondition: "Tab Bình đang ẩn", steps: "An gửi hai tin", data: "2 tin", expected: "Bình có Chưa đọc: 2", type: "State", priority: "P1", br: ["BR-05"] },
+    { id: "TC-C-109", title: "Quay lại tab", precondition: "Bình có 2 tin chưa đọc", steps: "Hiện lại tab Bình", data: "—", expected: "Chưa đọc: 0", type: "State", priority: "P1", br: ["BR-05"] },
+    { id: "TC-C-110", title: "Tab đang xem không tăng chưa đọc", precondition: "Hai tab đang hiển thị", steps: "An gửi một tin", data: "—", expected: "Bình vẫn Chưa đọc: 0", type: "Negative", priority: "P1", br: ["BR-05"] },
+    { id: "TC-C-111", title: "Tải lại giữ lịch sử", precondition: "Có tin nhắn", steps: "Tải lại tab Bình", data: "—", expected: "Vẫn đủ tin nhắn, tên được giữ", type: "State", priority: "P1", br: ["BR-06"] },
+  ],
+};
+
+export const WORKSHOPS: Record<string, Workshop> = { login, forms, cart, playground, api, otp, todo, table, leave, chat };
 
 export function toCsv(cases: TestCase[]): string {
   const head = ["ID", "Tiêu đề", "Tiền điều kiện", "Các bước", "Dữ liệu", "Kết quả mong đợi", "Loại", "Ưu tiên", "BR"];

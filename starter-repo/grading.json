@@ -210,6 +210,26 @@
         "BUG-02",
         "BUG-03"
       ]
+    },
+    "chat-1": {
+      "lab": "chat",
+      "spec": "tests/exercises/chat/chat-1.spec.ts",
+      "bugs": []
+    },
+    "chat-2": {
+      "lab": "chat",
+      "spec": "tests/exercises/chat/chat-2.spec.ts",
+      "bugs": [
+        "BUG-01",
+        "BUG-03"
+      ]
+    },
+    "chat-3": {
+      "lab": "chat",
+      "spec": "tests/exercises/chat/chat-3.spec.ts",
+      "bugs": [
+        "BUG-02"
+      ]
     }
   }
 }

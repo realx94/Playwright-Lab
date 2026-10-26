@@ -169,11 +169,13 @@ Vai trò Admin/Manager/Staff/Guest; ma trận quyền; thử IDOR (đổi id tro
 | LAB-02 Form đa dạng | `/lab/forms` | Đã làm |
 | LAB-03 Giỏ hàng & Checkout | `/lab/cart` | Đã làm |
 | LAB-04 Quản lý công việc (CRUD) | `/lab/todo` | Đã làm |
+| LAB-07 Nghỉ phép & duyệt đơn (HR) | `/lab/leave` | Đã làm (hai vai trò trên hai tab, ngày tháng, số dư phép, phân quyền) |
 | LAB-08 Bảng dữ liệu động | `/lab/table` | Đã làm (tìm kiếm, lọc, sắp xếp, phân trang, chọn nhiều, CSV) |
+| LAB-12 Chat thời gian thực | `/lab/chat` | Đã làm (BroadcastChannel, hai tab, chỉ báo đang nhập, tab ẩn) |
 | LAB-13 Tình huống khó (Playground) | `/lab/playground` | Đã làm (dialog, tab mới, iframe, shadow DOM, kéo thả, tải trễ, cuộn vô hạn, tải xuống) |
 | LAB-14 Mock REST API (Sách) | `/lab/api`, `/api/lab/*` | Đã làm (trạng thái theo cookie, 401/403/409/422, bug toggle) |
 | LAB-17 Đăng nhập Email OTP | `/lab/otp`, `/lab/inbox` | Đã làm (hộp thư giả, page.clock, bug toggle) |
-| LAB-05..07, 09..12, 15, 16, 18..28 | — | Chưa làm; các lab cần dịch vụ bên ngoài (OAuth, Stripe, DB, email thật) phụ thuộc mô hình BYO |
+| LAB-05, 06, 09..11, 15, 16, 18..28 | — | Chưa làm; các lab cần dịch vụ bên ngoài (OAuth, Stripe, DB, email thật) phụ thuộc mô hình BYO |
 
 ### Quy tắc kỹ thuật của trang lab
 - `/lab/<slug>` là **ứng dụng thuần**: không header, không thanh tìm kiếm của site (chỉ một liên kết quay lại ở layout lab) để locator của người học không bị trùng.

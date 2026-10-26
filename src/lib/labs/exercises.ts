@@ -1501,4 +1501,192 @@ test("đơn trùng ngày bị chặn, đơn không trùng được chấp nhận
   },
 ];
 
-export const EXERCISES: Record<string, Exercise[]> = { login, forms, cart, playground, api, otp, todo, table, leave };
+const chat: Exercise[] = [
+  {
+    id: "chat-1",
+    title: "Hai người dùng trò chuyện thời gian thực",
+    difficulty: 3,
+    task: "Mở hai tab cho An và Bình trong cùng một context. An gõ dở một câu và Bình phải thấy chỉ báo đang nhập; sau khi An gửi, Bình thấy tin ngay không cần tải lại; Bình trả lời và An thấy.",
+    criteria: [
+      "Dùng hai Page trong cùng một context, mỗi tab một tên",
+      "Kiểm tra chỉ báo đang nhập ở tab kia và việc nó biến mất sau khi gửi",
+      "Dùng assertion tự thử lại để chờ tin đến, không dùng chờ cố định",
+      "Viết hàm helper cho thao tác vào phòng và gửi tin",
+      ...COMMON_CRITERIA,
+    ],
+    hints: [
+      "Tin nhắn truyền giữa các tab bằng BroadcastChannel nên chỉ hoạt động trong cùng một context.",
+      "pressSequentially gõ từng phím và kích hoạt chỉ báo đang nhập.",
+      "Chỉ báo có data-testid là chat-typing; nó tự biến mất sau khoảng 1,5 giây.",
+    ],
+    solution: `import { test, expect, type BrowserContext, type Page } from "@playwright/test";
+
+async function join(page: Page, name: string) {
+  await page.getByLabel("Tên hiển thị").fill(name);
+  await page.getByRole("button", { name: "Vào phòng" }).click();
+  await expect(page.getByTestId("chat-me")).toHaveText(name);
+}
+
+// Mở hai tab của hai người dùng trong cùng một context.
+async function twoUsers(page: Page, context: BrowserContext) {
+  await page.goto("/lab/chat");
+  await page.getByTestId("reset-data").click();
+  await join(page, "An");
+  const binh = await context.newPage();
+  await binh.goto("/lab/chat");
+  await join(binh, "Bình");
+  return binh;
+}
+
+async function send(p: Page, text: string) {
+  await p.getByLabel("Soạn nội dung").fill(text);
+  await p.getByRole("button", { name: "Gửi" }).click();
+}
+
+test("trò chuyện giữa hai tab", async ({ page, context }) => {
+  const binh = await twoUsers(page, context);
+
+  await page.getByLabel("Soạn nội dung").pressSequentially("Xin ch");
+  await expect(binh.getByTestId("chat-typing")).toHaveText("An đang nhập…");
+
+  await send(page, "Xin chào Bình");
+  await expect(binh.getByTestId("chat-message").last()).toContainText("Xin chào Bình");
+  await expect(binh.getByTestId("chat-typing")).toHaveText("");
+
+  await send(binh, "Chào An!");
+  await expect(page.getByTestId("chat-message")).toHaveCount(2);
+  await expect(page.getByTestId("chat-message").last()).toContainText("Chào An!");
+});`,
+  },
+  {
+    id: "chat-2",
+    title: "Giới hạn tin nhắn và chuẩn hoá khoảng trắng",
+    difficulty: 3,
+    bugs: ["BUG-01", "BUG-03"],
+    task: "Kiểm tra biên 200/201 ký tự, tin nhắn chỉ có khoảng trắng và việc cắt khoảng trắng hai đầu. Test phải đỏ khi bật BUG-01 hoặc BUG-03.",
+    criteria: [
+      "Có test đúng biên 200 (gửi được) và 201 (bị từ chối, không tạo tin mới)",
+      "Có test tin chỉ gồm khoảng trắng",
+      "Kiểm tra nội dung thô (textContent) để phát hiện khoảng trắng chưa bị cắt",
+      "Test đỏ với BUG-01 và với BUG-03",
+      ...COMMON_CRITERIA,
+    ],
+    hints: [
+      "toHaveText chuẩn hoá khoảng trắng nên có thể che lỗi; hãy đọc textContent thô bằng evaluate.",
+      "Dùng 'a'.repeat(201) để tạo chuỗi dài.",
+      "Sau khi tin 201 ký tự bị từ chối, số tin nhắn phải vẫn bằng 0.",
+    ],
+    solution: `import { test, expect, type BrowserContext, type Page } from "@playwright/test";
+
+async function join(page: Page, name: string) {
+  await page.getByLabel("Tên hiển thị").fill(name);
+  await page.getByRole("button", { name: "Vào phòng" }).click();
+  await expect(page.getByTestId("chat-me")).toHaveText(name);
+}
+
+// Mở hai tab của hai người dùng trong cùng một context.
+async function twoUsers(page: Page, context: BrowserContext) {
+  await page.goto("/lab/chat");
+  await page.getByTestId("reset-data").click();
+  await join(page, "An");
+  const binh = await context.newPage();
+  await binh.goto("/lab/chat");
+  await join(binh, "Bình");
+  return binh;
+}
+
+async function send(p: Page, text: string) {
+  await p.getByLabel("Soạn nội dung").fill(text);
+  await p.getByRole("button", { name: "Gửi" }).click();
+}
+
+test("biên 200 và 201 ký tự", async ({ page, context }) => {
+  await twoUsers(page, context);
+  await send(page, "a".repeat(201));
+  await expect(page.getByTestId("chat-error")).toContainText("tối đa 200");
+  await expect(page.getByTestId("chat-message")).toHaveCount(0);
+
+  await send(page, "a".repeat(200));
+  await expect(page.getByTestId("chat-message")).toHaveCount(1);
+});
+
+test("tin chỉ có khoảng trắng bị từ chối", async ({ page, context }) => {
+  await twoUsers(page, context);
+  await send(page, "   ");
+  await expect(page.getByTestId("chat-error")).toHaveText("Tin nhắn không được để trống");
+});
+
+test("khoảng trắng hai đầu được cắt", async ({ page, context }) => {
+  await twoUsers(page, context);
+  await send(page, "  chào  ");
+  const raw = await page.getByTestId("chat-text").last().evaluate((el) => el.textContent);
+  expect(raw).toBe("chào");
+});`,
+  },
+  {
+    id: "chat-3",
+    title: "Bộ đếm tin chưa đọc khi tab bị ẩn",
+    difficulty: 3,
+    bugs: ["BUG-02"],
+    task: "Chứng minh bộ đếm chưa đọc không tăng khi tab đang được xem, tăng khi tab bị ẩn và về 0 khi hiện lại. Giả lập tab ẩn bằng code. Test phải đỏ khi bật BUG-02.",
+    criteria: [
+      "Kiểm tra bộ đếm bằng 0 khi tab đang hiển thị mà nhận tin",
+      "Giả lập tab ẩn và tab hiện lại bằng visibilityState và sự kiện visibilitychange",
+      "Kiểm tra bộ đếm bằng 2 sau hai tin khi ẩn và về 0 khi hiện lại",
+      "Test đỏ với BUG-02",
+      ...COMMON_CRITERIA,
+    ],
+    hints: [
+      "Playwright coi mọi tab đều đang hiển thị nên cần tự đổi document.visibilityState trong trang.",
+      "Dùng page.evaluate với Object.defineProperty rồi dispatchEvent(new Event('visibilitychange')).",
+      "Bộ đếm có data-testid là chat-unread, nội dung dạng Chưa đọc: N.",
+    ],
+    solution: `import { test, expect, type BrowserContext, type Page } from "@playwright/test";
+
+async function join(page: Page, name: string) {
+  await page.getByLabel("Tên hiển thị").fill(name);
+  await page.getByRole("button", { name: "Vào phòng" }).click();
+  await expect(page.getByTestId("chat-me")).toHaveText(name);
+}
+
+// Mở hai tab của hai người dùng trong cùng một context.
+async function twoUsers(page: Page, context: BrowserContext) {
+  await page.goto("/lab/chat");
+  await page.getByTestId("reset-data").click();
+  await join(page, "An");
+  const binh = await context.newPage();
+  await binh.goto("/lab/chat");
+  await join(binh, "Bình");
+  return binh;
+}
+
+async function send(p: Page, text: string) {
+  await p.getByLabel("Soạn nội dung").fill(text);
+  await p.getByRole("button", { name: "Gửi" }).click();
+}
+
+async function setVisibility(p: Page, state: "hidden" | "visible") {
+  await p.evaluate((s) => {
+    Object.defineProperty(document, "visibilityState", { configurable: true, get: () => s });
+    document.dispatchEvent(new Event("visibilitychange"));
+  }, state);
+}
+
+test("chưa đọc chỉ tăng khi tab bị ẩn", async ({ page, context }) => {
+  const binh = await twoUsers(page, context);
+
+  await send(page, "Tin 1");
+  await expect(binh.getByTestId("chat-unread")).toHaveText("Chưa đọc: 0");
+
+  await setVisibility(binh, "hidden");
+  await send(page, "Tin 2");
+  await send(page, "Tin 3");
+  await expect(binh.getByTestId("chat-unread")).toHaveText("Chưa đọc: 2");
+
+  await setVisibility(binh, "visible");
+  await expect(binh.getByTestId("chat-unread")).toHaveText("Chưa đọc: 0");
+});`,
+  },
+];
+
+export const EXERCISES: Record<string, Exercise[]> = { login, forms, cart, playground, api, otp, todo, table, leave, chat };

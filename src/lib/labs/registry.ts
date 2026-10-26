@@ -18,4 +18,5 @@ export const LABS: LabInfo[] = [
   { slug: "todo", id: "LAB-04", title: "Quản lý công việc (CRUD)", domain: "Productivity", difficulty: 1, skills: ["CRUD", "dialog xác nhận", "bộ lọc", "localStorage"], ready: true },
   { slug: "table", id: "LAB-08", title: "Bảng dữ liệu động (Quản lý người dùng)", domain: "Admin", difficulty: 2, skills: ["bảng", "sắp xếp", "lọc", "phân trang", "chọn nhiều", "tải CSV"], ready: true },
   { slug: "leave", id: "LAB-07", title: "Nghỉ phép & duyệt đơn (HR)", domain: "HR", difficulty: 3, skills: ["nhiều vai trò", "hai tab", "trạng thái đơn", "ngày tháng", "phân quyền"], ready: true },
+  { slug: "chat", id: "LAB-12", title: "Chat thời gian thực giữa các tab", domain: "Realtime", difficulty: 3, skills: ["nhiều tab", "BroadcastChannel", "auto-wait", "visibilitychange"], ready: true },
 ];
