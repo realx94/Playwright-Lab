@@ -384,4 +384,141 @@ test("không huỷ được đơn đang giao", async ({ page }) => {
   },
 ];
 
-export const EXERCISES: Record<string, Exercise[]> = { login, forms, cart };
+const playground: Exercise[] = [
+  {
+    id: "playground-1",
+    title: "Xử lý hộp thoại confirm",
+    difficulty: 2,
+    task: "Kiểm tra hai nhánh của hộp thoại confirm: chấp nhận hiển thị “Đồng ý”, từ chối hiển thị “Huỷ”. Hộp thoại phải được xử lý bằng code.",
+    criteria: [
+      "Đăng ký xử lý hộp thoại TRƯỚC khi bấm nút gây ra nó",
+      "Có đủ hai nhánh: chấp nhận và từ chối",
+      "Kiểm tra nội dung thông báo của hộp thoại (dialog.message())",
+      ...COMMON_CRITERIA,
+    ],
+    hints: [
+      "Playwright có sự kiện dialog trên đối tượng page.",
+      "Dùng page.once để chỉ xử lý đúng một hộp thoại.",
+      "dialog.accept() để đồng ý và dialog.dismiss() để từ chối.",
+    ],
+    solution: `import { test, expect } from "@playwright/test";
+
+test("confirm: đồng ý", async ({ page }) => {
+  await page.goto("/lab/playground");
+  page.once("dialog", async (dialog) => {
+    expect(dialog.type()).toBe("confirm");
+    expect(dialog.message()).toContain("Bạn có chắc không?");
+    await dialog.accept();
+  });
+  await page.getByRole("button", { name: "Hiện confirm" }).click();
+  await expect(page.getByTestId("confirm-result")).toHaveText("Đồng ý");
+});
+
+test("confirm: huỷ", async ({ page }) => {
+  await page.goto("/lab/playground");
+  page.once("dialog", (dialog) => dialog.dismiss());
+  await page.getByRole("button", { name: "Hiện confirm" }).click();
+  await expect(page.getByTestId("confirm-result")).toHaveText("Huỷ");
+});`,
+  },
+  {
+    id: "playground-2",
+    title: "Tab mới và iframe",
+    difficulty: 2,
+    task: "Bắt tab mới sau khi bấm liên kết trợ giúp và kiểm tra nội dung của nó; sau đó điền và gửi form nằm trong iframe thanh toán.",
+    criteria: [
+      "Bắt tab mới bằng sự kiện của context, chạy song song với thao tác bấm",
+      "Dùng đối tượng Page của tab mới để kiểm tra tiêu đề",
+      "Thao tác trong iframe bằng frameLocator, không dùng page.getBy... trực tiếp",
+      ...COMMON_CRITERIA,
+    ],
+    hints: [
+      "Liên kết dùng rel=noopener nên sự kiện popup của page không xảy ra; hãy nghe sự kiện của context.",
+      "Dùng Promise.all để vừa chờ sự kiện vừa bấm.",
+      "page.frameLocator(...) nhận selector của thẻ iframe, ví dụ theo data-testid.",
+    ],
+    solution: `import { test, expect } from "@playwright/test";
+
+test("mở trang trợ giúp ở tab mới", async ({ page, context }) => {
+  await page.goto("/lab/playground");
+  const [popup] = await Promise.all([
+    context.waitForEvent("page"),
+    page.getByRole("link", { name: "Mở trang trợ giúp" }).click(),
+  ]);
+  await expect(popup).toHaveURL(/playground\\/help/);
+  await expect(popup.getByRole("heading", { name: "Trang trợ giúp" })).toBeVisible();
+});
+
+test("thanh toán trong iframe", async ({ page }) => {
+  await page.goto("/lab/playground");
+  const frame = page.frameLocator('[data-testid="payment-frame"]');
+  await frame.getByLabel("Số thẻ").fill("4242 4242 4242 4242");
+  await frame.getByRole("button", { name: "Thanh toán" }).click();
+  await expect(frame.getByRole("status")).toHaveText("Thanh toán thành công");
+});`,
+  },
+  {
+    id: "playground-3",
+    title: "Kéo thả và nội dung tải trễ",
+    difficulty: 3,
+    task: "Kéo Thẻ A vào vùng thả. Sau đó mở trang với ?delay=3000, bấm Tải dữ liệu và chờ kết quả hiện ra mà không dùng chờ cố định.",
+    criteria: [
+      "Dùng dragTo cho thao tác kéo thả",
+      "Kiểm tra kết quả thả bằng assertion, không phải bằng sleep",
+      "Chờ nội dung trễ bằng assertion có timeout phù hợp, không dùng waitForTimeout",
+      ...COMMON_CRITERIA,
+    ],
+    hints: [
+      "locator.dragTo(target) nhận một locator đích.",
+      "Timeout mặc định của expect là 5 giây; độ trễ 3 giây vẫn nằm trong đó nhưng có thể nâng cục bộ.",
+      "Dùng toBeVisible({ timeout }) cho phần tử chỉ hiện sau khi tải xong.",
+    ],
+    solution: `import { test, expect } from "@playwright/test";
+
+test("kéo thẻ A vào vùng thả", async ({ page }) => {
+  await page.goto("/lab/playground");
+  await page.getByTestId("drag-item").dragTo(page.getByTestId("drop-zone"));
+  await expect(page.getByTestId("drop-result")).toHaveText("Thẻ A");
+});
+
+test("nội dung tải trễ không cần waitForTimeout", async ({ page }) => {
+  await page.goto("/lab/playground?delay=3000");
+  await page.getByRole("button", { name: "Tải dữ liệu" }).click();
+  await expect(page.getByTestId("delay-result")).toBeVisible({ timeout: 6000 });
+});`,
+  },
+  {
+    id: "playground-4",
+    title: "Shadow DOM và cuộn vô hạn",
+    difficulty: 3,
+    task: "Bấm nút nằm trong shadow DOM và kiểm tra kết quả. Sau đó cuộn danh sách tới cuối để tải thêm mục và kiểm tra số lượng tăng đúng.",
+    criteria: [
+      "Tìm nút trong shadow DOM bằng getByRole (không cần cú pháp đặc biệt)",
+      "Cuộn bằng cách tác động lên đúng phần tử cuộn, không cuộn cả trang",
+      "Kiểm tra số lượng bằng assertion tự thử lại (toHaveText/toHaveCount)",
+      ...COMMON_CRITERIA,
+    ],
+    hints: [
+      "Locator của Playwright tự đi xuyên qua shadow DOM dạng open.",
+      "locator.evaluate cho phép chạy code trên phần tử, ví dụ el.scrollTo(0, el.scrollHeight).",
+      "Số mục hiển thị trong phần tử có data-testid là scroll-count.",
+    ],
+    solution: `import { test, expect } from "@playwright/test";
+
+test("bấm nút trong shadow DOM", async ({ page }) => {
+  await page.goto("/lab/playground");
+  await page.getByRole("button", { name: "Bấm trong shadow" }).click();
+  await expect(page.getByText("Đã bấm trong shadow DOM")).toBeVisible();
+});
+
+test("cuộn tới cuối để tải thêm mục", async ({ page }) => {
+  await page.goto("/lab/playground");
+  const list = page.getByTestId("scroll-list");
+  await expect(page.getByTestId("scroll-count")).toHaveText("20");
+  await list.evaluate((el) => el.scrollTo(0, el.scrollHeight));
+  await expect(page.getByTestId("scroll-count")).toHaveText("40");
+});`,
+  },
+];
+
+export const EXERCISES: Record<string, Exercise[]> = { login, forms, cart, playground };

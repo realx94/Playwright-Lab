@@ -88,7 +88,34 @@ const cart: Workshop = {
   ],
 };
 
-export const WORKSHOPS: Record<string, Workshop> = { login, forms, cart };
+const playground: Workshop = {
+  techniques: ["Exploratory", "State Transition", "Boundary Value Analysis"],
+  rules: [
+    { id: "BR-01", text: "Hộp thoại confirm: Đồng ý trả về “Đồng ý”, Huỷ trả về “Huỷ”" },
+    { id: "BR-02", text: "Liên kết trợ giúp mở ở tab mới" },
+    { id: "BR-03", text: "iframe thanh toán: số thẻ từ 12 chữ số mới thành công" },
+    { id: "BR-04", text: "Nút trong shadow DOM hiện thông báo khi bấm" },
+    { id: "BR-05", text: "Kéo Thẻ A vào vùng thả thì hiển thị Thẻ A" },
+    { id: "BR-06", text: "Nội dung hiện sau độ trễ cấu hình bằng ?delay (mặc định 1500 ms)" },
+    { id: "BR-07", text: "Cuộn tới cuối tải thêm 20 mục, tối đa 60 mục" },
+    { id: "BR-08", text: "Nút tải tệp tạo ra tệp ghi-chu.txt" },
+  ],
+  cases: [
+    { id: "TC-P-001", title: "Confirm: chọn Đồng ý", precondition: "Mở playground", steps: "Bấm Hiện confirm, chấp nhận hộp thoại", data: "—", expected: "Hiển thị “Đồng ý”", type: "Happy", priority: "P0", br: ["BR-01"] },
+    { id: "TC-P-002", title: "Confirm: chọn Huỷ", precondition: "Mở playground", steps: "Bấm Hiện confirm, từ chối hộp thoại", data: "—", expected: "Hiển thị “Huỷ”", type: "Negative", priority: "P0", br: ["BR-01"] },
+    { id: "TC-P-003", title: "Liên kết mở tab mới", precondition: "Mở playground", steps: "Bấm Mở trang trợ giúp", data: "—", expected: "Có tab mới tới /lab/playground/help", type: "Happy", priority: "P1", br: ["BR-02"] },
+    { id: "TC-P-004", title: "iframe: số thẻ hợp lệ", precondition: "Mở playground", steps: "Nhập số thẻ 16 chữ số trong khung, bấm Thanh toán", data: "4242 4242 4242 4242", expected: "Thanh toán thành công", type: "Happy", priority: "P0", br: ["BR-03"] },
+    { id: "TC-P-005", title: "iframe: 11 chữ số bị từ chối", precondition: "Mở playground", steps: "Nhập 11 chữ số, bấm Thanh toán", data: "12345678901", expected: "Số thẻ không hợp lệ", type: "BVA", priority: "P1", br: ["BR-03"] },
+    { id: "TC-P-006", title: "iframe: 12 chữ số được chấp nhận", precondition: "Mở playground", steps: "Nhập 12 chữ số, bấm Thanh toán", data: "123456789012", expected: "Thanh toán thành công", type: "BVA", priority: "P1", br: ["BR-03"] },
+    { id: "TC-P-007", title: "Bấm nút trong shadow DOM", precondition: "Mở playground", steps: "Bấm Bấm trong shadow", data: "—", expected: "Hiện Đã bấm trong shadow DOM", type: "Happy", priority: "P1", br: ["BR-04"] },
+    { id: "TC-P-008", title: "Kéo thả Thẻ A", precondition: "Mở playground", steps: "Kéo Thẻ A vào Vùng thả", data: "—", expected: "Hiển thị Đã thả: Thẻ A", type: "Happy", priority: "P1", br: ["BR-05"] },
+    { id: "TC-P-009", title: "Nội dung tải trễ 3 giây", precondition: "Mở /lab/playground?delay=3000", steps: "Bấm Tải dữ liệu", data: "delay=3000", expected: "Sau khoảng 3 giây hiện Đã tải xong, không dùng chờ cố định", type: "State", priority: "P1", br: ["BR-06"] },
+    { id: "TC-P-010", title: "Cuộn tải thêm tới giới hạn 60", precondition: "Mở playground", steps: "Cuộn danh sách tới cuối hai lần", data: "—", expected: "Số mục tăng 20 → 40 → 60 và dừng ở 60", type: "BVA", priority: "P2", br: ["BR-07"] },
+    { id: "TC-P-011", title: "Tải tệp ghi chú", precondition: "Mở playground", steps: "Bấm Tải tệp ghi chú", data: "—", expected: "Tệp ghi-chu.txt được tải xuống", type: "Happy", priority: "P2", br: ["BR-08"] },
+  ],
+};
+
+export const WORKSHOPS: Record<string, Workshop> = { login, forms, cart, playground };
 
 export function toCsv(cases: TestCase[]): string {
   const head = ["ID", "Tiêu đề", "Tiền điều kiện", "Các bước", "Dữ liệu", "Kết quả mong đợi", "Loại", "Ưu tiên", "BR"];
