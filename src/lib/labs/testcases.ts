@@ -407,7 +407,31 @@ const guard: Workshop = {
   ],
 };
 
-export const WORKSHOPS: Record<string, Workshop> = { login, forms, cart, playground, api, otp, todo, table, leave, chat, totp, oauth, pay, orders, guard };
+const webhooks: Workshop = {
+  techniques: ["Security", "Idempotency", "Boundary Value Analysis", "Error Guessing"],
+  rules: [
+    { id: "BR-01", text: "Webhook phải kèm x-signature = sha256=HMAC_SHA256(secret, timestamp + \".\" + body); sai hoặc thiếu chữ ký → 401" },
+    { id: "BR-02", text: "x-timestamp lệch quá 300 giây so với giờ server → 400 (chống replay)" },
+    { id: "BR-03", text: "Sự kiện trùng event id chỉ xử lý một lần; lần sau trả 200 với duplicate: true" },
+    { id: "BR-04", text: "invoice.paid: hóa đơn phải tồn tại (404) và số tiền khớp (422); loại sự kiện khác → 422; JSON hỏng → 400" },
+    { id: "BR-05", text: "Sự kiện có id bắt đầu evt_flaky lỗi 503 hai lần đầu; đối tác retry theo backoff sẽ thành công ở lần thứ ba" },
+  ],
+  cases: [
+    { id: "TC-W-101", title: "Sự kiện hợp lệ", precondition: "inv-1 chưa thanh toán", steps: "Gửi invoice.paid inv-1 100000 có chữ ký đúng", data: "evt_1", expected: "200, inv-1 đã thanh toán, doanh thu 100.000", type: "Happy", priority: "P0", br: ["BR-01", "BR-04"] },
+    { id: "TC-W-102", title: "Chữ ký sai", precondition: "—", steps: "Gửi với chữ ký giả", data: "sha256=deadbeef", expected: "401, không đổi dữ liệu", type: "Security", priority: "P0", br: ["BR-01"] },
+    { id: "TC-W-103", title: "Thiếu chữ ký", precondition: "—", steps: "Bỏ header x-signature", data: "(không)", expected: "401", type: "Security", priority: "P0", br: ["BR-01"] },
+    { id: "TC-W-104", title: "Body bị sửa sau khi ký", precondition: "—", steps: "Dùng chữ ký của body khác", data: "chữ ký body khác", expected: "401", type: "Security", priority: "P1", br: ["BR-01"] },
+    { id: "TC-W-105", title: "Timestamp cũ 600 giây", precondition: "—", steps: "Ký đúng nhưng timestamp = bây giờ − 600", data: "−600s", expected: "400", type: "BVA", priority: "P0", br: ["BR-02"] },
+    { id: "TC-W-106", title: "Timestamp cũ 290 giây", precondition: "—", steps: "Ký đúng với timestamp = bây giờ − 290", data: "−290s", expected: "200", type: "BVA", priority: "P1", br: ["BR-02"] },
+    { id: "TC-W-107", title: "Sự kiện trùng", precondition: "evt_4 đã xử lý", steps: "Gửi lại evt_4", data: "evt_4", expected: "200 duplicate true; doanh thu không tăng", type: "State", priority: "P0", br: ["BR-03"] },
+    { id: "TC-W-108", title: "Số tiền không khớp", precondition: "—", steps: "Gửi invoice.paid với 99999", data: "99999", expected: "422", type: "Negative", priority: "P1", br: ["BR-04"] },
+    { id: "TC-W-109", title: "Hóa đơn không tồn tại", precondition: "—", steps: "Gửi cho inv-999", data: "inv-999", expected: "404", type: "Negative", priority: "P1", br: ["BR-04"] },
+    { id: "TC-W-110", title: "Loại sự kiện lạ", precondition: "—", steps: "Gửi invoice.refunded", data: "invoice.refunded", expected: "422", type: "Negative", priority: "P2", br: ["BR-04"] },
+    { id: "TC-W-111", title: "Retry khi 503", precondition: "—", steps: "Gửi evt_flaky_1 và thử lại có backoff", data: "evt_flaky_1", expected: "503, 503 rồi 200", type: "State", priority: "P0", br: ["BR-05"] },
+  ],
+};
+
+export const WORKSHOPS: Record<string, Workshop> = { login, forms, cart, playground, api, otp, todo, table, leave, chat, totp, oauth, pay, orders, guard, webhooks };
 
 export function toCsv(cases: TestCase[]): string {
   const head = ["ID", "Tiêu đề", "Tiền điều kiện", "Các bước", "Dữ liệu", "Kết quả mong đợi", "Loại", "Ưu tiên", "BR"];

@@ -170,6 +170,11 @@ Tạo hai chế độ: **Fake IdP** (trang đồng ý giả trong site, ổn đ�
 - Hệ thống giả lập đối tác gọi `POST /api/lab/webhook` kèm chữ ký HMAC-SHA256.
 - BR: chữ ký sai → 401; sự kiện trùng `event_id` → xử lý một lần; đối tác retry theo backoff khi nhận 5xx.
 - Kỹ năng: tạo request ký HMAC trong test, `expect.poll` kết quả bất đồng bộ, kiểm DB.
+- **Bản đã làm:** `POST /api/lab/webhook` (header `x-timestamp`, `x-signature`, secret `whsec_lab_secret`), `GET /api/lab/webhook/state`.
+  - BR-01 chữ ký HMAC-SHA256 sai/thiếu → 401; BR-02 timestamp lệch > 300 giây → 400.
+  - BR-03 trùng event id chỉ xử lý một lần; BR-04 hóa đơn lạ 404, số tiền lệch 422, loại lạ 422, JSON hỏng 400.
+  - BR-05 `evt_flaky*` lỗi 503 hai lần đầu để luyện retry/backoff.
+  - Bug: BUG-01 không kiểm tra chữ ký; BUG-02 xử lý lại sự kiện trùng; BUG-03 không kiểm tra timestamp.
 
 ### LAB-23 Email giao dịch
 Kiểm tra email đơn hàng/reset mật khẩu: tiêu đề, người nhận, nội dung động, link, định dạng tiền, ngôn ngữ; mở link trong email bằng Playwright.
@@ -219,7 +224,8 @@ Vai trò Admin/Manager/Staff/Guest; ma trận quyền; thử IDOR (đổi id tro
 | LAB-20 Thanh toán thẻ (Fake Payment) | `/lab/pay` | Đã làm (iframe nhập thẻ, 3D Secure, webhook trễ, hoàn tiền, idempotency) |
 | LAB-21 Đơn hàng & xác minh DB | `/lab/orders`, `/api/lab/orders`, `/api/lab/db/*` | Đã làm (DB mô phỏng chỉ-đọc, rollback, idempotency, xoá mềm, UI ↔ API ↔ DB) |
 | LAB-24 CAPTCHA & giới hạn tần suất | `/lab/guard` | Đã làm |
-| LAB-5, 6, 9, 10, 11, 15, 16, 22, 23, 25, 26, 27, 28 | — | Chưa làm |
+| LAB-22 Webhook & sự kiện bất đồng bộ | `/lab/webhooks` | Đã làm |
+| LAB-5, 6, 9, 10, 11, 15, 16, 23, 25, 26, 27, 28 | — | Chưa làm |
 
 ### Quy tắc kỹ thuật của trang lab
 - `/lab/<slug>` là **ứng dụng thuần**: không header, không thanh tìm kiếm của site (chỉ một liên kết quay lại ở layout lab) để locator của người học không bị trùng.

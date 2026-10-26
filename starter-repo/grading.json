@@ -331,6 +331,26 @@
       "lab": "guard",
       "spec": "tests/exercises/guard/guard-3.spec.ts",
       "bugs": []
+    },
+    "webhooks-1": {
+      "lab": "webhooks",
+      "spec": "tests/exercises/webhooks/webhooks-1.spec.ts",
+      "bugs": [
+        "BUG-01"
+      ]
+    },
+    "webhooks-2": {
+      "lab": "webhooks",
+      "spec": "tests/exercises/webhooks/webhooks-2.spec.ts",
+      "bugs": [
+        "BUG-02",
+        "BUG-03"
+      ]
+    },
+    "webhooks-3": {
+      "lab": "webhooks",
+      "spec": "tests/exercises/webhooks/webhooks-3.spec.ts",
+      "bugs": []
     }
   }
 }

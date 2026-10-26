@@ -2762,4 +2762,184 @@ test("khóa sau 4 lần sai rồi đăng nhập lại", async ({ page }) => {
   },
 ];
 
-export const EXERCISES: Record<string, Exercise[]> = { login, forms, cart, playground, api, otp, todo, table, leave, chat, totp, oauth, pay, orders, guard };
+const webhooks: Exercise[] = [
+  {
+    id: "webhooks-1",
+    title: "Ký HMAC và gửi webhook hợp lệ; từ chối chữ ký sai",
+    difficulty: 3,
+    bugs: ["BUG-01"],
+    task: "Đóng vai đối tác: tự tính chữ ký HMAC-SHA256 và gửi sự kiện invoice.paid. Kiểm tra hóa đơn và doanh thu được cập nhật qua endpoint trạng thái. Sau đó chứng minh chữ ký sai, thiếu chữ ký hoặc body bị sửa đều bị 401 và không đổi dữ liệu. Test phải đỏ khi bật BUG-01.",
+    criteria: [
+      "Tính chữ ký bằng node:crypto với chuỗi timestamp + '.' + body",
+      "Gửi body dạng Buffer để từng byte khớp với chuỗi đã ký",
+      "Kiểm tra 200 và trạng thái hóa đơn qua GET /api/lab/webhook/state",
+      "Có test chữ ký sai, thiếu chữ ký và chữ ký của body khác, tất cả đều 401",
+      "Kiểm tra dữ liệu không đổi sau các lần bị từ chối",
+      "Test đỏ với BUG-01",
+      ...COMMON_CRITERIA,
+    ],
+    hints: [
+      "createHmac('sha256', secret).update(timestamp + '.' + body).digest('hex') rồi thêm tiền tố sha256=.",
+      "Nếu truyền chuỗi JSON hỏng cho data, Playwright có thể gói lại; dùng Buffer.from(body) để giữ nguyên.",
+      "Secret của lab là whsec_lab_secret; header cần có là x-timestamp và x-signature.",
+    ],
+    solution: `import { test, expect, type APIRequestContext } from "@playwright/test";
+import { createHmac } from "node:crypto";
+
+const SECRET = "whsec_lab_secret";
+const URL = "/api/lab/webhook";
+const nowSec = () => Math.floor(Date.now() / 1000);
+
+const event = (id: string, invoice = "inv-1", amount = 100_000, type = "invoice.paid") =>
+  JSON.stringify({ id, type, data: { invoice_id: invoice, amount } });
+
+// Chữ ký = sha256= + HMAC_SHA256(secret, timestamp + "." + body). Gửi Buffer để server nhận đúng từng byte đã ký.
+async function send(request: APIRequestContext, body: string, opts: { ts?: number; signature?: string | null } = {}) {
+  const ts = String(opts.ts ?? nowSec());
+  const signature = opts.signature !== undefined ? opts.signature : "sha256=" + createHmac("sha256", SECRET).update(ts + "." + body).digest("hex");
+  const headers: Record<string, string> = { "content-type": "application/json", "x-timestamp": ts };
+  if (signature) headers["x-signature"] = signature;
+  return request.post(URL, { headers, data: Buffer.from(body) });
+}
+
+const state = async (request: APIRequestContext) => (await request.get(URL + "/state")).json();
+
+test("webhook hợp lệ cập nhật hóa đơn", async ({ request }) => {
+  const res = await send(request, event("evt_1"));
+  expect(res.status()).toBe(200);
+  expect(await res.json()).toEqual({ received: true, duplicate: false });
+
+  const s = await state(request);
+  expect(s.invoices.find((i: { id: string }) => i.id === "inv-1").status).toBe("paid");
+  expect(s.revenue).toBe(100_000);
+});
+
+test("chữ ký sai, thiếu hoặc của body khác đều bị 401", async ({ request }) => {
+  const body = event("evt_2");
+  expect((await send(request, body, { signature: "sha256=deadbeef" })).status()).toBe(401);
+  expect((await send(request, body, { signature: null })).status()).toBe(401);
+
+  const ts = nowSec();
+  const other = "sha256=" + createHmac("sha256", SECRET).update(ts + "." + event("evt_khac")).digest("hex");
+  expect((await send(request, body, { ts, signature: other })).status()).toBe(401);
+  expect((await state(request)).revenue).toBe(0);
+});`,
+  },
+  {
+    id: "webhooks-2",
+    title: "Chống replay và sự kiện trùng (idempotency)",
+    difficulty: 3,
+    bugs: ["BUG-02", "BUG-03"],
+    task: "Kiểm tra timestamp lệch 600 giây bị 400 còn lệch 290 giây thì được nhận, và một sự kiện gửi hai lần chỉ được cộng doanh thu một lần (lần hai trả duplicate: true). Test phải đỏ khi bật BUG-02 hoặc BUG-03.",
+    criteria: [
+      "Ký đúng nhưng đặt timestamp quá khứ và tương lai 600 giây để kiểm tra 400",
+      "Kiểm tra biên: timestamp cách 290 giây vẫn được chấp nhận",
+      "Gửi cùng một event id hai lần và kiểm tra duplicate: true",
+      "Kiểm tra doanh thu chỉ tăng một lần",
+      "Test đỏ với BUG-02 và với BUG-03",
+      ...COMMON_CRITERIA,
+    ],
+    hints: [
+      "Timestamp là số giây (không phải mili giây): Math.floor(Date.now() / 1000).",
+      "Ngưỡng của lab là 300 giây; 600 chắc chắn ngoài ngưỡng, 290 chắc chắn trong ngưỡng.",
+      "Mỗi test có request context riêng nên doanh thu bắt đầu từ 0.",
+    ],
+    solution: `import { test, expect, type APIRequestContext } from "@playwright/test";
+import { createHmac } from "node:crypto";
+
+const SECRET = "whsec_lab_secret";
+const URL = "/api/lab/webhook";
+const nowSec = () => Math.floor(Date.now() / 1000);
+
+const event = (id: string, invoice = "inv-1", amount = 100_000, type = "invoice.paid") =>
+  JSON.stringify({ id, type, data: { invoice_id: invoice, amount } });
+
+// Chữ ký = sha256= + HMAC_SHA256(secret, timestamp + "." + body). Gửi Buffer để server nhận đúng từng byte đã ký.
+async function send(request: APIRequestContext, body: string, opts: { ts?: number; signature?: string | null } = {}) {
+  const ts = String(opts.ts ?? nowSec());
+  const signature = opts.signature !== undefined ? opts.signature : "sha256=" + createHmac("sha256", SECRET).update(ts + "." + body).digest("hex");
+  const headers: Record<string, string> = { "content-type": "application/json", "x-timestamp": ts };
+  if (signature) headers["x-signature"] = signature;
+  return request.post(URL, { headers, data: Buffer.from(body) });
+}
+
+const state = async (request: APIRequestContext) => (await request.get(URL + "/state")).json();
+
+test("timestamp quá cũ hoặc quá mới bị từ chối", async ({ request }) => {
+  expect((await send(request, event("evt_3"), { ts: nowSec() - 600 })).status()).toBe(400);
+  expect((await send(request, event("evt_3"), { ts: nowSec() + 600 })).status()).toBe(400);
+  expect((await send(request, event("evt_3"), { ts: nowSec() - 290 })).status()).toBe(200);
+});
+
+test("sự kiện trùng id chỉ xử lý một lần", async ({ request }) => {
+  await send(request, event("evt_4"));
+  const again = await send(request, event("evt_4"));
+  expect(again.status()).toBe(200);
+  expect((await again.json()).duplicate).toBe(true);
+  expect((await state(request)).revenue).toBe(100_000);
+});`,
+  },
+  {
+    id: "webhooks-3",
+    title: "Retry với backoff và cập nhật bất đồng bộ trên giao diện",
+    difficulty: 3,
+    task: "Gửi sự kiện evt_flaky_1 theo vòng retry có backoff lũy thừa cho tới khi thành công (503, 503 rồi 200). Thêm test giao diện: bấm giả lập đối tác trả inv-2, chờ hóa đơn tự chuyển sang Đã thanh toán và doanh thu cập nhật.",
+    criteria: [
+      "Vòng retry tối đa 5 lần, dừng khi res.ok() và ghi lại dãy status",
+      "Dãy status chính xác là 503, 503, 200",
+      "Backoff tăng dần giữa các lần thử, không dùng một khoảng chờ cố định lớn",
+      "Test giao diện chờ trạng thái bằng assertion có timeout đủ lớn",
+      "Kiểm tra doanh thu và nhật ký webhook trên giao diện",
+      ...COMMON_CRITERIA,
+    ],
+    hints: [
+      "Hàm chờ: await new Promise((r) => setTimeout(r, 200 * 2 ** attempt)).",
+      "Server trả 503 hai lần đầu với cùng event id, rồi mới xử lý ở lần thứ ba.",
+      "Trên UI, nút của đối tác chuyển thành Đối tác đang gửi… trong lúc chờ, hóa đơn cập nhật nhờ polling mỗi giây.",
+    ],
+    solution: `import { test, expect, type APIRequestContext } from "@playwright/test";
+import { createHmac } from "node:crypto";
+
+const SECRET = "whsec_lab_secret";
+const URL = "/api/lab/webhook";
+const nowSec = () => Math.floor(Date.now() / 1000);
+
+const event = (id: string, invoice = "inv-1", amount = 100_000, type = "invoice.paid") =>
+  JSON.stringify({ id, type, data: { invoice_id: invoice, amount } });
+
+// Chữ ký = sha256= + HMAC_SHA256(secret, timestamp + "." + body). Gửi Buffer để server nhận đúng từng byte đã ký.
+async function send(request: APIRequestContext, body: string, opts: { ts?: number; signature?: string | null } = {}) {
+  const ts = String(opts.ts ?? nowSec());
+  const signature = opts.signature !== undefined ? opts.signature : "sha256=" + createHmac("sha256", SECRET).update(ts + "." + body).digest("hex");
+  const headers: Record<string, string> = { "content-type": "application/json", "x-timestamp": ts };
+  if (signature) headers["x-signature"] = signature;
+  return request.post(URL, { headers, data: Buffer.from(body) });
+}
+
+const state = async (request: APIRequestContext) => (await request.get(URL + "/state")).json();
+
+test("đối tác retry khi 503 cho tới khi thành công", async ({ request }) => {
+  const body = event("evt_flaky_1", "inv-2", 250_000);
+  const statuses: number[] = [];
+  for (let attempt = 0; attempt < 5; attempt++) {
+    const res = await send(request, body);
+    statuses.push(res.status());
+    if (res.ok()) break;
+    await new Promise((r) => setTimeout(r, 200 * 2 ** attempt));
+  }
+  expect(statuses).toEqual([503, 503, 200]);
+  expect((await state(request)).revenue).toBe(250_000);
+});
+
+test("giao diện tự cập nhật khi webhook đến", async ({ page }) => {
+  await page.goto("/lab/webhooks");
+  await page.getByTestId("reset-data").click();
+  await page.getByRole("button", { name: "Giả lập đối tác trả inv-2" }).click();
+  await expect(page.getByTestId("invoice-status-inv-2")).toHaveText("Đã thanh toán", { timeout: 10_000 });
+  await expect(page.getByTestId("revenue")).toHaveText("Doanh thu ghi nhận: 250.000 ₫");
+  await expect(page.getByTestId("webhook-log")).toContainText("evt_ui_inv-2");
+});`,
+  },
+];
+
+export const EXERCISES: Record<string, Exercise[]> = { login, forms, cart, playground, api, otp, todo, table, leave, chat, totp, oauth, pay, orders, guard, webhooks };
