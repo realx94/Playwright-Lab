@@ -1,0 +1,168 @@
+{
+  "questions": [
+    {
+      "id": "q1",
+      "type": "single",
+      "prompt": "Biến nào nên khai báo bằng const?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Bộ đếm số lần thử đăng nhập được tăng dần sau mỗi lần sai"
+        },
+        {
+          "id": "b",
+          "text": "Đường dẫn trang đăng nhập không đổi trong suốt file test"
+        },
+        {
+          "id": "c",
+          "text": "Tổng tiền được cộng dồn qua từng sản phẩm trong giỏ"
+        },
+        {
+          "id": "d",
+          "text": "Biến lưu kết quả gần nhất và bị ghi đè liên tục"
+        }
+      ],
+      "answer": [
+        "b"
+      ],
+      "explanation": "const dành cho giá trị không gán lại. Bộ đếm, tổng cộng dồn và giá trị bị ghi đè cần let."
+    },
+    {
+      "id": "q2",
+      "type": "single",
+      "prompt": "Kết quả của biểu thức 5 === \"5\" là gì và vì sao?",
+      "options": [
+        {
+          "id": "a",
+          "text": "true, vì hai giá trị trông giống nhau khi được in ra"
+        },
+        {
+          "id": "b",
+          "text": "true, vì JavaScript tự đổi kiểu chuỗi sang số trước khi so sánh hai vế"
+        },
+        {
+          "id": "c",
+          "text": "false, vì hai giá trị khác kiểu dữ liệu nên không bằng nhau"
+        },
+        {
+          "id": "d",
+          "text": "false, vì số luôn nhỏ hơn chuỗi khi so sánh với nhau"
+        }
+      ],
+      "answer": [
+        "c"
+      ],
+      "explanation": "=== so sánh cả kiểu và giá trị, không ép kiểu. Chỉ == mới ép kiểu và cho kết quả true."
+    },
+    {
+      "id": "q3",
+      "type": "multi",
+      "prompt": "Những giá trị nào là falsy khi dùng trong điều kiện if? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Số 0 và chuỗi rỗng khi được dùng trong điều kiện if"
+        },
+        {
+          "id": "b",
+          "text": "null và undefined khi được dùng trong điều kiện if"
+        },
+        {
+          "id": "c",
+          "text": "Mảng rỗng [] vì nó không chứa phần tử nào bên trong"
+        },
+        {
+          "id": "d",
+          "text": "Chuỗi \"false\" vì bên trong nó có chứa chữ false đấy"
+        }
+      ],
+      "answer": [
+        "a",
+        "b"
+      ],
+      "explanation": "Falsy gồm false, 0, chuỗi rỗng, null, undefined, NaN. Chuỗi \"false\" và mảng rỗng đều là truthy."
+    },
+    {
+      "id": "q4",
+      "type": "single",
+      "prompt": "Đoạn code nào tạo chuỗi Đã thử 3 lần bằng template literal khi n bằng 3?",
+      "options": [
+        {
+          "id": "a",
+          "text": "const m = 'Đã thử ${n} lần'; với n bằng 3"
+        },
+        {
+          "id": "b",
+          "text": "const m = Đã thử (n) lần; với n bằng 3"
+        },
+        {
+          "id": "c",
+          "text": "const m = \"Đã thử \" + {n} + \" lần\"; với n bằng 3"
+        },
+        {
+          "id": "d",
+          "text": "const m = `Đã thử ${n} lần`; với n bằng 3"
+        }
+      ],
+      "answer": [
+        "d"
+      ],
+      "explanation": "Template literal dùng dấu huyền ` và ${}. Nháy đơn không nội suy biến, các cách còn lại sai cú pháp."
+    },
+    {
+      "id": "q5",
+      "type": "multi",
+      "prompt": "Điều nào đúng về let và const? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "const không cho gán lại biến sang một giá trị khác"
+        },
+        {
+          "id": "b",
+          "text": "const chỉ dùng được cho các giá trị kiểu số nguyên"
+        },
+        {
+          "id": "c",
+          "text": "let không thể thay đổi giá trị sau lần gán đầu tiên"
+        },
+        {
+          "id": "d",
+          "text": "let cho phép gán lại giá trị sau khi đã khai báo"
+        }
+      ],
+      "answer": [
+        "a",
+        "d"
+      ],
+      "explanation": "const chặn gán lại, let cho phép gán lại. Cả hai đều dùng cho mọi kiểu dữ liệu."
+    },
+    {
+      "id": "q6",
+      "type": "single",
+      "prompt": "Trong JavaScript, null và undefined khác nhau thế nào?",
+      "options": [
+        {
+          "id": "a",
+          "text": "null chỉ xuất hiện khi chương trình bị lỗi biên dịch"
+        },
+        {
+          "id": "b",
+          "text": "Hai giá trị này giống hệt nhau và có thể thay thế cho nhau hoàn toàn"
+        },
+        {
+          "id": "c",
+          "text": "null là giá trị rỗng do chủ động gán, undefined là chưa gán"
+        },
+        {
+          "id": "d",
+          "text": "undefined là số 0 còn null là chuỗi ký tự rỗng trong JS"
+        }
+      ],
+      "answer": [
+        "c"
+      ],
+      "explanation": "null thể hiện chủ ý không có giá trị; undefined nghĩa là biến chưa được gán. Chúng khác kiểu và khác nghĩa."
+    }
+  ]
+}

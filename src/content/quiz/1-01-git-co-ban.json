@@ -1,0 +1,168 @@
+{
+  "questions": [
+    {
+      "id": "q1",
+      "type": "single",
+      "prompt": "Sau khi sửa một file, thay đổi đó nằm ở vùng nào trước khi bạn chạy git add?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Remote, nơi bản sao trên máy chủ được lưu giữ"
+        },
+        {
+          "id": "b",
+          "text": "Working directory, nơi các thay đổi còn chưa được đánh dấu"
+        },
+        {
+          "id": "c",
+          "text": "Repository, nơi lịch sử các commit đã được lưu lại"
+        },
+        {
+          "id": "d",
+          "text": "Staging area, nơi các thay đổi đã được chọn để commit"
+        }
+      ],
+      "answer": [
+        "b"
+      ],
+      "explanation": "Thay đổi mới luôn bắt đầu ở working directory. git add chuyển chúng vào staging area, git commit mới ghi vào repository."
+    },
+    {
+      "id": "q2",
+      "type": "single",
+      "prompt": "Để tránh vô tình commit file .env chứa khoá bí mật, việc nên làm ngay từ đầu là gì?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Thêm .env vào file .gitignore ngay từ lúc khởi tạo repo"
+        },
+        {
+          "id": "b",
+          "text": "Nén file .env thành .zip trước khi chạy lệnh git add"
+        },
+        {
+          "id": "c",
+          "text": "Đổi tên file .env thành .env.txt để Git không nhận ra"
+        },
+        {
+          "id": "d",
+          "text": "Chỉ commit vào buổi tối khi ít người truy cập repo"
+        }
+      ],
+      "answer": [
+        "a"
+      ],
+      "explanation": ".gitignore bảo Git bỏ qua file. Đổi tên hay nén chỉ che mắt, vẫn có thể bị commit nhầm; thời điểm commit không liên quan."
+    },
+    {
+      "id": "q3",
+      "type": "multi",
+      "prompt": "Những lệnh nào chỉ dùng để XEM thông tin mà không thay đổi lịch sử? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "git log --oneline để xem lịch sử commit dạng gọn"
+        },
+        {
+          "id": "b",
+          "text": "git init để xem danh sách các commit của repo hiện tại"
+        },
+        {
+          "id": "c",
+          "text": "git status để xem trạng thái các file đang thay đổi"
+        },
+        {
+          "id": "d",
+          "text": "git commit -m để xem lại nội dung thông điệp commit"
+        }
+      ],
+      "answer": [
+        "a",
+        "c"
+      ],
+      "explanation": "status và log chỉ đọc. commit tạo bản ghi mới; init khởi tạo repo mới chứ không liệt kê commit."
+    },
+    {
+      "id": "q4",
+      "type": "single",
+      "prompt": "Thông điệp commit nào hữu ích nhất cho người đọc lịch sử về sau?",
+      "options": [
+        {
+          "id": "a",
+          "text": "update: sửa đổi một số thứ trong dự án cho tốt hơn"
+        },
+        {
+          "id": "b",
+          "text": "fix: sửa lỗi và cập nhật nhiều thứ khác trong dự án"
+        },
+        {
+          "id": "c",
+          "text": "commit: lưu lại các thay đổi mới của tôi hôm nay"
+        },
+        {
+          "id": "d",
+          "text": "feat: thêm test biên tuổi 18–65 cho form đăng ký"
+        }
+      ],
+      "answer": [
+        "d"
+      ],
+      "explanation": "Thông điệp tốt nói rõ loại thay đổi và nội dung cụ thể. Các thông điệp còn lại quá mơ hồ để tra cứu sau này."
+    },
+    {
+      "id": "q5",
+      "type": "multi",
+      "prompt": "Mục nào nên được đưa vào .gitignore của project Playwright? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "tests/ vì thư mục này chứa các file test của dự án"
+        },
+        {
+          "id": "b",
+          "text": "playwright-report/ vì đây là kết quả sinh ra sau khi chạy"
+        },
+        {
+          "id": "c",
+          "text": "node_modules/ vì thư mục này rất nặng và tái tạo được"
+        },
+        {
+          "id": "d",
+          "text": "package.json vì file này mô tả các thư viện cần cài"
+        }
+      ],
+      "answer": [
+        "b",
+        "c"
+      ],
+      "explanation": "Chỉ loại bỏ thứ sinh ra tự động hoặc tái tạo được. tests/ và package.json là nguồn của dự án nên phải được theo dõi."
+    },
+    {
+      "id": "q6",
+      "type": "single",
+      "prompt": "Một commit trong Git thực chất là gì?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Bản sao dự án được tải về từ máy chủ GitHub"
+        },
+        {
+          "id": "b",
+          "text": "Một nhánh riêng được tạo ra mỗi khi bạn lưu file"
+        },
+        {
+          "id": "c",
+          "text": "Bản ghi chỉ chứa các dòng code vừa được sửa gần nhất"
+        },
+        {
+          "id": "d",
+          "text": "Ảnh chụp trạng thái toàn bộ dự án tại một thời điểm"
+        }
+      ],
+      "answer": [
+        "d"
+      ],
+      "explanation": "Git lưu snapshot của cả dự án; khi cần nó tính ra phần khác biệt. Nhánh và remote là khái niệm khác."
+    }
+  ]
+}

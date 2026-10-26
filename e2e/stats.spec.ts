@@ -4,14 +4,14 @@ const LESSON = "/learn/0-1-tong-quan-automation";
 
 test("đánh dấu hoàn thành được ghi vào thống kê", async ({ page }) => {
   await page.goto("/stats");
-  await expect(page.getByTestId("stat-done")).toContainText("0/1");
+  await expect(page.getByTestId("stat-done")).toContainText(/^0\/\d+ bài \(0%\)/);
 
   await page.goto(LESSON);
   await page.getByRole("button", { name: "Đánh dấu hoàn thành" }).click();
   await expect(page.getByRole("button", { name: "Đã hoàn thành" })).toBeVisible();
 
   await page.goto("/stats");
-  await expect(page.getByTestId("stat-done")).toContainText("1/1 bài (100%)");
+  await expect(page.getByTestId("stat-done")).toContainText(/^1\/\d+ bài/);
 });
 
 test("xuất rồi nhập lại dữ liệu", async ({ page }) => {
@@ -28,10 +28,10 @@ test("xuất rồi nhập lại dữ liệu", async ({ page }) => {
 
   page.once("dialog", (d) => d.accept());
   await page.getByRole("button", { name: "Xoá dữ liệu" }).click();
-  await expect(page.getByTestId("stat-done")).toContainText("0/1");
+  await expect(page.getByTestId("stat-done")).toContainText(/^0\/\d+ bài \(0%\)/);
 
   await page.getByTestId("import-input").setInputFiles(file);
-  await expect(page.getByTestId("stat-done")).toContainText("1/1");
+  await expect(page.getByTestId("stat-done")).toContainText(/^1\/\d+ bài/);
 });
 
 test("popover Hỏi Google AI hiện khi bôi đen và mở tab mới", async ({ page, context }) => {

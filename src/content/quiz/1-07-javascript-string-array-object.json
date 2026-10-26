@@ -1,0 +1,168 @@
+{
+  "questions": [
+    {
+      "id": "q1",
+      "type": "single",
+      "prompt": "Cần lấy danh sách email của những user từ 18 tuổi trở lên. Cách nào đúng?",
+      "options": [
+        {
+          "id": "a",
+          "text": "users.reduce(u => u.email).filter(u => u.age)"
+        },
+        {
+          "id": "b",
+          "text": "users.find(u => u.age >= 18).map(u => u.email)"
+        },
+        {
+          "id": "c",
+          "text": "users.filter(u => u.age >= 18).map(u => u.email)"
+        },
+        {
+          "id": "d",
+          "text": "users.map(u => u.age >= 18).filter(u => u.email)"
+        }
+      ],
+      "answer": [
+        "c"
+      ],
+      "explanation": "Lọc trước (filter) rồi biến đổi (map). find chỉ trả về một phần tử nên không có map."
+    },
+    {
+      "id": "q2",
+      "type": "single",
+      "prompt": "Đoạn const b = a; b.push(1) với a là mảng sẽ ảnh hưởng thế nào?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Chương trình báo lỗi vì không được gán mảng cho biến khác"
+        },
+        {
+          "id": "b",
+          "text": "Mảng a cũng thay đổi vì a và b cùng trỏ tới một mảng"
+        },
+        {
+          "id": "c",
+          "text": "Mảng a giữ nguyên vì b là một bản sao hoàn toàn riêng"
+        },
+        {
+          "id": "d",
+          "text": "Mảng a bị xoá hết phần tử vì b đã lấy mất dữ liệu"
+        }
+      ],
+      "answer": [
+        "b"
+      ],
+      "explanation": "Mảng là kiểu tham chiếu, gán chỉ sao chép con trỏ. Muốn bản sao dùng [...a] hoặc a.slice()."
+    },
+    {
+      "id": "q3",
+      "type": "multi",
+      "prompt": "Cách nào sao chép đối tượng user và đổi tuổi mà không sửa bản gốc? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Gán const u2 = user rồi sửa u2.age thành 31 trực tiếp"
+        },
+        {
+          "id": "b",
+          "text": "Dùng user.age = 31 vì như vậy luôn tạo ra bản sao mới"
+        },
+        {
+          "id": "c",
+          "text": "Dùng Object.assign({}, user, { age: 31 }) để tạo bản sao"
+        },
+        {
+          "id": "d",
+          "text": "Dùng spread: { ...user, age: 31 } để tạo bản sao mới"
+        }
+      ],
+      "answer": [
+        "c",
+        "d"
+      ],
+      "explanation": "Spread và Object.assign với đối tượng rỗng tạo bản sao nông. Gán trực tiếp hoặc sửa thuộc tính vẫn tác động lên bản gốc."
+    },
+    {
+      "id": "q4",
+      "type": "single",
+      "prompt": "Kết quả của const { email } = { email: \"a@lab.dev\", age: 30 } là gì?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Tạo biến email nhận toàn bộ đối tượng gồm cả email lẫn age"
+        },
+        {
+          "id": "b",
+          "text": "Tạo biến email nhận giá trị chuỗi a@lab.dev từ đối tượng"
+        },
+        {
+          "id": "c",
+          "text": "Tạo một mảng gồm email và age lấy từ đối tượng đã cho"
+        },
+        {
+          "id": "d",
+          "text": "Báo lỗi vì chỉ được lấy các thuộc tính theo thứ tự trong đối tượng"
+        }
+      ],
+      "answer": [
+        "b"
+      ],
+      "explanation": "Destructuring lấy thuộc tính theo tên, không phụ thuộc thứ tự, và gán giá trị của thuộc tính đó cho biến cùng tên."
+    },
+    {
+      "id": "q5",
+      "type": "multi",
+      "prompt": "Phương thức nào của chuỗi trả về true hoặc false? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "includes kiểm tra chuỗi có chứa một đoạn con hay không"
+        },
+        {
+          "id": "b",
+          "text": "startsWith kiểm tra chuỗi có bắt đầu bằng đoạn cho trước"
+        },
+        {
+          "id": "c",
+          "text": "trim cắt bỏ khoảng trắng và trả về giá trị boolean"
+        },
+        {
+          "id": "d",
+          "text": "split tách chuỗi và trả về giá trị đúng hoặc sai"
+        }
+      ],
+      "answer": [
+        "a",
+        "b"
+      ],
+      "explanation": "includes và startsWith trả về boolean. trim trả về chuỗi mới, split trả về mảng."
+    },
+    {
+      "id": "q6",
+      "type": "single",
+      "prompt": "reduce phù hợp nhất với việc nào?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Lọc ra các phần tử thoả điều kiện cho trước từ mảng"
+        },
+        {
+          "id": "b",
+          "text": "Duyệt mảng để in ra từng phần tử mà không trả về gì"
+        },
+        {
+          "id": "c",
+          "text": "Gộp cả mảng thành một giá trị, ví dụ tổng tiền giỏ hàng"
+        },
+        {
+          "id": "d",
+          "text": "Đảo ngược thứ tự các phần tử của mảng ban đầu"
+        }
+      ],
+      "answer": [
+        "c"
+      ],
+      "explanation": "reduce tích luỹ mảng thành một kết quả duy nhất. Lọc là filter, duyệt là forEach, đảo thứ tự là reverse."
+    }
+  ]
+}

@@ -1,0 +1,168 @@
+{
+  "questions": [
+    {
+      "id": "q1",
+      "type": "single",
+      "prompt": "Vì sao page.click() phải được viết với await?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Vì await làm trang web tải nhanh hơn khi người dùng bấm"
+        },
+        {
+          "id": "b",
+          "text": "Vì nó trả về Promise và test cần chờ thao tác hoàn tất"
+        },
+        {
+          "id": "c",
+          "text": "Vì thiếu await thì trình duyệt sẽ từ chối mở trang"
+        },
+        {
+          "id": "d",
+          "text": "Vì await tự động thêm một giây chờ sau mỗi thao tác"
+        }
+      ],
+      "answer": [
+        "b"
+      ],
+      "explanation": "Thao tác trình duyệt là bất đồng bộ và trả về Promise. Không await thì test chạy tiếp khi thao tác chưa xong."
+    },
+    {
+      "id": "q2",
+      "type": "single",
+      "prompt": "Đoạn items.forEach(async (i) => { await check(i); }) có vấn đề gì?",
+      "options": [
+        {
+          "id": "a",
+          "text": "forEach không chờ các hàm async nên test có thể kết thúc sớm"
+        },
+        {
+          "id": "b",
+          "text": "Không có vấn đề gì vì forEach đã tự động chờ giúp bạn"
+        },
+        {
+          "id": "c",
+          "text": "forEach chỉ chạy phần tử đầu tiên khi có từ khoá async"
+        },
+        {
+          "id": "d",
+          "text": "await bên trong forEach làm chương trình rơi vào vòng lặp vô hạn"
+        }
+      ],
+      "answer": [
+        "a"
+      ],
+      "explanation": "forEach bỏ qua Promise trả về nên không chờ. Hãy dùng for...of hoặc Promise.all(items.map(...))."
+    },
+    {
+      "id": "q3",
+      "type": "multi",
+      "prompt": "Cách nào đúng để xử lý nhiều Promise? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Bỏ await để mọi Promise tự động chạy theo thứ tự đúng"
+        },
+        {
+          "id": "b",
+          "text": "Dùng for không có await để chờ tất cả các Promise"
+        },
+        {
+          "id": "c",
+          "text": "Promise.all để chạy song song và chờ cả hai hoàn tất"
+        },
+        {
+          "id": "d",
+          "text": "await lần lượt từng Promise khi chúng phụ thuộc nhau"
+        }
+      ],
+      "answer": [
+        "c",
+        "d"
+      ],
+      "explanation": "Độc lập thì Promise.all, phụ thuộc thì await tuần tự. Bỏ await hoặc lặp không await không đảm bảo thứ tự."
+    },
+    {
+      "id": "q4",
+      "type": "single",
+      "prompt": "Promise đang ở trạng thái nào khi thao tác chưa hoàn tất?",
+      "options": [
+        {
+          "id": "a",
+          "text": "resolved-all, tức mọi Promise khác đều đã hoàn thành"
+        },
+        {
+          "id": "b",
+          "text": "fulfilled, tức đã có kết quả thành công được trả về"
+        },
+        {
+          "id": "c",
+          "text": "rejected, tức đã thất bại và có lỗi được ném ra"
+        },
+        {
+          "id": "d",
+          "text": "pending, tức đang chờ kết quả hoặc lỗi trả về sau cùng"
+        }
+      ],
+      "answer": [
+        "d"
+      ],
+      "explanation": "Promise có ba trạng thái: pending, fulfilled, rejected. Khi chưa xong là pending."
+    },
+    {
+      "id": "q5",
+      "type": "multi",
+      "prompt": "Điều nào đúng về async/await? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Hàm dùng await bên trong phải được khai báo async"
+        },
+        {
+          "id": "b",
+          "text": "Có thể bắt lỗi của lời gọi await bằng try/catch"
+        },
+        {
+          "id": "c",
+          "text": "Hàm async luôn trả về giá trị thường chứ không phải Promise"
+        },
+        {
+          "id": "d",
+          "text": "await chỉ dùng được ngoài mọi hàm, không dùng trong hàm"
+        }
+      ],
+      "answer": [
+        "a",
+        "b"
+      ],
+      "explanation": "await nằm trong hàm async và lỗi được bắt bằng try/catch. Hàm async luôn trả về Promise."
+    },
+    {
+      "id": "q6",
+      "type": "single",
+      "prompt": "Test xanh nhưng kiểm tra xong trước khi trang kịp phản hồi. Nguyên nhân khả dĩ nhất?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Tên test quá ngắn nên runner kết thúc sớm hơn dự kiến"
+        },
+        {
+          "id": "b",
+          "text": "Trình duyệt headless bỏ qua mọi bước kiểm tra kết quả"
+        },
+        {
+          "id": "c",
+          "text": "Thiếu await ở một thao tác hoặc assertion trong test"
+        },
+        {
+          "id": "d",
+          "text": "Số lượng file test quá ít nên cấu hình bị bỏ qua"
+        }
+      ],
+      "answer": [
+        "c"
+      ],
+      "explanation": "Thiếu await khiến test không chờ nên assertion chạy trước khi trạng thái đúng xuất hiện."
+    }
+  ]
+}

@@ -1,0 +1,168 @@
+{
+  "questions": [
+    {
+      "id": "q1",
+      "type": "single",
+      "prompt": "Vì sao nên tạo nhánh mới cho mỗi công việc thay vì sửa trực tiếp trên main?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Để mỗi người có thể dùng một phiên bản Node khác nhau"
+        },
+        {
+          "id": "b",
+          "text": "Để Git tự động chạy test mỗi khi có commit mới"
+        },
+        {
+          "id": "c",
+          "text": "Để dung lượng của repository luôn nhỏ hơn bình thường"
+        },
+        {
+          "id": "d",
+          "text": "Để cô lập thay đổi và dễ review hoặc huỷ bỏ khi cần"
+        }
+      ],
+      "answer": [
+        "d"
+      ],
+      "explanation": "Nhánh cô lập công việc nên main luôn ổn định, PR dễ review. Nó không liên quan tới chạy test tự động, dung lượng hay phiên bản Node."
+    },
+    {
+      "id": "q2",
+      "type": "single",
+      "prompt": "git push bị từ chối vì remote có commit mới hơn bản của bạn. Bước hợp lý tiếp theo là gì?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Đổi tên nhánh hiện tại để tránh bị từ chối nữa"
+        },
+        {
+          "id": "b",
+          "text": "Xoá repo trên máy rồi clone lại từ đầu ngay lập tức"
+        },
+        {
+          "id": "c",
+          "text": "Chạy git pull để lấy thay đổi mới rồi push lại"
+        },
+        {
+          "id": "d",
+          "text": "Dùng push với tuỳ chọn ép buộc để ghi đè remote"
+        }
+      ],
+      "answer": [
+        "c"
+      ],
+      "explanation": "Cần tích hợp thay đổi của người khác trước. Ép buộc ghi đè sẽ làm mất commit của đồng đội."
+    },
+    {
+      "id": "q3",
+      "type": "multi",
+      "prompt": "Điều nào đúng về SSH key khi dùng với GitHub? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Khoá công khai (.pub) được thêm vào tài khoản GitHub"
+        },
+        {
+          "id": "b",
+          "text": "Mỗi lần push đều phải gõ lại mật khẩu tài khoản"
+        },
+        {
+          "id": "c",
+          "text": "Khoá riêng được dán vào GitHub để máy chủ xác thực danh tính của bạn"
+        },
+        {
+          "id": "d",
+          "text": "Khoá riêng phải được giữ bí mật trên máy của bạn"
+        }
+      ],
+      "answer": [
+        "a",
+        "d"
+      ],
+      "explanation": "Chỉ khoá công khai được chia sẻ; khoá riêng không rời máy. SSH giúp xác thực mà không phải nhập mật khẩu mỗi lần."
+    },
+    {
+      "id": "q4",
+      "type": "single",
+      "prompt": "Pull Request dùng để làm gì?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Kéo mọi thay đổi mới nhất của nhánh main về nhánh làm việc hiện tại"
+        },
+        {
+          "id": "b",
+          "text": "Khoá nhánh main để không ai có thể chỉnh sửa nữa"
+        },
+        {
+          "id": "c",
+          "text": "Tải toàn bộ repo từ GitHub về máy cục bộ của bạn"
+        },
+        {
+          "id": "d",
+          "text": "Đề nghị hợp nhất nhánh và là nơi đồng đội review code"
+        }
+      ],
+      "answer": [
+        "d"
+      ],
+      "explanation": "PR là đề nghị merge kèm thảo luận và review. Tải repo là clone, kéo thay đổi về là pull."
+    },
+    {
+      "id": "q5",
+      "type": "multi",
+      "prompt": "Lệnh nào hợp lệ khi làm việc với nhánh? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "git merge feat/login để hợp nhất nhánh vào nhánh hiện tại"
+        },
+        {
+          "id": "b",
+          "text": "git switch -c feat/login để tạo và chuyển sang nhánh mới"
+        },
+        {
+          "id": "c",
+          "text": "git branch --push để đẩy nhánh hiện tại lên máy chủ từ xa GitHub"
+        },
+        {
+          "id": "d",
+          "text": "git clone feat/login để tạo nhánh mới từ nhánh hiện tại"
+        }
+      ],
+      "answer": [
+        "a",
+        "b"
+      ],
+      "explanation": "switch -c tạo nhánh, merge hợp nhất. Đẩy nhánh dùng git push; clone dùng để tải về một repo."
+    },
+    {
+      "id": "q6",
+      "type": "single",
+      "prompt": "origin trong lệnh git push origin main chỉ điều gì?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Tên mặc định của remote, tức bản sao repo trên máy chủ"
+        },
+        {
+          "id": "b",
+          "text": "Tên của người đầu tiên đã tạo ra repo trên nền tảng GitHub này"
+        },
+        {
+          "id": "c",
+          "text": "Thư mục cục bộ chứa bản sao lưu của toàn bộ repo"
+        },
+        {
+          "id": "d",
+          "text": "Nhánh gốc đầu tiên được tạo khi khởi tạo repo"
+        }
+      ],
+      "answer": [
+        "a"
+      ],
+      "explanation": "origin là tên gắn với địa chỉ remote (thường là GitHub). Nó không phải tên người, nhánh hay thư mục."
+    }
+  ]
+}

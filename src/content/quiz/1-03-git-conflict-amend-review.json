@@ -1,0 +1,168 @@
+{
+  "questions": [
+    {
+      "id": "q1",
+      "type": "single",
+      "prompt": "Khi Git báo conflict, các dấu <<<<<<< và >>>>>>> trong file có ý nghĩa gì?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Đánh dấu vùng mà Git đã tự hợp nhất thành công cả hai bên lại"
+        },
+        {
+          "id": "b",
+          "text": "Đánh dấu vùng hai nhánh sửa khác nhau cần bạn quyết định"
+        },
+        {
+          "id": "c",
+          "text": "Đánh dấu phần code bị lỗi cú pháp cần được sửa lại"
+        },
+        {
+          "id": "d",
+          "text": "Đánh dấu các dòng đã bị Git tự động xoá khỏi file"
+        }
+      ],
+      "answer": [
+        "b"
+      ],
+      "explanation": "Phần giữa các dấu là hai phiên bản mâu thuẫn; con người phải chọn hoặc kết hợp rồi xoá các dấu."
+    },
+    {
+      "id": "q2",
+      "type": "single",
+      "prompt": "Bạn vừa commit nhưng quên thêm một file test và chưa push. Cách gọn nhất là gì?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Chạy git merge để gộp file thiếu vào commit trước"
+        },
+        {
+          "id": "b",
+          "text": "Tạo thêm một commit mới tên là oops rồi push cả hai commit lên"
+        },
+        {
+          "id": "c",
+          "text": "Xoá repo cục bộ và clone lại để có lịch sử sạch"
+        },
+        {
+          "id": "d",
+          "text": "git add file đó rồi chạy git commit --amend --no-edit"
+        }
+      ],
+      "answer": [
+        "d"
+      ],
+      "explanation": "--amend bổ sung vào commit gần nhất khi chưa push. merge không dùng cho việc này."
+    },
+    {
+      "id": "q3",
+      "type": "multi",
+      "prompt": "Bước nào đúng khi giải quyết conflict? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Xoá toàn bộ file bị conflict rồi tạo lại từ con số không"
+        },
+        {
+          "id": "b",
+          "text": "Chạy git add file đã sửa rồi commit để hoàn tất merge"
+        },
+        {
+          "id": "c",
+          "text": "Chọn nội dung đúng và xoá các dòng đánh dấu conflict"
+        },
+        {
+          "id": "d",
+          "text": "Giữ nguyên các dòng đánh dấu để Git tự xử lý sau đó"
+        }
+      ],
+      "answer": [
+        "b",
+        "c"
+      ],
+      "explanation": "Phải sửa nội dung, xoá dấu, add và commit. Để nguyên dấu sẽ làm hỏng file; xoá file làm mất công việc."
+    },
+    {
+      "id": "q4",
+      "type": "single",
+      "prompt": "Vì sao không nên amend commit đã push lên nhánh dùng chung?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Vì amend chỉ chạy được trên hệ điều hành macOS thôi"
+        },
+        {
+          "id": "b",
+          "text": "Vì nó viết lại lịch sử khiến đồng đội bị lệch với remote"
+        },
+        {
+          "id": "c",
+          "text": "Vì GitHub không cho phép sửa bất kỳ commit nào đã đẩy"
+        },
+        {
+          "id": "d",
+          "text": "Vì amend làm mất toàn bộ các file đã được commit từ trước đó"
+        }
+      ],
+      "answer": [
+        "b"
+      ],
+      "explanation": "Amend tạo commit mới thay thế commit cũ nên lịch sử của bạn khác với remote, gây rắc rối cho người đã lấy commit cũ."
+    },
+    {
+      "id": "q5",
+      "type": "multi",
+      "prompt": "Mục nào nên có trong checklist review code của test automation? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Có dùng chờ cố định hoặc locator mong manh hay không"
+        },
+        {
+          "id": "b",
+          "text": "Test có thực sự kiểm tra đúng kết quả cần kiểm tra"
+        },
+        {
+          "id": "c",
+          "text": "Số dòng code có đúng bằng số dòng của test cũ không"
+        },
+        {
+          "id": "d",
+          "text": "Tên tác giả của commit có xuất hiện đủ lớn hay không"
+        }
+      ],
+      "answer": [
+        "a",
+        "b"
+      ],
+      "explanation": "Review tập trung vào chất lượng test: kiểm tra đúng ý, độ ổn định. Tên tác giả hay số dòng không phản ánh chất lượng."
+    },
+    {
+      "id": "q6",
+      "type": "single",
+      "prompt": "Khi review PR, nhận xét nào mang lại giá trị cao nhất?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Yêu cầu đổi tên mọi biến sang cách đặt tên cá nhân"
+        },
+        {
+          "id": "b",
+          "text": "Đề nghị gộp toàn bộ test vào duy nhất một file lớn"
+        },
+        {
+          "id": "c",
+          "text": "Chỉ ra tình huống biên mà test hiện tại chưa phủ tới"
+        },
+        {
+          "id": "d",
+          "text": "Nhận xét rằng thụt lề nên dùng bốn dấu cách thay vì hai dấu"
+        }
+      ],
+      "answer": [
+        "c"
+      ],
+      "explanation": "Phát hiện khoảng trống về độ phủ là giá trị lớn nhất. Phong cách nên để công cụ format tự xử lý."
+    }
+  ]
+}

@@ -1,0 +1,168 @@
+{
+  "questions": [
+    {
+      "id": "q1",
+      "type": "single",
+      "prompt": "Cú pháp nào tạo tiêu đề cấp 2 trong Markdown?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Đặt dòng giữa hai cặp dấu sao liên tiếp nhau"
+        },
+        {
+          "id": "b",
+          "text": "Bao dòng giữa hai dấu ngoặc vuông ở hai đầu"
+        },
+        {
+          "id": "c",
+          "text": "Bắt đầu dòng bằng hai dấu thăng và một dấu cách"
+        },
+        {
+          "id": "d",
+          "text": "Đặt hai dấu bằng liên tiếp ngay phía trước dòng"
+        }
+      ],
+      "answer": [
+        "c"
+      ],
+      "explanation": "## Tiêu đề tạo heading cấp 2. Dấu sao tạo in đậm, ngoặc vuông dùng cho liên kết."
+    },
+    {
+      "id": "q2",
+      "type": "single",
+      "prompt": "Để chèn khối code có tô màu cú pháp, bạn dùng cách nào?",
+      "options": [
+        {
+          "id": "a",
+          "text": "In đậm toàn bộ các dòng code bằng cặp dấu sao đôi"
+        },
+        {
+          "id": "b",
+          "text": "Chèn khối code thành bảng gồm một cột và nhiều dòng"
+        },
+        {
+          "id": "c",
+          "text": "Bao khối code giữa hai hàng ba dấu huyền kèm tên ngôn ngữ"
+        },
+        {
+          "id": "d",
+          "text": "Đặt mỗi dòng code giữa hai dấu ngoặc nhọn ở hai đầu"
+        }
+      ],
+      "answer": [
+        "c"
+      ],
+      "explanation": "Hàng rào ba dấu huyền kèm tên ngôn ngữ (ts, bash…) cho phép tô màu cú pháp."
+    },
+    {
+      "id": "q3",
+      "type": "multi",
+      "prompt": "Bug report tốt nên có những thành phần nào? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Kết quả mong đợi và kết quả thực tế được tách riêng"
+        },
+        {
+          "id": "b",
+          "text": "Lời nhận xét về năng lực của lập trình viên viết code"
+        },
+        {
+          "id": "c",
+          "text": "Toàn bộ mã nguồn của ứng dụng được dán vào phần mô tả"
+        },
+        {
+          "id": "d",
+          "text": "Các bước tái hiện rõ ràng, đánh số theo thứ tự"
+        }
+      ],
+      "answer": [
+        "a",
+        "d"
+      ],
+      "explanation": "Bước tái hiện và so sánh mong đợi/thực tế giúp dev tái hiện lỗi nhanh. Nhận xét cá nhân hay dán cả mã nguồn không có ích."
+    },
+    {
+      "id": "q4",
+      "type": "single",
+      "prompt": "Bảng Markdown bị hiển thị thành văn bản thô. Nguyên nhân thường gặp là gì?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Văn bản trong bảng được viết bằng tiếng Việt có dấu"
+        },
+        {
+          "id": "b",
+          "text": "Có quá nhiều hàng dữ liệu vượt quá giới hạn của bảng"
+        },
+        {
+          "id": "c",
+          "text": "Thiếu dòng phân cách gồm các dấu gạch ngang dưới hàng tiêu đề"
+        },
+        {
+          "id": "d",
+          "text": "Bảng được đặt ở cuối tệp thay vì ở đầu tài liệu"
+        }
+      ],
+      "answer": [
+        "c"
+      ],
+      "explanation": "Bảng cần dòng |---|---| ngay sau tiêu đề. Số hàng, ngôn ngữ hay vị trí không ảnh hưởng."
+    },
+    {
+      "id": "q5",
+      "type": "multi",
+      "prompt": "Cách nào làm README dễ dùng hơn cho người mới? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Viết toàn bộ nội dung trong một đoạn văn thật dài"
+        },
+        {
+          "id": "b",
+          "text": "Chỉ ghi tên dự án mà không thêm bất kỳ hướng dẫn nào"
+        },
+        {
+          "id": "c",
+          "text": "Có sơ đồ cấu trúc thư mục kèm lời giải thích ngắn"
+        },
+        {
+          "id": "d",
+          "text": "Có mục cài đặt và lệnh chạy test theo từng bước"
+        }
+      ],
+      "answer": [
+        "c",
+        "d"
+      ],
+      "explanation": "README tốt hướng dẫn cài đặt, chạy và giải thích cấu trúc. Thiếu hướng dẫn hoặc dồn thành một đoạn làm khó người đọc."
+    },
+    {
+      "id": "q6",
+      "type": "single",
+      "prompt": "Vì sao nên thêm dòng trống giữa hai đoạn văn trong Markdown?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Để GitHub tự động tạo mục lục cho toàn bộ tài liệu"
+        },
+        {
+          "id": "b",
+          "text": "Nếu không có, hai đoạn có thể bị gộp thành một đoạn"
+        },
+        {
+          "id": "c",
+          "text": "Để file Markdown được nén nhỏ hơn khi lưu trên đĩa"
+        },
+        {
+          "id": "d",
+          "text": "Để trình soạn thảo tự động đánh số các dòng cho bạn"
+        }
+      ],
+      "answer": [
+        "b"
+      ],
+      "explanation": "Markdown dùng dòng trống để phân tách đoạn. Nó không liên quan tới nén, đánh số dòng hay mục lục."
+    }
+  ]
+}

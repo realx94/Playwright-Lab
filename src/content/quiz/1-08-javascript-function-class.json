@@ -1,0 +1,168 @@
+{
+  "questions": [
+    {
+      "id": "q1",
+      "type": "single",
+      "prompt": "Từ khoá nào dùng để gọi constructor của lớp cha trong class con?",
+      "options": [
+        {
+          "id": "a",
+          "text": "base(...) và chỉ được gọi bên ngoài constructor của class"
+        },
+        {
+          "id": "b",
+          "text": "parent(...) và có thể gọi ở bất kỳ vị trí nào trong class"
+        },
+        {
+          "id": "c",
+          "text": "extends(...) và tự động được gọi mà không cần viết"
+        },
+        {
+          "id": "d",
+          "text": "super(...) và phải gọi trước khi dùng this trong constructor"
+        }
+      ],
+      "answer": [
+        "d"
+      ],
+      "explanation": "super() gọi constructor lớp cha và bắt buộc phải chạy trước khi truy cập this trong class con."
+    },
+    {
+      "id": "q2",
+      "type": "single",
+      "prompt": "Vì sao Page Object thường được viết dưới dạng class?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Để gom locator và hành động của một trang vào một chỗ"
+        },
+        {
+          "id": "b",
+          "text": "Vì Playwright chỉ chạy được khi mọi file đều dùng class"
+        },
+        {
+          "id": "c",
+          "text": "Vì class chạy nhanh hơn hàm thường khi thao tác DOM"
+        },
+        {
+          "id": "d",
+          "text": "Vì class giúp test tự động sửa locator khi trang đổi"
+        }
+      ],
+      "answer": [
+        "a"
+      ],
+      "explanation": "Class gom dữ liệu (locator) và hành vi (action) của một trang, giúp tái sử dụng và bảo trì tại một nơi."
+    },
+    {
+      "id": "q3",
+      "type": "multi",
+      "prompt": "Điều nào đúng về arrow function? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Bắt buộc phải khai báo bằng từ khoá function đứng trước"
+        },
+        {
+          "id": "b",
+          "text": "Có cú pháp ngắn gọn như (a, b) => a + b"
+        },
+        {
+          "id": "c",
+          "text": "Luôn tạo ra một giá trị this hoàn toàn mới khi chạy"
+        },
+        {
+          "id": "d",
+          "text": "Giữ nguyên this của phạm vi nơi nó được khai báo"
+        }
+      ],
+      "answer": [
+        "b",
+        "d"
+      ],
+      "explanation": "Arrow function ngắn gọn và không có this riêng (kế thừa từ phạm vi bao ngoài)."
+    },
+    {
+      "id": "q4",
+      "type": "single",
+      "prompt": "Gọi const p = LoginPage(); (thiếu new) với một class sẽ cho kết quả thế nào?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Tạo một đối tượng rỗng và bỏ qua constructor của lớp"
+        },
+        {
+          "id": "b",
+          "text": "Lỗi, vì class phải được gọi bằng new để tạo đối tượng"
+        },
+        {
+          "id": "c",
+          "text": "Tự động thêm new giúp bạn khi trình biên dịch chạy"
+        },
+        {
+          "id": "d",
+          "text": "Tạo ra một đối tượng LoginPage hoàn toàn bình thường"
+        }
+      ],
+      "answer": [
+        "b"
+      ],
+      "explanation": "Class không thể gọi như hàm thường; thiếu new sẽ ném lỗi."
+    },
+    {
+      "id": "q5",
+      "type": "multi",
+      "prompt": "Modifier nào của TypeScript có tác dụng đúng như mô tả? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "public chỉ cho truy cập từ bên trong chính class đó"
+        },
+        {
+          "id": "b",
+          "text": "readonly cho phép gán lại giá trị bất cứ lúc nào"
+        },
+        {
+          "id": "c",
+          "text": "readonly cho phép gán giá trị khi khởi tạo rồi khoá lại"
+        },
+        {
+          "id": "d",
+          "text": "private chỉ cho truy cập từ bên trong chính class đó"
+        }
+      ],
+      "answer": [
+        "c",
+        "d"
+      ],
+      "explanation": "private giới hạn trong class; readonly chỉ gán lúc khai báo hoặc trong constructor. public cho truy cập từ ngoài."
+    },
+    {
+      "id": "q6",
+      "type": "single",
+      "prompt": "Hàm greet(name = \"bạn\") được gọi là greet() sẽ dùng giá trị nào cho name?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Dùng chuỗi rỗng vì đó là giá trị mặc định của mọi tham số"
+        },
+        {
+          "id": "b",
+          "text": "Dùng giá trị mặc định là chuỗi bạn vì không truyền tham số"
+        },
+        {
+          "id": "c",
+          "text": "Báo lỗi vì tham số có giá trị mặc định thì bắt buộc truyền"
+        },
+        {
+          "id": "d",
+          "text": "Dùng giá trị undefined vì chưa có tham số nào được truyền"
+        }
+      ],
+      "answer": [
+        "b"
+      ],
+      "explanation": "Khi không truyền (undefined), tham số nhận giá trị mặc định đã khai báo."
+    }
+  ]
+}

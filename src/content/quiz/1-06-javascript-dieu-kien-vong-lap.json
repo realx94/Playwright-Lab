@@ -1,0 +1,168 @@
+{
+  "questions": [
+    {
+      "id": "q1",
+      "type": "single",
+      "prompt": "Kiểm tra tuổi hợp lệ trong khoảng 18 đến 65 (gồm cả hai đầu). Điều kiện nào đúng?",
+      "options": [
+        {
+          "id": "a",
+          "text": "age > 18 && age <= 65, loại riêng giá trị đầu khoảng"
+        },
+        {
+          "id": "b",
+          "text": "age > 18 && age < 65, loại hẳn cả hai đầu khoảng"
+        },
+        {
+          "id": "c",
+          "text": "age >= 18 && age <= 65, cả hai đầu đều hợp lệ"
+        },
+        {
+          "id": "d",
+          "text": "age >= 18 || age <= 65, chỉ cần thoả một vế là đủ"
+        }
+      ],
+      "answer": [
+        "c"
+      ],
+      "explanation": "Gồm cả hai đầu cần >= và <= nối bằng &&. Dùng || thì mọi số đều thoả; dùng > hoặc < làm sai biên."
+    },
+    {
+      "id": "q2",
+      "type": "single",
+      "prompt": "Vòng lặp nào phù hợp để duyệt mảng dữ liệu test và có await bên trong?",
+      "options": [
+        {
+          "id": "a",
+          "text": "for...of vì nó chờ được từng lần lặp khi có await"
+        },
+        {
+          "id": "b",
+          "text": "map vì nó luôn chờ trước khi chạy phần tử kế tiếp"
+        },
+        {
+          "id": "c",
+          "text": "while vì nó chỉ dùng được với các mảng có await"
+        },
+        {
+          "id": "d",
+          "text": "forEach vì nó tự động chờ await ở mỗi lần lặp"
+        }
+      ],
+      "answer": [
+        "a"
+      ],
+      "explanation": "for...of nằm trong hàm async nên await hoạt động tuần tự. forEach và map không chờ các hàm async bên trong."
+    },
+    {
+      "id": "q3",
+      "type": "multi",
+      "prompt": "Câu lệnh nào thoát hoặc bỏ qua vòng lặp đúng cách? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "break để bỏ qua lần lặp hiện tại và đi tiếp"
+        },
+        {
+          "id": "b",
+          "text": "continue để bỏ qua lần lặp hiện tại và đi tiếp"
+        },
+        {
+          "id": "c",
+          "text": "continue để thoát hẳn khỏi vòng lặp đang chạy"
+        },
+        {
+          "id": "d",
+          "text": "break để thoát hẳn khỏi vòng lặp đang chạy"
+        }
+      ],
+      "answer": [
+        "b",
+        "d"
+      ],
+      "explanation": "break kết thúc cả vòng, continue chỉ bỏ qua lần hiện tại. Hai phương án sai đã đảo ngược vai trò."
+    },
+    {
+      "id": "q4",
+      "type": "single",
+      "prompt": "Đoạn while (tries < 5) { } không thay đổi biến tries thì điều gì xảy ra?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Chạy đúng năm lần rồi tự động dừng lại như vòng for"
+        },
+        {
+          "id": "b",
+          "text": "Chạy vô hạn vì điều kiện dừng không thể chuyển sang sai"
+        },
+        {
+          "id": "c",
+          "text": "Báo lỗi cú pháp ngay khi chương trình bắt đầu chạy"
+        },
+        {
+          "id": "d",
+          "text": "Bỏ qua hoàn toàn khối lệnh vì điều kiện bị đánh giá sai"
+        }
+      ],
+      "answer": [
+        "b"
+      ],
+      "explanation": "Điều kiện luôn đúng và không được cập nhật nên vòng lặp không bao giờ dừng."
+    },
+    {
+      "id": "q5",
+      "type": "multi",
+      "prompt": "Khi test biên của khoảng 18–65, những giá trị nào cần có? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "40 và 41 là các giá trị nằm ở giữa khoảng hợp lệ"
+        },
+        {
+          "id": "b",
+          "text": "18 và 65 là các giá trị nằm đúng tại hai biên"
+        },
+        {
+          "id": "c",
+          "text": "0 và 1000 là các giá trị cực đại của kiểu số"
+        },
+        {
+          "id": "d",
+          "text": "17 và 66 là các giá trị ngay sát bên ngoài khoảng"
+        }
+      ],
+      "answer": [
+        "b",
+        "d"
+      ],
+      "explanation": "BVA kiểm tra tại biên và ngay sát biên. Giá trị ở giữa hoặc quá xa biên ít khi phát hiện lỗi điều kiện."
+    },
+    {
+      "id": "q6",
+      "type": "single",
+      "prompt": "Biểu thức age >= 18 ? \"lớn\" : \"nhỏ\" cho kết quả gì khi age bằng 18?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Trả về chuỗi nhỏ vì 18 là giá trị biên bị loại"
+        },
+        {
+          "id": "b",
+          "text": "Trả về chuỗi lớn vì điều kiện được thoả mãn"
+        },
+        {
+          "id": "c",
+          "text": "Trả về giá trị true vì đây là một biểu thức so sánh"
+        },
+        {
+          "id": "d",
+          "text": "Báo lỗi vì toán tử ba ngôi không dùng được với số"
+        }
+      ],
+      "answer": [
+        "b"
+      ],
+      "explanation": ">= bao gồm cả 18 nên nhánh đầu được chọn và trả về chuỗi lớn."
+    }
+  ]
+}

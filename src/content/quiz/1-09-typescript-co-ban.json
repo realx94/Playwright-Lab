@@ -1,0 +1,168 @@
+{
+  "questions": [
+    {
+      "id": "q1",
+      "type": "single",
+      "prompt": "Lợi ích lớn nhất của TypeScript trong automation là gì?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Tự động sinh ra locator đúng cho mọi trang web"
+        },
+        {
+          "id": "b",
+          "text": "Giúp test chạy nhanh hơn rất nhiều lần so với JavaScript thuần"
+        },
+        {
+          "id": "c",
+          "text": "Bắt lỗi sai kiểu hoặc gõ sai tên thuộc tính ngay lúc viết"
+        },
+        {
+          "id": "d",
+          "text": "Cho phép bỏ qua hoàn toàn việc viết assertion"
+        }
+      ],
+      "answer": [
+        "c"
+      ],
+      "explanation": "TypeScript kiểm tra kiểu khi viết nên lỗi chính tả hay sai tham số được phát hiện sớm. Nó không làm test nhanh hơn hay sinh locator."
+    },
+    {
+      "id": "q2",
+      "type": "single",
+      "prompt": "Muốn một tham số chỉ nhận một trong ba giá trị vn, us, jp thì dùng gì?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Kiểu void vì hàm không cần trả về giá trị nào"
+        },
+        {
+          "id": "b",
+          "text": "Kiểu union literal: type Country = 'vn' | 'us' | 'jp'"
+        },
+        {
+          "id": "c",
+          "text": "Kiểu mảng: type Country = string[] để chứa đủ ba phần tử đó"
+        },
+        {
+          "id": "d",
+          "text": "Kiểu any để nhận được giá trị bất kỳ từ người gọi"
+        }
+      ],
+      "answer": [
+        "b"
+      ],
+      "explanation": "Union của các literal giới hạn giá trị hợp lệ. any hay string[] không giới hạn gì."
+    },
+    {
+      "id": "q3",
+      "type": "multi",
+      "prompt": "Khai báo nào cho thuộc tính tuỳ chọn hợp lệ? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "interface User { name!: string } với dấu chấm than sau tên"
+        },
+        {
+          "id": "b",
+          "text": "Thuộc tính tuỳ chọn luôn phải có giá trị không rỗng"
+        },
+        {
+          "id": "c",
+          "text": "interface User { name?: string } với dấu hỏi sau tên"
+        },
+        {
+          "id": "d",
+          "text": "Thuộc tính tuỳ chọn có thể là undefined khi truy cập"
+        }
+      ],
+      "answer": [
+        "c",
+        "d"
+      ],
+      "explanation": "Dấu ? đánh dấu tuỳ chọn, nên giá trị có thể là undefined. Dấu ! có ý nghĩa khác, không tạo thuộc tính tuỳ chọn."
+    },
+    {
+      "id": "q4",
+      "type": "single",
+      "prompt": "Khác biệt phổ biến giữa interface và type là gì?",
+      "options": [
+        {
+          "id": "a",
+          "text": "type chạy được lúc runtime còn interface thì không thể"
+        },
+        {
+          "id": "b",
+          "text": "interface chỉ dùng được cho số còn type chỉ dùng cho chuỗi"
+        },
+        {
+          "id": "c",
+          "text": "interface bắt buộc phải đặt tên bằng chữ cái in hoa ở toàn bộ ký tự"
+        },
+        {
+          "id": "d",
+          "text": "interface mở rộng được bằng extends, type linh hoạt với union"
+        }
+      ],
+      "answer": [
+        "d"
+      ],
+      "explanation": "Cả hai mô tả hình dạng dữ liệu. interface có extends, type hỗ trợ union tiện hơn. Cả hai đều bị xoá khi biên dịch."
+    },
+    {
+      "id": "q5",
+      "type": "multi",
+      "prompt": "Kiểu trả về nào đúng cho hàm async? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "void khi hàm async trả về một chuỗi ký tự"
+        },
+        {
+          "id": "b",
+          "text": "Promise<string> khi hàm trả về một chuỗi ký tự"
+        },
+        {
+          "id": "c",
+          "text": "string khi hàm async trả về một chuỗi ký tự thay vì Promise"
+        },
+        {
+          "id": "d",
+          "text": "Promise<void> khi hàm không trả về giá trị nào"
+        }
+      ],
+      "answer": [
+        "b",
+        "d"
+      ],
+      "explanation": "Hàm async luôn trả về Promise nên kiểu phải bọc trong Promise<...>."
+    },
+    {
+      "id": "q6",
+      "type": "single",
+      "prompt": "Dùng any khắp nơi có hậu quả gì?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Mất khả năng kiểm tra kiểu nên lỗi chỉ lộ ra khi chạy"
+        },
+        {
+          "id": "b",
+          "text": "Code chạy chậm hơn do phải đổi kiểu liên tục lúc chạy"
+        },
+        {
+          "id": "c",
+          "text": "Trình biên dịch tự sửa kiểu sai giúp bạn khi build"
+        },
+        {
+          "id": "d",
+          "text": "File được đánh dấu là chỉ đọc và không thể lưu lại"
+        }
+      ],
+      "answer": [
+        "a"
+      ],
+      "explanation": "any tắt kiểm tra kiểu nên lợi ích của TypeScript biến mất. Trình biên dịch không tự sửa và tốc độ chạy không đổi."
+    }
+  ]
+}
