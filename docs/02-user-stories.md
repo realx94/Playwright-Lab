@@ -37,6 +37,7 @@ Persona: **L** = Learner (QA), **M** = Mentor, **A** = Admin/Content author.
 
 **US-01.04 (P0)** – Là L, tôi muốn lọc lab theo domain/độ khó/kỹ năng để chọn bài luyện đúng nhu cầu.
 - AC: filter đa chọn; hiển thị tag (Form, Table, iframe, API…).
+- Đã làm: `/labs` xếp theo độ khó (Dễ → Vừa → Khó) rồi theo mã lab, chia nhóm có tiêu đề; lọc đa chọn theo độ khó và domain, ô tìm theo tên/kỹ năng (không phân biệt hoa thường và dấu), nút Xoá bộ lọc, đếm số lab hiển thị.
 
 ## EP-02 Đọc bài học & giải thích kiến thức
 **US-02.01 (P0)** – Là L, tôi muốn bài học có mục tiêu và checklist kiến thức để biết cần nắm gì.
