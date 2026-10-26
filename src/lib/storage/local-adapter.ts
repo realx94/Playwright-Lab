@@ -41,6 +41,17 @@ export const localAdapter: StorageAdapter = {
   async saveProgress(p) {
     await (await db()).put("lessonProgress", p);
   },
+  async touchProgress(lessonId, addSeconds) {
+    const tx = (await db()).transaction("lessonProgress", "readwrite");
+    const cur = await tx.store.get(lessonId);
+    await tx.store.put({
+      lessonId,
+      status: cur?.status ?? "in-progress",
+      lastViewedAt: Date.now(),
+      timeSpentSec: (cur?.timeSpentSec ?? 0) + addSeconds,
+    });
+    await tx.done;
+  },
   async saveAttempt(a) {
     await (await db()).put("quizAttempts", a);
   },

@@ -48,6 +48,8 @@ export interface StorageAdapter {
   getProgress(lessonId: string): Promise<LessonProgress | undefined>;
   listProgress(): Promise<LessonProgress[]>;
   saveProgress(p: LessonProgress): Promise<void>;
+  /** Cập nhật thời điểm xem và cộng dồn thời gian đọc mà không ghi đè trạng thái (đọc-ghi trong một giao dịch). */
+  touchProgress(lessonId: string, addSeconds: number): Promise<void>;
   saveAttempt(a: QuizAttempt): Promise<void>;
   listAttempts(): Promise<QuizAttempt[]>;
   saveExercise(a: ExerciseAttempt): Promise<void>;

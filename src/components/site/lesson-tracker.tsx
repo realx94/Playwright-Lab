@@ -7,30 +7,10 @@ import { storage } from "@/lib/storage";
 export function LessonTracker({ lessonId }: { lessonId: string }) {
   useEffect(() => {
     const start = Date.now();
-    storage
-      .getProgress(lessonId)
-      .then((p) =>
-        storage.saveProgress({
-          lessonId,
-          status: p?.status ?? "in-progress",
-          lastViewedAt: Date.now(),
-          timeSpentSec: p?.timeSpentSec ?? 0,
-        }),
-      )
-      .catch(() => {});
+    storage.touchProgress(lessonId, 0).catch(() => {});
     return () => {
-      const spent = Math.round((Date.now() - start) / 1000);
-      storage
-        .getProgress(lessonId)
-        .then((p) =>
-          storage.saveProgress({
-            lessonId,
-            status: p?.status ?? "in-progress",
-            lastViewedAt: Date.now(),
-            timeSpentSec: (p?.timeSpentSec ?? 0) + spent,
-          }),
-        )
-        .catch(() => {});
+      // Đọc-ghi nguyên tử để không ghi đè trạng thái "đã hoàn thành" vừa được lưu ở nơi khác.
+      storage.touchProgress(lessonId, Math.round((Date.now() - start) / 1000)).catch(() => {});
     };
   }, [lessonId]);
   return null;
