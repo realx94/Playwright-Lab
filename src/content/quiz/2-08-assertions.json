@@ -1,0 +1,168 @@
+{
+  "questions": [
+    {
+      "id": "q1",
+      "type": "single",
+      "prompt": "Khác biệt cốt lõi giữa expect(locator).toHaveText() và expect(await locator.innerText()).toBe() là gì?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Cái sau chạy trong trình duyệt còn cái đầu chạy ngoài môi trường test"
+        },
+        {
+          "id": "b",
+          "text": "Cái đầu tự thử lại đến khi đúng, cái sau chỉ kiểm tra một lần"
+        },
+        {
+          "id": "c",
+          "text": "Hai cách hoàn toàn giống nhau về mọi mặt khi chạy"
+        },
+        {
+          "id": "d",
+          "text": "Cái đầu chỉ dùng được cho văn bản và cái sau cho số"
+        }
+      ],
+      "answer": [
+        "b"
+      ],
+      "explanation": "Web-first assertion tự thử lại đến hết timeout. Lấy text rồi so sánh chỉ kiểm tra một khoảnh khắc nên dễ flaky."
+    },
+    {
+      "id": "q2",
+      "type": "single",
+      "prompt": "Muốn khẳng định một phần tử không xuất hiện, cách nào hợp lý?",
+      "options": [
+        {
+          "id": "a",
+          "text": "await page.waitForTimeout(5000) rồi mới tiếp tục"
+        },
+        {
+          "id": "b",
+          "text": "await expect(locator).toHaveCount(0) hoặc toBeHidden()"
+        },
+        {
+          "id": "c",
+          "text": "expect(await locator.count()).toBe(0) ngay lập tức"
+        },
+        {
+          "id": "d",
+          "text": "expect(locator).toBeVisible() rồi tự đảo ngược lại kết quả của nó"
+        }
+      ],
+      "answer": [
+        "b"
+      ],
+      "explanation": "toHaveCount(0) và toBeHidden() tự thử lại. Đếm tức thời có thể sai khi trang chưa cập nhật."
+    },
+    {
+      "id": "q3",
+      "type": "multi",
+      "prompt": "Matcher nào là web-first (tự thử lại)? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "toBe() gọi trên một chuỗi lấy từ innerText()"
+        },
+        {
+          "id": "b",
+          "text": "toHaveURL() gọi trên đối tượng page của Playwright"
+        },
+        {
+          "id": "c",
+          "text": "toEqual() gọi trên mảng chuỗi lấy từ hàm allInnerTexts()"
+        },
+        {
+          "id": "d",
+          "text": "toBeVisible() gọi trên locator của một phần tử"
+        }
+      ],
+      "answer": [
+        "b",
+        "d"
+      ],
+      "explanation": "Assertion gọi trên locator hoặc page là web-first. Matcher gọi trên giá trị JavaScript thông thường chỉ kiểm tra một lần."
+    },
+    {
+      "id": "q4",
+      "type": "single",
+      "prompt": "Assertion nào mang ý nghĩa nghiệp vụ mạnh nhất cho giỏ hàng?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Trang giỏ hàng tải xong mà không có lỗi trong console"
+        },
+        {
+          "id": "b",
+          "text": "Có ít nhất một phần tử chứa chữ Tổng cộng ở trong trang web"
+        },
+        {
+          "id": "c",
+          "text": "Nút Đặt hàng có hiển thị trên màn hình hay không"
+        },
+        {
+          "id": "d",
+          "text": "Tổng tiền bằng tạm tính trừ giảm giá cộng VAT và phí ship"
+        }
+      ],
+      "answer": [
+        "d"
+      ],
+      "explanation": "Kiểm tra giá trị tính từ quy tắc nghiệp vụ phát hiện bug thật; các kiểm tra tồn tại/hiển thị quá yếu."
+    },
+    {
+      "id": "q5",
+      "type": "multi",
+      "prompt": "Khi nào nên dùng expect.soft? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Khi muốn dừng test ngay ở lần kiểm tra đầu tiên bị lỗi"
+        },
+        {
+          "id": "b",
+          "text": "Khi bước tiếp theo phụ thuộc vào kết quả của lần kiểm tra này"
+        },
+        {
+          "id": "c",
+          "text": "Các kiểm tra độc lập không ảnh hưởng đến bước sau"
+        },
+        {
+          "id": "d",
+          "text": "Muốn thu thập nhiều lỗi trong cùng một test rồi mới báo"
+        }
+      ],
+      "answer": [
+        "c",
+        "d"
+      ],
+      "explanation": "soft ghi nhận lỗi nhưng cho test chạy tiếp, phù hợp các kiểm tra độc lập. Nếu bước sau phụ thuộc thì nên dùng expect thường."
+    },
+    {
+      "id": "q6",
+      "type": "single",
+      "prompt": "Giá trị kỳ vọng trong assertion nên lấy từ đâu?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Tính từ quy tắc nghiệp vụ, không sao chép từ giao diện"
+        },
+        {
+          "id": "b",
+          "text": "Chọn một số bất kỳ miễn là test chạy được màu xanh"
+        },
+        {
+          "id": "c",
+          "text": "Sao chép đúng giá trị đang hiển thị trên giao diện"
+        },
+        {
+          "id": "d",
+          "text": "Lấy từ kết quả của lần chạy test thành công trước đó"
+        }
+      ],
+      "answer": [
+        "a"
+      ],
+      "explanation": "Sao chép giá trị đang hiển thị sẽ làm bug bị coi là đúng. Kỳ vọng phải độc lập, tính từ quy tắc."
+    }
+  ]
+}

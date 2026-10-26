@@ -1,0 +1,168 @@
+{
+  "questions": [
+    {
+      "id": "q1",
+      "type": "single",
+      "prompt": "Ba phần nên có trong một test rõ ràng là gì?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Khai báo, biên dịch, rồi đóng gói thành tệp thực thi"
+        },
+        {
+          "id": "b",
+          "text": "Cài đặt, gỡ cài đặt, rồi khởi động lại trình duyệt"
+        },
+        {
+          "id": "c",
+          "text": "Viết mã, xoá mã, rồi lưu lại vào kho mã nguồn"
+        },
+        {
+          "id": "d",
+          "text": "Chuẩn bị, thực hiện hành động, rồi đối chiếu kết quả"
+        }
+      ],
+      "answer": [
+        "d"
+      ],
+      "explanation": "Arrange – Act – Assert giúp test dễ đọc và biết lỗi nằm ở phần nào."
+    },
+    {
+      "id": "q2",
+      "type": "single",
+      "prompt": "Fixture nào cho test một tab trình duyệt sạch để thao tác?",
+      "options": [
+        {
+          "id": "a",
+          "text": "browser, dùng để thay thế cho mọi trình duyệt khác"
+        },
+        {
+          "id": "b",
+          "text": "testInfo, dùng để lưu mật khẩu của người dùng test"
+        },
+        {
+          "id": "c",
+          "text": "page, được Playwright tạo mới và sạch cho mỗi test"
+        },
+        {
+          "id": "d",
+          "text": "request, dùng để gửi các yêu cầu HTTP tới máy chủ"
+        }
+      ],
+      "answer": [
+        "c"
+      ],
+      "explanation": "page là tab trong một context mới cho mỗi test. request dùng cho API, browser là tiến trình trình duyệt."
+    },
+    {
+      "id": "q3",
+      "type": "multi",
+      "prompt": "Cách nào chạy một phần bộ test? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "npx playwright test --only để chỉ chạy test mới nhất"
+        },
+        {
+          "id": "b",
+          "text": "npx playwright test login để chạy file có tên chứa login"
+        },
+        {
+          "id": "c",
+          "text": "npx playwright test -g \"@smoke\" để lọc theo tên hoặc tag"
+        },
+        {
+          "id": "d",
+          "text": "npx playwright test --short để chạy một nửa số test"
+        }
+      ],
+      "answer": [
+        "b",
+        "c"
+      ],
+      "explanation": "-g lọc theo tên/tag, đối số là mẫu tên file. --only và --short không phải tuỳ chọn của Playwright."
+    },
+    {
+      "id": "q4",
+      "type": "single",
+      "prompt": "Quên xoá test.only trước khi commit gây hậu quả gì?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Playwright từ chối khởi động và báo lỗi cú pháp"
+        },
+        {
+          "id": "b",
+          "text": "Mọi test khác bị đánh dấu thất bại ngay lập tức"
+        },
+        {
+          "id": "c",
+          "text": "Test đó chạy hai lần liên tiếp trong cùng một phiên chạy"
+        },
+        {
+          "id": "d",
+          "text": "Chỉ test đó chạy nên các test khác bị bỏ qua mà không báo"
+        }
+      ],
+      "answer": [
+        "d"
+      ],
+      "explanation": "test.only khiến cả bộ chỉ chạy một test. Hãy bật forbidOnly trong CI để chặn."
+    },
+    {
+      "id": "q5",
+      "type": "multi",
+      "prompt": "Điều nào về test.describe là đúng? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Nhóm các test liên quan để dễ đọc và cấu hình chung"
+        },
+        {
+          "id": "b",
+          "text": "Có thể đặt hooks như beforeEach áp dụng cho cả nhóm"
+        },
+        {
+          "id": "c",
+          "text": "Mỗi nhóm describe chạy trong một trình duyệt riêng khác"
+        },
+        {
+          "id": "d",
+          "text": "Bắt buộc phải có thì các test mới được phép chạy"
+        }
+      ],
+      "answer": [
+        "a",
+        "b"
+      ],
+      "explanation": "describe là cách tổ chức tuỳ chọn, cho phép gắn hooks và cấu hình chung. Nó không bắt buộc và không tạo trình duyệt riêng."
+    },
+    {
+      "id": "q6",
+      "type": "single",
+      "prompt": "test.fixme dùng để làm gì?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Sửa tự động lỗi của test trước khi chạy lần kế tiếp"
+        },
+        {
+          "id": "b",
+          "text": "Chạy test với tốc độ chậm để dễ quan sát từng bước"
+        },
+        {
+          "id": "c",
+          "text": "Đánh dấu test cần làm hoặc đang hỏng để tạm bỏ qua"
+        },
+        {
+          "id": "d",
+          "text": "Xoá test khỏi dự án vĩnh viễn sau lần chạy kế tiếp"
+        }
+      ],
+      "answer": [
+        "c"
+      ],
+      "explanation": "fixme đánh dấu test cần sửa và bỏ qua nó nhưng vẫn giữ trong mã để nhắc việc. Starter repo dùng nó cho các bài tập."
+    }
+  ]
+}

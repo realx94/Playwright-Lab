@@ -1,0 +1,168 @@
+{
+  "questions": [
+    {
+      "id": "q1",
+      "type": "single",
+      "prompt": "Khi nào phải đăng ký page.on(\"dialog\") để xử lý hộp thoại confirm?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Trước khi thao tác gây ra hộp thoại, nếu không test sẽ treo"
+        },
+        {
+          "id": "b",
+          "text": "Không cần đăng ký vì Playwright luôn tự đóng mọi hộp thoại"
+        },
+        {
+          "id": "c",
+          "text": "Sau khi hộp thoại đã hiện và người dùng đã bấm xong"
+        },
+        {
+          "id": "d",
+          "text": "Chỉ khi chạy trình duyệt ở chế độ headless trên CI"
+        }
+      ],
+      "answer": [
+        "a"
+      ],
+      "explanation": "Phải đăng ký trước. Playwright mặc định tự loại bỏ dialog nhưng nếu bạn đã đăng ký handler mà không xử lý thì test sẽ treo."
+    },
+    {
+      "id": "q2",
+      "type": "single",
+      "prompt": "Cách nào bắt được tab mới mở sau khi click một liên kết?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Dùng page.goBack() để quay về trang vừa được mở ra"
+        },
+        {
+          "id": "b",
+          "text": "Dùng page.close() để đóng tab hiện tại rồi chọn tab kế"
+        },
+        {
+          "id": "c",
+          "text": "Dùng page.reload() để tải lại trang và tìm tab mới"
+        },
+        {
+          "id": "d",
+          "text": "Dùng context.waitForEvent(\"page\") cùng lúc với thao tác click"
+        }
+      ],
+      "answer": [
+        "d"
+      ],
+      "explanation": "Lắng nghe sự kiện page của context song song với thao tác click (Promise.all) để bắt tab mới."
+    },
+    {
+      "id": "q3",
+      "type": "multi",
+      "prompt": "Cách nào đúng để thao tác với iframe? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "page.frameLocator(\"#payment\").getByLabel(\"Số thẻ\")"
+        },
+        {
+          "id": "b",
+          "text": "Dùng frameLocator rồi chaining các locator quen thuộc"
+        },
+        {
+          "id": "c",
+          "text": "page.getByLabel(\"Số thẻ\") truy cập thẳng vào bên trong iframe"
+        },
+        {
+          "id": "d",
+          "text": "Dùng page.iframe() để tự chuyển đổi toàn bộ ngữ cảnh"
+        }
+      ],
+      "answer": [
+        "a",
+        "b"
+      ],
+      "explanation": "frameLocator chỉ rõ khung rồi dùng locator thường. Locator ở page không đi xuyên vào iframe."
+    },
+    {
+      "id": "q4",
+      "type": "single",
+      "prompt": "Đối tượng nào dùng để thao tác trên tab mới mở?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Đối tượng page cũ vì mọi tab dùng chung một page"
+        },
+        {
+          "id": "b",
+          "text": "Đối tượng request vì tab mới được tạo bởi yêu cầu HTTP"
+        },
+        {
+          "id": "c",
+          "text": "Đối tượng browser vì nó điều khiển trực tiếp các tab"
+        },
+        {
+          "id": "d",
+          "text": "Đối tượng Page mới mà sự kiện popup hoặc page trả về"
+        }
+      ],
+      "answer": [
+        "d"
+      ],
+      "explanation": "Mỗi tab là một Page riêng. Phải dùng Page mới để thao tác trong tab đó."
+    },
+    {
+      "id": "q5",
+      "type": "multi",
+      "prompt": "Khi chờ tải xuống tệp, cách nào đúng? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Dùng page.goto() đến đường dẫn của tệp trong ổ đĩa"
+        },
+        {
+          "id": "b",
+          "text": "Đọc tệp ngay lập tức mà không cần chờ sự kiện download"
+        },
+        {
+          "id": "c",
+          "text": "Dùng page.waitForEvent(\"download\") cùng lúc với thao tác click"
+        },
+        {
+          "id": "d",
+          "text": "Lấy tên tệp tải về bằng download.suggestedFilename()"
+        }
+      ],
+      "answer": [
+        "c",
+        "d"
+      ],
+      "explanation": "Phải chờ sự kiện download song song với click rồi dùng đối tượng Download để lấy thông tin tệp."
+    },
+    {
+      "id": "q6",
+      "type": "single",
+      "prompt": "Modal HTML trong trang (không phải alert của trình duyệt) xử lý thế nào?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Dùng page.on(\"dialog\") vì mọi hộp thoại đều giống nhau"
+        },
+        {
+          "id": "b",
+          "text": "Dùng context.waitForEvent vì modal là một tab riêng"
+        },
+        {
+          "id": "c",
+          "text": "Dùng locator thông thường vì nó là phần tử trong DOM"
+        },
+        {
+          "id": "d",
+          "text": "Dùng frameLocator vì modal luôn nằm trong một iframe"
+        }
+      ],
+      "answer": [
+        "c"
+      ],
+      "explanation": "Modal HTML là phần tử DOM bình thường. Chỉ alert/confirm/prompt của trình duyệt mới cần handler dialog."
+    }
+  ]
+}

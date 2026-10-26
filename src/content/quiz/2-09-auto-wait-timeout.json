@@ -1,0 +1,168 @@
+{
+  "questions": [
+    {
+      "id": "q1",
+      "type": "single",
+      "prompt": "Vì sao waitForTimeout(3000) không phải cách chờ tốt?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Vì thời gian cố định lúc thừa lúc thiếu, vừa chậm vừa flaky"
+        },
+        {
+          "id": "b",
+          "text": "Vì nó chỉ chờ được tối đa một giây cho mỗi lần gọi"
+        },
+        {
+          "id": "c",
+          "text": "Vì nó khiến trình duyệt tự động đóng sau khi chờ xong"
+        },
+        {
+          "id": "d",
+          "text": "Vì Playwright đã loại bỏ hoàn toàn hàm này ra khỏi thư viện này"
+        }
+      ],
+      "answer": [
+        "a"
+      ],
+      "explanation": "Chờ cố định phí thời gian khi trang nhanh và không đủ khi trang chậm. Chờ theo điều kiện nhanh và ổn định hơn."
+    },
+    {
+      "id": "q2",
+      "type": "single",
+      "prompt": "Hành động click() của Playwright tự chờ những gì?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Mọi yêu cầu mạng của trang đều đã hoàn tất xong"
+        },
+        {
+          "id": "b",
+          "text": "Phần tử hiển thị, ổn định, nhận được sự kiện và đang bật"
+        },
+        {
+          "id": "c",
+          "text": "Toàn bộ ảnh và video trên trang được tải về xong"
+        },
+        {
+          "id": "d",
+          "text": "Người dùng thật xác nhận thao tác bằng một hộp thoại riêng biệt"
+        }
+      ],
+      "answer": [
+        "b"
+      ],
+      "explanation": "Actionability checks gồm hiển thị, ổn định, nhận được sự kiện và được bật."
+    },
+    {
+      "id": "q3",
+      "type": "multi",
+      "prompt": "Cách nào chờ theo điều kiện thay cho sleep? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "page.pause() chờ cho đến khi test tự kết thúc"
+        },
+        {
+          "id": "b",
+          "text": "page.waitForResponse() chờ một phản hồi mạng cụ thể"
+        },
+        {
+          "id": "c",
+          "text": "page.waitForTimeout() chờ một khoảng thời gian cố định"
+        },
+        {
+          "id": "d",
+          "text": "expect(locator).toBeVisible() với timeout phù hợp"
+        }
+      ],
+      "answer": [
+        "b",
+        "d"
+      ],
+      "explanation": "toBeVisible và waitForResponse chờ một điều kiện cụ thể. waitForTimeout là chờ cố định; pause mở Inspector để gỡ lỗi."
+    },
+    {
+      "id": "q4",
+      "type": "single",
+      "prompt": "Test hết 30 giây vì trang rất chậm ở một bước. Cách hợp lý nhất là gì?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Nâng timeout toàn cục lên vài phút cho mọi test trong dự án"
+        },
+        {
+          "id": "b",
+          "text": "Thêm waitForTimeout dài trước mỗi thao tác trong test"
+        },
+        {
+          "id": "c",
+          "text": "Chờ đúng điều kiện cần thiết ở bước đó và nâng timeout cục bộ"
+        },
+        {
+          "id": "d",
+          "text": "Bỏ qua bước chậm và không kiểm tra kết quả của nó"
+        }
+      ],
+      "answer": [
+        "c"
+      ],
+      "explanation": "Xử lý cục bộ đúng chỗ chậm. Nâng timeout toàn cục hay chờ cố định chỉ che giấu vấn đề."
+    },
+    {
+      "id": "q5",
+      "type": "multi",
+      "prompt": "Điều nào đúng về timeout trong Playwright? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Có thể đặt actionTimeout riêng cho các thao tác trên trang"
+        },
+        {
+          "id": "b",
+          "text": "Timeout của test và timeout của assertion là hai giá trị khác nhau"
+        },
+        {
+          "id": "c",
+          "text": "Chỉ có duy nhất một timeout áp dụng cho mọi thứ trong test"
+        },
+        {
+          "id": "d",
+          "text": "Timeout chỉ ảnh hưởng đến thao tác goto và không ảnh hưởng gì khác"
+        }
+      ],
+      "answer": [
+        "a",
+        "b"
+      ],
+      "explanation": "Có nhiều loại timeout: test, expect, action, navigation. Mỗi loại cấu hình riêng."
+    },
+    {
+      "id": "q6",
+      "type": "single",
+      "prompt": "Chờ trạng thái networkidle có thể gây vấn đề gì?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Nó bỏ qua toàn bộ yêu cầu mạng của trang khi chờ"
+        },
+        {
+          "id": "b",
+          "text": "Nó chỉ dùng được ở chế độ headed của trình duyệt"
+        },
+        {
+          "id": "c",
+          "text": "Trang có websocket kéo dài có thể không đạt trạng thái idle"
+        },
+        {
+          "id": "d",
+          "text": "Nó làm trình duyệt tự động tắt kết nối mạng khi chạy"
+        }
+      ],
+      "answer": [
+        "c"
+      ],
+      "explanation": "Kết nối kéo dài (websocket, polling) khiến mạng không bao giờ idle. Nên chờ điều kiện cụ thể của giao diện."
+    }
+  ]
+}

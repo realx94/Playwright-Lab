@@ -1,0 +1,168 @@
+{
+  "questions": [
+    {
+      "id": "q1",
+      "type": "single",
+      "prompt": "Với checkbox nên dùng check() thay vì click() vì sao?",
+      "options": [
+        {
+          "id": "a",
+          "text": "check() đảm bảo trạng thái cuối là đã chọn, tránh tắt nhầm"
+        },
+        {
+          "id": "b",
+          "text": "check() tự động tắt mọi checkbox khác đang được chọn"
+        },
+        {
+          "id": "c",
+          "text": "check() chạy nhanh hơn click() trên mọi loại phần tử"
+        },
+        {
+          "id": "d",
+          "text": "click() không thể thao tác lên các checkbox trong trang web hiện nay"
+        }
+      ],
+      "answer": [
+        "a"
+      ],
+      "explanation": "check() quan tâm đến trạng thái đích và xác nhận sau khi thao tác; click() chỉ bấm và có thể đảo ngược trạng thái nếu đã chọn."
+    },
+    {
+      "id": "q2",
+      "type": "single",
+      "prompt": "Muốn chọn một lựa chọn trong thẻ select native, dùng gì?",
+      "options": [
+        {
+          "id": "a",
+          "text": "click() rồi gõ chữ vn bằng bàn phím vào thẻ select"
+        },
+        {
+          "id": "b",
+          "text": "selectOption(\"vn\") truyền giá trị hoặc nhãn của lựa chọn"
+        },
+        {
+          "id": "c",
+          "text": "check(\"vn\") giống như chọn một checkbox trong trang"
+        },
+        {
+          "id": "d",
+          "text": "fill(\"vn\") giống như điền giá trị vào một ô nhập"
+        }
+      ],
+      "answer": [
+        "b"
+      ],
+      "explanation": "selectOption chuyên dành cho thẻ select native và nhận giá trị, nhãn hoặc chỉ số."
+    },
+    {
+      "id": "q3",
+      "type": "multi",
+      "prompt": "Playwright kiểm tra điều kiện nào trước khi click? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Phần tử đã ổn định, không còn đang chuyển động"
+        },
+        {
+          "id": "b",
+          "text": "Trang web đã được người dùng cuộn xuống tận dưới cùng của nó"
+        },
+        {
+          "id": "c",
+          "text": "Phần tử đang hiển thị và không bị phần tử khác che"
+        },
+        {
+          "id": "d",
+          "text": "Phần tử có chứa ít nhất một đoạn chữ bên trong"
+        }
+      ],
+      "answer": [
+        "a",
+        "c"
+      ],
+      "explanation": "Actionability gồm: hiển thị, ổn định, nhận được sự kiện, được bật. Không đòi cuộn hay có chữ."
+    },
+    {
+      "id": "q4",
+      "type": "single",
+      "prompt": "Điền \"abc\" vào ô nhập đang có sẵn chữ cũ. fill() xử lý thế nào?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Báo lỗi vì ô nhập đã có sẵn dữ liệu bên trong"
+        },
+        {
+          "id": "b",
+          "text": "Xoá nội dung cũ rồi đặt giá trị mới vào ô nhập"
+        },
+        {
+          "id": "c",
+          "text": "Nối giá trị mới vào sau nội dung cũ của ô nhập"
+        },
+        {
+          "id": "d",
+          "text": "Chỉ đặt giá trị khi ô nhập đang hoàn toàn trống"
+        }
+      ],
+      "answer": [
+        "b"
+      ],
+      "explanation": "fill đặt toàn bộ giá trị của ô nhập, thay thế nội dung cũ."
+    },
+    {
+      "id": "q5",
+      "type": "multi",
+      "prompt": "Cách nào đúng để upload tệp trong test? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "fill với nội dung tệp dán vào như một đoạn văn bản"
+        },
+        {
+          "id": "b",
+          "text": "click vào ô chọn tệp rồi gõ đường dẫn bằng bàn phím"
+        },
+        {
+          "id": "c",
+          "text": "setInputFiles với đối tượng gồm name, mimeType và buffer"
+        },
+        {
+          "id": "d",
+          "text": "setInputFiles với đường dẫn tới tệp có sẵn trên máy"
+        }
+      ],
+      "answer": [
+        "c",
+        "d"
+      ],
+      "explanation": "setInputFiles nhận đường dẫn hoặc đối tượng buffer. Hộp thoại chọn tệp của hệ điều hành không thao tác được bằng click/gõ phím."
+    },
+    {
+      "id": "q6",
+      "type": "single",
+      "prompt": "Select tuỳ biến (không phải thẻ select) nên xử lý thế nào?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Dùng selectOption vì đây là một thẻ select thông thường"
+        },
+        {
+          "id": "b",
+          "text": "Dùng fill để gõ tên lựa chọn vào phần tử đó"
+        },
+        {
+          "id": "c",
+          "text": "Click để mở danh sách rồi chọn getByRole(\"option\")"
+        },
+        {
+          "id": "d",
+          "text": "Dùng check để đánh dấu lựa chọn trong danh sách"
+        }
+      ],
+      "answer": [
+        "c"
+      ],
+      "explanation": "Select tuỳ biến là các phần tử div/button; hãy thao tác như người dùng: mở danh sách rồi chọn option."
+    }
+  ]
+}

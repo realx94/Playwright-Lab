@@ -1,0 +1,168 @@
+{
+  "questions": [
+    {
+      "id": "q1",
+      "type": "single",
+      "prompt": "DOM khác với mã HTML nguồn ở điểm nào?",
+      "options": [
+        {
+          "id": "a",
+          "text": "DOM là ngôn ngữ lập trình dùng để viết các bài test tự động"
+        },
+        {
+          "id": "b",
+          "text": "DOM là cây đối tượng hiện tại và có thể bị JavaScript thay đổi"
+        },
+        {
+          "id": "c",
+          "text": "DOM là bản sao lưu cố định của HTML được lưu trong ổ đĩa"
+        },
+        {
+          "id": "d",
+          "text": "DOM chỉ chứa phần giao diện và không có các thẻ ở bên trong"
+        }
+      ],
+      "answer": [
+        "b"
+      ],
+      "explanation": "HTML nguồn là văn bản; DOM là cây đối tượng trình duyệt dựng ra và có thể thay đổi khi JavaScript chạy. Automation làm việc với DOM."
+    },
+    {
+      "id": "q2",
+      "type": "single",
+      "prompt": "Ô nhập có thẻ label for=\"email\" đi kèm. Locator nào tìm đúng ô nhập theo cách người dùng?",
+      "options": [
+        {
+          "id": "a",
+          "text": "page.getByTitle(\"Email\") dựa vào thuộc tính chú thích của trang"
+        },
+        {
+          "id": "b",
+          "text": "page.getByPlaceholder(\"for\") dựa vào thuộc tính for của nhãn"
+        },
+        {
+          "id": "c",
+          "text": "page.getByAltText(\"Email\") dựa vào văn bản thay thế của ảnh"
+        },
+        {
+          "id": "d",
+          "text": "page.getByLabel(\"Email\") dựa vào nhãn của ô nhập và thuộc tính for"
+        }
+      ],
+      "answer": [
+        "d"
+      ],
+      "explanation": "getByLabel dùng nhãn gắn với ô nhập. getByAltText dành cho ảnh, getByTitle cho thuộc tính title, getByPlaceholder cho chữ gợi ý trong ô nhập."
+    },
+    {
+      "id": "q3",
+      "type": "multi",
+      "prompt": "Những thuộc tính nào thường được dùng để định danh phần tử cho kiểm thử? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "href dùng để lưu nội dung chữ hiển thị trong các nút bấm"
+        },
+        {
+          "id": "b",
+          "text": "style dùng để chứa độ rộng và màu chữ của phần tử"
+        },
+        {
+          "id": "c",
+          "text": "aria-label dùng để mô tả phần tử cho công nghệ hỗ trợ"
+        },
+        {
+          "id": "d",
+          "text": "data-testid do nhóm phát triển thêm riêng cho kiểm thử"
+        }
+      ],
+      "answer": [
+        "c",
+        "d"
+      ],
+      "explanation": "data-testid và aria-* ổn định, gắn với mục đích rõ ràng. style chỉ là trình bày, href là địa chỉ liên kết."
+    },
+    {
+      "id": "q4",
+      "type": "single",
+      "prompt": "Phần tử nằm trong iframe không tìm được bằng locator thông thường vì sao?",
+      "options": [
+        {
+          "id": "a",
+          "text": "iframe làm mất toàn bộ thuộc tính của các phần tử bên trong"
+        },
+        {
+          "id": "b",
+          "text": "iframe chỉ chứa ảnh nên không có phần tử nào bên trong"
+        },
+        {
+          "id": "c",
+          "text": "iframe là một tài liệu riêng nên cần chỉ rõ khung chứa phần tử"
+        },
+        {
+          "id": "d",
+          "text": "iframe luôn bị trình duyệt chặn nên không thể thao tác được"
+        }
+      ],
+      "answer": [
+        "c"
+      ],
+      "explanation": "iframe nhúng một tài liệu độc lập. Dùng frameLocator để chỉ rõ khung rồi mới tìm phần tử bên trong."
+    },
+    {
+      "id": "q5",
+      "type": "multi",
+      "prompt": "Điều nào đúng về cây DOM? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Mỗi thẻ HTML tương ứng với một nút trong cây"
+        },
+        {
+          "id": "b",
+          "text": "Phần tử có thể có quan hệ cha, con và anh em"
+        },
+        {
+          "id": "c",
+          "text": "Phần tử con không thể chứa phần tử con khác bên trong"
+        },
+        {
+          "id": "d",
+          "text": "Cây DOM chỉ cho phép tối đa ba cấp lồng nhau"
+        }
+      ],
+      "answer": [
+        "a",
+        "b"
+      ],
+      "explanation": "DOM là cây các nút có quan hệ cha–con–anh em và không giới hạn độ sâu lồng nhau."
+    },
+    {
+      "id": "q6",
+      "type": "single",
+      "prompt": "Vì sao nên tránh locator dựa vào class sinh tự động như .css-1a2b3c?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Chúng thay đổi mỗi lần build nên test dễ vỡ bất ngờ"
+        },
+        {
+          "id": "b",
+          "text": "Chúng làm trang tải chậm hơn rất nhiều khi chạy test"
+        },
+        {
+          "id": "c",
+          "text": "Chúng bị trình duyệt chặn không cho Playwright đọc"
+        },
+        {
+          "id": "d",
+          "text": "Chúng chỉ tồn tại trong chế độ headless của trình duyệt"
+        }
+      ],
+      "answer": [
+        "a"
+      ],
+      "explanation": "Tên class sinh tự động đổi theo mỗi lần build, làm locator hỏng dù chức năng không đổi."
+    }
+  ]
+}

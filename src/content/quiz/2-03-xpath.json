@@ -1,0 +1,168 @@
+{
+  "questions": [
+    {
+      "id": "q1",
+      "type": "single",
+      "prompt": "Ưu điểm nổi bật của XPath so với CSS selector truyền thống là gì?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Không bị ảnh hưởng khi cấu trúc trang thay đổi"
+        },
+        {
+          "id": "b",
+          "text": "Luôn ngắn gọn và dễ đọc hơn mọi loại locator khác"
+        },
+        {
+          "id": "c",
+          "text": "Được trình duyệt xử lý nhanh hơn rõ rệt ở mọi trường hợp"
+        },
+        {
+          "id": "d",
+          "text": "Đi ngược lên phần tử cha và lọc được theo nội dung chữ"
+        }
+      ],
+      "answer": [
+        "d"
+      ],
+      "explanation": "XPath đi theo mọi hướng (kể cả lên cha) và dựa được vào chữ. Nhưng thường dài và dễ vỡ khi cấu trúc đổi."
+    },
+    {
+      "id": "q2",
+      "type": "single",
+      "prompt": "XPath nào chọn nút có chữ Đăng nhập kể cả khi thừa khoảng trắng hai đầu?",
+      "options": [
+        {
+          "id": "a",
+          "text": "//button[contains(@id,'Đăng nhập')] (tìm trong thuộc tính id)"
+        },
+        {
+          "id": "b",
+          "text": "//button[@name='Đăng nhập'] (dựa vào thuộc tính name)"
+        },
+        {
+          "id": "c",
+          "text": "//button[text()='Đăng nhập'] (khớp chính xác từng ký tự)"
+        },
+        {
+          "id": "d",
+          "text": "//button[normalize-space()='Đăng nhập'] (đã gọt khoảng trắng)"
+        }
+      ],
+      "answer": [
+        "d"
+      ],
+      "explanation": "normalize-space() cắt khoảng trắng thừa. text()= đòi khớp tuyệt đối nên hỏng khi thừa khoảng trắng."
+    },
+    {
+      "id": "q3",
+      "type": "multi",
+      "prompt": "XPath nào là tương đối và hợp lệ? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "//input[@type='email'] chọn mọi ô nhập kiểu email"
+        },
+        {
+          "id": "b",
+          "text": "/html/body/div[2]/button chọn nút nằm trong thân trang"
+        },
+        {
+          "id": "c",
+          "text": "/html/body/div[3]/form/input[1] chọn ô nhập đầu tiên"
+        },
+        {
+          "id": "d",
+          "text": "//td[text()='SALE10']/parent::tr chọn hàng chứa mã"
+        }
+      ],
+      "answer": [
+        "a",
+        "d"
+      ],
+      "explanation": "XPath tương đối bắt đầu bằng //. Hai đường dẫn bắt đầu từ /html là tuyệt đối, rất mong manh."
+    },
+    {
+      "id": "q4",
+      "type": "single",
+      "prompt": "Vì sao không nên dùng XPath tuyệt đối do DevTools Copy XPath sinh ra?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Nó tự động xoá phần tử khỏi cây DOM sau khi dùng"
+        },
+        {
+          "id": "b",
+          "text": "Nó gắn chặt với vị trí nên vỡ ngay khi cấu trúc trang đổi"
+        },
+        {
+          "id": "c",
+          "text": "Nó không được trình duyệt hiểu khi chạy trong Playwright"
+        },
+        {
+          "id": "d",
+          "text": "Nó chỉ dùng được một lần duy nhất cho mỗi phiên làm việc"
+        }
+      ],
+      "answer": [
+        "b"
+      ],
+      "explanation": "Đường dẫn tuyệt đối liệt kê toàn bộ cấu trúc từ gốc nên chỉ cần thêm một thẻ bao ngoài là hỏng."
+    },
+    {
+      "id": "q5",
+      "type": "multi",
+      "prompt": "Khi nào XPath hợp lý hơn các locator khác? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Phần tử đã có role và tên truy cập đầy đủ, rõ ràng"
+        },
+        {
+          "id": "b",
+          "text": "Cần đi từ ô nhãn sang ô dữ liệu nằm cạnh trong bảng"
+        },
+        {
+          "id": "c",
+          "text": "Cần chọn cả hàng của bảng dựa trên chữ trong một ô"
+        },
+        {
+          "id": "d",
+          "text": "Phần tử có data-testid đã được nhóm phát triển thêm sẵn"
+        }
+      ],
+      "answer": [
+        "b",
+        "c"
+      ],
+      "explanation": "XPath mạnh ở việc điều hướng quan hệ cấu trúc trong bảng. Khi đã có role hoặc testid thì dùng chúng."
+    },
+    {
+      "id": "q6",
+      "type": "single",
+      "prompt": "Trong Playwright, cách nào dùng XPath đúng cú pháp?",
+      "options": [
+        {
+          "id": "a",
+          "text": "page.xpath(\"//td[text()='SALE10']\") gọi trực tiếp từ đối tượng page"
+        },
+        {
+          "id": "b",
+          "text": "page.getByRole(\"//td[text()='SALE10']\") truyền XPath làm vai trò"
+        },
+        {
+          "id": "c",
+          "text": "page.locator(\"xpath=//td[text()='SALE10']\") với tiền tố xpath="
+        },
+        {
+          "id": "d",
+          "text": "page.getByXPath(\"//td[text()='SALE10']\") với hàm riêng cho XPath"
+        }
+      ],
+      "answer": [
+        "c"
+      ],
+      "explanation": "Playwright nhận XPath qua page.locator với tiền tố xpath= (hoặc chuỗi bắt đầu bằng //). Không có hàm getByXPath hay page.xpath."
+    }
+  ]
+}

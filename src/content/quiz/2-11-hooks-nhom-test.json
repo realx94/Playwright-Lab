@@ -1,0 +1,168 @@
+{
+  "questions": [
+    {
+      "id": "q1",
+      "type": "single",
+      "prompt": "Nên làm gì để mỗi test bắt đầu từ trạng thái dữ liệu sạch?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Chạy các test theo thứ tự cố định để dữ liệu nối tiếp"
+        },
+        {
+          "id": "b",
+          "text": "Đặt bước reset dữ liệu trong beforeEach của nhóm test"
+        },
+        {
+          "id": "c",
+          "text": "Để test sau tự dọn dữ liệu do test trước để lại"
+        },
+        {
+          "id": "d",
+          "text": "Đặt bước reset trong afterAll để dọn một lần cuối cùng"
+        }
+      ],
+      "answer": [
+        "b"
+      ],
+      "explanation": "beforeEach đảm bảo mỗi test độc lập. Phụ thuộc thứ tự hay dọn muộn làm test dễ hỏng dây chuyền."
+    },
+    {
+      "id": "q2",
+      "type": "single",
+      "prompt": "beforeAll khác beforeEach ở điểm nào?",
+      "options": [
+        {
+          "id": "a",
+          "text": "beforeAll chỉ dùng cho test song song, beforeEach cho tuần tự"
+        },
+        {
+          "id": "b",
+          "text": "beforeAll chạy một lần cho nhóm, beforeEach chạy trước mỗi test"
+        },
+        {
+          "id": "c",
+          "text": "beforeAll chạy sau cùng, beforeEach chạy trước tất cả test"
+        },
+        {
+          "id": "d",
+          "text": "Hai hook giống nhau và chỉ khác nhau về tên gọi"
+        }
+      ],
+      "answer": [
+        "b"
+      ],
+      "explanation": "beforeAll chạy một lần cho cả nhóm; beforeEach chạy lặp lại trước từng test."
+    },
+    {
+      "id": "q3",
+      "type": "multi",
+      "prompt": "Điều nào đúng về chạy song song? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Test trong cùng một file mặc định chạy tuần tự"
+        },
+        {
+          "id": "b",
+          "text": "Mặc định mọi test trong dự án chạy lần lượt từng cái"
+        },
+        {
+          "id": "c",
+          "text": "Mặc định các file test chạy song song với nhau"
+        },
+        {
+          "id": "d",
+          "text": "Test song song luôn dùng chung một context và một page"
+        }
+      ],
+      "answer": [
+        "a",
+        "c"
+      ],
+      "explanation": "Mặc định song song theo file; trong một file chạy tuần tự (có thể bật fullyParallel). Mỗi test có context riêng."
+    },
+    {
+      "id": "q4",
+      "type": "single",
+      "prompt": "test.step giúp ích gì cho báo cáo?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Chia test thành các bước có tên, dễ biết lỗi ở bước nào"
+        },
+        {
+          "id": "b",
+          "text": "Tự động chụp ảnh màn hình sau mỗi dòng code của test"
+        },
+        {
+          "id": "c",
+          "text": "Ẩn toàn bộ chi tiết của test để báo cáo gọn hơn"
+        },
+        {
+          "id": "d",
+          "text": "Làm cho các bước trong test chạy song song với nhau"
+        }
+      ],
+      "answer": [
+        "a"
+      ],
+      "explanation": "test.step đặt tên cho từng đoạn nên báo cáo và trace hiển thị theo bước dễ đọc."
+    },
+    {
+      "id": "q5",
+      "type": "multi",
+      "prompt": "Nguyên tắc nào giúp test độc lập? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Không dựa vào kết quả hay thứ tự của test khác"
+        },
+        {
+          "id": "b",
+          "text": "Mọi test chia sẻ chung một tài khoản và một giỏ hàng"
+        },
+        {
+          "id": "c",
+          "text": "Mỗi test tự chuẩn bị và tự dọn dữ liệu mà nó cần"
+        },
+        {
+          "id": "d",
+          "text": "Test sau dùng lại dữ liệu mà test trước vừa tạo ra"
+        }
+      ],
+      "answer": [
+        "a",
+        "c"
+      ],
+      "explanation": "Độc lập nghĩa là test chạy riêng lẻ hay song song đều cho cùng kết quả."
+    },
+    {
+      "id": "q6",
+      "type": "single",
+      "prompt": "Dùng chế độ serial cho nhóm test khi nào là hợp lý?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Khi cần bỏ qua toàn bộ các hook của nhóm test"
+        },
+        {
+          "id": "b",
+          "text": "Khi muốn bộ test chạy nhanh hơn trên máy tính nhiều nhân"
+        },
+        {
+          "id": "c",
+          "text": "Khi muốn mỗi test chạy trong một trình duyệt khác nhau"
+        },
+        {
+          "id": "d",
+          "text": "Khi các bước phụ thuộc nhau thật sự và không thể tách riêng"
+        }
+      ],
+      "answer": [
+        "d"
+      ],
+      "explanation": "Serial buộc chạy tuần tự và dừng khi một bước lỗi, chỉ nên dùng khi các bước thật sự phụ thuộc nhau."
+    }
+  ]
+}

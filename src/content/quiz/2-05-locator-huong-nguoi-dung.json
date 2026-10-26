@@ -1,0 +1,168 @@
+{
+  "questions": [
+    {
+      "id": "q1",
+      "type": "single",
+      "prompt": "Thứ tự ưu tiên locator nào được Playwright khuyến nghị?",
+      "options": [
+        {
+          "id": "a",
+          "text": "getByRole trước, rồi getByLabel, sau cùng mới tới CSS"
+        },
+        {
+          "id": "b",
+          "text": "CSS selector trước, rồi XPath, sau cùng mới tới getByRole"
+        },
+        {
+          "id": "c",
+          "text": "XPath trước, rồi getByText, sau cùng mới tới getByLabel"
+        },
+        {
+          "id": "d",
+          "text": "getByTestId trước, rồi CSS, sau cùng mới tới getByRole"
+        }
+      ],
+      "answer": [
+        "a"
+      ],
+      "explanation": "Ưu tiên locator theo cách người dùng nhận biết (role, label), CSS/XPath là phương án cuối."
+    },
+    {
+      "id": "q2",
+      "type": "single",
+      "prompt": "getByText(\"Đăng nhập\") báo lỗi strict mode vì lý do gì?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Phần tử đó đang bị ẩn khỏi vùng nhìn thấy của trang"
+        },
+        {
+          "id": "b",
+          "text": "Có nhiều hơn một phần tử khớp, ví dụ tiêu đề và nút"
+        },
+        {
+          "id": "c",
+          "text": "Playwright chỉ cho dùng getByText với số, không dùng chữ"
+        },
+        {
+          "id": "d",
+          "text": "Chữ Đăng nhập có dấu nên locator không đọc được"
+        }
+      ],
+      "answer": [
+        "b"
+      ],
+      "explanation": "Strict mode báo lỗi khi locator khớp nhiều phần tử. Hãy thu hẹp bằng getByRole kèm name hoặc exact: true."
+    },
+    {
+      "id": "q3",
+      "type": "multi",
+      "prompt": "Locator nào chọn đúng phần tử mà người dùng nhìn thấy? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "getByRole(\"textbox\", { name: \"Đăng nhập\" }) cho nút bấm"
+        },
+        {
+          "id": "b",
+          "text": "getByLabel(\"Email\") cho ô nhập có nhãn Email"
+        },
+        {
+          "id": "c",
+          "text": "getByRole(\"button\", { name: \"Đăng nhập\" }) cho nút bấm"
+        },
+        {
+          "id": "d",
+          "text": "getByLabel(\"Đăng nhập\") cho nút gửi biểu mẫu"
+        }
+      ],
+      "answer": [
+        "b",
+        "c"
+      ],
+      "explanation": "Role phải đúng loại phần tử: nút là button, không phải textbox. getByLabel dành cho ô nhập có nhãn, không dành cho nút."
+    },
+    {
+      "id": "q4",
+      "type": "single",
+      "prompt": "Radio của shadcn có thẻ input ẩn đi kèm. Locator nào chọn đúng phần tử nhìn thấy được?",
+      "options": [
+        {
+          "id": "a",
+          "text": "getByLabel(\"Nam\") vì nhãn chỉ gắn với đúng một phần tử"
+        },
+        {
+          "id": "b",
+          "text": "getByText(\"Nam\") vì chữ chỉ xuất hiện đúng một lần"
+        },
+        {
+          "id": "c",
+          "text": "getByRole(\"radio\", { name: \"Nam\" }) theo vai trò và tên"
+        },
+        {
+          "id": "d",
+          "text": "getByTitle(\"Nam\") vì mọi radio đều có thuộc tính title"
+        }
+      ],
+      "answer": [
+        "c"
+      ],
+      "explanation": "getByLabel khớp cả input ẩn lẫn phần tử hiển thị nên vi phạm strict mode. getByRole chọn đúng phần tử có vai trò radio."
+    },
+    {
+      "id": "q5",
+      "type": "multi",
+      "prompt": "Lợi ích của locator hướng người dùng là gì? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Luôn chạy nhanh hơn locator CSS ở mọi tình huống"
+        },
+        {
+          "id": "b",
+          "text": "Không cần phần tử có tên hay vai trò rõ ràng"
+        },
+        {
+          "id": "c",
+          "text": "Gián tiếp kiểm tra khả năng truy cập của trang"
+        },
+        {
+          "id": "d",
+          "text": "Bền hơn khi cách viết code của giao diện thay đổi"
+        }
+      ],
+      "answer": [
+        "c",
+        "d"
+      ],
+      "explanation": "Locator theo role/label bền và buộc giao diện có tên truy cập được. Chúng cần phần tử có role và tên rõ ràng, tốc độ không khác biệt."
+    },
+    {
+      "id": "q6",
+      "type": "single",
+      "prompt": "Khi nào getByTestId là lựa chọn hợp lý?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Khi phần tử không có role hoặc nhãn rõ ràng để dùng"
+        },
+        {
+          "id": "b",
+          "text": "Khi cần tìm phần tử bằng vị trí trong danh sách"
+        },
+        {
+          "id": "c",
+          "text": "Khi muốn tránh phải thêm thuộc tính nào vào mã nguồn"
+        },
+        {
+          "id": "d",
+          "text": "Khi muốn kiểm tra văn bản hiển thị đúng ngôn ngữ"
+        }
+      ],
+      "answer": [
+        "a"
+      ],
+      "explanation": "testid là lối thoát cho phần tử không có role/nhãn rõ. Nó không kiểm tra chữ hiển thị và cần được thêm vào mã nguồn."
+    }
+  ]
+}

@@ -1,0 +1,168 @@
+{
+  "questions": [
+    {
+      "id": "q1",
+      "type": "single",
+      "prompt": "Selector nào ổn định nhất khi giao diện được thiết kế lại?",
+      "options": [
+        {
+          "id": "a",
+          "text": "[data-testid=\"dashboard\"] vì gắn với mục đích kiểm thử"
+        },
+        {
+          "id": "b",
+          "text": "div > div:nth-child(3) vì chỉ rõ vị trí cụ thể của nó"
+        },
+        {
+          "id": "c",
+          "text": ".css-1a2b3c vì có tên class riêng biệt, không trùng ai"
+        },
+        {
+          "id": "d",
+          "text": "body div div div button vì mô tả đầy đủ đường đi tới nút"
+        }
+      ],
+      "answer": [
+        "a"
+      ],
+      "explanation": "Thuộc tính kiểm thử gắn với ý nghĩa nên bền. Selector theo vị trí hoặc class sinh tự động đều dễ vỡ."
+    },
+    {
+      "id": "q2",
+      "type": "single",
+      "prompt": "Selector input[type=\"email\"] chọn những phần tử nào?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Mọi phần tử con nằm bên trong một thẻ input có tên email"
+        },
+        {
+          "id": "b",
+          "text": "Mọi thẻ có chứa chữ email ở trong nội dung văn bản hiển thị"
+        },
+        {
+          "id": "c",
+          "text": "Thẻ input đầu tiên của trang bất kể loại và giá trị type"
+        },
+        {
+          "id": "d",
+          "text": "Mọi thẻ input có thuộc tính type đúng bằng giá trị email"
+        }
+      ],
+      "answer": [
+        "d"
+      ],
+      "explanation": "Dạng tag[attr=\"giá trị\"] lọc theo thuộc tính, không liên quan đến nội dung chữ hay vị trí."
+    },
+    {
+      "id": "q3",
+      "type": "multi",
+      "prompt": "Những cách kết hợp selector nào đúng ý nghĩa? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "a ~ b chọn b là phần tử cha trực tiếp của phần tử a"
+        },
+        {
+          "id": "b",
+          "text": "a > b chọn các phần tử b là con trực tiếp của a"
+        },
+        {
+          "id": "c",
+          "text": "a + b chọn phần tử b là anh em đứng ngay sau a"
+        },
+        {
+          "id": "d",
+          "text": "a b chọn b chỉ khi b là con trực tiếp của phần tử a"
+        }
+      ],
+      "answer": [
+        "b",
+        "c"
+      ],
+      "explanation": "'>' là con trực tiếp, '+' là anh em kế tiếp. 'a b' là hậu duệ ở mọi cấp, '~' là các anh em đứng sau."
+    },
+    {
+      "id": "q4",
+      "type": "single",
+      "prompt": "Nhược điểm chính của :nth-child khi dùng làm locator là gì?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Phụ thuộc vị trí nên vỡ khi thứ tự phần tử thay đổi"
+        },
+        {
+          "id": "b",
+          "text": "Không thể dùng cùng lúc với bất kỳ selector nào khác"
+        },
+        {
+          "id": "c",
+          "text": "Chỉ hoạt động trên trình duyệt Chrome mà không chạy ở Firefox"
+        },
+        {
+          "id": "d",
+          "text": "Chạy chậm hơn gấp nhiều lần so với các selector khác"
+        }
+      ],
+      "answer": [
+        "a"
+      ],
+      "explanation": "Locator theo vị trí hỏng ngay khi thêm hoặc đổi thứ tự phần tử, dù chức năng vẫn đúng."
+    },
+    {
+      "id": "q5",
+      "type": "multi",
+      "prompt": "Cách nào dùng để thử nhanh một selector? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Ô tìm kiếm Ctrl+F trong tab Elements của DevTools"
+        },
+        {
+          "id": "b",
+          "text": "Chạy git status ở thư mục gốc của dự án"
+        },
+        {
+          "id": "c",
+          "text": "Gõ selector vào thanh địa chỉ của trình duyệt"
+        },
+        {
+          "id": "d",
+          "text": "page.locator(\"css\").count() trong một đoạn test thử"
+        }
+      ],
+      "answer": [
+        "a",
+        "d"
+      ],
+      "explanation": "DevTools cho đếm số phần tử khớp ngay; count() trong test cũng cho kết quả tương tự. Thanh địa chỉ và git không liên quan."
+    },
+    {
+      "id": "q6",
+      "type": "single",
+      "prompt": "Khi nào CSS selector là lựa chọn hợp lý trong Playwright?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Khi muốn kiểm tra luôn khả năng truy cập của phần tử đó"
+        },
+        {
+          "id": "b",
+          "text": "Khi cần locator ngắn nhất và không quan tâm độ ổn định"
+        },
+        {
+          "id": "c",
+          "text": "Khi phần tử không có role, label hay test id phù hợp để dùng"
+        },
+        {
+          "id": "d",
+          "text": "Khi mọi phần tử trong trang đều có role và tên rõ ràng"
+        }
+      ],
+      "answer": [
+        "c"
+      ],
+      "explanation": "CSS là phương án dự phòng khi không có locator hướng người dùng. Nó không kiểm tra accessibility."
+    }
+  ]
+}

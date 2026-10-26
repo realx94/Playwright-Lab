@@ -1,0 +1,168 @@
+{
+  "questions": [
+    {
+      "id": "q1",
+      "type": "single",
+      "prompt": "Cần xem lại từng bước của một test đã chạy xong trên CI. Công cụ nào phù hợp nhất?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Playwright Inspector, vì nó chạy lại test trực tiếp ở CI"
+        },
+        {
+          "id": "b",
+          "text": "Trace Viewer, mở file trace.zip của lần chạy đó"
+        },
+        {
+          "id": "c",
+          "text": "Codegen, vì nó ghi lại thao tác của bạn khi đang chạy"
+        },
+        {
+          "id": "d",
+          "text": "Báo cáo JUnit, vì nó chứa ảnh chụp từng bước"
+        }
+      ],
+      "answer": [
+        "b"
+      ],
+      "explanation": "Trace chứa DOM snapshot, mạng, console của lần chạy đã qua. Inspector dành cho gỡ lỗi trực tiếp, codegen dùng để ghi thao tác."
+    },
+    {
+      "id": "q2",
+      "type": "single",
+      "prompt": "Muốn ghi thao tác thủ công để sinh code nháp, nên dùng gì?",
+      "options": [
+        {
+          "id": "a",
+          "text": "npx playwright install kèm địa chỉ trang cần ghi"
+        },
+        {
+          "id": "b",
+          "text": "npx playwright test --debug kèm địa chỉ trang cần ghi"
+        },
+        {
+          "id": "c",
+          "text": "npx playwright show-report kèm địa chỉ trang cần ghi"
+        },
+        {
+          "id": "d",
+          "text": "npx playwright codegen kèm địa chỉ trang cần ghi"
+        }
+      ],
+      "answer": [
+        "d"
+      ],
+      "explanation": "codegen ghi lại tương tác thành code. show-report mở báo cáo, --debug mở Inspector, install tải trình duyệt."
+    },
+    {
+      "id": "q3",
+      "type": "multi",
+      "prompt": "Bước nào nên làm khi điều tra một test đỏ? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Kiểm tra locator có khớp nhiều hơn một phần tử không"
+        },
+        {
+          "id": "b",
+          "text": "Chạy lại nhiều lần cho tới khi test chuyển sang xanh"
+        },
+        {
+          "id": "c",
+          "text": "Tăng timeout toàn cục lên thật cao rồi chạy lại ngay"
+        },
+        {
+          "id": "d",
+          "text": "Đọc thông báo lỗi và xem trang trông thế nào ở bước đó"
+        }
+      ],
+      "answer": [
+        "a",
+        "d"
+      ],
+      "explanation": "Điều tra nguyên nhân thật trước khi sửa. Tăng timeout hay chạy lại chỉ che lỗi."
+    },
+    {
+      "id": "q4",
+      "type": "single",
+      "prompt": "Tuỳ chọn trace nào cân bằng giữa thông tin và chi phí trên CI?",
+      "options": [
+        {
+          "id": "a",
+          "text": "off, tắt hoàn toàn để test chạy nhanh nhất có thể"
+        },
+        {
+          "id": "b",
+          "text": "retain-on-success, chỉ giữ lại trace của test thành công"
+        },
+        {
+          "id": "c",
+          "text": "on-first-retry, chỉ ghi trace khi test được chạy lại"
+        },
+        {
+          "id": "d",
+          "text": "on, ghi trace cho mọi test kể cả những test đã xanh"
+        }
+      ],
+      "answer": [
+        "c"
+      ],
+      "explanation": "on-first-retry chỉ ghi trace khi test fail và được thử lại, tiết kiệm dung lượng mà vẫn có bằng chứng."
+    },
+    {
+      "id": "q5",
+      "type": "multi",
+      "prompt": "page.pause() có những đặc điểm nào? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Chạy tiếp ngay mà không dừng test lại ở dòng đó"
+        },
+        {
+          "id": "b",
+          "text": "Hữu ích khi gỡ lỗi cục bộ và nên xoá trước khi commit"
+        },
+        {
+          "id": "c",
+          "text": "Tự động ghi lại toàn bộ video của test thành tệp"
+        },
+        {
+          "id": "d",
+          "text": "Mở Playwright Inspector tại đúng dòng code đó"
+        }
+      ],
+      "answer": [
+        "b",
+        "d"
+      ],
+      "explanation": "pause dừng test và mở Inspector để gỡ lỗi. Nó không ghi video, và nên xoá khỏi mã trước khi commit."
+    },
+    {
+      "id": "q6",
+      "type": "single",
+      "prompt": "Codegen sinh ra locator dài. Việc nên làm tiếp theo là gì?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Xoá locator và dùng toạ độ chuột để thao tác thay thế"
+        },
+        {
+          "id": "b",
+          "text": "Chuyển về getByRole hoặc getByLabel cho ổn định hơn"
+        },
+        {
+          "id": "c",
+          "text": "Giữ nguyên vì locator của codegen luôn là tốt nhất"
+        },
+        {
+          "id": "d",
+          "text": "Thêm tiền tố xpath= vào mọi locator cho chắc chắn"
+        }
+      ],
+      "answer": [
+        "b"
+      ],
+      "explanation": "Codegen cho code nháp; bạn cần tinh chỉnh locator về dạng hướng người dùng."
+    }
+  ]
+}

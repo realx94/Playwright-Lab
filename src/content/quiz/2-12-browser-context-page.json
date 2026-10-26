@@ -1,0 +1,168 @@
+{
+  "questions": [
+    {
+      "id": "q1",
+      "type": "single",
+      "prompt": "Mối quan hệ nào giữa browser, context và page là đúng?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Browser, context và page là ba tên gọi của cùng một thứ"
+        },
+        {
+          "id": "b",
+          "text": "Một browser có nhiều context, mỗi context có nhiều page"
+        },
+        {
+          "id": "c",
+          "text": "Một context có nhiều browser và mỗi browser có một page"
+        },
+        {
+          "id": "d",
+          "text": "Một page có nhiều browser và mỗi browser có nhiều context"
+        }
+      ],
+      "answer": [
+        "b"
+      ],
+      "explanation": "Phân cấp: browser → context → page. Context là hồ sơ độc lập, page là tab."
+    },
+    {
+      "id": "q2",
+      "type": "single",
+      "prompt": "Muốn mô phỏng hai người dùng đăng nhập khác nhau cùng lúc, nên làm gì?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Tạo hai context riêng và mở một page trong mỗi context"
+        },
+        {
+          "id": "b",
+          "text": "Mở hai tab trong cùng một context rồi đăng nhập hai lần"
+        },
+        {
+          "id": "c",
+          "text": "Tạo hai browser và dùng chung một context giữa hai browser"
+        },
+        {
+          "id": "d",
+          "text": "Chạy test hai lần liên tiếp bằng cùng một trình duyệt"
+        }
+      ],
+      "answer": [
+        "a"
+      ],
+      "explanation": "Hai tab trong cùng context chia sẻ cookie và localStorage nên không thể là hai người dùng khác nhau."
+    },
+    {
+      "id": "q3",
+      "type": "multi",
+      "prompt": "Điều nào đúng về storageState? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Giúp bỏ qua bước đăng nhập lặp lại trong nhiều test"
+        },
+        {
+          "id": "b",
+          "text": "Tự động mở khoá mọi tài khoản đã bị khoá trước đó"
+        },
+        {
+          "id": "c",
+          "text": "Nên được commit lên Git cùng với mã nguồn của dự án"
+        },
+        {
+          "id": "d",
+          "text": "Lưu cookie và localStorage để tái sử dụng phiên đăng nhập"
+        }
+      ],
+      "answer": [
+        "a",
+        "d"
+      ],
+      "explanation": "storageState giúp đăng nhập một lần, dùng nhiều lần. File chứa cookie nên không được commit."
+    },
+    {
+      "id": "q4",
+      "type": "single",
+      "prompt": "Vì sao mỗi test thường được chạy trong context mới?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Để cô lập cookie và dữ liệu nên test không ảnh hưởng nhau"
+        },
+        {
+          "id": "b",
+          "text": "Để tăng dung lượng bộ nhớ có sẵn cho từng test chạy"
+        },
+        {
+          "id": "c",
+          "text": "Để Playwright có thể bỏ qua các bước chờ đợi tự động"
+        },
+        {
+          "id": "d",
+          "text": "Để mỗi test dùng một trình duyệt có phiên bản khác nhau"
+        }
+      ],
+      "answer": [
+        "a"
+      ],
+      "explanation": "Context mới nghĩa là trạng thái sạch, đảm bảo test độc lập và chạy song song an toàn."
+    },
+    {
+      "id": "q5",
+      "type": "multi",
+      "prompt": "Việc nào nên làm với file .auth/user.json? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Commit lên GitHub để đồng đội dùng chung phiên của bạn"
+        },
+        {
+          "id": "b",
+          "text": "Gửi qua tin nhắn để người khác chạy test thay bạn"
+        },
+        {
+          "id": "c",
+          "text": "Tạo lại khi phiên đăng nhập hết hạn hoặc bị thay đổi"
+        },
+        {
+          "id": "d",
+          "text": "Thêm vào .gitignore vì nó chứa cookie của phiên đăng nhập"
+        }
+      ],
+      "answer": [
+        "c",
+        "d"
+      ],
+      "explanation": "File chứa thông tin phiên là dữ liệu nhạy cảm: không commit, không chia sẻ, tạo lại khi cần."
+    },
+    {
+      "id": "q6",
+      "type": "single",
+      "prompt": "Test tự mở context bằng browser.newContext() cần làm gì khi xong?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Gọi pause() để giữ phiên đăng nhập cho lần chạy sau"
+        },
+        {
+          "id": "b",
+          "text": "Gọi close() để giải phóng tài nguyên của context đó"
+        },
+        {
+          "id": "c",
+          "text": "Gọi reload() để làm mới lại trang trước khi kết thúc"
+        },
+        {
+          "id": "d",
+          "text": "Không cần làm gì vì Playwright luôn tự dọn mọi context"
+        }
+      ],
+      "answer": [
+        "b"
+      ],
+      "explanation": "Context do bạn tự tạo phải tự đóng; chỉ context của fixture mới được Playwright tự dọn."
+    }
+  ]
+}

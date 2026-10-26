@@ -1,0 +1,168 @@
+{
+  "questions": [
+    {
+      "id": "q1",
+      "type": "single",
+      "prompt": "Locator khớp ba phần tử và bạn gọi click(). Playwright xử lý thế nào?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Báo lỗi strict mode vì không biết cần bấm phần tử nào"
+        },
+        {
+          "id": "b",
+          "text": "Bấm vào phần tử đầu tiên rồi bỏ qua hai phần tử còn lại"
+        },
+        {
+          "id": "c",
+          "text": "Bấm lần lượt cả ba phần tử theo thứ tự xuất hiện"
+        },
+        {
+          "id": "d",
+          "text": "Chọn ngẫu nhiên một phần tử trong ba phần tử khớp"
+        }
+      ],
+      "answer": [
+        "a"
+      ],
+      "explanation": "Strict mode buộc locator phải xác định đúng một phần tử khi thao tác, tránh thao tác nhầm chỗ."
+    },
+    {
+      "id": "q2",
+      "type": "single",
+      "prompt": "Cách thu hẹp phạm vi tìm nút trong đúng thẻ sản phẩm là gì?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Chaining: card.getByRole(\"button\", { name: \"Thêm vào giỏ\" })"
+        },
+        {
+          "id": "b",
+          "text": "Thêm waitForTimeout để nút cần tìm tự động hiện ra đúng chỗ"
+        },
+        {
+          "id": "c",
+          "text": "Dùng XPath tuyệt đối dài dựa trên đường dẫn từ thẻ html"
+        },
+        {
+          "id": "d",
+          "text": "Dùng nth(0) và hy vọng thứ tự hiển thị sẽ không thay đổi"
+        }
+      ],
+      "answer": [
+        "a"
+      ],
+      "explanation": "Chaining tìm trong phạm vi một locator cha nên chính xác và bền hơn so với dựa vào vị trí."
+    },
+    {
+      "id": "q3",
+      "type": "multi",
+      "prompt": "Điều nào đúng về filter? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "filter xoá những phần tử không khớp khỏi trang web"
+        },
+        {
+          "id": "b",
+          "text": "filter chỉ dùng được cho các phần tử là thẻ input"
+        },
+        {
+          "id": "c",
+          "text": "filter({ hasText }) lọc theo nội dung chữ bên trong"
+        },
+        {
+          "id": "d",
+          "text": "filter({ has }) lọc theo locator con nằm bên trong"
+        }
+      ],
+      "answer": [
+        "c",
+        "d"
+      ],
+      "explanation": "filter thu hẹp tập locator theo chữ hoặc theo phần tử con, không áp dụng riêng cho input và không sửa DOM."
+    },
+    {
+      "id": "q4",
+      "type": "single",
+      "prompt": "Vì sao nên dùng expect(locator).toHaveCount(3) thay vì expect(await locator.count()).toBe(3)?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Vì toHaveCount tự thử lại cho tới khi số lượng khớp"
+        },
+        {
+          "id": "b",
+          "text": "Vì count() chỉ đếm được các phần tử đang bị ẩn đi"
+        },
+        {
+          "id": "c",
+          "text": "Vì count() không trả về số nguyên trong Playwright"
+        },
+        {
+          "id": "d",
+          "text": "Vì toHaveCount chạy nhanh hơn nhờ bỏ qua việc chờ"
+        }
+      ],
+      "answer": [
+        "a"
+      ],
+      "explanation": "count() chỉ đếm tức thời nên có thể sai khi danh sách chưa cập nhật; toHaveCount tự thử lại."
+    },
+    {
+      "id": "q5",
+      "type": "multi",
+      "prompt": "Khi nào dùng nth() là hợp lý? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Khi muốn tránh phải đặt tên hoặc thêm thuộc tính cho phần tử đó"
+        },
+        {
+          "id": "b",
+          "text": "Khi cần locator ổn định dù thứ tự phần tử có thay đổi"
+        },
+        {
+          "id": "c",
+          "text": "Khi thứ tự chính là điều cần kiểm tra, như mục đầu tiên"
+        },
+        {
+          "id": "d",
+          "text": "Khi cần kiểm tra đúng mục thứ hai của danh sách"
+        }
+      ],
+      "answer": [
+        "c",
+        "d"
+      ],
+      "explanation": "nth chỉ hợp lý khi vị trí là một phần của điều được kiểm tra. Nó mong manh nếu thứ tự có thể đổi."
+    },
+    {
+      "id": "q6",
+      "type": "single",
+      "prompt": "page.getByRole(\"listitem\").filter({ hasText: \"Chuột\" }) trả về gì?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Mọi phần tử của trang có chứa chữ Chuột bất kể loại"
+        },
+        {
+          "id": "b",
+          "text": "Các mục danh sách có chứa chữ Chuột trong nội dung"
+        },
+        {
+          "id": "c",
+          "text": "Số lượng mục danh sách có chứa chữ Chuột trong đó"
+        },
+        {
+          "id": "d",
+          "text": "Chỉ mục danh sách đầu tiên trên toàn bộ trang web"
+        }
+      ],
+      "answer": [
+        "b"
+      ],
+      "explanation": "Kết quả vẫn là locator của các listitem thoả điều kiện; muốn lấy số lượng phải dùng toHaveCount hoặc count()."
+    }
+  ]
+}

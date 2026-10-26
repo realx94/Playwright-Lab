@@ -1,0 +1,168 @@
+{
+  "questions": [
+    {
+      "id": "q1",
+      "type": "single",
+      "prompt": "Cấu hình video nào hợp lý cho CI để tiết kiệm dung lượng?",
+      "options": [
+        {
+          "id": "a",
+          "text": "on-success, chỉ giữ video của những test đã xanh"
+        },
+        {
+          "id": "b",
+          "text": "retain-on-failure, chỉ giữ video của test bị lỗi"
+        },
+        {
+          "id": "c",
+          "text": "on, quay và giữ video của mọi test được chạy"
+        },
+        {
+          "id": "d",
+          "text": "off, không quay video và cũng không có trace"
+        }
+      ],
+      "answer": [
+        "b"
+      ],
+      "explanation": "retain-on-failure giữ bằng chứng cho test lỗi mà không tốn dung lượng cho test xanh."
+    },
+    {
+      "id": "q2",
+      "type": "single",
+      "prompt": "Cách nào để dùng nhiều reporter trong cùng một cấu hình?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Tạo nhiều file playwright.config.ts cho từng loại báo cáo"
+        },
+        {
+          "id": "b",
+          "text": "Chạy test nhiều lần, mỗi lần dùng một reporter khác"
+        },
+        {
+          "id": "c",
+          "text": "Khai báo reporter là mảng gồm nhiều cặp [tên, tuỳ chọn]"
+        },
+        {
+          "id": "d",
+          "text": "Không thể dùng nhiều hơn một reporter trong một lần chạy"
+        }
+      ],
+      "answer": [
+        "c"
+      ],
+      "explanation": "reporter nhận mảng nên có thể kết hợp list, html, junit trong một lần chạy."
+    },
+    {
+      "id": "q3",
+      "type": "multi",
+      "prompt": "Bằng chứng nào nên đính kèm trong bug report? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Các bước tái hiện cùng dữ liệu đã nhập vào"
+        },
+        {
+          "id": "b",
+          "text": "Mật khẩu thật của tài khoản đang dùng để test"
+        },
+        {
+          "id": "c",
+          "text": "Toàn bộ thư mục node_modules trong dự án đang dùng"
+        },
+        {
+          "id": "d",
+          "text": "Ảnh chụp thể hiện đúng thời điểm lỗi xảy ra"
+        }
+      ],
+      "answer": [
+        "a",
+        "d"
+      ],
+      "explanation": "Ảnh và các bước tái hiện giúp dev hiểu nhanh. Không đính kèm file không liên quan hay thông tin nhạy cảm."
+    },
+    {
+      "id": "q4",
+      "type": "single",
+      "prompt": "Phương thức nào chụp cả trang dài, kể cả phần phải cuộn?",
+      "options": [
+        {
+          "id": "a",
+          "text": "page.screenshot({ scroll: true }) chụp toàn trang"
+        },
+        {
+          "id": "b",
+          "text": "page.screenshot({ fullPage: true }) chụp toàn trang"
+        },
+        {
+          "id": "c",
+          "text": "locator.screenshot() chụp toàn bộ trang web đang mở"
+        },
+        {
+          "id": "d",
+          "text": "page.capture({ fullPage: true }) chụp toàn trang"
+        }
+      ],
+      "answer": [
+        "b"
+      ],
+      "explanation": "fullPage: true chụp toàn bộ chiều dài trang. locator.screenshot chỉ chụp một phần tử."
+    },
+    {
+      "id": "q5",
+      "type": "multi",
+      "prompt": "Điều nào đúng về so sánh ảnh (visual testing)? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Ảnh chuẩn (baseline) được lưu lại để so với lần chạy sau"
+        },
+        {
+          "id": "b",
+          "text": "Cần cố định viewport và font để kết quả ổn định"
+        },
+        {
+          "id": "c",
+          "text": "Luôn cho kết quả giống nhau trên mọi hệ điều hành"
+        },
+        {
+          "id": "d",
+          "text": "Không bị ảnh hưởng bởi nội dung động như ngày giờ"
+        }
+      ],
+      "answer": [
+        "a",
+        "b"
+      ],
+      "explanation": "Visual test nhạy với môi trường và nội dung động; cần cố định các yếu tố này và lưu baseline."
+    },
+    {
+      "id": "q6",
+      "type": "single",
+      "prompt": "testInfo.attach() dùng để làm gì?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Gửi báo cáo kết quả qua email cho người quản lý"
+        },
+        {
+          "id": "b",
+          "text": "Gắn một test vào một test khác làm điều kiện chạy"
+        },
+        {
+          "id": "c",
+          "text": "Đính kèm trình duyệt vào test để chạy song song"
+        },
+        {
+          "id": "d",
+          "text": "Đính kèm ảnh hoặc dữ liệu vào báo cáo của test đó"
+        }
+      ],
+      "answer": [
+        "d"
+      ],
+      "explanation": "attach thêm tệp hoặc dữ liệu vào báo cáo của test để dễ điều tra."
+    }
+  ]
+}
