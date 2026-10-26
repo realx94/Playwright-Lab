@@ -1,0 +1,168 @@
+{
+  "questions": [
+    {
+      "id": "q1",
+      "type": "single",
+      "prompt": "Lớp tương đương (equivalence class) là gì?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Nhóm giá trị có độ dài chuỗi hoàn toàn giống nhau"
+        },
+        {
+          "id": "b",
+          "text": "Nhóm giá trị mà hệ thống xử lý theo cùng một cách"
+        },
+        {
+          "id": "c",
+          "text": "Nhóm phần tử có cùng thẻ HTML trên một trang web"
+        },
+        {
+          "id": "d",
+          "text": "Nhóm test case được viết bởi cùng một người kiểm thử"
+        }
+      ],
+      "answer": [
+        "b"
+      ],
+      "explanation": "Mọi giá trị trong một lớp được xử lý giống nhau nên chỉ cần test một đại diện."
+    },
+    {
+      "id": "q2",
+      "type": "single",
+      "prompt": "Trường tuổi hợp lệ 18–65. Tập đại diện nào phủ tốt nhất các lớp tương đương?",
+      "options": [
+        {
+          "id": "a",
+          "text": "18, 19, 20, 21, 22 và các số liền kề nhau khác trong khoảng"
+        },
+        {
+          "id": "b",
+          "text": "30, 31, 32, 33, 34 và vài số tuỳ ý nằm trong khoảng hợp lệ"
+        },
+        {
+          "id": "c",
+          "text": "17, 66 và hai giá trị biên còn lại của cả khoảng"
+        },
+        {
+          "id": "d",
+          "text": "10, 30, 80, cùng một giá trị không phải số và một ô rỗng"
+        }
+      ],
+      "answer": [
+        "d"
+      ],
+      "explanation": "Cần đại diện của từng lớp: dưới khoảng, trong khoảng, trên khoảng, không phải số, rỗng. Các tập còn lại chỉ nằm trong một hoặc hai lớp."
+    },
+    {
+      "id": "q3",
+      "type": "multi",
+      "prompt": "Nguyên tắc nào đúng khi kết hợp nhiều trường nhập? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Có ít nhất một test mà mọi trường đều hợp lệ"
+        },
+        {
+          "id": "b",
+          "text": "Chỉ cần test các lớp không hợp lệ vì lớp hợp lệ hiển nhiên đúng"
+        },
+        {
+          "id": "c",
+          "text": "Mỗi test nên chứa càng nhiều trường sai càng tốt"
+        },
+        {
+          "id": "d",
+          "text": "Mỗi test chỉ để một trường không hợp lệ để biết lỗi do đâu"
+        }
+      ],
+      "answer": [
+        "a",
+        "d"
+      ],
+      "explanation": "Mỗi test một lỗi giúp xác định nguyên nhân; vẫn cần test luồng hợp lệ để chắc chức năng chính hoạt động."
+    },
+    {
+      "id": "q4",
+      "type": "single",
+      "prompt": "Tệp đính kèm chỉ nhận png/jpg/pdf, tối đa 2MB. Tệp nào là đại diện của lớp HỢP LỆ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Tệp rỗng 0 byte vì không có nội dung"
+        },
+        {
+          "id": "b",
+          "text": "Tệp exe dung lượng 1MB vì sai định dạng"
+        },
+        {
+          "id": "c",
+          "text": "Tệp png dung lượng 1MB vì thuộc lớp hợp lệ"
+        },
+        {
+          "id": "d",
+          "text": "Tệp png dung lượng 5MB vì quá dung lượng"
+        }
+      ],
+      "answer": [
+        "c"
+      ],
+      "explanation": "Chỉ tệp đúng định dạng và dưới 2MB mới hợp lệ; ba tệp còn lại mỗi tệp đại diện một lớp không hợp lệ khác nhau."
+    },
+    {
+      "id": "q5",
+      "type": "multi",
+      "prompt": "Điều nào đúng về phân vùng tương đương? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Giúp giảm số test mà vẫn phủ các nhóm hành vi"
+        },
+        {
+          "id": "b",
+          "text": "Cần test cả lớp hợp lệ lẫn lớp không hợp lệ"
+        },
+        {
+          "id": "c",
+          "text": "Chỉ áp dụng được cho dữ liệu kiểu số nguyên"
+        },
+        {
+          "id": "d",
+          "text": "Phải thử mọi giá trị trong từng lớp mới đủ"
+        }
+      ],
+      "answer": [
+        "a",
+        "b"
+      ],
+      "explanation": "EP chọn đại diện thay vì thử hết và áp dụng cho nhiều loại dữ liệu, kể cả chuỗi, tệp, lựa chọn."
+    },
+    {
+      "id": "q6",
+      "type": "single",
+      "prompt": "Chia mật khẩu 8–32 ký tự theo độ dài, có bao nhiêu lớp tương đương?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Hai lớp: ngắn hơn 8 và từ 8 trở lên không giới hạn"
+        },
+        {
+          "id": "b",
+          "text": "Một lớp duy nhất vì mọi mật khẩu đều giống nhau"
+        },
+        {
+          "id": "c",
+          "text": "Ba lớp: ngắn hơn 8, từ 8 đến 32 và dài hơn 32"
+        },
+        {
+          "id": "d",
+          "text": "Hai mươi lăm lớp, mỗi độ dài từ 8 đến 32 một lớp"
+        }
+      ],
+      "answer": [
+        "c"
+      ],
+      "explanation": "Có hai lớp không hợp lệ (quá ngắn, quá dài) và một lớp hợp lệ ở giữa. Không cần mỗi độ dài một lớp."
+    }
+  ]
+}

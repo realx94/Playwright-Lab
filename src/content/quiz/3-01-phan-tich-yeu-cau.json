@@ -1,0 +1,168 @@
+{
+  "questions": [
+    {
+      "id": "q1",
+      "type": "single",
+      "prompt": "Yêu cầu ghi: Mã giảm giá áp dụng cho đơn từ 500.000đ. Điểm mơ hồ nào cần hỏi lại trước khi viết test?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Đơn đúng 500.000đ có được áp mã không, và tính tại bước nào"
+        },
+        {
+          "id": "b",
+          "text": "Màu của nút áp dụng mã giảm giá nên chọn là màu nào"
+        },
+        {
+          "id": "c",
+          "text": "Số lượng nhân viên đang chạy test trong ngày hôm nay"
+        },
+        {
+          "id": "d",
+          "text": "Tên của lập trình viên đã viết chức năng áp dụng mã"
+        }
+      ],
+      "answer": [
+        "a"
+      ],
+      "explanation": "Điểm mơ hồ liên quan trực tiếp tới hành vi cần kiểm tra: biên của ngưỡng và thứ tự tính toán. Màu nút hay tên người viết không ảnh hưởng quy tắc."
+    },
+    {
+      "id": "q2",
+      "type": "single",
+      "prompt": "Business Rule được đánh số (BR-01, BR-02…) nhằm mục đích chính nào?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Để làm cho tài liệu yêu cầu trông dài và chuyên nghiệp hơn"
+        },
+        {
+          "id": "b",
+          "text": "Để lập trình viên biết thứ tự cần viết từng dòng code"
+        },
+        {
+          "id": "c",
+          "text": "Để trình duyệt tự động nhận diện quy tắc khi chạy test"
+        },
+        {
+          "id": "d",
+          "text": "Để truy vết từng quy tắc tới test case đã kiểm tra nó"
+        }
+      ],
+      "answer": [
+        "d"
+      ],
+      "explanation": "Đánh số cho phép lập ma trận truy vết BR × TC và biết quy tắc nào chưa được phủ."
+    },
+    {
+      "id": "q3",
+      "type": "multi",
+      "prompt": "Dấu hiệu nào cho thấy yêu cầu còn mơ hồ? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Yêu cầu được trình bày bằng bảng có đánh số rõ ràng"
+        },
+        {
+          "id": "b",
+          "text": "Không nêu rõ thông báo lỗi khi dữ liệu không hợp lệ"
+        },
+        {
+          "id": "c",
+          "text": "Thiếu giá trị biên hoặc không nói rõ ≥ hay >"
+        },
+        {
+          "id": "d",
+          "text": "Mỗi quy tắc đều có ví dụ minh hoạ bằng số cụ thể"
+        }
+      ],
+      "answer": [
+        "b",
+        "c"
+      ],
+      "explanation": "Thiếu biên và thiếu thông báo lỗi khiến người test phải tự đoán. Bảng đánh số và ví dụ số cụ thể làm yêu cầu rõ hơn."
+    },
+    {
+      "id": "q4",
+      "type": "single",
+      "prompt": "Gặp điểm mơ hồ trong yêu cầu, nên làm gì?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Viết test theo hành vi hiện tại của ứng dụng đang chạy"
+        },
+        {
+          "id": "b",
+          "text": "Bỏ qua chỗ mơ hồ vì sẽ rõ hơn khi ứng dụng hoàn thiện"
+        },
+        {
+          "id": "c",
+          "text": "Hỏi người đưa yêu cầu và ghi lại giả định đã chốt"
+        },
+        {
+          "id": "d",
+          "text": "Tự chọn cách hiểu hợp lý nhất rồi viết test theo đó"
+        }
+      ],
+      "answer": [
+        "c"
+      ],
+      "explanation": "Phải làm rõ với người có thẩm quyền và ghi lại. Tự đoán hay lấy ứng dụng làm chuẩn có thể biến bug thành hành vi đúng."
+    },
+    {
+      "id": "q5",
+      "type": "multi",
+      "prompt": "Acceptance Criteria tốt có đặc điểm nào? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Có thể kiểm chứng rõ ràng là đạt hoặc không đạt"
+        },
+        {
+          "id": "b",
+          "text": "Dùng các từ chung chung như tốt, nhanh, thân thiện"
+        },
+        {
+          "id": "c",
+          "text": "Mô tả chi tiết cách lập trình viên cần viết code"
+        },
+        {
+          "id": "d",
+          "text": "Mô tả kết quả quan sát được, không mô tả cách cài đặt"
+        }
+      ],
+      "answer": [
+        "a",
+        "d"
+      ],
+      "explanation": "Tiêu chí tốt đo được và nói về kết quả. Từ chung chung hoặc mô tả cách cài đặt đều không kiểm chứng được."
+    },
+    {
+      "id": "q6",
+      "type": "single",
+      "prompt": "Vì sao không nên viết kết quả mong đợi bằng cách quan sát ứng dụng đang chạy?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Vì quan sát ứng dụng làm tốn bộ nhớ của máy tính"
+        },
+        {
+          "id": "b",
+          "text": "Vì tài liệu yêu cầu chắc chắn không có lỗi nào cả"
+        },
+        {
+          "id": "c",
+          "text": "Vì ứng dụng đang chạy luôn hiển thị chậm hơn tài liệu"
+        },
+        {
+          "id": "d",
+          "text": "Vì bug hiện có sẽ bị coi là hành vi đúng và lọt qua"
+        }
+      ],
+      "answer": [
+        "d"
+      ],
+      "explanation": "Kỳ vọng phải độc lập với ứng dụng; nếu không, test chỉ xác nhận hành vi hiện tại kể cả khi nó sai."
+    }
+  ]
+}

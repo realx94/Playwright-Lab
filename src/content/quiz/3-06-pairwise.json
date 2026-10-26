@@ -1,0 +1,168 @@
+{
+  "questions": [
+    {
+      "id": "q1",
+      "type": "single",
+      "prompt": "Pairwise đảm bảo điều gì?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Chỉ các giá trị ở biên của từng tham số được chọn"
+        },
+        {
+          "id": "b",
+          "text": "Mọi tổ hợp đầy đủ của tất cả các tham số đều được thử"
+        },
+        {
+          "id": "c",
+          "text": "Mọi cặp giá trị của hai tham số bất kỳ xuất hiện ít nhất một lần"
+        },
+        {
+          "id": "d",
+          "text": "Mỗi giá trị của từng tham số chỉ xuất hiện đúng một lần duy nhất"
+        }
+      ],
+      "answer": [
+        "c"
+      ],
+      "explanation": "Pairwise (2-wise) phủ mọi cặp giá trị thay vì mọi tổ hợp đầy đủ."
+    },
+    {
+      "id": "q2",
+      "type": "single",
+      "prompt": "Form có bốn tham số với 3, 3, 2 và 3 giá trị. Số tổ hợp đầy đủ là bao nhiêu?",
+      "options": [
+        {
+          "id": "a",
+          "text": "36 tổ hợp vì 3 nhân 3 nhân 2 nhân 2"
+        },
+        {
+          "id": "b",
+          "text": "54 tổ hợp vì 3 nhân 3 nhân 2 nhân 3"
+        },
+        {
+          "id": "c",
+          "text": "11 tổ hợp vì 3 cộng 3 cộng 2 cộng 3"
+        },
+        {
+          "id": "d",
+          "text": "24 tổ hợp vì 4 tham số nhân với 6"
+        }
+      ],
+      "answer": [
+        "b"
+      ],
+      "explanation": "Số tổ hợp đầy đủ là tích số giá trị của từng tham số: 3×3×2×3 = 54."
+    },
+    {
+      "id": "q3",
+      "type": "multi",
+      "prompt": "Hạn chế của pairwise là gì? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Luôn tạo ra số test bằng số tổ hợp đầy đủ"
+        },
+        {
+          "id": "b",
+          "text": "Cần khai báo ràng buộc nếu các tham số phụ thuộc nhau"
+        },
+        {
+          "id": "c",
+          "text": "Có thể bỏ lỡ lỗi chỉ xảy ra khi ba tham số cùng tổ hợp"
+        },
+        {
+          "id": "d",
+          "text": "Không dùng được cho form có nhiều hơn hai tham số"
+        }
+      ],
+      "answer": [
+        "b",
+        "c"
+      ],
+      "explanation": "Pairwise không phủ tương tác ba tham số trở lên và cần ràng buộc khi tham số phụ thuộc nhau."
+    },
+    {
+      "id": "q4",
+      "type": "single",
+      "prompt": "Khi nào pairwise KHÔNG nên là phương pháp duy nhất?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Với tham số chỉ có hai giá trị khác nhau trong form"
+        },
+        {
+          "id": "b",
+          "text": "Với chức năng rủi ro cao như thanh toán hoặc phân quyền"
+        },
+        {
+          "id": "c",
+          "text": "Với giao diện chỉ có một ô nhập duy nhất trên trang"
+        },
+        {
+          "id": "d",
+          "text": "Với form có ít hơn bốn tham số đầu vào và cấu trúc đơn giản"
+        }
+      ],
+      "answer": [
+        "b"
+      ],
+      "explanation": "Chức năng rủi ro cao nên kết hợp thêm decision table hoặc tăng lên 3-wise để giảm nguy cơ bỏ lỡ."
+    },
+    {
+      "id": "q5",
+      "type": "multi",
+      "prompt": "Sau khi có tập pairwise, nên làm gì thêm? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Nhân đôi số test để chắc chắn phủ đủ các cặp"
+        },
+        {
+          "id": "b",
+          "text": "Xoá các tổ hợp mà bạn cho là hiếm khi xảy ra"
+        },
+        {
+          "id": "c",
+          "text": "Thêm các test bắt buộc theo nghiệp vụ như happy path"
+        },
+        {
+          "id": "d",
+          "text": "Chuyển tập tổ hợp thành mảng dữ liệu cho test data-driven"
+        }
+      ],
+      "answer": [
+        "c",
+        "d"
+      ],
+      "explanation": "Pairwise là phần mở rộng, vẫn cần các test bắt buộc; kết quả nên được đưa vào test data-driven."
+    },
+    {
+      "id": "q6",
+      "type": "single",
+      "prompt": "Tham số Quốc gia quyết định danh sách Thành phố. Cần làm gì khi sinh pairwise?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Bỏ qua vì công cụ tự hiểu mối quan hệ giữa chúng"
+        },
+        {
+          "id": "b",
+          "text": "Khai báo ràng buộc để không sinh tổ hợp vô lý"
+        },
+        {
+          "id": "c",
+          "text": "Xoá một trong hai tham số khỏi danh sách đầu vào"
+        },
+        {
+          "id": "d",
+          "text": "Gộp hai tham số thành một chuỗi dài thống nhất"
+        }
+      ],
+      "answer": [
+        "b"
+      ],
+      "explanation": "Công cụ không tự biết ràng buộc; nếu không khai báo sẽ sinh tổ hợp không thể xảy ra như Việt Nam + New York."
+    }
+  ]
+}

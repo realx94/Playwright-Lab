@@ -1,0 +1,168 @@
+{
+  "questions": [
+    {
+      "id": "q1",
+      "type": "single",
+      "prompt": "Vì sao nên ghi ID test case và BR trong tên test Playwright?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Để trình duyệt nhớ được kết quả của lần chạy trước"
+        },
+        {
+          "id": "b",
+          "text": "Để test chạy nhanh hơn khi tên test dài hơn"
+        },
+        {
+          "id": "c",
+          "text": "Để truy vết quy tắc nào đang được kiểm tra và lọc bằng -g"
+        },
+        {
+          "id": "d",
+          "text": "Để Playwright tự động sinh ra báo cáo bằng tiếng Việt"
+        }
+      ],
+      "answer": [
+        "c"
+      ],
+      "explanation": "Tên test chứa BR/TC giúp truy vết và chạy riêng bằng npx playwright test -g."
+    },
+    {
+      "id": "q2",
+      "type": "single",
+      "prompt": "Data-driven testing nghĩa là gì?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Mỗi bộ dữ liệu được viết thành một file test riêng"
+        },
+        {
+          "id": "b",
+          "text": "Test lấy dữ liệu trực tiếp từ cơ sở dữ liệu thật"
+        },
+        {
+          "id": "c",
+          "text": "Dữ liệu được viết cố định ngay trong từng câu lệnh"
+        },
+        {
+          "id": "d",
+          "text": "Một đoạn logic chạy với nhiều bộ dữ liệu từ một mảng"
+        }
+      ],
+      "answer": [
+        "d"
+      ],
+      "explanation": "Data-driven tách dữ liệu khỏi logic để một đoạn code phủ nhiều trường hợp."
+    },
+    {
+      "id": "q3",
+      "type": "multi",
+      "prompt": "Checklist nào đúng trước khi chuyển test case sang code? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Có cách đưa dữ liệu về trạng thái ban đầu"
+        },
+        {
+          "id": "b",
+          "text": "Test case đã được viết xong trong ít nhất một tuần"
+        },
+        {
+          "id": "c",
+          "text": "Dữ liệu và kết quả mong đợi đã được nêu rõ ràng"
+        },
+        {
+          "id": "d",
+          "text": "Có ít nhất một đồng nghiệp đã chạy thủ công"
+        }
+      ],
+      "answer": [
+        "a",
+        "c"
+      ],
+      "explanation": "Cần dữ liệu và kỳ vọng rõ ràng cùng khả năng reset trạng thái; thời gian tồn tại hay đồng nghiệp chạy thủ công không phải điều kiện."
+    },
+    {
+      "id": "q4",
+      "type": "single",
+      "prompt": "Cách nào chạy riêng các test của quy tắc BR-02?",
+      "options": [
+        {
+          "id": "a",
+          "text": "npx playwright test --rule BR-02 vì đây là tuỳ chọn riêng"
+        },
+        {
+          "id": "b",
+          "text": "npx playwright test BR-02.ts vì mỗi quy tắc một file"
+        },
+        {
+          "id": "c",
+          "text": "npx playwright rule BR-02 vì đây là lệnh dành cho quy tắc"
+        },
+        {
+          "id": "d",
+          "text": "npx playwright test -g \"BR-02\" vì tên test có chứa BR-02"
+        }
+      ],
+      "answer": [
+        "d"
+      ],
+      "explanation": "-g lọc test theo tên. Playwright không có tuỳ chọn --rule hay lệnh rule."
+    },
+    {
+      "id": "q5",
+      "type": "multi",
+      "prompt": "Cách viết spec nào tốt? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Tách dữ liệu, thao tác và kiểm tra rõ ràng"
+        },
+        {
+          "id": "b",
+          "text": "Mỗi test tự đưa dữ liệu về trạng thái sạch"
+        },
+        {
+          "id": "c",
+          "text": "Chép nguyên từng bước thủ công thành các dòng lệnh"
+        },
+        {
+          "id": "d",
+          "text": "Dùng dữ liệu viết cứng và lặp lại ở mỗi test"
+        }
+      ],
+      "answer": [
+        "a",
+        "b"
+      ],
+      "explanation": "Tách lớp và độc lập giúp test dễ bảo trì; sao chép từng bước thủ công và dữ liệu cứng làm test dài và dễ vỡ."
+    },
+    {
+      "id": "q6",
+      "type": "single",
+      "prompt": "Test case ghi: chỉ tuổi 17 và 66 báo lỗi trong bốn giá trị 17, 18, 65, 66. Spec nào đúng ý nhất?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Chỉ thử tuổi 17 và kỳ vọng báo lỗi ở ô nhập"
+        },
+        {
+          "id": "b",
+          "text": "Lặp qua 17, 18, 65, 66 và kỳ vọng lỗi chỉ ở 17 và 66"
+        },
+        {
+          "id": "c",
+          "text": "Thử một tuổi bất kỳ rồi kỳ vọng sẽ báo lỗi"
+        },
+        {
+          "id": "d",
+          "text": "Chỉ thử các tuổi 18 và 65 rồi kỳ vọng không lỗi"
+        }
+      ],
+      "answer": [
+        "b"
+      ],
+      "explanation": "Spec phải phủ cả bốn giá trị và khẳng định cả trường hợp không lỗi, đúng như test case."
+    }
+  ]
+}

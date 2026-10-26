@@ -1,0 +1,168 @@
+{
+  "questions": [
+    {
+      "id": "q1",
+      "type": "single",
+      "prompt": "Khi test chuyển trạng thái cần đặc biệt chú ý điều gì?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Số lượng ký tự của tên mỗi trạng thái trong hệ thống"
+        },
+        {
+          "id": "b",
+          "text": "Thứ tự sắp xếp chữ cái của các trạng thái"
+        },
+        {
+          "id": "c",
+          "text": "Màu sắc của từng trạng thái hiển thị trên giao diện"
+        },
+        {
+          "id": "d",
+          "text": "Các chuyển đổi không được phép như huỷ đơn khi đang giao"
+        }
+      ],
+      "answer": [
+        "d"
+      ],
+      "explanation": "Chuyển đổi không hợp lệ rất dễ bị bỏ sót và thường chứa bug (ví dụ BUG-03 ở LAB-03)."
+    },
+    {
+      "id": "q2",
+      "type": "single",
+      "prompt": "Trong bảng chuyển trạng thái, ô đánh dấu không cho phép nghĩa là gì?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Sự kiện đó luôn chuyển về trạng thái ban đầu"
+        },
+        {
+          "id": "b",
+          "text": "Sự kiện đó chưa có ai viết test case để kiểm tra"
+        },
+        {
+          "id": "c",
+          "text": "Sự kiện đó dẫn tới lỗi hệ thống và cần sửa gấp"
+        },
+        {
+          "id": "d",
+          "text": "Sự kiện đó không được phép ở trạng thái hiện tại"
+        }
+      ],
+      "answer": [
+        "d"
+      ],
+      "explanation": "Ô không cho phép mô tả quy tắc nghiệp vụ; test cần xác nhận hệ thống thật sự chặn thao tác đó."
+    },
+    {
+      "id": "q3",
+      "type": "multi",
+      "prompt": "Độ phủ nào nên đạt khi test chuyển trạng thái? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Mọi trạng thái đều được đi qua ít nhất một lần"
+        },
+        {
+          "id": "b",
+          "text": "Chỉ cần thử các chuyển đổi mà người dùng hay dùng"
+        },
+        {
+          "id": "c",
+          "text": "Chỉ cần đi qua trạng thái đầu và trạng thái cuối"
+        },
+        {
+          "id": "d",
+          "text": "Mọi chuyển đổi hợp lệ đều có ít nhất một test"
+        }
+      ],
+      "answer": [
+        "a",
+        "d"
+      ],
+      "explanation": "Phủ trạng thái và phủ chuyển đổi là hai mức tối thiểu; bỏ qua trạng thái giữa hay chuyển đổi hiếm sẽ để lọt lỗi."
+    },
+    {
+      "id": "q4",
+      "type": "single",
+      "prompt": "Sau khi chuyển trạng thái, điều gì cần kiểm tra thêm?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Trạng thái tự đổi lại về ban đầu sau mỗi phút"
+        },
+        {
+          "id": "b",
+          "text": "Trạng thái chỉ hiển thị khi người dùng di chuột"
+        },
+        {
+          "id": "c",
+          "text": "Trạng thái vẫn đúng sau khi tải lại trang"
+        },
+        {
+          "id": "d",
+          "text": "Trạng thái được hiển thị bằng màu xanh lá"
+        }
+      ],
+      "answer": [
+        "c"
+      ],
+      "explanation": "Cần xác nhận trạng thái đã được lưu thật, không chỉ hiển thị tạm trên giao diện."
+    },
+    {
+      "id": "q5",
+      "type": "multi",
+      "prompt": "Vòng đời đơn ở LAB-03: điều nào đúng? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Đơn Mới có thể huỷ trực tiếp sang Đã huỷ"
+        },
+        {
+          "id": "b",
+          "text": "Đơn Đang giao có thể huỷ nếu khách yêu cầu"
+        },
+        {
+          "id": "c",
+          "text": "Đơn Đã huỷ có thể quay lại thanh toán"
+        },
+        {
+          "id": "d",
+          "text": "Đơn Hoàn tất là trạng thái cuối, không đổi nữa"
+        }
+      ],
+      "answer": [
+        "a",
+        "d"
+      ],
+      "explanation": "Chỉ huỷ được khi chưa giao; Hoàn tất và Đã huỷ là trạng thái cuối."
+    },
+    {
+      "id": "q6",
+      "type": "single",
+      "prompt": "Khoá tài khoản sau 5 lần sai: test nào thuộc dạng chuyển trạng thái?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Sai 4 lần chưa khoá, sai lần thứ 5 thì khoá"
+        },
+        {
+          "id": "b",
+          "text": "Đăng nhập đúng và xem trang chính hiển thị"
+        },
+        {
+          "id": "c",
+          "text": "Kiểm tra ô email có nhãn hiển thị đúng"
+        },
+        {
+          "id": "d",
+          "text": "Nhập mật khẩu 7 ký tự để xem thông báo lỗi"
+        }
+      ],
+      "answer": [
+        "a"
+      ],
+      "explanation": "Chuyển từ trạng thái bình thường sang bị khoá khi đạt ngưỡng là một chuyển đổi trạng thái."
+    }
+  ]
+}

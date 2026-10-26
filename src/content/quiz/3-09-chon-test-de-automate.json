@@ -1,0 +1,168 @@
+{
+  "questions": [
+    {
+      "id": "q1",
+      "type": "single",
+      "prompt": "Test case nào đáng automate nhất?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Kịch bản chỉ chạy một lần khi chuyển sang hệ thống mới"
+        },
+        {
+          "id": "b",
+          "text": "Đăng nhập hợp lệ, được chạy trong mọi bản build"
+        },
+        {
+          "id": "c",
+          "text": "Màn hình đang thiết kế lại gần như mỗi tuần"
+        },
+        {
+          "id": "d",
+          "text": "Kiểm tra cảm quan xem logo có đẹp không"
+        }
+      ],
+      "answer": [
+        "b"
+      ],
+      "explanation": "Ổn định, lặp lại và rủi ro cao là ứng viên tốt nhất; ba lựa chọn còn lại thay đổi liên tục, cảm quan hoặc chỉ chạy một lần."
+    },
+    {
+      "id": "q2",
+      "type": "single",
+      "prompt": "Smoke test khác regression ở điểm nào?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Smoke nhỏ và nhanh, regression rộng hơn và chạy lâu hơn"
+        },
+        {
+          "id": "b",
+          "text": "Smoke chỉ chạy thủ công, regression chỉ chạy tự động"
+        },
+        {
+          "id": "c",
+          "text": "Smoke chạy sau phát hành, regression chạy trước khi viết code"
+        },
+        {
+          "id": "d",
+          "text": "Smoke kiểm tra giao diện, regression kiểm tra cơ sở dữ liệu"
+        }
+      ],
+      "answer": [
+        "a"
+      ],
+      "explanation": "Smoke kiểm tra nhanh chức năng sống còn; regression rà soát rộng để bảo đảm thay đổi không phá chức năng cũ."
+    },
+    {
+      "id": "q3",
+      "type": "multi",
+      "prompt": "Tiêu chí nào tăng giá trị của việc automate? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Test được chạy lặp lại nhiều lần mỗi sprint"
+        },
+        {
+          "id": "b",
+          "text": "Rủi ro lớn nếu chức năng này bị hỏng bất ngờ"
+        },
+        {
+          "id": "c",
+          "text": "Chỉ cần chạy đúng một lần duy nhất"
+        },
+        {
+          "id": "d",
+          "text": "Chức năng thay đổi liên tục từng ngày"
+        }
+      ],
+      "answer": [
+        "a",
+        "b"
+      ],
+      "explanation": "Chạy lặp lại và rủi ro cao làm tăng lợi ích; thay đổi liên tục hay chạy một lần làm giảm lợi ích."
+    },
+    {
+      "id": "q4",
+      "type": "single",
+      "prompt": "Công thức tính tiền phức tạp nên kiểm tra ở tầng nào cho hiệu quả?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Chỉ UI vì UI phản ánh trải nghiệm thật của người dùng"
+        },
+        {
+          "id": "b",
+          "text": "Chỉ kiểm tra thủ công vì tính tiền cần con người"
+        },
+        {
+          "id": "c",
+          "text": "Unit hoặc API vì nhanh, ổn định, chỉ ra lỗi chính xác"
+        },
+        {
+          "id": "d",
+          "text": "Không cần kiểm tra vì công thức đã được lập trình viên viết"
+        }
+      ],
+      "answer": [
+        "c"
+      ],
+      "explanation": "Logic tính toán nên test ở tầng thấp; UI chỉ giữ vài luồng quan trọng."
+    },
+    {
+      "id": "q5",
+      "type": "multi",
+      "prompt": "Test nào nên giữ ở tầng UI? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Từng công thức tính thuế với hàng chục bộ số"
+        },
+        {
+          "id": "b",
+          "text": "Kiểm tra giao diện phản hồi đúng khi bấm nút"
+        },
+        {
+          "id": "c",
+          "text": "Kiểm tra từng hàm xử lý chuỗi riêng lẻ"
+        },
+        {
+          "id": "d",
+          "text": "Luồng đặt hàng đi từ đầu đến cuối theo người dùng"
+        }
+      ],
+      "answer": [
+        "b",
+        "d"
+      ],
+      "explanation": "UI test cho hành trình người dùng và phản hồi giao diện; tính toán và hàm riêng lẻ nên ở unit/API."
+    },
+    {
+      "id": "q6",
+      "type": "single",
+      "prompt": "Một test đạt 10 điểm trên thang 4 tiêu chí (tối đa 12). Nên làm gì?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Nên automate vì điểm cao cho thấy lợi ích vượt chi phí"
+        },
+        {
+          "id": "b",
+          "text": "Chờ thêm một sprint rồi chấm điểm lại từ đầu"
+        },
+        {
+          "id": "c",
+          "text": "Chỉ automate nếu đã có đủ ngân sách mua thêm công cụ mới"
+        },
+        {
+          "id": "d",
+          "text": "Để thủ công vì điểm chưa đạt mức tối đa 12"
+        }
+      ],
+      "answer": [
+        "a"
+      ],
+      "explanation": "Ngưỡng nên automate là từ 9 điểm trở lên; không cần đạt tối đa."
+    }
+  ]
+}

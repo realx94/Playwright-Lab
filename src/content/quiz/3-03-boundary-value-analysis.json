@@ -1,0 +1,168 @@
+{
+  "questions": [
+    {
+      "id": "q1",
+      "type": "single",
+      "prompt": "Khoảng hợp lệ 18–65. Bộ giá trị biên (BVA 2 giá trị) là gì?",
+      "options": [
+        {
+          "id": "a",
+          "text": "18, 40, 65 chỉ gồm hai biên và một giá trị ở giữa"
+        },
+        {
+          "id": "b",
+          "text": "19, 20, 63, 64 gồm các giá trị ngay bên trong khoảng"
+        },
+        {
+          "id": "c",
+          "text": "0, 18, 65, 100 gồm biên và các giá trị cực đoan"
+        },
+        {
+          "id": "d",
+          "text": "17, 18 ở biên dưới và 65, 66 ở biên trên"
+        }
+      ],
+      "answer": [
+        "d"
+      ],
+      "explanation": "BVA 2 giá trị lấy giá trị đúng tại biên và giá trị ngay sát bên ngoài: 17, 18, 65, 66."
+    },
+    {
+      "id": "q2",
+      "type": "single",
+      "prompt": "Vì sao lỗi thường nằm ở giá trị biên?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Vì trình duyệt xử lý giá trị biên khác với giá trị thường"
+        },
+        {
+          "id": "b",
+          "text": "Vì giá trị biên là các số duy nhất được lưu vào cơ sở dữ liệu"
+        },
+        {
+          "id": "c",
+          "text": "Vì lập trình viên dễ nhầm giữa > và >= khi viết điều kiện"
+        },
+        {
+          "id": "d",
+          "text": "Vì giá trị biên luôn là các số lớn nhất mà máy tính xử lý được"
+        }
+      ],
+      "answer": [
+        "c"
+      ],
+      "explanation": "Lỗi lệch một đơn vị (off-by-one) rất phổ biến khi viết điều kiện so sánh."
+    },
+    {
+      "id": "q3",
+      "type": "multi",
+      "prompt": "SALE10 áp dụng từ 500.000đ. Giá trị nào cần test? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "499.999đ để xác nhận mã chưa được áp dụng"
+        },
+        {
+          "id": "b",
+          "text": "1.000.000đ vì đây là giá trị nằm ngay sát biên"
+        },
+        {
+          "id": "c",
+          "text": "500.000đ để xác nhận mã bắt đầu được áp dụng"
+        },
+        {
+          "id": "d",
+          "text": "250.000đ vì đây là giá trị nằm ngay sát biên"
+        }
+      ],
+      "answer": [
+        "a",
+        "c"
+      ],
+      "explanation": "Giá trị sát biên là 499.999đ, 500.000đ (và 500.001đ). 250.000đ và 1.000.000đ nằm xa biên."
+    },
+    {
+      "id": "q4",
+      "type": "single",
+      "prompt": "Giới hạn độ dài trường nhập tiếng Việt có dấu nên được tính theo đơn vị nào?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Số dòng mà chuỗi chiếm khi hiển thị trên trang"
+        },
+        {
+          "id": "b",
+          "text": "Số byte mà chuỗi chiếm trong bộ nhớ của máy tính"
+        },
+        {
+          "id": "c",
+          "text": "Số ký tự hiển thị, không phải số byte của chuỗi"
+        },
+        {
+          "id": "d",
+          "text": "Số từ được ngăn cách với nhau bằng dấu cách"
+        }
+      ],
+      "answer": [
+        "c"
+      ],
+      "explanation": "Người dùng đếm theo ký tự. Chữ có dấu chiếm nhiều byte hơn nên đếm byte sẽ cho biên sai."
+    },
+    {
+      "id": "q5",
+      "type": "multi",
+      "prompt": "Bẫy nào cần chú ý khi test biên? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Biên của màu sắc và phông chữ hiển thị trên trang"
+        },
+        {
+          "id": "b",
+          "text": "Biên chỉ tồn tại ở các trường nhập kiểu số"
+        },
+        {
+          "id": "c",
+          "text": "Biên của số lượng như tối đa 10 sản phẩm trong giỏ"
+        },
+        {
+          "id": "d",
+          "text": "Phép làm tròn tại ngưỡng như VAT ra số lẻ"
+        }
+      ],
+      "answer": [
+        "c",
+        "d"
+      ],
+      "explanation": "Biên có thể ở làm tròn, số lượng, thời gian, độ dài… không chỉ ở trường số."
+    },
+    {
+      "id": "q6",
+      "type": "single",
+      "prompt": "Quy tắc: tối đa 10 sản phẩm mỗi loại. Test nào phát hiện lỗi dùng >= thay cho > ở điều kiện từ chối?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Thêm 5 sản phẩm và xác nhận được chấp nhận"
+        },
+        {
+          "id": "b",
+          "text": "Thêm 1 sản phẩm và xác nhận được chấp nhận"
+        },
+        {
+          "id": "c",
+          "text": "Thêm đúng 10 sản phẩm và xác nhận vẫn được chấp nhận"
+        },
+        {
+          "id": "d",
+          "text": "Thêm 50 sản phẩm và xác nhận bị từ chối"
+        }
+      ],
+      "answer": [
+        "c"
+      ],
+      "explanation": "Lỗi nằm ở biên: số 10 phải được chấp nhận. Các giá trị 5, 50, 1 cho cùng kết quả dù điều kiện viết sai."
+    }
+  ]
+}

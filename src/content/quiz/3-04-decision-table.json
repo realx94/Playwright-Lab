@@ -1,0 +1,168 @@
+{
+  "questions": [
+    {
+      "id": "q1",
+      "type": "single",
+      "prompt": "Bảng quyết định phù hợp nhất khi nào?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Chỉ có duy nhất một trường nhập số đơn giản cần kiểm tra"
+        },
+        {
+          "id": "b",
+          "text": "Kết quả phụ thuộc vào tổ hợp của nhiều điều kiện"
+        },
+        {
+          "id": "c",
+          "text": "Cần đo tốc độ tải trang trên nhiều thiết bị"
+        },
+        {
+          "id": "d",
+          "text": "Cần kiểm tra giao diện hiển thị đẹp hay không"
+        }
+      ],
+      "answer": [
+        "b"
+      ],
+      "explanation": "Decision table thể hiện quan hệ điều kiện kết hợp → hành động; không dùng để kiểm tra giao diện hay hiệu năng."
+    },
+    {
+      "id": "q2",
+      "type": "single",
+      "prompt": "Với 3 điều kiện đúng/sai, số luật tối đa trong bảng đầy đủ là bao nhiêu?",
+      "options": [
+        {
+          "id": "a",
+          "text": "8 luật, vì mỗi điều kiện có hai giá trị nên là 2 mũ 3"
+        },
+        {
+          "id": "b",
+          "text": "3 luật, vì mỗi điều kiện tạo ra đúng một luật"
+        },
+        {
+          "id": "c",
+          "text": "6 luật, vì 3 điều kiện nhân với 2 giá trị bằng 6"
+        },
+        {
+          "id": "d",
+          "text": "9 luật, vì mỗi điều kiện có ba giá trị nên nhân ba lần"
+        }
+      ],
+      "answer": [
+        "a"
+      ],
+      "explanation": "Số tổ hợp là 2^n = 8, không phải phép nhân n với 2."
+    },
+    {
+      "id": "q3",
+      "type": "multi",
+      "prompt": "Rút gọn bảng quyết định nghĩa là gì? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Xoá bỏ những luật mà bạn thấy khó viết test nhất"
+        },
+        {
+          "id": "b",
+          "text": "Chỉ giữ lại luật đầu tiên của bảng đầy đủ ban đầu"
+        },
+        {
+          "id": "c",
+          "text": "Gộp các luật cho cùng kết quả khi một điều kiện không ảnh hưởng"
+        },
+        {
+          "id": "d",
+          "text": "Dùng dấu gạch ngang để chỉ điều kiện không quan trọng"
+        }
+      ],
+      "answer": [
+        "c",
+        "d"
+      ],
+      "explanation": "Rút gọn chỉ gộp các luật trùng kết quả, không bỏ luật vì lý do thuận tiện."
+    },
+    {
+      "id": "q4",
+      "type": "single",
+      "prompt": "Kết quả mong đợi của mỗi luật nên lấy từ đâu?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Từ tài liệu yêu cầu và business rule đã chốt"
+        },
+        {
+          "id": "b",
+          "text": "Từ lần chạy test thành công gần nhất trước đó"
+        },
+        {
+          "id": "c",
+          "text": "Từ kết quả mà ứng dụng đang hiển thị hiện tại"
+        },
+        {
+          "id": "d",
+          "text": "Từ ý kiến cá nhân của người chạy test"
+        }
+      ],
+      "answer": [
+        "a"
+      ],
+      "explanation": "Nguồn sự thật là yêu cầu. Lấy từ ứng dụng sẽ làm bug được coi là đúng."
+    },
+    {
+      "id": "q5",
+      "type": "multi",
+      "prompt": "Với quy tắc ship/giảm giá của LAB-03, điều nào đúng? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Giỏ 1.050.000đ có mã SALE10 vẫn bị tính ship 30.000đ"
+        },
+        {
+          "id": "b",
+          "text": "Phí ship xét theo tạm tính đã trừ giảm giá"
+        },
+        {
+          "id": "c",
+          "text": "Phí ship xét theo tạm tính trước khi giảm giá"
+        },
+        {
+          "id": "d",
+          "text": "Giỏ 1.050.000đ có mã SALE10 được miễn phí ship"
+        }
+      ],
+      "answer": [
+        "a",
+        "b"
+      ],
+      "explanation": "1.050.000 − 100.000 = 950.000 < 1.000.000 nên vẫn tính ship. Ship xét sau khi trừ giảm giá."
+    },
+    {
+      "id": "q6",
+      "type": "single",
+      "prompt": "Luật nào dễ bị bỏ sót nhất khi chỉ liệt kê theo trực giác?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Luật mà ứng dụng đã hiển thị sẵn trong màn hình"
+        },
+        {
+          "id": "b",
+          "text": "Luật có điều kiện được mô tả rõ ràng trong yêu cầu"
+        },
+        {
+          "id": "c",
+          "text": "Luật thông thường nhất mà ai cũng nghĩ tới đầu tiên khi viết test"
+        },
+        {
+          "id": "d",
+          "text": "Tổ hợp hiếm gặp như có mã giảm giá nhưng vẫn dưới ngưỡng ship"
+        }
+      ],
+      "answer": [
+        "d"
+      ],
+      "explanation": "Bảng quyết định liệt kê có hệ thống mọi tổ hợp nên giúp bắt được những tổ hợp mà trực giác bỏ sót."
+    }
+  ]
+}

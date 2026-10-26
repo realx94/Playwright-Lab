@@ -1,0 +1,168 @@
+{
+  "questions": [
+    {
+      "id": "q1",
+      "type": "single",
+      "prompt": "Nhập <script>alert(1)</script> vào ô email. Kết quả đúng là gì?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Lưu email này và hiển thị nguyên văn trên trang"
+        },
+        {
+          "id": "b",
+          "text": "Báo email không hợp lệ và không thực thi script"
+        },
+        {
+          "id": "c",
+          "text": "Hiện hộp thoại alert vì script đã được chạy"
+        },
+        {
+          "id": "d",
+          "text": "Tự động xoá toàn bộ nội dung của ô nhập"
+        }
+      ],
+      "answer": [
+        "b"
+      ],
+      "explanation": "Dữ liệu đầu vào phải được kiểm tra và không bao giờ thực thi như mã. Hộp thoại alert xuất hiện nghĩa là có lỗ hổng XSS."
+    },
+    {
+      "id": "q2",
+      "type": "single",
+      "prompt": "Thông báo đăng nhập sai nào an toàn hơn?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Thông báo cụ thể: Mật khẩu của bạn đã sai"
+        },
+        {
+          "id": "b",
+          "text": "Thông báo cụ thể: Email này chưa được đăng ký"
+        },
+        {
+          "id": "c",
+          "text": "Thông báo chi tiết: tài khoản có tồn tại hay không"
+        },
+        {
+          "id": "d",
+          "text": "Thông báo chung: Email hoặc mật khẩu không đúng"
+        }
+      ],
+      "answer": [
+        "d"
+      ],
+      "explanation": "Thông báo cụ thể giúp kẻ xấu dò tài khoản tồn tại (user enumeration). Thông báo chung không tiết lộ điều đó."
+    },
+    {
+      "id": "q3",
+      "type": "multi",
+      "prompt": "Việc nào thuộc kiểm tra phân quyền? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Đổi mã đơn hàng trong địa chỉ để xem đơn của người khác"
+        },
+        {
+          "id": "b",
+          "text": "Gọi API quản trị bằng tài khoản người dùng thường"
+        },
+        {
+          "id": "c",
+          "text": "Kiểm tra màu của nút khi người dùng di chuột"
+        },
+        {
+          "id": "d",
+          "text": "Đổi cỡ chữ của trang để xem bố cục thay đổi"
+        }
+      ],
+      "answer": [
+        "a",
+        "b"
+      ],
+      "explanation": "Phân quyền là kiểm tra người dùng không truy cập được tài nguyên hay chức năng ngoài quyền của họ (IDOR, API quản trị)."
+    },
+    {
+      "id": "q4",
+      "type": "single",
+      "prompt": "Khi đăng nhập chỉ bằng bàn phím, điều gì cần kiểm tra đầu tiên?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Số lượng phím tắt có sẵn trong hệ điều hành"
+        },
+        {
+          "id": "b",
+          "text": "Tốc độ gõ phím của người kiểm thử trên máy"
+        },
+        {
+          "id": "c",
+          "text": "Kích thước của bàn phím được dùng để thao tác"
+        },
+        {
+          "id": "d",
+          "text": "Thứ tự Tab hợp lý và thấy rõ ô đang được focus"
+        }
+      ],
+      "answer": [
+        "d"
+      ],
+      "explanation": "Dùng bàn phím là kiểm tra accessibility cơ bản: thứ tự focus và dấu hiệu nhìn thấy được."
+    },
+    {
+      "id": "q5",
+      "type": "multi",
+      "prompt": "Bộ dữ liệu xấu cho một ô nhập gồm những gì? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Chuỗi rỗng và chuỗi chỉ gồm khoảng trắng"
+        },
+        {
+          "id": "b",
+          "text": "Chuỗi rất dài vượt xa giới hạn cho phép"
+        },
+        {
+          "id": "c",
+          "text": "Chỉ các giá trị hợp lệ thường gặp nhất"
+        },
+        {
+          "id": "d",
+          "text": "Chỉ những giá trị đã được dùng ở lần test trước"
+        }
+      ],
+      "answer": [
+        "a",
+        "b"
+      ],
+      "explanation": "Negative testing dùng dữ liệu rỗng, quá dài, ký tự đặc biệt, định dạng sai để thử các giới hạn."
+    },
+    {
+      "id": "q6",
+      "type": "single",
+      "prompt": "Vì sao dùng getByRole khi test cũng hỗ trợ kiểm tra accessibility?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Nó chặn các script độc hại gửi tới trang"
+        },
+        {
+          "id": "b",
+          "text": "Nó tự động sửa các lỗi bảo mật của trang"
+        },
+        {
+          "id": "c",
+          "text": "Nó làm trang tải nhanh hơn trên mọi thiết bị"
+        },
+        {
+          "id": "d",
+          "text": "Nó buộc phần tử có vai trò và tên truy cập được"
+        }
+      ],
+      "answer": [
+        "d"
+      ],
+      "explanation": "getByRole chỉ tìm được phần tử có vai trò và tên đúng, nên phần tử thiếu tên truy cập sẽ lộ ra khi viết test."
+    }
+  ]
+}
