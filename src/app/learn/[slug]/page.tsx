@@ -4,7 +4,10 @@ import remarkGfm from "remark-gfm";
 import { AskAiKeyword } from "@/components/ask-ai/selection-popover";
 import { MarkDoneButton } from "@/components/site/mark-done-button";
 import { LessonTracker } from "@/components/site/lesson-tracker";
+import { Suspense } from "react";
+import { QuizRunner } from "@/components/quiz/quiz-runner";
 import { getLesson, getLessons } from "@/lib/content";
+import { getQuiz } from "@/lib/quiz";
 
 export function generateStaticParams() {
   return getLessons().map((l) => ({ slug: l.slug }));
@@ -19,6 +22,7 @@ export default async function LessonPage({ params }: PageProps<"/learn/[slug]">)
   const { slug } = await params;
   const lesson = getLesson(slug);
   if (!lesson) notFound();
+  const quiz = getQuiz(lesson.slug);
   return (
     <article className="mx-auto max-w-3xl px-4 py-10">
       <LessonTracker lessonId={lesson.slug} />
@@ -37,6 +41,17 @@ export default async function LessonPage({ params }: PageProps<"/learn/[slug]">)
               <AskAiKeyword key={k} term={k} />
             ))}
           </div>
+        </section>
+      )}
+      {quiz && (
+        <section className="mt-10 space-y-4 border-t pt-6">
+          <h2 className="text-xl font-semibold">Kiểm tra kiến thức</h2>
+          <p className="text-sm text-muted-foreground">
+            Thứ tự câu và đáp án được xáo trộn mỗi lần làm. Có câu chọn nhiều đáp án; phải chọn đúng và đủ mới được điểm.
+          </p>
+          <Suspense>
+            <QuizRunner quiz={quiz} />
+          </Suspense>
         </section>
       )}
       <div className="mt-10 border-t pt-6">

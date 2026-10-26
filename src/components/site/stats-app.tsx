@@ -8,7 +8,13 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { storage, type AskAiEntry, type ExportData, type LessonProgress } from "@/lib/storage";
+import {
+  storage,
+  type AskAiEntry,
+  type ExportData,
+  type LessonProgress,
+  type QuizAttempt,
+} from "@/lib/storage";
 
 export interface LessonRef {
   slug: string;
@@ -25,11 +31,13 @@ function fmt(sec: number) {
 export function StatsApp({ lessons }: { lessons: LessonRef[] }) {
   const [progress, setProgress] = useState<LessonProgress[] | null>(null);
   const [asks, setAsks] = useState<AskAiEntry[]>([]);
+  const [attempts, setAttempts] = useState<QuizAttempt[]>([]);
   const fileRef = useRef<HTMLInputElement>(null);
 
   const refresh = useCallback(async () => {
     setProgress(await storage.listProgress());
     setAsks(await storage.listAsk());
+    setAttempts((await storage.listAttempts()).sort((a, b) => b.takenAt - a.takenAt));
   }, []);
 
   useEffect(() => {
@@ -150,6 +158,25 @@ export function StatsApp({ lessons }: { lessons: LessonRef[] }) {
           })}
         </ul>
       </section>
+
+      {attempts.length > 0 && (
+        <section className="space-y-2">
+          <h2 className="text-lg font-semibold">Lịch sử làm quiz</h2>
+          <ul className="divide-y rounded-xl border" data-testid="quiz-history">
+            {attempts.slice(0, 10).map((a) => (
+              <li key={a.id} className="flex items-center justify-between p-3 text-sm">
+                <span>
+                  {lessons.find((l) => l.slug === a.quizId)?.title ?? a.quizId} ·{" "}
+                  {new Date(a.takenAt).toLocaleString("vi-VN")}
+                </span>
+                <Badge variant={a.score === a.total ? "default" : "secondary"}>
+                  {a.score}/{a.total} · {fmt(a.durationSec)}
+                </Badge>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
 
       {asks.length > 0 && (
         <section className="space-y-2">

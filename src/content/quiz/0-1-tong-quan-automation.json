@@ -1,0 +1,109 @@
+{
+  "questions": [
+    {
+      "id": "q1",
+      "type": "single",
+      "prompt": "Một team chạy regression thủ công mất 2 ngày mỗi sprint, sản phẩm đã khá ổn định. Hành động nào hợp lý nhất để giảm chi phí về lâu dài?",
+      "options": [
+        { "id": "a", "text": "Tự động hoá các luồng ổn định và chạy theo lịch cố định" },
+        { "id": "b", "text": "Giảm phạm vi regression xuống còn một nửa số chức năng" },
+        { "id": "c", "text": "Dồn toàn bộ regression vào cuối sprint để chạy một lần" },
+        { "id": "d", "text": "Bổ sung thêm người chạy thủ công cho mỗi đợt phát hành" }
+      ],
+      "answer": ["a"],
+      "explanation": "Regression lặp lại nhiều lần trên chức năng ổn định là ứng viên lý tưởng cho automation: chi phí đầu tư một lần, chạy lại gần như miễn phí. Giảm phạm vi làm tăng rủi ro, dồn cuối sprint làm lỗi phát hiện muộn, thêm người chỉ tăng chi phí tuyến tính."
+    },
+    {
+      "id": "q2",
+      "type": "single",
+      "prompt": "Theo mô hình test pyramid, tầng nào nên có số lượng test lớn nhất?",
+      "options": [
+        { "id": "a", "text": "UI test mô phỏng thao tác người dùng trên trình duyệt" },
+        { "id": "b", "text": "Unit test chạy nhanh trên từng hàm hoặc module nhỏ" },
+        { "id": "c", "text": "API test gọi trực tiếp vào các endpoint của hệ thống" },
+        { "id": "d", "text": "Test khám phá do tester thực hiện thủ công mỗi sprint" }
+      ],
+      "answer": ["b"],
+      "explanation": "Đáy kim tự tháp là unit test: nhanh, rẻ, ổn định, chỉ ra lỗi chính xác. UI test ở đỉnh vì chậm và dễ vỡ nên số lượng ít hơn."
+    },
+    {
+      "id": "q3",
+      "type": "multi",
+      "prompt": "Những mục nào PHÙ HỢP để ưu tiên automate? (chọn tất cả đáp án đúng)",
+      "options": [
+        { "id": "a", "text": "Luồng đăng nhập được chạy trong mọi bản build" },
+        { "id": "b", "text": "Màn hình đang được thiết kế lại gần như mỗi tuần" },
+        { "id": "c", "text": "Tính phí vận chuyển với nhiều bộ dữ liệu khác nhau" },
+        { "id": "d", "text": "Đánh giá bố cục có hài hoà và dễ nhìn hay không" }
+      ],
+      "answer": ["a", "c"],
+      "explanation": "Nên automate thứ lặp lại, ổn định và có kết quả đúng/sai rõ ràng (đăng nhập, tính toán theo nhiều dữ liệu). Giao diện thay đổi liên tục hay đánh giá cảm quan thì không đáng đầu tư automation."
+    },
+    {
+      "id": "q4",
+      "type": "single",
+      "prompt": "Một test lúc pass lúc fail dù code không thay đổi. Nguyên nhân thường gặp nhất là gì?",
+      "options": [
+        { "id": "a", "text": "Test được viết bằng ngôn ngữ khác với ngôn ngữ của ứng dụng" },
+        { "id": "b", "text": "Báo cáo kết quả được xuất ra HTML thay vì định dạng JSON" },
+        { "id": "c", "text": "Test dựa vào thời gian chờ cố định hoặc dữ liệu dùng chung" },
+        { "id": "d", "text": "Mỗi test chứa nhiều hơn năm câu lệnh kiểm tra kết quả" }
+      ],
+      "answer": ["c"],
+      "explanation": "Flaky test thường do chờ cố định (race condition giữa test và ứng dụng) hoặc do các test dẫm chân nhau trên dữ liệu chung. Ngôn ngữ, định dạng báo cáo hay số lượng assertion không làm kết quả bất ổn."
+    },
+    {
+      "id": "q5",
+      "type": "multi",
+      "prompt": "Cách nào giúp GIẢM flaky test? (chọn tất cả đáp án đúng)",
+      "options": [
+        { "id": "a", "text": "Tăng số lần retry thật cao để test luôn có cơ hội pass" },
+        { "id": "b", "text": "Chờ theo điều kiện của giao diện thay vì dừng vài giây cố định" },
+        { "id": "c", "text": "Cho mọi test chạy song song dùng chung một tài khoản duy nhất" },
+        { "id": "d", "text": "Để mỗi test tự tạo và tự dọn dữ liệu riêng của nó" },
+        { "id": "e", "text": "Chạy toàn bộ test tuần tự trên một máy duy nhất mọi lúc" }
+      ],
+      "answer": ["b", "d"],
+      "explanation": "Chờ theo điều kiện và cô lập dữ liệu xử lý đúng gốc rễ. Retry cao chỉ che giấu vấn đề; dùng chung tài khoản gây xung đột; chạy tuần tự trên một máy không giải quyết nguyên nhân."
+    },
+    {
+      "id": "q6",
+      "type": "single",
+      "prompt": "Mô tả nào về chi phí của automation là chính xác nhất?",
+      "options": [
+        { "id": "a", "text": "Chi phí thấp ở lần chạy đầu và tăng dần theo mỗi lần chạy lại" },
+        { "id": "b", "text": "Chi phí không đổi dù test được chạy một lần hay hàng trăm lần" },
+        { "id": "c", "text": "Chi phí chỉ phát sinh khi test fail và cần điều tra nguyên nhân" },
+        { "id": "d", "text": "Đầu tư ban đầu đáng kể, lợi ích tăng dần khi test chạy lặp lại" }
+      ],
+      "answer": ["d"],
+      "explanation": "Automation tốn công viết và bảo trì ban đầu, nhưng mỗi lần chạy thêm gần như không tốn thêm công, nên ROI tăng theo số lần chạy lại."
+    },
+    {
+      "id": "q7",
+      "type": "single",
+      "prompt": "Một test UI rất chậm chỉ để kiểm tra công thức tính chiết khấu. Nên xử lý thế nào?",
+      "options": [
+        { "id": "a", "text": "Giữ ở tầng UI vì UI test phản ánh đúng trải nghiệm người dùng" },
+        { "id": "b", "text": "Thêm các bước chờ cố định để test không fail vì chạy quá chậm" },
+        { "id": "c", "text": "Xoá test này vì công thức tính toán không cần kiểm thử lại" },
+        { "id": "d", "text": "Chuyển xuống tầng unit hoặc API để chạy nhanh và ổn định hơn" }
+      ],
+      "answer": ["d"],
+      "explanation": "Logic tính toán thuần không cần qua giao diện. Đưa xuống unit/API cho kết quả nhanh, ít vỡ, dễ chỉ ra lỗi; UI chỉ giữ vài luồng quan trọng."
+    },
+    {
+      "id": "q8",
+      "type": "single",
+      "prompt": "Smoke test khác regression test chủ yếu ở điểm nào?",
+      "options": [
+        { "id": "a", "text": "Smoke chỉ chạy bằng tay còn regression bắt buộc phải tự động" },
+        { "id": "b", "text": "Smoke kiểm tra giao diện còn regression chỉ kiểm tra dữ liệu" },
+        { "id": "c", "text": "Smoke chạy sau khi phát hành còn regression chạy trước khi code" },
+        { "id": "d", "text": "Smoke kiểm tra nhanh chức năng sống còn, regression rà soát rộng hơn" }
+      ],
+      "answer": ["d"],
+      "explanation": "Smoke là bộ test nhỏ, chạy nhanh để biết bản build có đủ ổn định để test tiếp không. Regression rộng và sâu hơn để chắc chắn thay đổi mới không phá chức năng cũ."
+    }
+  ]
+}

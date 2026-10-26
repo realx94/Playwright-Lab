@@ -10,6 +10,7 @@ Website học **Playwright Automation từ Zero đến Hero** dành cho QA: họ
 | 04 | [Lab Catalog](04-lab-catalog.md) | Danh mục lab nghiệp vụ (e-commerce, banking, HR…), bài toán, test case mẫu, bài tập |
 | 05 | [Tech & Architecture](05-tech-architecture.md) | Next.js, Tailwind + shadcn/ui, cấu trúc thư mục, deploy Vercel/Netlify |
 | 06 | [Integrations](06-integrations.md) | Dịch vụ bên thứ 3, mô hình BYO, Fake Inbox, thiết kế DB lab, bảo mật khoá |
+| 07 | [Quiz Guidelines](07-quiz-guidelines.md) | Quy tắc viết quiz chống đoán mẹo, xáo trộn, kiểm tra tự động |
 
 ## Nguồn tham khảo
 Chương trình tham khảo khung của khoá [Fullstack Automation QA với Playwright TypeScript – hoctest.com](https://hoctest.com/khoa-hoc/fullstack-automation-qa-tu-chua-biet-gi-voi-playwright-typescript/) (19 chương, 79 bài). Nội dung của Playwright Lab được **tự biên soạn lại**, không sao chép; mở rộng thêm phần nghiệp vụ, thiết kế test case và lab tương tác.
