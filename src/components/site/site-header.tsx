@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { FlaskConical } from "lucide-react";
+import { ThemeToggle } from "@/components/site/theme-toggle";
 
 const links = [
   { href: "/learn", label: "Bài học" },
@@ -22,6 +23,9 @@ export function SiteHeader() {
             </Link>
           ))}
         </nav>
+        <div className="ml-auto flex items-center gap-1">
+          <ThemeToggle />
+        </div>
       </div>
     </header>
   );
