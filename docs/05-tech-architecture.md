@@ -22,7 +22,7 @@ Quy tắc: tự viết component chỉ khi shadcn không có (vd. `AskAIPopover`
 /docs                      # tài liệu sản phẩm
 /src
   /app
-    /(site)                # trang học
+    /(site)                # nhóm route của site: có header, tìm kiếm, bôi đen hỏi AI
       /learn/[level]/[slug]
       /labs, /cheatsheet, /glossary, /interview
     /labs/[slug]           # Trang hướng dẫn lab: BR, Test Case Workshop, bài tập

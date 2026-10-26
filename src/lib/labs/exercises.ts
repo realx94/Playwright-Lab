@@ -1076,4 +1076,205 @@ test("bộ lọc, bộ đếm và lưu dữ liệu", async ({ page }) => {
   },
 ];
 
-export const EXERCISES: Record<string, Exercise[]> = { login, forms, cart, playground, api, otp, todo };
+const table: Exercise[] = [
+  {
+    id: "table-1",
+    title: "Tìm kiếm, lọc và tổng số",
+    difficulty: 2,
+    task: "Kiểm tra tìm kiếm (có kết quả và không có kết quả), lọc vai trò, và lọc kết hợp vai trò với trạng thái. Luôn đối chiếu với tổng số hiển thị.",
+    criteria: [
+      "Dùng getByLabel cho ô tìm kiếm và các bộ lọc",
+      "Kiểm tra tổng số người dùng sau mỗi thay đổi bằng assertion tự thử lại",
+      "Có test cho trạng thái không tìm thấy kết quả",
+      "Không dùng chờ cố định dù bảng có độ trễ khi tải",
+      ...COMMON_CRITERIA,
+    ],
+    hints: [
+      "Bảng hiển thị Đang tải trong một khoảng ngắn sau mỗi thay đổi; assertion tự thử lại sẽ xử lý.",
+      "select native dùng selectOption với giá trị như editor hoặc locked.",
+      "Tổng số nằm trong phần tử có data-testid là total-count.",
+    ],
+    solution: `import { test, expect } from "@playwright/test";
+
+test.beforeEach(async ({ page }) => {
+  await page.goto("/lab/table");
+  await page.getByTestId("reset-data").click();
+});
+
+test("tìm kiếm không phân biệt hoa thường", async ({ page }) => {
+  await page.getByLabel("Tìm kiếm").fill("MINH");
+  await expect(page.getByTestId("total-count")).toHaveText("3 người dùng");
+  await expect(page.getByTestId("user-row")).toHaveCount(3);
+});
+
+test("không có kết quả", async ({ page }) => {
+  await page.getByLabel("Tìm kiếm").fill("khong-ton-tai");
+  await expect(page.getByTestId("table-empty")).toBeVisible();
+  await expect(page.getByTestId("total-count")).toHaveText("0 người dùng");
+});
+
+test("lọc vai trò rồi kết hợp trạng thái", async ({ page }) => {
+  await page.getByLabel("Vai trò").selectOption("editor");
+  await expect(page.getByTestId("total-count")).toHaveText("11 người dùng");
+  await page.getByLabel("Trạng thái").selectOption("locked");
+  await expect(page.getByTestId("total-count")).toHaveText("3 người dùng");
+});`,
+  },
+  {
+    id: "table-2",
+    title: "Phân trang và số dòng mỗi trang",
+    difficulty: 2,
+    task: "Kiểm tra trang đầu, trang cuối (7 dòng), nút Trang trước/sau bị khoá đúng chỗ và đổi số dòng mỗi trang.",
+    criteria: [
+      "Kiểm tra chỉ số trang hiển thị (Trang x/y) và số dòng thực tế",
+      "Có test biên: trang đầu (Trang trước bị khoá) và trang cuối (Trang sau bị khoá)",
+      "Có test đổi số dòng mỗi trang về 20",
+      ...COMMON_CRITERIA,
+    ],
+    hints: [
+      "37 người dùng với 10 dòng mỗi trang là 4 trang; trang cuối còn 7 dòng.",
+      "Dùng toBeDisabled() cho nút bị khoá.",
+      "Chỉ số trang nằm trong phần tử có data-testid là page-info.",
+    ],
+    solution: `import { test, expect } from "@playwright/test";
+
+test.beforeEach(async ({ page }) => {
+  await page.goto("/lab/table");
+  await page.getByTestId("reset-data").click();
+});
+
+test("trang đầu: Trang trước bị khoá", async ({ page }) => {
+  await expect(page.getByTestId("page-info")).toHaveText("Trang 1/4");
+  await expect(page.getByTestId("user-row")).toHaveCount(10);
+  await expect(page.getByRole("button", { name: "Trang trước" })).toBeDisabled();
+});
+
+test("trang cuối còn 7 dòng và Trang sau bị khoá", async ({ page }) => {
+  for (let i = 0; i < 3; i++) await page.getByRole("button", { name: "Trang sau" }).click();
+  await expect(page.getByTestId("page-info")).toHaveText("Trang 4/4");
+  await expect(page.getByTestId("user-row")).toHaveCount(7);
+  await expect(page.getByRole("button", { name: "Trang sau" })).toBeDisabled();
+});
+
+test("đổi số dòng mỗi trang", async ({ page }) => {
+  await page.getByLabel("Số dòng mỗi trang").selectOption("20");
+  await expect(page.getByTestId("page-info")).toHaveText("Trang 1/2");
+  await expect(page.getByTestId("user-row")).toHaveCount(20);
+});`,
+  },
+  {
+    id: "table-3",
+    title: "Sắp xếp theo ngày và bắt BUG-03",
+    difficulty: 3,
+    task: "Chứng minh cột Ngày tạo sắp xếp đúng theo thời gian: đọc toàn bộ ngày trên trang, chuyển về thời gian thật và so sánh. Chạy lại với ?bugs=BUG-03 để thấy lỗi.",
+    criteria: [
+      "Kiểm tra aria-sort của tiêu đề cột sau mỗi lần bấm",
+      "So sánh các ngày bằng giá trị thời gian (không so sánh chuỗi dd/mm/yyyy)",
+      "Chờ bảng tải xong trước khi đọc dữ liệu, không dùng chờ cố định",
+      "Test xanh trên lab sạch và đỏ khi bật ?bugs=BUG-03",
+      ...COMMON_CRITERIA,
+    ],
+    hints: [
+      "allInnerTexts() không tự chờ: hãy chờ số dòng hoặc phần tử Đang tải biến mất trước.",
+      "Ngày hiển thị dạng dd/mm/yyyy; tách bằng split('/') rồi dùng Date.UTC.",
+      "Cột Ngày tạo là ô thứ 5 của mỗi dòng.",
+    ],
+    solution: `import { test, expect } from "@playwright/test";
+
+const toTime = (s: string) => {
+  const [d, m, y] = s.split("/").map(Number);
+  return Date.UTC(y, m - 1, d);
+};
+
+test("sắp theo Ngày tạo đúng thứ tự thời gian", async ({ page }) => {
+  await page.goto("/lab/table");   // thêm ?bugs=BUG-03 để thấy test đỏ
+  await page.getByTestId("reset-data").click();
+
+  const header = page.getByRole("columnheader", { name: "Ngày tạo" });
+  await page.getByRole("button", { name: "Ngày tạo" }).click();
+  await expect(header).toHaveAttribute("aria-sort", "ascending");
+  await expect(page.getByTestId("table-loading")).toBeHidden();
+  await expect(page.getByTestId("user-row")).toHaveCount(10);
+
+  const dates = await page.locator('[data-testid="user-row"] td:nth-child(5)').allInnerTexts();
+  const times = dates.map(toTime);
+  expect(times).toEqual([...times].sort((a, b) => a - b));
+
+  await page.getByRole("button", { name: "Ngày tạo" }).click();
+  await expect(header).toHaveAttribute("aria-sort", "descending");
+});`,
+  },
+  {
+    id: "table-4",
+    title: "Chọn nhiều và khoá hàng loạt",
+    difficulty: 3,
+    task: "Chọn tất cả trên trang hiện tại (phải là 10, không phải 37), khoá hàng loạt rồi dùng bộ lọc trạng thái để xác nhận số người bị khoá tăng đúng và Admin không bị khoá.",
+    criteria: [
+      "Khẳng định số dòng đã chọn là 10 sau khi chọn tất cả",
+      "Tính số người bị khoá kỳ vọng từ dữ liệu: 9 ban đầu + 4 người hoạt động không phải Admin ở trang 1 = 13",
+      "Kiểm tra riêng rằng Admin vẫn không bị khoá",
+      ...COMMON_CRITERIA,
+    ],
+    hints: [
+      "Checkbox chọn tất cả có tên Chọn tất cả trang này.",
+      "Sau khi khoá, lọc Trạng thái = locked để đếm.",
+      "Lọc vai trò Admin rồi kiểm tra các nút thao tác bị vô hiệu hoá.",
+    ],
+    solution: `import { test, expect } from "@playwright/test";
+
+test("chọn tất cả chỉ chọn trang hiện tại và khoá hàng loạt", async ({ page }) => {
+  await page.goto("/lab/table");
+  await page.getByTestId("reset-data").click();
+
+  await page.getByRole("checkbox", { name: "Chọn tất cả trang này" }).check();
+  await expect(page.getByTestId("selected-count")).toHaveText("Đã chọn 10");
+
+  await page.getByRole("button", { name: "Khoá đã chọn" }).click();
+  await page.getByLabel("Trạng thái").selectOption("locked");
+  await expect(page.getByTestId("total-count")).toHaveText("13 người dùng");
+
+  await page.getByLabel("Trạng thái").selectOption("all");
+  await page.getByLabel("Vai trò").selectOption("admin");
+  await expect(page.getByTestId("total-count")).toHaveText("6 người dùng");
+  for (const button of await page.getByRole("button", { name: /^(Khoá|Mở khoá) / }).all())
+    await expect(button).toBeDisabled();
+});`,
+  },
+  {
+    id: "table-5",
+    title: "Bắt BUG-01 và BUG-02",
+    difficulty: 3,
+    task: "Viết hai test bắt lỗi: tìm kiếm phải không phân biệt hoa thường (BUG-01) và đổi bộ lọc phải đưa về trang 1 (BUG-02). Mỗi test xanh trên lab sạch và đỏ khi bật bug tương ứng.",
+    criteria: [
+      "Test tìm kiếm dùng chữ in hoa khác với dữ liệu gốc",
+      "Test phân trang đi sang trang 2 rồi mới đổi bộ lọc",
+      "Mỗi test đỏ đúng lý do khi bật bug tương ứng, không đỏ vì locator sai",
+      ...COMMON_CRITERIA,
+    ],
+    hints: [
+      "Tìm MINH phải ra 3 người giống như tìm minh.",
+      "Lọc Editor có 11 người: với 10 dòng mỗi trang thì có 2 trang.",
+      "Sau khi đổi bộ lọc, chỉ số trang đúng phải là Trang 1/2.",
+    ],
+    solution: `import { test, expect } from "@playwright/test";
+
+test.beforeEach(async ({ page }) => {
+  await page.goto("/lab/table");   // thêm ?bugs=BUG-01 hoặc ?bugs=BUG-02 để thấy test đỏ
+  await page.getByTestId("reset-data").click();
+});
+
+test("tìm kiếm không phân biệt hoa thường", async ({ page }) => {
+  await page.getByLabel("Tìm kiếm").fill("MINH");
+  await expect(page.getByTestId("total-count")).toHaveText("3 người dùng");
+});
+
+test("đổi bộ lọc đưa về trang 1", async ({ page }) => {
+  await page.getByRole("button", { name: "Trang sau" }).click();
+  await expect(page.getByTestId("page-info")).toHaveText("Trang 2/4");
+  await page.getByLabel("Vai trò").selectOption("editor");
+  await expect(page.getByTestId("page-info")).toHaveText("Trang 1/2");
+});`,
+  },
+];
+
+export const EXERCISES: Record<string, Exercise[]> = { login, forms, cart, playground, api, otp, todo, table };

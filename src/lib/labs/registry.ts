@@ -16,4 +16,5 @@ export const LABS: LabInfo[] = [
   { slug: "api", id: "LAB-14", title: "Mock REST API (Sách)", domain: "API", difficulty: 2, skills: ["request", "status code", "422/409", "phân quyền", "CRUD"], ready: true },
   { slug: "otp", id: "LAB-17", title: "Đăng nhập Email OTP", domain: "Auth nâng cao", difficulty: 3, skills: ["hộp thư giả", "nhiều tab", "page.clock", "OTP hết hạn"], ready: true },
   { slug: "todo", id: "LAB-04", title: "Quản lý công việc (CRUD)", domain: "Productivity", difficulty: 1, skills: ["CRUD", "dialog xác nhận", "bộ lọc", "localStorage"], ready: true },
+  { slug: "table", id: "LAB-08", title: "Bảng dữ liệu động (Quản lý người dùng)", domain: "Admin", difficulty: 2, skills: ["bảng", "sắp xếp", "lọc", "phân trang", "chọn nhiều", "tải CSV"], ready: true },
 ];

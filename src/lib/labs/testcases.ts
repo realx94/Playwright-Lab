@@ -200,7 +200,36 @@ const todo: Workshop = {
   ],
 };
 
-export const WORKSHOPS: Record<string, Workshop> = { login, forms, cart, playground, api, otp, todo };
+const table: Workshop = {
+  techniques: ["Equivalence Partitioning", "Boundary Value Analysis", "Decision Table", "Pairwise"],
+  rules: [
+    { id: "BR-01", text: "Mặc định 10 dòng mỗi trang, sắp theo Tên A→Z, tổng 37 người dùng" },
+    { id: "BR-02", text: "Tìm kiếm không phân biệt hoa thường theo tên hoặc email" },
+    { id: "BR-03", text: "Đổi bất kỳ bộ lọc hoặc tìm kiếm thì quay về trang 1" },
+    { id: "BR-04", text: "Lọc vai trò và trạng thái kết hợp theo phép AND" },
+    { id: "BR-05", text: "Bấm tiêu đề cột đổi chiều sắp xếp; Ngày tạo sắp theo thời gian thật" },
+    { id: "BR-06", text: "Chọn tất cả chỉ chọn các dòng của trang hiện tại" },
+    { id: "BR-07", text: "Khoá/Mở khoá đổi trạng thái; Admin không thể bị khoá" },
+    { id: "BR-08", text: "Xuất CSV theo bộ lọc hiện tại, gồm mọi trang" },
+  ],
+  cases: [
+    { id: "TC-U-001", title: "Trạng thái mặc định", precondition: "Dữ liệu gốc", steps: "Mở trang", data: "—", expected: "37 người dùng, Trang 1/4, dòng đầu là Bùi Chi", type: "Happy", priority: "P0", br: ["BR-01"] },
+    { id: "TC-U-002", title: "Trang cuối", precondition: "Dữ liệu gốc", steps: "Bấm Trang sau ba lần", data: "—", expected: "Trang 4/4 có 7 dòng, Trang sau bị khoá", type: "BVA", priority: "P0", br: ["BR-01"] },
+    { id: "TC-U-003", title: "Đổi số dòng mỗi trang", precondition: "Dữ liệu gốc", steps: "Chọn 20 dòng mỗi trang", data: "20", expected: "Trang 1/2", type: "EP", priority: "P1", br: ["BR-01"] },
+    { id: "TC-U-004", title: "Tìm kiếm hoa thường", precondition: "Dữ liệu gốc", steps: "Nhập MINH", data: "MINH", expected: "3 người dùng", type: "EP", priority: "P0", br: ["BR-02"] },
+    { id: "TC-U-005", title: "Tìm kiếm không có kết quả", precondition: "Dữ liệu gốc", steps: "Nhập chuỗi không tồn tại", data: "khong-ton-tai", expected: "Hiện thông báo không tìm thấy", type: "Negative", priority: "P1", br: ["BR-02"] },
+    { id: "TC-U-006", title: "Đổi bộ lọc quay về trang 1", precondition: "Đang ở trang 2", steps: "Chọn vai trò Editor", data: "editor", expected: "Về Trang 1/2 (11 editor)", type: "State", priority: "P0", br: ["BR-03"] },
+    { id: "TC-U-007", title: "Lọc kết hợp", precondition: "Dữ liệu gốc", steps: "Chọn Editor và Đã khoá", data: "editor + locked", expected: "3 người dùng", type: "Decision", priority: "P0", br: ["BR-04"] },
+    { id: "TC-U-008", title: "Sắp xếp Ngày tạo tăng dần", precondition: "Dữ liệu gốc", steps: "Bấm tiêu đề Ngày tạo", data: "—", expected: "Dòng đầu là 01/01/2025, các ngày tăng dần theo thời gian", type: "Decision", priority: "P0", br: ["BR-05"] },
+    { id: "TC-U-009", title: "Đảo chiều sắp xếp", precondition: "Đang sắp tăng dần", steps: "Bấm lại tiêu đề", data: "—", expected: "aria-sort chuyển sang descending", type: "State", priority: "P1", br: ["BR-05"] },
+    { id: "TC-U-010", title: "Chọn tất cả trang này", precondition: "Dữ liệu gốc", steps: "Tick ô chọn tất cả", data: "—", expected: "Đã chọn 10 (không phải 37)", type: "BVA", priority: "P0", br: ["BR-06"] },
+    { id: "TC-U-011", title: "Khoá hàng loạt", precondition: "Đã chọn 10 dòng", steps: "Bấm Khoá đã chọn", data: "—", expected: "Tổng số người bị khoá tăng từ 9 lên 13; Admin không bị khoá", type: "Decision", priority: "P0", br: ["BR-07"] },
+    { id: "TC-U-012", title: "Nút khoá của Admin", precondition: "Lọc vai trò Admin", steps: "Quan sát nút thao tác", data: "admin", expected: "Mọi nút bị vô hiệu hoá", type: "Negative", priority: "P1", br: ["BR-07"] },
+    { id: "TC-U-013", title: "Xuất CSV theo bộ lọc", precondition: "Đang lọc 3 người", steps: "Bấm Xuất CSV", data: "minh", expected: "Tệp nguoi-dung.csv có 1 dòng tiêu đề + 3 dòng", type: "Happy", priority: "P2", br: ["BR-08"] },
+  ],
+};
+
+export const WORKSHOPS: Record<string, Workshop> = { login, forms, cart, playground, api, otp, todo, table };
 
 export function toCsv(cases: TestCase[]): string {
   const head = ["ID", "Tiêu đề", "Tiền điều kiện", "Các bước", "Dữ liệu", "Kết quả mong đợi", "Loại", "Ưu tiên", "BR"];

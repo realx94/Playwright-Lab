@@ -2,9 +2,12 @@ import { test, expect } from "@playwright/test";
 
 test("Ctrl+K mở tìm kiếm, gõ từ khoá và đi tới bài học", async ({ page }) => {
   await page.goto("/");
-  await page.keyboard.press("Control+k");
   const input = page.getByPlaceholder(/Tìm bài học/);
-  await expect(input).toBeVisible();
+  // Phím tắt chỉ hoạt động sau khi trang hydrate xong; thử lại tới khi hộp tìm kiếm thật sự mở.
+  await expect(async () => {
+    if (!(await input.isVisible())) await page.keyboard.press("Control+k");
+    await expect(input).toBeVisible({ timeout: 1000 });
+  }).toPass();
   await input.fill("xpath");
   await page.getByRole("option", { name: /XPath/ }).first().click();
   await expect(page).toHaveURL(/\/learn\//);

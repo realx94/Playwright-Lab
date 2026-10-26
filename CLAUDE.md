@@ -29,7 +29,7 @@ Quy trình mỗi lần triển khai:
 - Mọi truy cập lưu trữ đi qua `src/lib/storage` (`StorageAdapter`), không gọi IndexedDB/localStorage trực tiếp trong UI (trừ cấu hình nhỏ của từng lab).
 - Lab: có nút **Reset**, `data-testid` ổn định, bug bật bằng `?bugs=BUG-xx`, spec đáp án trong `e2e/<lab>-lab.spec.ts`, test case mẫu trong `src/lib/labs/testcases.ts`.
 - Quiz: file `src/content/quiz/<slug>.json`; `e2e/quiz-bank.spec.ts` phải xanh.
-- Bài tập lab: dữ liệu ở `src/lib/labs/exercises.ts`; **đáp án mẫu phải chạy xanh** (`npm run verify:solutions`). Trang `/lab/<slug>` chỉ chứa ứng dụng; BR, workshop và bài tập đặt ở `/labs/<slug>` để không gây trùng locator.
+- Bài tập lab: dữ liệu ở `src/lib/labs/exercises.ts`; **đáp án mẫu phải chạy xanh** (`npm run verify:solutions`). Trang `/lab/<slug>` chỉ chứa ứng dụng và **không có header của site** (layout riêng ở `src/app/lab/layout.tsx`); BR, workshop và bài tập đặt ở `/labs/<slug>` (nhóm route `(site)`) để không gây trùng locator. Khi thêm lab mới phải thêm: component, page, mục trong `registry.ts`, workshop (`testcases.ts`), bài tập (`exercises.ts`), spec `e2e/<lab>-lab.spec.ts`, rồi chạy `npm run verify:solutions` và `npm run starter:stubs`.
 - Starter repo (`starter-repo/`, có `package.json` riêng, bị loại khỏi tsconfig/eslint gốc): khi thêm/đổi lab hoặc bài tập, chạy `npm run starter:stubs` để sinh lại file bài tập, thêm Page Object nếu cần, và chạy thử ví dụ của starter với `BASE_URL` trỏ vào site đang chạy. `public/starter-repo.zip` được tạo tự động ở bước prebuild, không commit.
 - Nội dung tiếng Việt, thuật ngữ kỹ thuật giữ tiếng Anh. Không sao chép nội dung của khoá học khác.
 - Không commit khoá/API key; `.env*` đã được git bỏ qua.
