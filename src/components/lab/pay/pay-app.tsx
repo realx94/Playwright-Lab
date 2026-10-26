@@ -30,6 +30,7 @@ export function PayApp() {
   const [message, setMessage] = useState<Message>(null);
   const [threeDs, setThreeDs] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [frameReady, setFrameReady] = useState(false);
   const [refundInput, setRefundInput] = useState("");
   const [refundError, setRefundError] = useState<string | null>(null);
 
@@ -80,7 +81,9 @@ export function PayApp() {
     /* eslint-enable react-hooks/set-state-in-effect */
 
     const onMessage = (e: MessageEvent) => {
-      if (e.origin !== window.location.origin || e.data?.type !== "card-result") return;
+      if (e.origin !== window.location.origin) return;
+      if (e.data?.type === "card-frame-ready") return setFrameReady(true);
+      if (e.data?.type !== "card-result") return;
       if (!e.data.ok) {
         setBusy(false);
         return setMessage({ kind: "error", text: "Vui lòng kiểm tra thông tin thẻ" });
@@ -155,6 +158,7 @@ export function PayApp() {
     setBusy(false);
     setRefundError(null);
     setRefundInput("");
+    setFrameReady(false);
     frame.current?.contentWindow?.location.reload();
   }
 
@@ -185,7 +189,7 @@ export function PayApp() {
         <section aria-label="Thanh toán" className="space-y-3 rounded-xl border p-5">
           <h2 className="text-lg font-semibold">Thanh toán bằng thẻ</h2>
           <iframe ref={frame} src="/lab/pay/frame" title="Khung nhập thẻ" className="h-52 w-full rounded-md border" />
-          <Button onClick={pay} disabled={busy || threeDs}>
+          <Button onClick={pay} disabled={!frameReady || busy || threeDs}>
             Thanh toán
           </Button>
         </section>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { useBugs } from "@/lib/labs/use-bugs";
 import {
@@ -22,7 +22,6 @@ import {
 
 /** Ứng dụng đăng nhập bằng LabID theo luồng Authorization Code (có state chống CSRF). */
 export function OauthApp() {
-  const router = useRouter();
   const params = useSearchParams();
   const bugs = useBugs();
   const bugsRef = useRef(bugs);
@@ -75,8 +74,8 @@ export function OauthApp() {
     const state = params.get("state");
     const err = params.get("error");
     if (code || err) {
+      window.history.replaceState(null, "", "/lab/oauth"); // xoá code khỏi URL ngay để tải lại không xử lý lần hai
       finish(code, state, err);
-      router.replace("/lab/oauth");
     }
     setReady(true);
     /* eslint-enable react-hooks/set-state-in-effect */
