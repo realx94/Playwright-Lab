@@ -116,8 +116,11 @@ Xem dịch vụ và cách cấu hình tại [06-integrations.md](06-integrations
 - BR-01 Bật 2FA bằng quét QR (secret base32), xác nhận bằng mã TOTP 6 số, chu kỳ 30s.
 - BR-02 Chấp nhận lệch ±1 chu kỳ.
 - BR-03 Tạo 10 recovery code, mỗi mã dùng một lần.
-- BR-04 SMS OTP gửi vào hộp SMS giả `/lab/inbox/sms`.
-**Kỹ năng:** `otplib` tính mã trong test, đọc secret từ UI, test ranh giới 30s.
+- BR-04 Nhập sai 3 lần liên tiếp thì khóa tài khoản, kể cả khi sau đó nhập đúng.
+- BR-05 Một mã TOTP đã dùng để đăng nhập không được dùng lại (chống replay).
+- SMS OTP (hộp SMS giả `/lab/inbox/sms`) chưa làm; bản hiện tại chỉ gồm TOTP và mã khôi phục.
+**Kỹ năng:** tự tính TOTP trong test (`node:crypto` hoặc `otplib`), đọc secret từ UI, `page.clock` để test ranh giới 30s.
+**Bug:** BUG-01 chấp nhận lệch ±2 chu kỳ; BUG-02 mã khôi phục dùng lại được; BUG-03 dùng lại cùng một mã TOTP.
 
 ### LAB-19 OAuth / Social login
 Tạo hai chế độ: **Fake IdP** (trang đồng ý giả trong site, ổn định) và **GitHub/Google thật** (chỉ để quan sát luồng).
@@ -175,7 +178,8 @@ Vai trò Admin/Manager/Staff/Guest; ma trận quyền; thử IDOR (đổi id tro
 | LAB-13 Tình huống khó (Playground) | `/lab/playground` | Đã làm (dialog, tab mới, iframe, shadow DOM, kéo thả, tải trễ, cuộn vô hạn, tải xuống) |
 | LAB-14 Mock REST API (Sách) | `/lab/api`, `/api/lab/*` | Đã làm (trạng thái theo cookie, 401/403/409/422, bug toggle) |
 | LAB-17 Đăng nhập Email OTP | `/lab/otp`, `/lab/inbox` | Đã làm (hộp thư giả, page.clock, bug toggle) |
-| LAB-05, 06, 09..11, 15, 16, 18..28 | — | Chưa làm; các lab cần dịch vụ bên ngoài (OAuth, Stripe, DB, email thật) phụ thuộc mô hình BYO |
+| LAB-18 Đăng nhập 2FA (TOTP) | `/lab/totp` | Đã làm (TOTP RFC 6238, cửa sổ ±1, mã khôi phục, khóa tài khoản, chống replay; chưa có SMS OTP) |
+| LAB-05, 06, 09..11, 15, 16, 19..28 | — | Chưa làm; các lab cần dịch vụ bên ngoài (OAuth, Stripe, DB, email thật) phụ thuộc mô hình BYO |
 
 ### Quy tắc kỹ thuật của trang lab
 - `/lab/<slug>` là **ứng dụng thuần**: không header, không thanh tìm kiếm của site (chỉ một liên kết quay lại ở layout lab) để locator của người học không bị trùng.

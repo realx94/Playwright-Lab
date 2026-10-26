@@ -230,6 +230,26 @@
       "bugs": [
         "BUG-02"
       ]
+    },
+    "totp-1": {
+      "lab": "totp",
+      "spec": "tests/exercises/totp/totp-1.spec.ts",
+      "bugs": []
+    },
+    "totp-2": {
+      "lab": "totp",
+      "spec": "tests/exercises/totp/totp-2.spec.ts",
+      "bugs": [
+        "BUG-01",
+        "BUG-03"
+      ]
+    },
+    "totp-3": {
+      "lab": "totp",
+      "spec": "tests/exercises/totp/totp-3.spec.ts",
+      "bugs": [
+        "BUG-02"
+      ]
     }
   }
 }

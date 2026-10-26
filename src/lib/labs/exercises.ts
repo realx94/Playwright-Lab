@@ -1689,4 +1689,290 @@ test("chưa đọc chỉ tăng khi tab bị ẩn", async ({ page, context }) => 
   },
 ];
 
-export const EXERCISES: Record<string, Exercise[]> = { login, forms, cart, playground, api, otp, todo, table, leave, chat };
+const totp: Exercise[] = [
+  {
+    id: "totp-1",
+    title: "Bật 2FA và đăng nhập bằng mã TOTP",
+    difficulty: 3,
+    task: "Bật 2FA: đọc khoá base32 trên trang rồi tự tính mã TOTP trong test. Sau đó đăng xuất, đăng nhập bằng mật khẩu và mã TOTP của chu kỳ kế tiếp. Dùng đồng hồ giả để mã không đổi giữa chừng.",
+    criteria: [
+      "Đọc khoá từ giao diện (data-testid totp-secret) và tự tính mã 6 số trong test",
+      "Cố định thời gian bằng context.clock.setFixedTime để mã ổn định",
+      "Kiểm tra hiện 10 mã khôi phục sau khi bật",
+      "Đăng nhập lại qua hai bước: mật khẩu rồi mã TOTP",
+      ...COMMON_CRITERIA,
+    ],
+    hints: [
+      "TOTP = HOTP(khoá, floor(thời gian / 30 giây)); dùng createHmac('sha1', khoá) của node:crypto.",
+      "Khoá hiển thị ở dạng base32, cần giải mã sang byte trước khi đưa vào HMAC.",
+      "Sau khi bật 2FA, mã vừa dùng chưa bị tính là đã dùng; nhưng khi đăng nhập hãy dùng mã của chu kỳ kế tiếp để chắc chắn.",
+    ],
+    solution: `import { test, expect, type BrowserContext, type Page } from "@playwright/test";
+import { createHmac } from "node:crypto";
+
+// TOTP theo RFC 6238 (SHA-1, 6 số, 30 giây) tính bằng node:crypto, không cần thư viện.
+function base32Decode(input: string) {
+  const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
+  let bits = 0;
+  let value = 0;
+  const out: number[] = [];
+  for (const ch of input.toUpperCase()) {
+    value = (value << 5) | alphabet.indexOf(ch);
+    bits += 5;
+    if (bits >= 8) {
+      out.push((value >>> (bits - 8)) & 0xff);
+      bits -= 8;
+    }
+  }
+  return Buffer.from(out);
+}
+
+function totp(secret: string, atMs: number) {
+  const msg = Buffer.alloc(8);
+  msg.writeBigUInt64BE(BigInt(Math.floor(atMs / 1000 / 30)));
+  const h = createHmac("sha1", base32Decode(secret)).update(msg).digest();
+  const o = h[h.length - 1] & 0xf;
+  const n = ((h[o] & 0x7f) << 24) | (h[o + 1] << 16) | (h[o + 2] << 8) | h[o + 3];
+  return String(n % 1_000_000).padStart(6, "0");
+}
+
+// 10:00:00Z chia hết cho 30 giây nên T0 nằm giữa một chu kỳ.
+const T0 = new Date("2026-03-01T10:00:10Z").getTime();
+const STEP = 30_000;
+
+async function enable(page: Page, context: BrowserContext) {
+  await context.clock.setFixedTime(new Date(T0));
+  await page.goto("/lab/totp");
+  await page.getByTestId("reset-data").click();
+  await page.getByRole("button", { name: "Bật 2FA" }).click();
+  const secret = (await page.getByTestId("totp-secret").textContent())!.trim();
+  await page.getByLabel("Mã xác nhận").fill(totp(secret, T0));
+  await page.getByRole("button", { name: "Xác nhận" }).click();
+  await expect(page.getByTestId("totp-status")).toHaveText("2FA: Đã bật");
+  return secret;
+}
+
+async function passwordStep(page: Page) {
+  await page.getByRole("button", { name: "Đăng xuất" }).click();
+  await page.getByLabel("Mật khẩu").fill("Passw0rd!");
+  await page.getByRole("button", { name: "Tiếp tục" }).click();
+}
+
+async function enterCode(page: Page, code: string) {
+  await page.getByLabel("Mã xác thực", { exact: true }).fill(code);
+  await page.getByRole("button", { name: "Xác nhận" }).click();
+}
+
+test("bật 2FA và đăng nhập hai bước", async ({ page, context }) => {
+  const secret = await enable(page, context);
+  await expect(page.getByTestId("recovery-code")).toHaveCount(10);
+
+  await passwordStep(page);
+  await context.clock.setFixedTime(new Date(T0 + STEP));
+  await enterCode(page, totp(secret, T0 + STEP));
+  await expect(page.getByTestId("totp-welcome")).toContainText("user@lab.dev");
+});`,
+  },
+  {
+    id: "totp-2",
+    title: "Độ lệch thời gian và chống dùng lại mã",
+    difficulty: 3,
+    bugs: ["BUG-01", "BUG-03"],
+    task: "Kiểm tra biên của cửa sổ chấp nhận (±1 chu kỳ được, ±2 chu kỳ bị từ chối) và việc một mã đã dùng không được dùng lại. Test phải đỏ khi bật BUG-01 hoặc BUG-03.",
+    criteria: [
+      "Có test mã lệch -1 chu kỳ (được chấp nhận) và -2 chu kỳ (bị từ chối)",
+      "Có test dùng lại cùng một mã sau khi đăng xuất và nhận thông báo đã được sử dụng",
+      "Tính mã ở thời điểm lệch bằng cách truyền thời gian vào hàm totp, không chờ thật",
+      "Test đỏ với BUG-01 và với BUG-03",
+      ...COMMON_CRITERIA,
+    ],
+    hints: [
+      "Hàm totp(secret, thờiĐiểm) cho phép tính mã của quá khứ hoặc tương lai mà không phải chờ.",
+      "Thời gian của trang đã bị cố định bằng setFixedTime nên mã của chu kỳ -2 chắc chắn nằm ngoài cửa sổ.",
+      "Để thử dùng lại mã: đăng nhập, đăng xuất, nhập lại đúng mã đó trong cùng chu kỳ.",
+    ],
+    solution: `import { test, expect, type BrowserContext, type Page } from "@playwright/test";
+import { createHmac } from "node:crypto";
+
+// TOTP theo RFC 6238 (SHA-1, 6 số, 30 giây) tính bằng node:crypto, không cần thư viện.
+function base32Decode(input: string) {
+  const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
+  let bits = 0;
+  let value = 0;
+  const out: number[] = [];
+  for (const ch of input.toUpperCase()) {
+    value = (value << 5) | alphabet.indexOf(ch);
+    bits += 5;
+    if (bits >= 8) {
+      out.push((value >>> (bits - 8)) & 0xff);
+      bits -= 8;
+    }
+  }
+  return Buffer.from(out);
+}
+
+function totp(secret: string, atMs: number) {
+  const msg = Buffer.alloc(8);
+  msg.writeBigUInt64BE(BigInt(Math.floor(atMs / 1000 / 30)));
+  const h = createHmac("sha1", base32Decode(secret)).update(msg).digest();
+  const o = h[h.length - 1] & 0xf;
+  const n = ((h[o] & 0x7f) << 24) | (h[o + 1] << 16) | (h[o + 2] << 8) | h[o + 3];
+  return String(n % 1_000_000).padStart(6, "0");
+}
+
+// 10:00:00Z chia hết cho 30 giây nên T0 nằm giữa một chu kỳ.
+const T0 = new Date("2026-03-01T10:00:10Z").getTime();
+const STEP = 30_000;
+
+async function enable(page: Page, context: BrowserContext) {
+  await context.clock.setFixedTime(new Date(T0));
+  await page.goto("/lab/totp");
+  await page.getByTestId("reset-data").click();
+  await page.getByRole("button", { name: "Bật 2FA" }).click();
+  const secret = (await page.getByTestId("totp-secret").textContent())!.trim();
+  await page.getByLabel("Mã xác nhận").fill(totp(secret, T0));
+  await page.getByRole("button", { name: "Xác nhận" }).click();
+  await expect(page.getByTestId("totp-status")).toHaveText("2FA: Đã bật");
+  return secret;
+}
+
+async function passwordStep(page: Page) {
+  await page.getByRole("button", { name: "Đăng xuất" }).click();
+  await page.getByLabel("Mật khẩu").fill("Passw0rd!");
+  await page.getByRole("button", { name: "Tiếp tục" }).click();
+}
+
+async function enterCode(page: Page, code: string) {
+  await page.getByLabel("Mã xác thực", { exact: true }).fill(code);
+  await page.getByRole("button", { name: "Xác nhận" }).click();
+}
+
+test("mã lệch hai chu kỳ bị từ chối, một chu kỳ được chấp nhận", async ({ page, context }) => {
+  const secret = await enable(page, context);
+
+  await passwordStep(page);
+  await enterCode(page, totp(secret, T0 - 2 * STEP));
+  await expect(page.getByTestId("totp-error")).toHaveText("Mã không đúng");
+
+  await enterCode(page, totp(secret, T0 - STEP));
+  await expect(page.getByTestId("totp-welcome")).toBeVisible();
+});
+
+test("mã đã dùng không dùng lại được", async ({ page, context }) => {
+  const secret = await enable(page, context);
+  await passwordStep(page);
+  await enterCode(page, totp(secret, T0));
+  await expect(page.getByTestId("totp-welcome")).toBeVisible();
+
+  await passwordStep(page);
+  await enterCode(page, totp(secret, T0));
+  await expect(page.getByTestId("totp-error")).toHaveText("Mã đã được sử dụng");
+});`,
+  },
+  {
+    id: "totp-3",
+    title: "Mã khôi phục dùng một lần và khóa tài khoản",
+    difficulty: 3,
+    bugs: ["BUG-02"],
+    task: "Đăng nhập bằng mã khôi phục, chứng minh mã đó bị gạch và không dùng lại được. Thêm test nhập sai 3 lần thì tài khoản bị khóa, kể cả khi nhập đúng sau đó. Test phải đỏ khi bật BUG-02.",
+    criteria: [
+      "Lấy một mã khôi phục từ giao diện sau khi bật 2FA",
+      "Kiểm tra mã được đánh dấu đã dùng (thuộc tính data-used) sau lần dùng đầu",
+      "Dùng lại mã đó và nhận thông báo đã được sử dụng",
+      "Có test sai 3 lần dẫn đến khóa, và nhập đúng vẫn bị từ chối",
+      "Test đỏ với BUG-02",
+      ...COMMON_CRITERIA,
+    ],
+    hints: [
+      "Màn nhập mã có liên kết Dùng mã khôi phục để chuyển sang ô nhập mã khôi phục.",
+      "Sau khi bấm liên kết, nhãn của nó đổi thành Dùng mã từ ứng dụng xác thực nên chỉ còn nút gửi mang tên Dùng mã khôi phục.",
+      "Mã đã dùng có data-used=true trên phần tử recovery-code tương ứng.",
+    ],
+    solution: `import { test, expect, type BrowserContext, type Page } from "@playwright/test";
+import { createHmac } from "node:crypto";
+
+// TOTP theo RFC 6238 (SHA-1, 6 số, 30 giây) tính bằng node:crypto, không cần thư viện.
+function base32Decode(input: string) {
+  const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
+  let bits = 0;
+  let value = 0;
+  const out: number[] = [];
+  for (const ch of input.toUpperCase()) {
+    value = (value << 5) | alphabet.indexOf(ch);
+    bits += 5;
+    if (bits >= 8) {
+      out.push((value >>> (bits - 8)) & 0xff);
+      bits -= 8;
+    }
+  }
+  return Buffer.from(out);
+}
+
+function totp(secret: string, atMs: number) {
+  const msg = Buffer.alloc(8);
+  msg.writeBigUInt64BE(BigInt(Math.floor(atMs / 1000 / 30)));
+  const h = createHmac("sha1", base32Decode(secret)).update(msg).digest();
+  const o = h[h.length - 1] & 0xf;
+  const n = ((h[o] & 0x7f) << 24) | (h[o + 1] << 16) | (h[o + 2] << 8) | h[o + 3];
+  return String(n % 1_000_000).padStart(6, "0");
+}
+
+// 10:00:00Z chia hết cho 30 giây nên T0 nằm giữa một chu kỳ.
+const T0 = new Date("2026-03-01T10:00:10Z").getTime();
+const STEP = 30_000;
+
+async function enable(page: Page, context: BrowserContext) {
+  await context.clock.setFixedTime(new Date(T0));
+  await page.goto("/lab/totp");
+  await page.getByTestId("reset-data").click();
+  await page.getByRole("button", { name: "Bật 2FA" }).click();
+  const secret = (await page.getByTestId("totp-secret").textContent())!.trim();
+  await page.getByLabel("Mã xác nhận").fill(totp(secret, T0));
+  await page.getByRole("button", { name: "Xác nhận" }).click();
+  await expect(page.getByTestId("totp-status")).toHaveText("2FA: Đã bật");
+  return secret;
+}
+
+async function passwordStep(page: Page) {
+  await page.getByRole("button", { name: "Đăng xuất" }).click();
+  await page.getByLabel("Mật khẩu").fill("Passw0rd!");
+  await page.getByRole("button", { name: "Tiếp tục" }).click();
+}
+
+async function enterCode(page: Page, code: string) {
+  await page.getByLabel("Mã xác thực", { exact: true }).fill(code);
+  await page.getByRole("button", { name: "Xác nhận" }).click();
+}
+
+test("mã khôi phục chỉ dùng một lần", async ({ page, context }) => {
+  await enable(page, context);
+  const code = (await page.getByTestId("recovery-code").first().textContent())!.trim();
+
+  await passwordStep(page);
+  await page.getByRole("button", { name: "Dùng mã khôi phục" }).click();
+  await page.getByLabel("Mã khôi phục", { exact: true }).fill(code);
+  await page.getByRole("button", { name: "Dùng mã khôi phục" }).click();
+  await expect(page.getByTestId("totp-welcome")).toBeVisible();
+  await expect(page.getByTestId("recovery-code").first()).toHaveAttribute("data-used", "true");
+
+  await passwordStep(page);
+  await page.getByRole("button", { name: "Dùng mã khôi phục" }).first().click();
+  await page.getByLabel("Mã khôi phục", { exact: true }).fill(code);
+  await page.getByRole("button", { name: "Dùng mã khôi phục" }).last().click();
+  await expect(page.getByTestId("totp-error")).toHaveText("Mã khôi phục đã được sử dụng");
+});
+
+test("sai ba lần thì khóa tài khoản", async ({ page, context }) => {
+  const secret = await enable(page, context);
+  await passwordStep(page);
+  for (let i = 0; i < 3; i++) await enterCode(page, "000000");
+  await expect(page.getByTestId("totp-error")).toContainText("bị khóa");
+
+  await enterCode(page, totp(secret, T0));
+  await expect(page.getByTestId("totp-error")).toContainText("bị khóa");
+  await expect(page.getByTestId("totp-welcome")).toHaveCount(0);
+});`,
+  },
+];
+
+export const EXERCISES: Record<string, Exercise[]> = { login, forms, cart, playground, api, otp, todo, table, leave, chat, totp };

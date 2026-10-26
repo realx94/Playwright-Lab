@@ -282,7 +282,31 @@ const chat: Workshop = {
   ],
 };
 
-export const WORKSHOPS: Record<string, Workshop> = { login, forms, cart, playground, api, otp, todo, table, leave, chat };
+const totp: Workshop = {
+  techniques: ["Boundary Value Analysis", "State Transition", "Security", "Error Guessing"],
+  rules: [
+    { id: "BR-01", text: "Bật 2FA bằng khoá base32 16 ký tự và mã TOTP 6 số, chu kỳ 30 giây" },
+    { id: "BR-02", text: "Chấp nhận mã lệch tối đa ±1 chu kỳ so với giờ hiện tại" },
+    { id: "BR-03", text: "Có 10 mã khôi phục, mỗi mã chỉ dùng một lần" },
+    { id: "BR-04", text: "Nhập sai 3 lần liên tiếp thì khóa tài khoản, kể cả khi sau đó nhập đúng" },
+    { id: "BR-05", text: "Một mã TOTP đã dùng để đăng nhập không được dùng lại (chống replay)" },
+  ],
+  cases: [
+    { id: "TC-T-101", title: "Bật 2FA với mã đúng", precondition: "Chưa bật 2FA", steps: "Bấm Bật 2FA, nhập mã tính từ khoá", data: "Mã TOTP hiện tại", expected: "2FA: Đã bật, hiện 10 mã khôi phục", type: "Happy", priority: "P0", br: ["BR-01", "BR-03"] },
+    { id: "TC-T-102", title: "Mã xác nhận không đủ 6 số", precondition: "Đang thiết lập 2FA", steps: "Nhập 12345", data: "12345", expected: "Báo mã gồm đúng 6 chữ số", type: "BVA", priority: "P1", br: ["BR-01"] },
+    { id: "TC-T-103", title: "Mã của chu kỳ liền trước", precondition: "Đã bật 2FA", steps: "Nhập mã của chu kỳ trước", data: "T − 30s", expected: "Đăng nhập thành công", type: "BVA", priority: "P0", br: ["BR-02"] },
+    { id: "TC-T-104", title: "Mã của chu kỳ liền sau", precondition: "Đã bật 2FA", steps: "Nhập mã của chu kỳ sau", data: "T + 30s", expected: "Đăng nhập thành công", type: "BVA", priority: "P1", br: ["BR-02"] },
+    { id: "TC-T-105", title: "Mã cũ hai chu kỳ", precondition: "Đã bật 2FA", steps: "Nhập mã của T − 60s", data: "T − 60s", expected: "Báo mã không đúng", type: "BVA", priority: "P0", br: ["BR-02"] },
+    { id: "TC-T-106", title: "Mã tương lai hai chu kỳ", precondition: "Đã bật 2FA", steps: "Nhập mã của T + 60s", data: "T + 60s", expected: "Báo mã không đúng", type: "BVA", priority: "P1", br: ["BR-02"] },
+    { id: "TC-T-107", title: "Dùng lại mã vừa đăng nhập", precondition: "Vừa đăng nhập bằng mã M", steps: "Đăng xuất, đăng nhập lại bằng M", data: "M", expected: "Báo mã đã được sử dụng", type: "Negative", priority: "P0", br: ["BR-05"] },
+    { id: "TC-T-108", title: "Mã khôi phục dùng lần đầu", precondition: "Đã bật 2FA", steps: "Đăng nhập bằng mã khôi phục", data: "Một mã khôi phục", expected: "Đăng nhập thành công, mã bị gạch", type: "Happy", priority: "P0", br: ["BR-03"] },
+    { id: "TC-T-109", title: "Mã khôi phục dùng lần hai", precondition: "Mã đã dùng", steps: "Đăng nhập lại bằng chính mã đó", data: "Mã đã dùng", expected: "Báo mã khôi phục đã được sử dụng", type: "Negative", priority: "P0", br: ["BR-03"] },
+    { id: "TC-T-110", title: "Sai ba lần thì khóa", precondition: "Ở bước nhập mã", steps: "Nhập sai 3 lần", data: "000000", expected: "Báo tài khoản bị khóa", type: "State", priority: "P0", br: ["BR-04"] },
+    { id: "TC-T-111", title: "Nhập đúng sau khi bị khóa", precondition: "Tài khoản đã khóa", steps: "Nhập mã TOTP đúng", data: "Mã hiện tại", expected: "Vẫn bị từ chối", type: "State", priority: "P1", br: ["BR-04"] },
+  ],
+};
+
+export const WORKSHOPS: Record<string, Workshop> = { login, forms, cart, playground, api, otp, todo, table, leave, chat, totp };
 
 export function toCsv(cases: TestCase[]): string {
   const head = ["ID", "Tiêu đề", "Tiền điều kiện", "Các bước", "Dữ liệu", "Kết quả mong đợi", "Loại", "Ưu tiên", "BR"];
