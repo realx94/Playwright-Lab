@@ -1,0 +1,168 @@
+{
+  "questions": [
+    {
+      "id": "q1",
+      "type": "single",
+      "prompt": "storageState dùng để làm gì?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Lưu cookie và localStorage để tái sử dụng phiên đăng nhập"
+        },
+        {
+          "id": "b",
+          "text": "Lưu cấu hình của trình duyệt trong file playwright.config.ts"
+        },
+        {
+          "id": "c",
+          "text": "Lưu toàn bộ mã nguồn của ứng dụng đang được test"
+        },
+        {
+          "id": "d",
+          "text": "Lưu kết quả của các assertion sau mỗi lần chạy"
+        }
+      ],
+      "answer": [
+        "a"
+      ],
+      "explanation": "storageState lưu cookie và localStorage của context để dùng lại phiên đã đăng nhập."
+    },
+    {
+      "id": "q2",
+      "type": "single",
+      "prompt": "Vì sao project setup cần khai báo dependencies trong các project khác?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Để mọi test dùng chung một tab trình duyệt"
+        },
+        {
+          "id": "b",
+          "text": "Để setup chạy xong trước khi test cần dùng phiên"
+        },
+        {
+          "id": "c",
+          "text": "Để các project chạy song song nhanh gấp đôi"
+        },
+        {
+          "id": "d",
+          "text": "Để Playwright tự động xoá file trạng thái cũ trước khi chạy"
+        }
+      ],
+      "answer": [
+        "b"
+      ],
+      "explanation": "dependencies bảo đảm thứ tự: project setup tạo file phiên xong thì các project khác mới chạy."
+    },
+    {
+      "id": "q3",
+      "type": "multi",
+      "prompt": "Việc nào đúng với file .auth/user.json? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Có thể chia sẻ cho người ngoài dự án"
+        },
+        {
+          "id": "b",
+          "text": "An toàn để commit vì chỉ chứa dữ liệu công khai"
+        },
+        {
+          "id": "c",
+          "text": "Có thể hết hạn nên cần tạo lại khi chạy"
+        },
+        {
+          "id": "d",
+          "text": "Nên được thêm vào .gitignore để không bị commit"
+        }
+      ],
+      "answer": [
+        "c",
+        "d"
+      ],
+      "explanation": "File chứa cookie phiên nên là dữ liệu nhạy cảm: không commit, không chia sẻ, tạo lại khi hết hạn."
+    },
+    {
+      "id": "q4",
+      "type": "single",
+      "prompt": "Test kiểm tra chính màn hình đăng nhập nên làm gì với storageState?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Dùng context không nạp storageState để chưa đăng nhập"
+        },
+        {
+          "id": "b",
+          "text": "Dùng chung phiên với mọi test khác trong dự án"
+        },
+        {
+          "id": "c",
+          "text": "Tắt hoàn toàn cookie của trình duyệt khi chạy"
+        },
+        {
+          "id": "d",
+          "text": "Nạp storageState của admin để có đủ mọi quyền"
+        }
+      ],
+      "answer": [
+        "a"
+      ],
+      "explanation": "Muốn kiểm tra trạng thái chưa đăng nhập thì không được nạp phiên đã lưu."
+    },
+    {
+      "id": "q5",
+      "type": "multi",
+      "prompt": "Khi cần nhiều vai trò người dùng, nên làm gì? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Đăng nhập lại bằng tay trước mỗi lần chạy test"
+        },
+        {
+          "id": "b",
+          "text": "Dùng chung một file trạng thái cho mọi vai trò"
+        },
+        {
+          "id": "c",
+          "text": "Dùng nhiều context để mô phỏng nhiều người cùng lúc"
+        },
+        {
+          "id": "d",
+          "text": "Tạo nhiều file trạng thái như admin.json, customer.json"
+        }
+      ],
+      "answer": [
+        "c",
+        "d"
+      ],
+      "explanation": "Mỗi vai trò một file trạng thái; nhiều context cho nhiều người dùng đồng thời."
+    },
+    {
+      "id": "q6",
+      "type": "single",
+      "prompt": "Phiên đăng nhập trong file hết hạn khiến test đỏ. Hướng xử lý hợp lý?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Tăng timeout của mọi test trong dự án lên vài phút"
+        },
+        {
+          "id": "b",
+          "text": "Xoá bước đăng nhập khỏi project setup của dự án"
+        },
+        {
+          "id": "c",
+          "text": "Tạo lại phiên bằng project setup trước mỗi lần chạy"
+        },
+        {
+          "id": "d",
+          "text": "Chạy lại nhiều lần cho đến khi phiên bỗng hợp lệ"
+        }
+      ],
+      "answer": [
+        "c"
+      ],
+      "explanation": "Project setup luôn tạo phiên mới nên không phụ thuộc phiên cũ còn hạn hay không."
+    }
+  ]
+}

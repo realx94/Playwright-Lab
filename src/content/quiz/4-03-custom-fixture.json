@@ -1,0 +1,168 @@
+{
+  "questions": [
+    {
+      "id": "q1",
+      "type": "single",
+      "prompt": "Khác biệt cơ bản giữa fixture và beforeEach là gì?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Fixture chạy cho mọi test còn beforeEach chỉ chạy một lần"
+        },
+        {
+          "id": "b",
+          "text": "Fixture chỉ dùng được cho API còn beforeEach cho giao diện"
+        },
+        {
+          "id": "c",
+          "text": "Hai khái niệm giống hệt nhau, chỉ khác cú pháp"
+        },
+        {
+          "id": "d",
+          "text": "Fixture chỉ được tạo khi test gọi tên và có thể tự dọn dẹp"
+        }
+      ],
+      "answer": [
+        "d"
+      ],
+      "explanation": "Fixture được tạo theo nhu cầu (lazy), đưa giá trị vào test và gom luôn phần dọn dẹp; hook thì chạy cho mọi test trong phạm vi."
+    },
+    {
+      "id": "q2",
+      "type": "single",
+      "prompt": "Trong fixture viết bằng test.extend, đoạn code dọn dẹp nằm ở đâu?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Trước lời gọi await use(...) trong cùng hàm"
+        },
+        {
+          "id": "b",
+          "text": "Ở ngoài hàm, trong một file cấu hình riêng"
+        },
+        {
+          "id": "c",
+          "text": "Sau lời gọi await use(...) bên trong cùng hàm"
+        },
+        {
+          "id": "d",
+          "text": "Trong phần tên của test có dùng fixture đó"
+        }
+      ],
+      "answer": [
+        "c"
+      ],
+      "explanation": "Code trước use là chuẩn bị, code sau use là dọn dẹp sau khi test chạy xong."
+    },
+    {
+      "id": "q3",
+      "type": "multi",
+      "prompt": "Điều nào đúng về fixture? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Chỉ được định nghĩa bằng cách sửa mã của Playwright"
+        },
+        {
+          "id": "b",
+          "text": "Phải được gọi bằng new trước khi dùng trong test"
+        },
+        {
+          "id": "c",
+          "text": "Có thể đưa Page Object vào test theo tên tham số"
+        },
+        {
+          "id": "d",
+          "text": "Quên await use(...) sẽ làm test bị treo"
+        }
+      ],
+      "answer": [
+        "c",
+        "d"
+      ],
+      "explanation": "Fixture khai báo bằng test.extend và nhận qua tham số; thiếu await use làm giá trị không bao giờ được trao cho test."
+    },
+    {
+      "id": "q4",
+      "type": "single",
+      "prompt": "Khai báo fixture với auto: true nghĩa là gì?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Fixture tự động sửa lỗi khi test thất bại"
+        },
+        {
+          "id": "b",
+          "text": "Fixture tự sinh ra dữ liệu ngẫu nhiên cho test"
+        },
+        {
+          "id": "c",
+          "text": "Fixture chỉ chạy một lần cho cả dự án"
+        },
+        {
+          "id": "d",
+          "text": "Fixture luôn chạy cho mọi test dù test không gọi tên"
+        }
+      ],
+      "answer": [
+        "d"
+      ],
+      "explanation": "auto: true làm fixture chạy tự động cho mọi test, hữu ích cho việc như bật logging hoặc dọn dẹp chung."
+    },
+    {
+      "id": "q5",
+      "type": "multi",
+      "prompt": "Khi nào nên dùng fixture thay vì hook? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Cần bỏ qua hoàn toàn bước dọn dẹp sau test"
+        },
+        {
+          "id": "b",
+          "text": "Việc chuẩn bị đi kèm với việc dọn dẹp tương ứng"
+        },
+        {
+          "id": "c",
+          "text": "Cần đưa một đối tượng như Page Object vào test"
+        },
+        {
+          "id": "d",
+          "text": "Chỉ có đúng một dòng lệnh dùng chung cho cả nhóm"
+        }
+      ],
+      "answer": [
+        "b",
+        "c"
+      ],
+      "explanation": "Fixture mạnh khi cần trao đối tượng và gom chuẩn bị + dọn dẹp; một dòng lệnh chung đơn giản thì dùng beforeEach."
+    },
+    {
+      "id": "q6",
+      "type": "single",
+      "prompt": "Fixture loggedInPage đã đăng nhập sẵn có tác dụng gì?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Test không phải lặp lại các bước đăng nhập"
+        },
+        {
+          "id": "b",
+          "text": "Test tự đăng ký tài khoản mới cho mỗi lần chạy"
+        },
+        {
+          "id": "c",
+          "text": "Test không cần có bất kỳ assertion nào nữa"
+        },
+        {
+          "id": "d",
+          "text": "Test luôn chạy nhanh gấp mười lần bình thường"
+        }
+      ],
+      "answer": [
+        "a"
+      ],
+      "explanation": "Fixture gom bước chuẩn bị dùng chung nên test chỉ tập trung vào điều cần kiểm tra."
+    }
+  ]
+}

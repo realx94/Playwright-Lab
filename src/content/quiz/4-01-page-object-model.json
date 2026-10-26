@@ -1,0 +1,168 @@
+{
+  "questions": [
+    {
+      "id": "q1",
+      "type": "single",
+      "prompt": "Lợi ích chính của Page Object Model là gì?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Khi giao diện đổi chỉ cần sửa locator ở một nơi"
+        },
+        {
+          "id": "b",
+          "text": "Test chạy nhanh hơn nhiều lần nhờ dùng class"
+        },
+        {
+          "id": "c",
+          "text": "Không cần viết assertion trong các bài test nữa"
+        },
+        {
+          "id": "d",
+          "text": "Playwright tự động sinh locator mới khi trang đổi"
+        }
+      ],
+      "answer": [
+        "a"
+      ],
+      "explanation": "POM tập trung locator và hành động ở một chỗ nên bảo trì dễ. Nó không làm test nhanh hơn hay thay thế assertion."
+    },
+    {
+      "id": "q2",
+      "type": "single",
+      "prompt": "Assertion nên đặt ở đâu trong mô hình POM?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Trong test, hoặc hàm expectXxx có tên rõ ý nghĩa"
+        },
+        {
+          "id": "b",
+          "text": "Chỉ trong BasePage để dùng chung cho mọi trang"
+        },
+        {
+          "id": "c",
+          "text": "Trong file cấu hình playwright.config.ts"
+        },
+        {
+          "id": "d",
+          "text": "Rải khắp mọi hành động bên trong Page Object"
+        }
+      ],
+      "answer": [
+        "a"
+      ],
+      "explanation": "Giữ assertion ở test (hoặc hàm expect rõ nghĩa) để test đọc được mục đích. Page Object chỉ nên chứa hành động."
+    },
+    {
+      "id": "q3",
+      "type": "multi",
+      "prompt": "Tên method nào theo đúng nguyên tắc đặt tên của POM? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "doStuff() là tên ngắn gọn dễ nhớ cho mọi thao tác"
+        },
+        {
+          "id": "b",
+          "text": "clickButton3() mô tả vị trí của nút trên trang"
+        },
+        {
+          "id": "c",
+          "text": "login(email, password) mô tả hành động nghiệp vụ"
+        },
+        {
+          "id": "d",
+          "text": "applyCoupon(code) mô tả hành động nghiệp vụ"
+        }
+      ],
+      "answer": [
+        "c",
+        "d"
+      ],
+      "explanation": "Tên theo nghiệp vụ giúp test đọc như câu chuyện; tên theo vị trí hay quá chung chung thì không."
+    },
+    {
+      "id": "q4",
+      "type": "single",
+      "prompt": "Locator trong Page Object nên được khai báo thế nào?",
+      "options": [
+        {
+          "id": "a",
+          "text": "private, chỉ để lộ những gì test cần assert"
+        },
+        {
+          "id": "b",
+          "text": "Lưu trong biến toàn cục của toàn bộ dự án"
+        },
+        {
+          "id": "c",
+          "text": "Khai báo lại trong từng test để rõ ràng hơn"
+        },
+        {
+          "id": "d",
+          "text": "public hết để test tuỳ ý dùng trực tiếp mọi locator"
+        }
+      ],
+      "answer": [
+        "a"
+      ],
+      "explanation": "Che locator nội bộ để test không phụ thuộc chi tiết giao diện; chỉ mở những phần cần assert."
+    },
+    {
+      "id": "q5",
+      "type": "multi",
+      "prompt": "Dấu hiệu Page Object thiết kế chưa tốt? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Tên hành động phản ánh nghiệp vụ người dùng"
+        },
+        {
+          "id": "b",
+          "text": "Test vẫn tự viết lại locator dù đã có Page Object"
+        },
+        {
+          "id": "c",
+          "text": "Một class ôm toàn bộ ứng dụng với hàng chục hành động"
+        },
+        {
+          "id": "d",
+          "text": "Mỗi class chỉ mô tả một trang hoặc một vùng giao diện"
+        }
+      ],
+      "answer": [
+        "b",
+        "c"
+      ],
+      "explanation": "Class quá lớn và test bỏ qua Page Object làm mất lợi ích. Một class một trang và tên nghiệp vụ là thiết kế tốt."
+    },
+    {
+      "id": "q6",
+      "type": "single",
+      "prompt": "Sau khi đổi nhãn nút Đăng nhập thành Vào hệ thống, cần sửa gì nếu dùng POM tốt?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Sửa lại từng test đang dùng nút này một cách riêng lẻ"
+        },
+        {
+          "id": "b",
+          "text": "Chỉ sửa locator trong LoginPage, các test giữ nguyên"
+        },
+        {
+          "id": "c",
+          "text": "Sửa file cấu hình và tắt toàn bộ test liên quan"
+        },
+        {
+          "id": "d",
+          "text": "Xoá LoginPage rồi viết lại từ đầu mọi test"
+        }
+      ],
+      "answer": [
+        "b"
+      ],
+      "explanation": "Đó chính là lợi ích của POM: thay đổi giao diện chỉ ảnh hưởng một nơi."
+    }
+  ]
+}

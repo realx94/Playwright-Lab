@@ -1,0 +1,168 @@
+{
+  "questions": [
+    {
+      "id": "q1",
+      "type": "single",
+      "prompt": "Dữ liệu test độc lập có lợi ích gì?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Test luôn đọc dữ liệu nhanh hơn từ ổ đĩa"
+        },
+        {
+          "id": "b",
+          "text": "Giảm số dòng code trong Page Object"
+        },
+        {
+          "id": "c",
+          "text": "Không cần reset dữ liệu giữa các lần chạy"
+        },
+        {
+          "id": "d",
+          "text": "Test chạy song song không giẫm chân lên nhau"
+        }
+      ],
+      "answer": [
+        "d"
+      ],
+      "explanation": "Mỗi test có dữ liệu riêng nên chạy song song an toàn."
+    },
+    {
+      "id": "q2",
+      "type": "single",
+      "prompt": "Hàm buildUser(overrides) hữu ích ở điểm nào?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Lưu người dùng mới vào cơ sở dữ liệu thật"
+        },
+        {
+          "id": "b",
+          "text": "Luôn trả về đúng cùng một người dùng cố định"
+        },
+        {
+          "id": "c",
+          "text": "Tự động xoá người dùng sau mỗi bài test"
+        },
+        {
+          "id": "d",
+          "text": "Sinh dữ liệu hợp lệ mặc định và chỉ đổi phần cần thiết"
+        }
+      ],
+      "answer": [
+        "d"
+      ],
+      "explanation": "Factory có ghi đè giúp mỗi test chỉ nêu điều khác biệt, tránh lặp dữ liệu."
+    },
+    {
+      "id": "q3",
+      "type": "multi",
+      "prompt": "Dữ liệu test nào nên dùng? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Một tài khoản duy nhất cho mọi test ghi dữ liệu"
+        },
+        {
+          "id": "b",
+          "text": "Dữ liệu ghi rõ nghĩa như overLimitPassword"
+        },
+        {
+          "id": "c",
+          "text": "Email giả có phần ngẫu nhiên để tránh trùng nhau"
+        },
+        {
+          "id": "d",
+          "text": "Thông tin thật của khách hàng đang dùng hệ thống"
+        }
+      ],
+      "answer": [
+        "b",
+        "c"
+      ],
+      "explanation": "Dùng dữ liệu giả, tên rõ nghĩa và độc lập cho mỗi test; tránh dữ liệu thật hay dùng chung."
+    },
+    {
+      "id": "q4",
+      "type": "single",
+      "prompt": "Test lỗi khi chạy song song vì dùng chung một email đăng ký. Cách sửa tốt nhất?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Giảm số worker xuống còn một để chạy lần lượt"
+        },
+        {
+          "id": "b",
+          "text": "Thêm waitForTimeout giữa các test để tránh va chạm"
+        },
+        {
+          "id": "c",
+          "text": "Dùng chung một email nhưng đổi thứ tự test"
+        },
+        {
+          "id": "d",
+          "text": "Mỗi test sinh email riêng bằng factory có phần ngẫu nhiên"
+        }
+      ],
+      "answer": [
+        "d"
+      ],
+      "explanation": "Sửa gốc rễ bằng dữ liệu độc lập; giảm worker hay chờ cố định chỉ che giấu vấn đề."
+    },
+    {
+      "id": "q5",
+      "type": "multi",
+      "prompt": "Nguồn dữ liệu nào hợp lý cho test data-driven? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Giá trị đọc từ clipboard của người chạy test"
+        },
+        {
+          "id": "b",
+          "text": "Mảng khai báo ngay trong file test gần đó"
+        },
+        {
+          "id": "c",
+          "text": "Tệp JSON nằm trong thư mục tests/data"
+        },
+        {
+          "id": "d",
+          "text": "Dữ liệu lấy ngẫu nhiên từ mạng xã hội"
+        }
+      ],
+      "answer": [
+        "b",
+        "c"
+      ],
+      "explanation": "Dữ liệu nên nằm trong mã nguồn (mảng hoặc JSON) để tái lập được."
+    },
+    {
+      "id": "q6",
+      "type": "single",
+      "prompt": "Nguy cơ của dữ liệu sinh ngẫu nhiên mà không ghi lại là gì?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Dữ liệu ngẫu nhiên thường không hợp lệ với quy tắc nghiệp vụ"
+        },
+        {
+          "id": "b",
+          "text": "Playwright từ chối chạy các test dùng dữ liệu ngẫu nhiên"
+        },
+        {
+          "id": "c",
+          "text": "Test chạy chậm hơn gấp hai lần so với dữ liệu cố định"
+        },
+        {
+          "id": "d",
+          "text": "Khó tái lập lỗi vì không biết dữ liệu nào đã gây thất bại"
+        }
+      ],
+      "answer": [
+        "d"
+      ],
+      "explanation": "Khi test đỏ cần biết dữ liệu nào gây lỗi; hãy ghi seed hoặc giá trị đã dùng vào báo cáo."
+    }
+  ]
+}

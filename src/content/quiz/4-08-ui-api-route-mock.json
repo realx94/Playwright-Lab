@@ -1,0 +1,168 @@
+{
+  "questions": [
+    {
+      "id": "q1",
+      "type": "single",
+      "prompt": "Vì sao nên tạo dữ liệu bằng API thay vì qua UI khi chuẩn bị test?",
+      "options": [
+        {
+          "id": "a",
+          "text": "API có thể tạo dữ liệu mà giao diện hoàn toàn không cho phép"
+        },
+        {
+          "id": "b",
+          "text": "Kết quả của test API trông đẹp hơn trong báo cáo"
+        },
+        {
+          "id": "c",
+          "text": "Nhanh và ổn định hơn vì bỏ qua nhiều thao tác giao diện"
+        },
+        {
+          "id": "d",
+          "text": "Giao diện không thể tạo được bất kỳ dữ liệu nào cả"
+        }
+      ],
+      "answer": [
+        "c"
+      ],
+      "explanation": "Chuẩn bị bằng API nhanh và ít vỡ hơn UI; UI chỉ dùng để kiểm tra điều cần kiểm tra."
+    },
+    {
+      "id": "q2",
+      "type": "single",
+      "prompt": "page.route dùng để làm gì?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Điều hướng người dùng sang một trang khác"
+        },
+        {
+          "id": "b",
+          "text": "Tự động ghi lại video của quá trình duyệt web"
+        },
+        {
+          "id": "c",
+          "text": "Chặn request mạng để trả phản hồi giả hoặc sửa nó"
+        },
+        {
+          "id": "d",
+          "text": "Định nghĩa đường dẫn của các trang trong ứng dụng"
+        }
+      ],
+      "answer": [
+        "c"
+      ],
+      "explanation": "page.route can thiệp vào lớp mạng: fulfill, abort hoặc continue request."
+    },
+    {
+      "id": "q3",
+      "type": "multi",
+      "prompt": "Khi nào nên mock phản hồi mạng? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Khi muốn kiểm tra tích hợp thật giữa các hệ thống"
+        },
+        {
+          "id": "b",
+          "text": "Dịch vụ bên thứ ba chậm hoặc không ổn định"
+        },
+        {
+          "id": "c",
+          "text": "Khi cần xác nhận hệ thống thật xử lý đúng dữ liệu"
+        },
+        {
+          "id": "d",
+          "text": "Cần giả lập lỗi 500 khó tái hiện trên hệ thống thật"
+        }
+      ],
+      "answer": [
+        "b",
+        "d"
+      ],
+      "explanation": "Mock phù hợp tình huống khó tái hiện hoặc phụ thuộc bên ngoài; kiểm tra tích hợp thật thì không nên mock."
+    },
+    {
+      "id": "q4",
+      "type": "single",
+      "prompt": "page.route đăng ký sau khi trang đã gọi API thì sao?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Vẫn chặn được vì Playwright chặn cả các lời gọi trong quá khứ"
+        },
+        {
+          "id": "b",
+          "text": "Không chặn được các lời gọi đã được gửi đi trước đó"
+        },
+        {
+          "id": "c",
+          "text": "Tự động chạy lại các lời gọi API cũ để chặn chúng"
+        },
+        {
+          "id": "d",
+          "text": "Báo lỗi cú pháp ngay khi bắt đầu chạy toàn bộ test"
+        }
+      ],
+      "answer": [
+        "b"
+      ],
+      "explanation": "Phải đăng ký route trước khi hành động gây ra request."
+    },
+    {
+      "id": "q5",
+      "type": "multi",
+      "prompt": "Cách nào đúng với route.fulfill? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Trả về status và nội dung JSON giả cho trang"
+        },
+        {
+          "id": "b",
+          "text": "Gửi yêu cầu đến máy chủ thật rồi giữ nguyên"
+        },
+        {
+          "id": "c",
+          "text": "Có thể dùng để mô phỏng lỗi 500 hoặc 404"
+        },
+        {
+          "id": "d",
+          "text": "Đóng tab trình duyệt đang mở ngay lập tức"
+        }
+      ],
+      "answer": [
+        "a",
+        "c"
+      ],
+      "explanation": "fulfill trả phản hồi do bạn tạo. Gửi tiếp tới máy chủ thật là route.continue."
+    },
+    {
+      "id": "q6",
+      "type": "single",
+      "prompt": "waitForResponse hữu ích khi nào?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Cần chờ một lời gọi mạng cụ thể rồi kiểm tra nội dung"
+        },
+        {
+          "id": "b",
+          "text": "Cần mở thêm một tab trình duyệt mới để thao tác"
+        },
+        {
+          "id": "c",
+          "text": "Cần chờ cho đến khi mọi tài nguyên đều tải xong"
+        },
+        {
+          "id": "d",
+          "text": "Cần tạm dừng test đúng ba giây trước khi tiếp tục"
+        }
+      ],
+      "answer": [
+        "a"
+      ],
+      "explanation": "waitForResponse chờ đúng một phản hồi theo điều kiện, kèm kiểm tra status hoặc nội dung."
+    }
+  ]
+}

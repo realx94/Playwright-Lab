@@ -1,0 +1,168 @@
+{
+  "questions": [
+    {
+      "id": "q1",
+      "type": "single",
+      "prompt": "Vì sao không nên commit file .env?",
+      "options": [
+        {
+          "id": "a",
+          "text": "File .env làm Playwright chạy chậm hơn khi khởi động"
+        },
+        {
+          "id": "b",
+          "text": "File .env chỉ đọc được trên máy đã tạo ra nó"
+        },
+        {
+          "id": "c",
+          "text": "Có thể chứa mật khẩu và khoá bí mật dùng riêng"
+        },
+        {
+          "id": "d",
+          "text": "Git không hỗ trợ lưu các file có tên bắt đầu bằng dấu chấm"
+        }
+      ],
+      "answer": [
+        "c"
+      ],
+      "explanation": "File .env thường chứa thông tin nhạy cảm nên phải nằm trong .gitignore; chỉ commit .env.example."
+    },
+    {
+      "id": "q2",
+      "type": "single",
+      "prompt": "Cách nào chạy cùng bộ test trên môi trường staging?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Viết một bộ test mới riêng cho từng môi trường"
+        },
+        {
+          "id": "b",
+          "text": "Đặt BASE_URL trỏ tới staging rồi chạy lệnh test"
+        },
+        {
+          "id": "c",
+          "text": "Cài lại Playwright mỗi khi đổi sang môi trường khác"
+        },
+        {
+          "id": "d",
+          "text": "Sửa URL trong từng file test trước mỗi lần chạy"
+        }
+      ],
+      "answer": [
+        "b"
+      ],
+      "explanation": "Tách địa chỉ khỏi code bằng biến môi trường để dùng lại cùng bộ test."
+    },
+    {
+      "id": "q3",
+      "type": "multi",
+      "prompt": "File .env.example nên có đặc điểm nào? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Được thêm vào .gitignore giống như file .env"
+        },
+        {
+          "id": "b",
+          "text": "Được commit để liệt kê các biến cần thiết"
+        },
+        {
+          "id": "c",
+          "text": "Không chứa các giá trị bí mật thật của ai"
+        },
+        {
+          "id": "d",
+          "text": "Chứa mật khẩu thật để đồng đội dùng ngay"
+        }
+      ],
+      "answer": [
+        "b",
+        "c"
+      ],
+      "explanation": ".env.example là mẫu công khai: nêu tên biến, không có bí mật, và được commit."
+    },
+    {
+      "id": "q4",
+      "type": "single",
+      "prompt": "Projects trong playwright.config.ts dùng để làm gì?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Chạy cùng bộ test với nhiều cấu hình như thiết bị"
+        },
+        {
+          "id": "b",
+          "text": "Chia dự án thành nhiều repository GitHub khác nhau"
+        },
+        {
+          "id": "c",
+          "text": "Lưu lịch sử các lần chạy test trên máy chủ"
+        },
+        {
+          "id": "d",
+          "text": "Quản lý danh sách thành viên làm việc trong nhóm"
+        }
+      ],
+      "answer": [
+        "a"
+      ],
+      "explanation": "Mỗi project là một cấu hình (trình duyệt, thiết bị, môi trường) cho cùng bộ test."
+    },
+    {
+      "id": "q5",
+      "type": "multi",
+      "prompt": "Cách xử lý bí mật đúng khi chạy trên CI? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Đọc qua biến môi trường tại thời điểm chạy lệnh test"
+        },
+        {
+          "id": "b",
+          "text": "Gửi mật khẩu qua nhóm chat để đồng đội dùng chung"
+        },
+        {
+          "id": "c",
+          "text": "Ghi thẳng mật khẩu vào file test để tiện dùng"
+        },
+        {
+          "id": "d",
+          "text": "Lưu trong phần secrets của hệ thống CI đang dùng"
+        }
+      ],
+      "answer": [
+        "a",
+        "d"
+      ],
+      "explanation": "Bí mật nằm trong secrets của CI và được truyền qua biến môi trường, không bao giờ ghi vào mã nguồn."
+    },
+    {
+      "id": "q6",
+      "type": "single",
+      "prompt": "Biến BASE_URL không được đặt thì config nên làm gì?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Chuyển sang dùng địa chỉ của một trang web ngẫu nhiên"
+        },
+        {
+          "id": "b",
+          "text": "Dùng giá trị mặc định hợp lý hoặc báo lỗi rõ ràng"
+        },
+        {
+          "id": "c",
+          "text": "Dừng máy tính của người đang chạy test"
+        },
+        {
+          "id": "d",
+          "text": "Để trống và hy vọng test tự tìm ra địa chỉ"
+        }
+      ],
+      "answer": [
+        "b"
+      ],
+      "explanation": "Giá trị mặc định hoặc lỗi rõ ràng giúp người chạy hiểu ngay vấn đề thay vì gặp lỗi khó hiểu."
+    }
+  ]
+}

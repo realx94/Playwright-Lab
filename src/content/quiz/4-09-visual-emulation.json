@@ -1,0 +1,168 @@
+{
+  "questions": [
+    {
+      "id": "q1",
+      "type": "single",
+      "prompt": "Muốn cập nhật ảnh chuẩn sau khi đổi giao diện có chủ đích, nên dùng cách nào?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Đổi tên các test để Playwright bỏ qua ảnh cũ"
+        },
+        {
+          "id": "b",
+          "text": "Xoá thư mục node_modules rồi cài lại thư viện"
+        },
+        {
+          "id": "c",
+          "text": "Chạy với tuỳ chọn --update-snapshots rồi review ảnh mới"
+        },
+        {
+          "id": "d",
+          "text": "Tăng maxDiffPixelRatio lên 1 để test luôn đạt"
+        }
+      ],
+      "answer": [
+        "c"
+      ],
+      "explanation": "--update-snapshots tạo lại ảnh chuẩn; sau đó phải review vì ảnh chuẩn cũng là mã nguồn."
+    },
+    {
+      "id": "q2",
+      "type": "single",
+      "prompt": "Vì sao ảnh baseline tạo trên Windows có thể lệch khi chạy trên CI Linux?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Windows lưu ảnh ở định dạng mà Linux không đọc được"
+        },
+        {
+          "id": "b",
+          "text": "Font chữ và cách vẽ khác nhau giữa các hệ điều hành"
+        },
+        {
+          "id": "c",
+          "text": "CI luôn thu nhỏ kích thước ảnh trước khi so sánh"
+        },
+        {
+          "id": "d",
+          "text": "Playwright chỉ hỗ trợ so sánh ảnh trên Windows"
+        }
+      ],
+      "answer": [
+        "b"
+      ],
+      "explanation": "Cách render font và đồ hoạ khác nhau theo hệ điều hành nên baseline cần tạo trên cùng môi trường với nơi so sánh."
+    },
+    {
+      "id": "q3",
+      "type": "multi",
+      "prompt": "Cách làm so sánh ảnh ổn định hơn? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Cố định viewport và tắt animation khi chụp"
+        },
+        {
+          "id": "b",
+          "text": "Chụp mọi trang trong ứng dụng cho chắc chắn"
+        },
+        {
+          "id": "c",
+          "text": "Tạo ảnh chuẩn trên mỗi máy của từng thành viên"
+        },
+        {
+          "id": "d",
+          "text": "Che phần dữ liệu động như ngày giờ bằng mask"
+        }
+      ],
+      "answer": [
+        "a",
+        "d"
+      ],
+      "explanation": "Cố định môi trường và che phần động giúp giảm sai khác giả; chụp mọi trang hay baseline mỗi máy làm tăng flaky."
+    },
+    {
+      "id": "q4",
+      "type": "single",
+      "prompt": "Cấu hình nào giả lập giao diện chế độ tối trên điện thoại cỡ nhỏ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "viewport nhỏ kết hợp colorScheme là dark"
+        },
+        {
+          "id": "b",
+          "text": "geolocation kết hợp permissions của trình duyệt"
+        },
+        {
+          "id": "c",
+          "text": "retries kết hợp workers của cấu hình chung"
+        },
+        {
+          "id": "d",
+          "text": "locale là vi-VN kết hợp timezoneId khác"
+        }
+      ],
+      "answer": [
+        "a"
+      ],
+      "explanation": "viewport quyết định kích thước, colorScheme quyết định chế độ sáng/tối."
+    },
+    {
+      "id": "q5",
+      "type": "multi",
+      "prompt": "Điều nào đúng về timezoneId và locale? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "locale ảnh hưởng định dạng ngày, số và ngôn ngữ"
+        },
+        {
+          "id": "b",
+          "text": "locale quyết định tốc độ mạng của trình duyệt"
+        },
+        {
+          "id": "c",
+          "text": "timezoneId ảnh hưởng cách hiển thị ngày giờ"
+        },
+        {
+          "id": "d",
+          "text": "timezoneId quyết định ngôn ngữ giao diện hiển thị"
+        }
+      ],
+      "answer": [
+        "a",
+        "c"
+      ],
+      "explanation": "locale xử lý định dạng và ngôn ngữ; timezoneId xử lý múi giờ. Không liên quan tốc độ mạng."
+    },
+    {
+      "id": "q6",
+      "type": "single",
+      "prompt": "Khi nào KHÔNG nên dùng so sánh ảnh?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Với màn hình ổn định và ít khi thay đổi bố cục"
+        },
+        {
+          "id": "b",
+          "text": "Với thành phần giao diện dùng chung rất quan trọng"
+        },
+        {
+          "id": "c",
+          "text": "Với trang chủ có bố cục cố định và rõ ràng"
+        },
+        {
+          "id": "d",
+          "text": "Với trang có nội dung thay đổi liên tục mà không che được"
+        }
+      ],
+      "answer": [
+        "d"
+      ],
+      "explanation": "So sánh ảnh chỉ hiệu quả với giao diện ổn định; nội dung động liên tục sẽ gây dương tính giả."
+    }
+  ]
+}

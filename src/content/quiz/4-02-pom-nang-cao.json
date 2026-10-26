@@ -1,0 +1,168 @@
+{
+  "questions": [
+    {
+      "id": "q1",
+      "type": "single",
+      "prompt": "Component object phù hợp khi nào?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Một vùng giao diện lặp lại ở nhiều nơi trong ứng dụng"
+        },
+        {
+          "id": "b",
+          "text": "Chỉ kiểm tra API mà không dùng giao diện"
+        },
+        {
+          "id": "c",
+          "text": "Mỗi trang có đúng một nút và không có gì lặp"
+        },
+        {
+          "id": "d",
+          "text": "Cần thay thế hoàn toàn trình duyệt thật bằng bản giả lập"
+        }
+      ],
+      "answer": [
+        "a"
+      ],
+      "explanation": "Component object đóng gói vùng giao diện lặp lại như header, bảng, thẻ sản phẩm."
+    },
+    {
+      "id": "q2",
+      "type": "single",
+      "prompt": "Thanh điều hướng dùng chung nhiều trang nên mô hình hoá thế nào?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Kế thừa: mọi trang là con của một lớp NavigationPage"
+        },
+        {
+          "id": "b",
+          "text": "Composition: mỗi trang có thuộc tính header là một component"
+        },
+        {
+          "id": "c",
+          "text": "Sao chép locator của thanh điều hướng vào từng trang"
+        },
+        {
+          "id": "d",
+          "text": "Để test tự tìm lại thanh điều hướng mỗi khi dùng"
+        }
+      ],
+      "answer": [
+        "b"
+      ],
+      "explanation": "Quan hệ trang có một thanh điều hướng là composition, không phải kế thừa; sao chép locator gây lặp lại."
+    },
+    {
+      "id": "q3",
+      "type": "multi",
+      "prompt": "Ưu điểm của composition so với kế thừa sâu? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Ghép các component linh hoạt cho từng trang"
+        },
+        {
+          "id": "b",
+          "text": "Tránh chuỗi lớp cha con dài, khó theo dõi"
+        },
+        {
+          "id": "c",
+          "text": "Giúp locator chạy nhanh hơn khi tìm phần tử"
+        },
+        {
+          "id": "d",
+          "text": "Bắt buộc phải dùng khi viết bất kỳ Page Object nào"
+        }
+      ],
+      "answer": [
+        "a",
+        "b"
+      ],
+      "explanation": "Composition linh hoạt và dễ hiểu hơn chuỗi kế thừa dài; nó không bắt buộc và không ảnh hưởng tốc độ."
+    },
+    {
+      "id": "q4",
+      "type": "single",
+      "prompt": "Component ProductCard nhận một Locator gốc. Mục đích chính của việc đó?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Để Playwright tự động bấm vào mọi thẻ sản phẩm"
+        },
+        {
+          "id": "b",
+          "text": "Để làm cho mọi thẻ sản phẩm có cùng màu sắc"
+        },
+        {
+          "id": "c",
+          "text": "Để bỏ qua các thẻ sản phẩm đang bị ẩn"
+        },
+        {
+          "id": "d",
+          "text": "Giới hạn mọi tìm kiếm trong phạm vi một thẻ sản phẩm"
+        }
+      ],
+      "answer": [
+        "d"
+      ],
+      "explanation": "Locator gốc thu hẹp phạm vi tìm kiếm nên các locator con không khớp nhầm thẻ khác."
+    },
+    {
+      "id": "q5",
+      "type": "multi",
+      "prompt": "Method nào thiết kế tốt? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "loginAndOpenCartAndAddItem() gộp nhiều việc lại"
+        },
+        {
+          "id": "b",
+          "text": "clickEverythingOnPage() thao tác với mọi nút trên trang"
+        },
+        {
+          "id": "c",
+          "text": "addToCart(times) làm đúng một việc rõ ràng"
+        },
+        {
+          "id": "d",
+          "text": "applyCoupon(code) trả quyền kiểm tra cho test"
+        }
+      ],
+      "answer": [
+        "c",
+        "d"
+      ],
+      "explanation": "Mỗi method một việc rõ ràng, còn quyền kiểm tra thuộc về test. Method gộp nhiều việc rất khó tái sử dụng."
+    },
+    {
+      "id": "q6",
+      "type": "single",
+      "prompt": "Dùng kế thừa BasePage hợp lý khi nào?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Khi cần tạo chuỗi kế thừa nhiều cấp cho mọi trang"
+        },
+        {
+          "id": "b",
+          "text": "Khi mọi trang đều có phần dùng chung như đường dẫn và goto"
+        },
+        {
+          "id": "c",
+          "text": "Khi một trang không có bất kỳ locator nào"
+        },
+        {
+          "id": "d",
+          "text": "Khi muốn thay thế hoàn toàn việc dùng fixture"
+        }
+      ],
+      "answer": [
+        "b"
+      ],
+      "explanation": "BasePage chứa phần chung của mọi trang, nhưng nên giữ nông (một cấp)."
+    }
+  ]
+}

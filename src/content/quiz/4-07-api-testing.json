@@ -1,0 +1,168 @@
+{
+  "questions": [
+    {
+      "id": "q1",
+      "type": "single",
+      "prompt": "Status code 201 thường cho biết điều gì?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Tài nguyên được chuyển sang địa chỉ khác"
+        },
+        {
+          "id": "b",
+          "text": "Yêu cầu bị từ chối vì thiếu xác thực"
+        },
+        {
+          "id": "c",
+          "text": "Tài nguyên mới đã được tạo thành công"
+        },
+        {
+          "id": "d",
+          "text": "Máy chủ gặp lỗi nội bộ khi xử lý"
+        }
+      ],
+      "answer": [
+        "c"
+      ],
+      "explanation": "201 Created cho biết đã tạo tài nguyên mới. 401 là thiếu xác thực, 500 là lỗi máy chủ, 3xx là chuyển hướng."
+    },
+    {
+      "id": "q2",
+      "type": "single",
+      "prompt": "Request không có token tới endpoint yêu cầu đăng nhập thường nhận status nào?",
+      "options": [
+        {
+          "id": "a",
+          "text": "404 vì endpoint này không có trên máy chủ"
+        },
+        {
+          "id": "b",
+          "text": "403 vì người dùng đã xác thực nhưng không đủ quyền"
+        },
+        {
+          "id": "c",
+          "text": "401 vì yêu cầu chưa được xác thực người dùng"
+        },
+        {
+          "id": "d",
+          "text": "500 vì máy chủ gặp lỗi khi đọc token"
+        }
+      ],
+      "answer": [
+        "c"
+      ],
+      "explanation": "401 nghĩa là chưa xác thực; 403 nghĩa là đã xác thực nhưng không đủ quyền."
+    },
+    {
+      "id": "q3",
+      "type": "multi",
+      "prompt": "Khi test một endpoint, nên kiểm tra gì? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Trường hợp thiếu xác thực hoặc không đủ quyền"
+        },
+        {
+          "id": "b",
+          "text": "Chỉ kiểm tra trường hợp thành công của endpoint"
+        },
+        {
+          "id": "c",
+          "text": "Chỉ kiểm tra mã status mà bỏ qua nội dung body"
+        },
+        {
+          "id": "d",
+          "text": "Mã status và nội dung body trả về đúng không"
+        }
+      ],
+      "answer": [
+        "a",
+        "d"
+      ],
+      "explanation": "Cần kiểm tra cả status lẫn body và các trường hợp lỗi như xác thực, phân quyền."
+    },
+    {
+      "id": "q4",
+      "type": "single",
+      "prompt": "Fixture request khác fixture page ở điểm nào?",
+      "options": [
+        {
+          "id": "a",
+          "text": "request và page hoàn toàn giống nhau về chức năng"
+        },
+        {
+          "id": "b",
+          "text": "request gửi HTTP trực tiếp không cần mở trình duyệt"
+        },
+        {
+          "id": "c",
+          "text": "request luôn phải mở trình duyệt mới thực hiện được"
+        },
+        {
+          "id": "d",
+          "text": "request chỉ đọc được dữ liệu mà không gửi được"
+        }
+      ],
+      "answer": [
+        "b"
+      ],
+      "explanation": "request là HTTP client của Playwright nên nhanh hơn nhiều so với thao tác qua trình duyệt."
+    },
+    {
+      "id": "q5",
+      "type": "multi",
+      "prompt": "Test API tạo bản ghi chạy lần hai bị lỗi 409. Việc nên làm? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Dọn dữ liệu đã tạo sau khi test chạy xong"
+        },
+        {
+          "id": "b",
+          "text": "Xoá assertion kiểm tra mã status 409 khỏi test"
+        },
+        {
+          "id": "c",
+          "text": "Luôn chạy test này đúng một lần duy nhất"
+        },
+        {
+          "id": "d",
+          "text": "Dùng dữ liệu độc lập, có phần ngẫu nhiên mỗi lần"
+        }
+      ],
+      "answer": [
+        "a",
+        "d"
+      ],
+      "explanation": "409 là xung đột do trùng dữ liệu; giải pháp là dữ liệu độc lập và dọn dẹp, không phải xoá assertion."
+    },
+    {
+      "id": "q6",
+      "type": "single",
+      "prompt": "Idempotency của một yêu cầu nghĩa là gì?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Yêu cầu chỉ được phép gửi đúng một lần"
+        },
+        {
+          "id": "b",
+          "text": "Yêu cầu không cần phải xác thực người dùng"
+        },
+        {
+          "id": "c",
+          "text": "Gửi lại cùng yêu cầu không tạo thêm bản ghi trùng"
+        },
+        {
+          "id": "d",
+          "text": "Yêu cầu luôn trả về cùng một thời gian phản hồi"
+        }
+      ],
+      "answer": [
+        "c"
+      ],
+      "explanation": "Tính idempotent giúp việc retry an toàn: gửi nhiều lần cho cùng kết quả như gửi một lần."
+    }
+  ]
+}
