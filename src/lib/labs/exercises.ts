@@ -1295,4 +1295,210 @@ test("đổi bộ lọc đưa về trang 1", async ({ page }) => {
   },
 ];
 
-export const EXERCISES: Record<string, Exercise[]> = { login, forms, cart, playground, api, otp, todo, table };
+const leave: Exercise[] = [
+  {
+    id: "leave-1",
+    title: "Gửi đơn hợp lệ và kiểm tra ngày",
+    difficulty: 2,
+    task: "Gửi một đơn phép năm 09/03–11/03 và xác nhận đơn ở trạng thái Chờ duyệt, tính đủ 3 ngày và chưa trừ số dư phép. Đặt giờ giả để không phụ thuộc ngày thật.",
+    criteria: [
+      "Đặt giờ giả bằng context.clock, không phụ thuộc ngày chạy test",
+      "Dùng hàm helper để điền và gửi đơn",
+      "Kiểm tra trạng thái, số ngày và số dư phép sau khi gửi",
+      ...COMMON_CRITERIA,
+    ],
+    hints: [
+      "context.clock.setFixedTime(date) cố định giờ giả trước khi mở trang.",
+      "Ô ngày dùng định dạng YYYY-MM-DD khi fill.",
+      "Số ngày và trạng thái có data-testid là leave-days-1 và leave-status-1.",
+    ],
+    solution: `import { test, expect, type BrowserContext, type Page } from "@playwright/test";
+
+// Giờ giả cố định: thứ Hai 02/03/2026, để ngày trong test luôn hợp lệ.
+const NOW = new Date("2026-03-02T09:00:00");
+
+async function open(page: Page, context: BrowserContext) {
+  await context.clock.setFixedTime(NOW);
+  await page.goto("/lab/leave");
+  await page.getByTestId("reset-data").click();
+}
+
+async function send(page: Page, from: string, to: string, type = "annual") {
+  await page.getByLabel("Loại nghỉ").selectOption(type);
+  await page.getByLabel("Từ ngày").fill(from);
+  await page.getByLabel("Đến ngày").fill(to);
+  await page.getByLabel("Lý do").fill("Đi công tác gia đình xa");
+  await page.getByRole("button", { name: "Gửi đơn" }).click();
+}
+
+test("gửi đơn hợp lệ", async ({ page, context }) => {
+  await open(page, context);
+  await send(page, "2026-03-09", "2026-03-11");
+  await expect(page.getByTestId("leave-status-1")).toHaveText("Chờ duyệt");
+  await expect(page.getByTestId("leave-days-1")).toHaveText("3");
+  await expect(page.getByTestId("leave-balance")).toHaveText("Phép năm còn 12/12 ngày");
+});`,
+  },
+  {
+    id: "leave-2",
+    title: "Hai vai trò trên hai tab",
+    difficulty: 3,
+    task: "Nhân viên gửi đơn ở tab thứ nhất; mở tab thứ hai chuyển sang vai trò Quản lý để duyệt. Quay lại tab nhân viên xác nhận trạng thái và số dư phép đã cập nhật mà không tải lại trang.",
+    criteria: [
+      "Dùng hai Page trong cùng một context (dùng chung localStorage)",
+      "Chọn vai trò Quản lý ở tab thứ hai bằng selectOption",
+      "Kiểm tra cả hai tab đều thấy trạng thái Đã duyệt",
+      "Số dư phép giảm đúng 3 ngày sau khi duyệt",
+      ...COMMON_CRITERIA,
+    ],
+    hints: [
+      "Vai trò lưu theo từng tab (sessionStorage) còn dữ liệu dùng chung giữa các tab.",
+      "context.newPage() mở tab mới trong cùng context.",
+      "Tab nhân viên tự cập nhật nhờ sự kiện storage nên assertion tự thử lại sẽ thấy thay đổi.",
+    ],
+    solution: `import { test, expect, type BrowserContext, type Page } from "@playwright/test";
+
+// Giờ giả cố định: thứ Hai 02/03/2026, để ngày trong test luôn hợp lệ.
+const NOW = new Date("2026-03-02T09:00:00");
+
+async function open(page: Page, context: BrowserContext) {
+  await context.clock.setFixedTime(NOW);
+  await page.goto("/lab/leave");
+  await page.getByTestId("reset-data").click();
+}
+
+async function send(page: Page, from: string, to: string, type = "annual") {
+  await page.getByLabel("Loại nghỉ").selectOption(type);
+  await page.getByLabel("Từ ngày").fill(from);
+  await page.getByLabel("Đến ngày").fill(to);
+  await page.getByLabel("Lý do").fill("Đi công tác gia đình xa");
+  await page.getByRole("button", { name: "Gửi đơn" }).click();
+}
+
+test("quản lý duyệt, nhân viên thấy cập nhật", async ({ page, context }) => {
+  await open(page, context);
+  await send(page, "2026-03-09", "2026-03-11");
+
+  const manager = await context.newPage();
+  await manager.goto("/lab/leave");
+  await manager.getByLabel("Vai trò").selectOption("manager");
+  await manager.getByRole("button", { name: "Duyệt đơn #1" }).click();
+  await expect(manager.getByTestId("leave-status-1")).toHaveText("Đã duyệt");
+
+  await expect(page.getByTestId("leave-status-1")).toHaveText("Đã duyệt");
+  await expect(page.getByTestId("leave-balance")).toHaveText("Phép năm còn 9/12 ngày");
+  await expect(page.getByRole("button", { name: "Huỷ đơn #1" })).toHaveCount(0);
+});`,
+  },
+  {
+    id: "leave-3",
+    title: "Biên số ngày phép và bắt BUG-01",
+    difficulty: 3,
+    bugs: ["BUG-01"],
+    task: "Kiểm tra biên của phép năm (còn 12 ngày): đơn đúng 12 ngày được chấp nhận, đơn 13 ngày bị từ chối, và số ngày hiển thị phải tính cả ngày đầu lẫn ngày cuối. Test phải đỏ khi bật BUG-01.",
+    criteria: [
+      "Có test đúng biên 12 ngày (chấp nhận) và 13 ngày (từ chối)",
+      "Kiểm tra số ngày hiển thị là 12 (tính cả ngày cuối)",
+      "Kiểm tra nội dung thông báo lỗi khi vượt số dư",
+      "Test xanh trên lab sạch và đỏ khi bật BUG-01",
+      ...COMMON_CRITERIA,
+    ],
+    hints: [
+      "Từ 01/04 đến 12/04 là 12 ngày khi tính cả hai đầu.",
+      "Thử đơn 13 ngày trước (bị từ chối) rồi mới gửi đơn 12 ngày.",
+      "Thông báo vượt số dư nằm trong phần tử data-testid là leave-error.",
+    ],
+    solution: `import { test, expect, type BrowserContext, type Page } from "@playwright/test";
+
+// Giờ giả cố định: thứ Hai 02/03/2026, để ngày trong test luôn hợp lệ.
+const NOW = new Date("2026-03-02T09:00:00");
+
+async function open(page: Page, context: BrowserContext) {
+  await context.clock.setFixedTime(NOW);
+  await page.goto("/lab/leave");
+  await page.getByTestId("reset-data").click();
+}
+
+async function send(page: Page, from: string, to: string, type = "annual") {
+  await page.getByLabel("Loại nghỉ").selectOption(type);
+  await page.getByLabel("Từ ngày").fill(from);
+  await page.getByLabel("Đến ngày").fill(to);
+  await page.getByLabel("Lý do").fill("Đi công tác gia đình xa");
+  await page.getByRole("button", { name: "Gửi đơn" }).click();
+}
+
+test("13 ngày bị từ chối, 12 ngày được chấp nhận và tính đủ ngày", async ({ page, context }) => {
+  await open(page, context);
+
+  await send(page, "2026-04-01", "2026-04-13");
+  await expect(page.getByTestId("leave-error")).toContainText("vượt quá phép năm còn lại (12)");
+  await expect(page.getByTestId("leave-empty")).toBeVisible();
+
+  await send(page, "2026-04-01", "2026-04-12");
+  await expect(page.getByTestId("leave-status-1")).toHaveText("Chờ duyệt");
+  await expect(page.getByTestId("leave-days-1")).toHaveText("12");
+});`,
+  },
+  {
+    id: "leave-4",
+    title: "Phân quyền và đơn trùng ngày (BUG-02, BUG-03)",
+    difficulty: 3,
+    bugs: ["BUG-02", "BUG-03"],
+    task: "Chứng minh nhân viên không có nút Duyệt/Từ chối còn quản lý thì có, và hệ thống chặn đơn trùng khoảng ngày. Test phải đỏ khi bật BUG-02 hoặc BUG-03.",
+    criteria: [
+      "Kiểm tra nút Duyệt không tồn tại ở vai trò nhân viên (toHaveCount(0))",
+      "Kiểm tra nút Duyệt có ở tab quản lý",
+      "Có test đơn trùng ngày bị từ chối kèm đúng thông báo, và đơn không trùng được chấp nhận",
+      "Test đỏ với BUG-02 và với BUG-03",
+      ...COMMON_CRITERIA,
+    ],
+    hints: [
+      "Với phân quyền, kiểm tra cả hai chiều: nhân viên không có, quản lý có.",
+      "Khoảng 11/03–12/03 trùng ngày 11/03 của đơn 09/03–11/03.",
+      "Đơn 12/03–13/03 không trùng nên phải được chấp nhận.",
+    ],
+    solution: `import { test, expect, type BrowserContext, type Page } from "@playwright/test";
+
+// Giờ giả cố định: thứ Hai 02/03/2026, để ngày trong test luôn hợp lệ.
+const NOW = new Date("2026-03-02T09:00:00");
+
+async function open(page: Page, context: BrowserContext) {
+  await context.clock.setFixedTime(NOW);
+  await page.goto("/lab/leave");
+  await page.getByTestId("reset-data").click();
+}
+
+async function send(page: Page, from: string, to: string, type = "annual") {
+  await page.getByLabel("Loại nghỉ").selectOption(type);
+  await page.getByLabel("Từ ngày").fill(from);
+  await page.getByLabel("Đến ngày").fill(to);
+  await page.getByLabel("Lý do").fill("Đi công tác gia đình xa");
+  await page.getByRole("button", { name: "Gửi đơn" }).click();
+}
+
+test("nhân viên không có nút Duyệt, quản lý thì có", async ({ page, context }) => {
+  await open(page, context);
+  await send(page, "2026-03-09", "2026-03-10");
+  await expect(page.getByRole("button", { name: "Duyệt đơn #1" })).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "Từ chối đơn #1" })).toHaveCount(0);
+
+  const manager = await context.newPage();
+  await manager.goto("/lab/leave");
+  await manager.getByLabel("Vai trò").selectOption("manager");
+  await expect(manager.getByRole("button", { name: "Duyệt đơn #1" })).toBeVisible();
+});
+
+test("đơn trùng ngày bị chặn, đơn không trùng được chấp nhận", async ({ page, context }) => {
+  await open(page, context);
+  await send(page, "2026-03-09", "2026-03-11");
+  await send(page, "2026-03-11", "2026-03-12");
+  await expect(page.getByTestId("leave-error")).toContainText("trùng với một đơn khác");
+  await expect(page.getByTestId("leave-row")).toHaveCount(1);
+
+  await send(page, "2026-03-12", "2026-03-13");
+  await expect(page.getByTestId("leave-row")).toHaveCount(2);
+});`,
+  },
+];
+
+export const EXERCISES: Record<string, Exercise[]> = { login, forms, cart, playground, api, otp, todo, table, leave };

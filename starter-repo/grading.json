@@ -185,6 +185,31 @@
         "BUG-01",
         "BUG-02"
       ]
+    },
+    "leave-1": {
+      "lab": "leave",
+      "spec": "tests/exercises/leave/leave-1.spec.ts",
+      "bugs": []
+    },
+    "leave-2": {
+      "lab": "leave",
+      "spec": "tests/exercises/leave/leave-2.spec.ts",
+      "bugs": []
+    },
+    "leave-3": {
+      "lab": "leave",
+      "spec": "tests/exercises/leave/leave-3.spec.ts",
+      "bugs": [
+        "BUG-01"
+      ]
+    },
+    "leave-4": {
+      "lab": "leave",
+      "spec": "tests/exercises/leave/leave-4.spec.ts",
+      "bugs": [
+        "BUG-02",
+        "BUG-03"
+      ]
     }
   }
 }

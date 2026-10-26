@@ -229,7 +229,35 @@ const table: Workshop = {
   ],
 };
 
-export const WORKSHOPS: Record<string, Workshop> = { login, forms, cart, playground, api, otp, todo, table };
+const leave: Workshop = {
+  techniques: ["Boundary Value Analysis", "State Transition", "Decision Table", "Permission matrix"],
+  rules: [
+    { id: "BR-01", text: "Đơn gồm loại nghỉ, từ ngày, đến ngày và lý do 10–200 ký tự" },
+    { id: "BR-02", text: "Ngày bắt đầu không ở quá khứ; ngày kết thúc từ ngày bắt đầu trở đi" },
+    { id: "BR-03", text: "Số ngày nghỉ tính cả ngày đầu và ngày cuối; phép năm còn 12 ngày" },
+    { id: "BR-04", text: "Trạng thái: Chờ duyệt → Đã duyệt / Từ chối / Đã huỷ" },
+    { id: "BR-05", text: "Chỉ Quản lý được duyệt hoặc từ chối; từ chối bắt buộc có lý do" },
+    { id: "BR-06", text: "Chỉ khi được duyệt, phép năm mới bị trừ; đơn đã duyệt không huỷ được" },
+    { id: "BR-07", text: "Không cho gửi đơn trùng khoảng ngày với đơn đang chờ hoặc đã duyệt" },
+  ],
+  cases: [
+    { id: "TC-H-001", title: "Gửi đơn hợp lệ", precondition: "Là nhân viên, hôm nay 02/03/2026", steps: "Chọn 09/03 đến 11/03, nhập lý do, gửi", data: "3 ngày", expected: "Đơn Chờ duyệt, số ngày 3, phép năm vẫn 12", type: "Happy", priority: "P0", br: ["BR-01", "BR-03", "BR-06"] },
+    { id: "TC-H-002", title: "Ngày bắt đầu ở quá khứ", precondition: "Hôm nay 02/03/2026", steps: "Chọn bắt đầu 01/03", data: "01/03", expected: "Báo ngày bắt đầu không được ở quá khứ", type: "BVA", priority: "P0", br: ["BR-02"] },
+    { id: "TC-H-003", title: "Kết thúc trước bắt đầu", precondition: "Là nhân viên", steps: "Bắt đầu 10/03, kết thúc 09/03", data: "—", expected: "Báo ngày kết thúc phải sau hoặc bằng ngày bắt đầu", type: "Negative", priority: "P0", br: ["BR-02"] },
+    { id: "TC-H-004", title: "Lý do 9 ký tự", precondition: "Là nhân viên", steps: "Nhập lý do 9 ký tự", data: "9 ký tự", expected: "Báo lý do tối thiểu 10 ký tự", type: "BVA", priority: "P1", br: ["BR-01"] },
+    { id: "TC-H-005", title: "Đúng 12 ngày phép", precondition: "Phép năm còn 12", steps: "Gửi đơn 01/04 đến 12/04", data: "12 ngày", expected: "Gửi thành công", type: "BVA", priority: "P0", br: ["BR-03"] },
+    { id: "TC-H-006", title: "13 ngày phép", precondition: "Phép năm còn 12", steps: "Gửi đơn 01/04 đến 13/04", data: "13 ngày", expected: "Báo vượt quá phép năm còn lại (12)", type: "BVA", priority: "P0", br: ["BR-03"] },
+    { id: "TC-H-007", title: "Nghỉ ốm không bị giới hạn bởi phép năm", precondition: "Phép năm còn 12", steps: "Gửi đơn nghỉ ốm 20 ngày", data: "sick", expected: "Gửi thành công", type: "EP", priority: "P1", br: ["BR-03"] },
+    { id: "TC-H-008", title: "Đơn trùng ngày", precondition: "Có đơn 09–11/03 chờ duyệt", steps: "Gửi đơn 11–12/03", data: "11/03", expected: "Báo trùng với một đơn khác", type: "Decision", priority: "P0", br: ["BR-07"] },
+    { id: "TC-H-009", title: "Quản lý duyệt đơn", precondition: "Có đơn chờ duyệt, mở tab Quản lý", steps: "Bấm Duyệt", data: "—", expected: "Đơn Đã duyệt; tab nhân viên thấy phép năm giảm đúng số ngày", type: "State", priority: "P0", br: ["BR-04", "BR-06"] },
+    { id: "TC-H-010", title: "Từ chối không có lý do", precondition: "Có đơn chờ duyệt", steps: "Từ chối rồi xác nhận khi để trống lý do", data: "(rỗng)", expected: "Báo vui lòng nhập lý do từ chối", type: "Negative", priority: "P1", br: ["BR-05"] },
+    { id: "TC-H-011", title: "Nhân viên không có nút Duyệt", precondition: "Có đơn chờ duyệt", steps: "Quan sát danh sách ở vai trò Nhân viên", data: "—", expected: "Không có nút Duyệt/Từ chối", type: "Security", priority: "P0", br: ["BR-05"] },
+    { id: "TC-H-012", title: "Huỷ đơn chờ duyệt", precondition: "Có đơn chờ duyệt", steps: "Nhân viên bấm Huỷ đơn", data: "—", expected: "Đơn Đã huỷ", type: "State", priority: "P1", br: ["BR-04"] },
+    { id: "TC-H-013", title: "Huỷ đơn đã duyệt", precondition: "Đơn đã được duyệt", steps: "Tìm nút Huỷ đơn", data: "—", expected: "Không có nút Huỷ đơn", type: "State", priority: "P0", br: ["BR-06"] },
+  ],
+};
+
+export const WORKSHOPS: Record<string, Workshop> = { login, forms, cart, playground, api, otp, todo, table, leave };
 
 export function toCsv(cases: TestCase[]): string {
   const head = ["ID", "Tiêu đề", "Tiền điều kiện", "Các bước", "Dữ liệu", "Kết quả mong đợi", "Loại", "Ưu tiên", "BR"];
