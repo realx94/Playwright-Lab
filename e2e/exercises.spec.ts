@@ -2,7 +2,12 @@ import { test, expect } from "@playwright/test";
 
 const open = async (page: import("@playwright/test").Page, id: string) => {
   const item = page.getByTestId(`exercise-${id}`);
-  await item.getByRole("button", { name: /./ }).first().click();
+  const trigger = item.getByRole("button", { name: /./ }).first();
+  // Trang có thể chưa hydrate xong khi bấm lần đầu: thử lại tới khi accordion thực sự mở.
+  await expect(async () => {
+    if ((await trigger.getAttribute("aria-expanded")) !== "true") await trigger.click();
+    await expect(trigger).toHaveAttribute("aria-expanded", "true", { timeout: 1000 });
+  }).toPass();
   return item;
 };
 
