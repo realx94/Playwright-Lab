@@ -115,7 +115,37 @@ const playground: Workshop = {
   ],
 };
 
-export const WORKSHOPS: Record<string, Workshop> = { login, forms, cart, playground };
+const api: Workshop = {
+  techniques: ["Equivalence Partitioning", "Boundary Value Analysis", "Decision Table", "State Transition"],
+  rules: [
+    { id: "BR-01", text: "GET danh sách có phân trang: pageSize mặc định 5, tối đa 50" },
+    { id: "BR-02", text: "Tìm theo q không phân biệt hoa thường trong tiêu đề và tác giả" },
+    { id: "BR-03", text: "GET theo id trả 200 hoặc 404" },
+    { id: "BR-04", text: "Thao tác ghi cần Bearer token: thiếu 401, token chỉ đọc 403" },
+    { id: "BR-05", text: "POST hợp lệ trả 201 kèm Location; dữ liệu sai trả 422" },
+    { id: "BR-06", text: "ISBN trùng trả 409" },
+    { id: "BR-07", text: "PUT cập nhật một phần trả 200; không có sách trả 404" },
+    { id: "BR-08", text: "DELETE chỉ admin: 204; không có sách 404" },
+    { id: "BR-09", text: "Mỗi phiên có dữ liệu riêng; /api/lab/reset khôi phục ban đầu" },
+  ],
+  cases: [
+    { id: "TC-A-001", title: "Danh sách mặc định", precondition: "Dữ liệu gốc", steps: "GET /api/lab/books", data: "—", expected: "200, page=1, pageSize=5, 5 phần tử, total=12", type: "Happy", priority: "P0", br: ["BR-01"] },
+    { id: "TC-A-002", title: "Trang cuối", precondition: "Dữ liệu gốc", steps: "GET ?page=3&pageSize=5", data: "page=3", expected: "200, còn 2 phần tử", type: "BVA", priority: "P1", br: ["BR-01"] },
+    { id: "TC-A-003", title: "pageSize vượt tối đa", precondition: "Dữ liệu gốc", steps: "GET ?pageSize=999", data: "999", expected: "pageSize trả về là 50", type: "BVA", priority: "P1", br: ["BR-01"] },
+    { id: "TC-A-004", title: "Tìm kiếm không phân biệt hoa thường", precondition: "Dữ liệu gốc", steps: "GET ?q=CLEAN", data: "CLEAN", expected: "total=2 (Clean Code, Clean Architecture)", type: "EP", priority: "P1", br: ["BR-02"] },
+    { id: "TC-A-005", title: "Sách không tồn tại", precondition: "Dữ liệu gốc", steps: "GET /api/lab/books/b-999", data: "b-999", expected: "404", type: "Negative", priority: "P0", br: ["BR-03"] },
+    { id: "TC-A-006", title: "Tạo sách khi thiếu token", precondition: "Không có Authorization", steps: "POST với body hợp lệ", data: "—", expected: "401", type: "Security", priority: "P0", br: ["BR-04"] },
+    { id: "TC-A-007", title: "Tạo sách bằng token chỉ đọc", precondition: "reader-token", steps: "POST với body hợp lệ", data: "reader-token", expected: "403", type: "Security", priority: "P0", br: ["BR-04"] },
+    { id: "TC-A-008", title: "Tạo sách hợp lệ", precondition: "admin-token", steps: "POST body hợp lệ", data: "isbn 978-1111111111", expected: "201 và header Location trỏ tới sách mới", type: "Happy", priority: "P0", br: ["BR-05"] },
+    { id: "TC-A-009", title: "Giá âm bị từ chối", precondition: "admin-token", steps: "POST với price = -1", data: "-1", expected: "422, errors có field price", type: "BVA", priority: "P1", br: ["BR-05"] },
+    { id: "TC-A-010", title: "ISBN trùng", precondition: "admin-token", steps: "POST với isbn của Clean Code", data: "978-0132350884", expected: "409", type: "Negative", priority: "P1", br: ["BR-06"] },
+    { id: "TC-A-011", title: "Cập nhật giá", precondition: "Có sách mới tạo", steps: "PUT price = 350000", data: "350000", expected: "200, giá mới được trả về và đọc lại đúng", type: "Happy", priority: "P1", br: ["BR-07"] },
+    { id: "TC-A-012", title: "Admin xoá sách", precondition: "Có sách mới tạo", steps: "DELETE rồi GET lại", data: "admin-token", expected: "204; GET sau đó trả 404", type: "State", priority: "P0", br: ["BR-08"] },
+    { id: "TC-A-013", title: "Reset khôi phục dữ liệu", precondition: "Đã tạo một sách", steps: "POST /api/lab/reset rồi GET danh sách", data: "—", expected: "204; total quay về 12", type: "State", priority: "P2", br: ["BR-09"] },
+  ],
+};
+
+export const WORKSHOPS: Record<string, Workshop> = { login, forms, cart, playground, api };
 
 export function toCsv(cases: TestCase[]): string {
   const head = ["ID", "Tiêu đề", "Tiền điều kiện", "Các bước", "Dữ liệu", "Kết quả mong đợi", "Loại", "Ưu tiên", "BR"];
