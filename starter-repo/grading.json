@@ -512,6 +512,89 @@
       "lab": "dashboard",
       "spec": "tests/exercises/dashboard/dashboard-3.spec.ts",
       "bugs": []
+    },
+    "clinic-1": {
+      "lab": "clinic",
+      "spec": "tests/exercises/clinic/clinic-1.spec.ts",
+      "bugs": [
+        "BUG-01"
+      ]
+    },
+    "clinic-2": {
+      "lab": "clinic",
+      "spec": "tests/exercises/clinic/clinic-2.spec.ts",
+      "bugs": [
+        "BUG-02"
+      ]
+    },
+    "clinic-3": {
+      "lab": "clinic",
+      "spec": "tests/exercises/clinic/clinic-3.spec.ts",
+      "bugs": [
+        "BUG-03"
+      ]
+    },
+    "tickets-1": {
+      "lab": "tickets",
+      "spec": "tests/exercises/tickets/tickets-1.spec.ts",
+      "bugs": [
+        "BUG-01",
+        "BUG-02"
+      ]
+    },
+    "tickets-2": {
+      "lab": "tickets",
+      "spec": "tests/exercises/tickets/tickets-2.spec.ts",
+      "bugs": [
+        "BUG-03"
+      ]
+    },
+    "tickets-3": {
+      "lab": "tickets",
+      "spec": "tests/exercises/tickets/tickets-3.spec.ts",
+      "bugs": []
+    },
+    "i18n-1": {
+      "lab": "i18n",
+      "spec": "tests/exercises/i18n/i18n-1.spec.ts",
+      "bugs": [
+        "BUG-01"
+      ]
+    },
+    "i18n-2": {
+      "lab": "i18n",
+      "spec": "tests/exercises/i18n/i18n-2.spec.ts",
+      "bugs": [
+        "BUG-02"
+      ]
+    },
+    "i18n-3": {
+      "lab": "i18n",
+      "spec": "tests/exercises/i18n/i18n-3.spec.ts",
+      "bugs": [
+        "BUG-03"
+      ]
+    },
+    "inventory-1": {
+      "lab": "inventory",
+      "spec": "tests/exercises/inventory/inventory-1.spec.ts",
+      "bugs": [
+        "BUG-03"
+      ]
+    },
+    "inventory-2": {
+      "lab": "inventory",
+      "spec": "tests/exercises/inventory/inventory-2.spec.ts",
+      "bugs": [
+        "BUG-01"
+      ]
+    },
+    "inventory-3": {
+      "lab": "inventory",
+      "spec": "tests/exercises/inventory/inventory-3.spec.ts",
+      "bugs": [
+        "BUG-02"
+      ]
     }
   }
 }
