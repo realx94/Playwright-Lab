@@ -31,4 +31,5 @@ export const LABS: LabInfo[] = [
   { slug: "mail", id: "LAB-23", title: "Email giao dịch (xác nhận đơn, đặt lại mật khẩu)", domain: "Notification", difficulty: 2, skills: ["đọc email", "nội dung động", "liên kết trong email", "định dạng tiền", "token hết hạn"], ready: true },
   { slug: "upload", id: "LAB-25", title: "Tải tệp lên kho lưu trữ", domain: "Storage", difficulty: 2, skills: ["setInputFiles", "biên dung lượng", "định dạng", "tiến trình", "huỷ", "nhiều tệp"], ready: true },
   { slug: "bank", id: "LAB-05", title: "Ngân hàng: chuyển tiền nhiều bước", domain: "Banking", difficulty: 3, skills: ["multi-step", "OTP giả", "biểu phí", "hạn mức ngày", "page.clock"], ready: true },
+  { slug: "booking", id: "LAB-06", title: "Đặt vé xem phim (sơ đồ ghế & giữ chỗ)", domain: "Travel", difficulty: 2, skills: ["sơ đồ ghế", "timer giữ chỗ", "hai người tranh ghế", "hết vé", "page.clock"], ready: true },
 ];

@@ -4098,4 +4098,206 @@ for (const [seconds, ok] of [
   },
 ];
 
-export const EXERCISES: Record<string, Exercise[]> = { login, forms, cart, playground, api, otp, todo, table, leave, chat, totp, oauth, pay, orders, guard, webhooks, rbac, timezone, csv, mail, upload, bank };
+const booking: Exercise[] = [
+  {
+    id: "booking-1",
+    title: "Chọn ghế, giá thường/VIP và giới hạn 6 ghế",
+    difficulty: 2,
+    bugs: ["BUG-01", "BUG-03"],
+    task: "Kiểm tra ghế A1 đã bán bị vô hiệu; chọn B1 (thường) và D2 (VIP) rồi kiểm tra tổng 200.000 ₫, giữ chỗ, thanh toán và mã vé VE0001. Thêm test chọn đủ 6 ghế (tổng 480.000 ₫) và ghế thứ 7 bị từ chối. Test phải đỏ khi bật BUG-01 hoặc BUG-03.",
+    criteria: [
+      "Dùng thuộc tính data-state của từng ghế để kiểm tra trạng thái",
+      "Kiểm tra tổng tiền theo loại ghế",
+      "Chạy hết luồng giữ chỗ và thanh toán và kiểm tra mã vé",
+      "Kiểm tra biên 6 ghế và 7 ghế với thông báo lỗi và trạng thái ghế thứ 7",
+      "Test đỏ với BUG-01 và với BUG-03",
+      ...COMMON_CRITERIA,
+    ],
+    hints: [
+      "Mỗi ghế có data-testid seat-<hàng><cột> (ví dụ seat-B1) và aria-label Ghế B1.",
+      "Ghế VIP là hàng D và E.",
+      "Đặt giờ giả ở đầu test để thời gian giữ chỗ ổn định.",
+    ],
+    solution: `import { test, expect, type BrowserContext, type Page } from "@playwright/test";
+
+const T0 = new Date("2026-03-01T10:00:00Z");
+const seat = (page: Page, s: string) => page.getByTestId("seat-" + s);
+
+async function open(page: Page) {
+  await page.goto("/lab/booking");
+  await page.getByTestId("reset-data").click();
+}
+
+async function pick(page: Page, ...seats: string[]) {
+  for (const s of seats) await seat(page, s).click();
+}
+
+const later = (context: BrowserContext, seconds: number) => context.clock.setFixedTime(new Date(T0.getTime() + seconds * 1000));
+
+test("chọn ghế thường và VIP, kiểm tra tổng tiền, giữ chỗ và thanh toán", async ({ page, context }) => {
+  await context.clock.setFixedTime(T0);
+  await open(page);
+  await expect(seat(page, "A1")).toBeDisabled();
+  await expect(seat(page, "A1")).toHaveAttribute("data-state", "booked");
+
+  await pick(page, "B1", "D2");
+  await expect(page.getByTestId("chosen")).toHaveText("Ghế đã chọn: B1, D2");
+  await expect(page.getByTestId("total")).toHaveText("Tổng: 200.000 ₫");
+
+  await page.getByRole("button", { name: "Giữ chỗ" }).click();
+  await page.getByRole("button", { name: "Thanh toán" }).click();
+  await expect(page.getByTestId("ticket-code")).toHaveText("Mã vé: VE0001");
+  await expect(seat(page, "D2")).toHaveAttribute("data-state", "booked");
+});
+
+test("tối đa 6 ghế mỗi lần đặt", async ({ page }) => {
+  await open(page);
+  await pick(page, "B1", "B2", "B3", "B4", "B5", "B6");
+  await expect(page.getByTestId("total")).toHaveText("Tổng: 480.000 ₫");
+  await seat(page, "C1").click();
+  await expect(page.getByTestId("booking-message")).toHaveText("Tối đa 6 ghế mỗi lần đặt");
+  await expect(seat(page, "C1")).toHaveAttribute("data-state", "free");
+});`,
+  },
+  {
+    id: "booking-2",
+    title: "Bộ đếm giữ chỗ và biên 300/301 giây",
+    difficulty: 3,
+    bugs: ["BUG-02"],
+    task: "Dùng context.clock.setFixedTime để kiểm tra bộ đếm giảm đúng (05:00 rồi 03:00 sau 120 giây), thanh toán đúng 300 giây vẫn thành công, còn 301 giây thì báo hết thời gian giữ chỗ và ghế được nhả. Test phải đỏ khi bật BUG-02.",
+    criteria: [
+      "Cố định giờ trước khi mở trang",
+      "Kiểm tra giá trị bộ đếm ở hai thời điểm",
+      "Kiểm tra biên 300 giây còn hợp lệ",
+      "Kiểm tra 301 giây báo hết hạn và ghế chuyển về trống",
+      "Test đỏ với BUG-02",
+      ...COMMON_CRITERIA,
+    ],
+    hints: [
+      "Giờ giả tăng bằng setFixedTime với mốc mới; bộ đếm tự cập nhật nửa giây một lần.",
+      "Lần giữ chỗ thứ hai bắt đầu ở mốc +300 giây nên hết hạn ở +601 giây.",
+      "Trạng thái ghế sau khi nhả là data-state=free.",
+    ],
+    solution: `import { test, expect, type BrowserContext, type Page } from "@playwright/test";
+
+const T0 = new Date("2026-03-01T10:00:00Z");
+const seat = (page: Page, s: string) => page.getByTestId("seat-" + s);
+
+async function open(page: Page) {
+  await page.goto("/lab/booking");
+  await page.getByTestId("reset-data").click();
+}
+
+async function pick(page: Page, ...seats: string[]) {
+  for (const s of seats) await seat(page, s).click();
+}
+
+const later = (context: BrowserContext, seconds: number) => context.clock.setFixedTime(new Date(T0.getTime() + seconds * 1000));
+
+test("bộ đếm giữ chỗ chạy theo đồng hồ giả", async ({ page, context }) => {
+  await context.clock.setFixedTime(T0);
+  await open(page);
+  await pick(page, "C1");
+  await page.getByRole("button", { name: "Giữ chỗ" }).click();
+  await expect(page.getByTestId("hold-countdown")).toHaveText("Giữ chỗ còn 05:00");
+  await later(context, 120);
+  await expect(page.getByTestId("hold-countdown")).toHaveText("Giữ chỗ còn 03:00");
+});
+
+test("thanh toán đúng 300 giây còn hợp lệ, 301 giây thì hết hạn", async ({ page, context }) => {
+  await context.clock.setFixedTime(T0);
+  await open(page);
+  await pick(page, "C1");
+  await page.getByRole("button", { name: "Giữ chỗ" }).click();
+  await later(context, 300);
+  await page.getByRole("button", { name: "Thanh toán" }).click();
+  await expect(page.getByTestId("booking-message")).toHaveText("Đặt vé thành công");
+
+  await pick(page, "C2");
+  await page.getByRole("button", { name: "Giữ chỗ" }).click();
+  await later(context, 601);
+  await page.getByRole("button", { name: "Thanh toán" }).click();
+  await expect(page.getByTestId("booking-message")).toHaveText("Hết thời gian giữ chỗ, ghế đã được nhả");
+  await expect(seat(page, "C2")).toHaveAttribute("data-state", "free");
+});`,
+  },
+  {
+    id: "booking-3",
+    title: "Hai người tranh một ghế và bán hết vé",
+    difficulty: 3,
+    task: "Mở hai tab trong cùng một context. Tab B chọn ghế C1 nhưng chưa giữ; tab A giữ C1 trước. Chứng minh tab B thấy C1 ở trạng thái đang giữ, bấm Giữ chỗ nhận thông báo, và C1 tự trống khi A huỷ hoặc khi hết hạn. Thêm test bán hết ghế của suất 20:00.",
+    criteria: [
+      "Dùng context.newPage() cho người thứ hai và cùng đồng hồ giả",
+      "Kiểm tra trạng thái held ở tab còn lại",
+      "Kiểm tra thông báo khi người sau giữ ghế đã bị chiếm",
+      "Kiểm tra ghế tự nhả sau khi huỷ và sau khi quá hạn",
+      "Kiểm tra thông báo hết vé và suất khác không bị ảnh hưởng",
+      ...COMMON_CRITERIA,
+    ],
+    hints: [
+      "Trạng thái được chia sẻ qua localStorage nên hai tab trong cùng context nhìn thấy nhau.",
+      "Suất 20:00 chỉ còn E5 và E6.",
+      "Chuyển suất bằng getByLabel('Suất chiếu').selectOption('s3').",
+    ],
+    solution: `import { test, expect, type BrowserContext, type Page } from "@playwright/test";
+
+const T0 = new Date("2026-03-01T10:00:00Z");
+const seat = (page: Page, s: string) => page.getByTestId("seat-" + s);
+
+async function open(page: Page) {
+  await page.goto("/lab/booking");
+  await page.getByTestId("reset-data").click();
+}
+
+async function pick(page: Page, ...seats: string[]) {
+  for (const s of seats) await seat(page, s).click();
+}
+
+const later = (context: BrowserContext, seconds: number) => context.clock.setFixedTime(new Date(T0.getTime() + seconds * 1000));
+
+test("hai người tranh một ghế ở hai tab", async ({ page, context }) => {
+  await context.clock.setFixedTime(T0);
+  await open(page);
+  const other = await context.newPage();
+  await other.goto("/lab/booking");
+
+  await pick(other, "C1");
+  await pick(page, "C1");
+  await page.getByRole("button", { name: "Giữ chỗ" }).click();
+  await expect(seat(other, "C1")).toHaveAttribute("data-state", "held");
+
+  await other.getByRole("button", { name: "Giữ chỗ" }).click();
+  await expect(other.getByTestId("booking-message")).toHaveText("Ghế C1 vừa được người khác giữ hoặc đặt");
+
+  await page.getByRole("button", { name: "Huỷ giữ chỗ" }).click();
+  await expect(seat(other, "C1")).toHaveAttribute("data-state", "free");
+});
+
+test("ghế bị giữ tự nhả khi hết 5 phút", async ({ page, context }) => {
+  await context.clock.setFixedTime(T0);
+  await open(page);
+  const other = await context.newPage();
+  await other.goto("/lab/booking");
+  await pick(page, "C1");
+  await page.getByRole("button", { name: "Giữ chỗ" }).click();
+  await expect(seat(other, "C1")).toHaveAttribute("data-state", "held");
+  await later(context, 301);
+  await expect(seat(other, "C1")).toHaveAttribute("data-state", "free");
+});
+
+test("bán hết ghế của một suất", async ({ page }) => {
+  await open(page);
+  await page.getByLabel("Suất chiếu").selectOption("s3");
+  await pick(page, "E5", "E6");
+  await page.getByRole("button", { name: "Giữ chỗ" }).click();
+  await page.getByRole("button", { name: "Thanh toán" }).click();
+  await expect(page.getByTestId("sold-out")).toHaveText("Suất chiếu đã hết vé");
+
+  await page.getByLabel("Suất chiếu").selectOption("s1");
+  await expect(page.getByTestId("sold-out")).toHaveCount(0);
+  await expect(seat(page, "E5")).toHaveAttribute("data-state", "free");
+});`,
+  },
+];
+
+export const EXERCISES: Record<string, Exercise[]> = { login, forms, cart, playground, api, otp, todo, table, leave, chat, totp, oauth, pay, orders, guard, webhooks, rbac, timezone, csv, mail, upload, bank, booking };

@@ -472,6 +472,26 @@
       "bugs": [
         "BUG-03"
       ]
+    },
+    "booking-1": {
+      "lab": "booking",
+      "spec": "tests/exercises/booking/booking-1.spec.ts",
+      "bugs": [
+        "BUG-01",
+        "BUG-03"
+      ]
+    },
+    "booking-2": {
+      "lab": "booking",
+      "spec": "tests/exercises/booking/booking-2.spec.ts",
+      "bugs": [
+        "BUG-02"
+      ]
+    },
+    "booking-3": {
+      "lab": "booking",
+      "spec": "tests/exercises/booking/booking-3.spec.ts",
+      "bugs": []
     }
   }
 }

@@ -236,6 +236,14 @@ Vai trò Admin/Manager/Staff/Guest; ma trận quyền; thử IDOR (đổi id tro
 - BR-05 OTP hiệu lực 60 giây, sai 3 lần thì huỷ; BR-06 mã giao dịch TXnnnn, lịch sử, giữ khi tải lại.
 - Bug: BUG-01 phí tính cả ở đúng 500.000; BUG-02 hạn mức ngày không cộng dồn; BUG-03 sai OTP quá 3 lần không huỷ.
 
+### LAB-06 Đặt vé xem phim (bản đã làm)
+`/lab/booking`: 3 suất chiếu, sơ đồ ghế 5×6 (A–C thường 80.000 ₫, D–E VIP 120.000 ₫), giữ chỗ 5 phút, thanh toán, trạng thái dùng chung giữa các tab.
+- BR-01 ghế đã bán không chọn được, tổng tiền theo loại ghế; BR-02 tối đa 6 ghế, phải chọn ≥ 1 ghế, bấm lại là bỏ chọn.
+- BR-03 giữ chỗ 5 phút có đếm ngược, ghế người khác đang giữ không chọn được.
+- BR-04 thanh toán đúng 300 giây còn hợp lệ, 301 giây thì hết hạn và nhả ghế; BR-05 tranh ghế: người giữ trước thắng; huỷ/hết hạn thì trống.
+- BR-06 hết ghế → "Suất chiếu đã hết vé"; ghế đã bán giữ khi tải lại.
+- Bug: BUG-01 ghế VIP tính giá thường; BUG-02 thanh toán được sau khi hết hạn giữ chỗ; BUG-03 cho đặt tới 7 ghế.
+
 ## Độ phủ kỹ năng theo lab (rà soát)
 | Kỹ năng | Lab |
 |---------|-----|
@@ -275,7 +283,8 @@ Vai trò Admin/Manager/Staff/Guest; ma trận quyền; thử IDOR (đổi id tro
 | LAB-23 Email giao dịch (xác nhận đơn, đặt lại mật khẩu) | `/lab/mail` | Đã làm |
 | LAB-25 Tải tệp lên kho lưu trữ | `/lab/upload` | Đã làm |
 | LAB-05 Ngân hàng: chuyển tiền nhiều bước | `/lab/bank` | Đã làm |
-| LAB-6, 9, 10, 11, 15, 16 | — | Chưa làm |
+| LAB-06 Đặt vé xem phim (sơ đồ ghế & giữ chỗ) | `/lab/booking` | Đã làm |
+| LAB-9, 10, 11, 15, 16 | — | Chưa làm |
 
 ### Quy tắc kỹ thuật của trang lab
 - `/lab/<slug>` là **ứng dụng thuần**: không header, không thanh tìm kiếm của site (chỉ một liên kết quay lại ở layout lab) để locator của người học không bị trùng.

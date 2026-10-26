@@ -585,7 +585,33 @@ const bank: Workshop = {
   ],
 };
 
-export const WORKSHOPS: Record<string, Workshop> = { login, forms, cart, playground, api, otp, todo, table, leave, chat, totp, oauth, pay, orders, guard, webhooks, rbac, timezone, csv, mail, upload, bank };
+const booking: Workshop = {
+  techniques: ["State Transition", "Boundary Value Analysis", "Concurrency", "Decision Table"],
+  rules: [
+    { id: "BR-01", text: "Có 3 suất chiếu độc lập; ghế đã bán không chọn được; ghế thường A–C 80.000 ₫, ghế VIP D–E 120.000 ₫; tổng tiền bằng tổng giá từng ghế" },
+    { id: "BR-02", text: "Mỗi lần đặt tối đa 6 ghế; phải chọn ít nhất một ghế mới giữ chỗ được; bấm lại ghế đã chọn là bỏ chọn" },
+    { id: "BR-03", text: "Giữ chỗ 5 phút với bộ đếm ngược mm:ss; ghế đang được người khác giữ hiển thị trạng thái đang giữ và không chọn được" },
+    { id: "BR-04", text: "Thanh toán trong 5 phút (đúng 300 giây còn hợp lệ) thành công và sinh mã vé VEnnnn; quá 300 giây thì giữ chỗ hết hạn, ghế được nhả" },
+    { id: "BR-05", text: "Hai người cùng giữ một ghế: người giữ trước thắng, người sau nhận thông báo; huỷ giữ chỗ hoặc hết hạn thì ghế tự trống" },
+    { id: "BR-06", text: "Khi mọi ghế của suất đã bán hiển thị Suất chiếu đã hết vé; ghế đã bán giữ nguyên sau khi tải lại" },
+  ],
+  cases: [
+    { id: "TC-V-101", title: "Đặt vé thành công", precondition: "Suất 10:00", steps: "Chọn B1 và D2, giữ chỗ, thanh toán", data: "B1 (thường), D2 (VIP)", expected: "Tổng 200.000 ₫, mã vé VE0001, hai ghế chuyển sang đã bán", type: "Happy", priority: "P0", br: ["BR-01", "BR-04"] },
+    { id: "TC-V-102", title: "Ghế đã bán", precondition: "A1 đã bán", steps: "Bấm ghế A1", data: "A1", expected: "Ghế bị vô hiệu, không chọn được", type: "Negative", priority: "P1", br: ["BR-01"] },
+    { id: "TC-V-103", title: "Giữ chỗ không chọn ghế", precondition: "—", steps: "Bấm Giữ chỗ", data: "(không ghế)", expected: "Báo hãy chọn ít nhất một ghế", type: "Negative", priority: "P1", br: ["BR-02"] },
+    { id: "TC-V-104", title: "Chọn ghế thứ 6", precondition: "Đã chọn 5 ghế", steps: "Chọn ghế thứ 6", data: "6 ghế", expected: "Chấp nhận, tổng 480.000 ₫ nếu cả 6 là ghế thường", type: "BVA", priority: "P0", br: ["BR-02"] },
+    { id: "TC-V-105", title: "Chọn ghế thứ 7", precondition: "Đã chọn 6 ghế", steps: "Chọn ghế thứ 7", data: "7 ghế", expected: "Báo tối đa 6 ghế mỗi lần đặt", type: "BVA", priority: "P0", br: ["BR-02"] },
+    { id: "TC-V-106", title: "Bộ đếm giữ chỗ", precondition: "Vừa giữ chỗ", steps: "Quan sát sau 0 và 120 giây", data: "—", expected: "05:00 rồi 03:00", type: "State", priority: "P1", br: ["BR-03"] },
+    { id: "TC-V-107", title: "Thanh toán đúng 300 giây", precondition: "Đã giữ chỗ", steps: "Thanh toán sau 300 giây", data: "300s", expected: "Thành công", type: "BVA", priority: "P0", br: ["BR-04"] },
+    { id: "TC-V-108", title: "Thanh toán sau 301 giây", precondition: "Đã giữ chỗ", steps: "Thanh toán sau 301 giây", data: "301s", expected: "Báo hết thời gian giữ chỗ; ghế được nhả", type: "BVA", priority: "P0", br: ["BR-04"] },
+    { id: "TC-V-109", title: "Người thứ hai thấy ghế đang giữ", precondition: "A đã giữ C1", steps: "Mở tab của B", data: "C1", expected: "C1 hiển thị đang giữ, không chọn được", type: "State", priority: "P0", br: ["BR-03", "BR-05"] },
+    { id: "TC-V-110", title: "Hai người tranh một ghế", precondition: "B đã chọn C1, A giữ trước", steps: "B bấm Giữ chỗ", data: "C1", expected: "B nhận thông báo ghế vừa được người khác giữ", type: "State", priority: "P0", br: ["BR-05"] },
+    { id: "TC-V-111", title: "Ghế tự nhả khi hết hạn", precondition: "A giữ C1", steps: "Chờ 301 giây", data: "301s", expected: "C1 trở lại trống cho người khác", type: "State", priority: "P1", br: ["BR-05"] },
+    { id: "TC-V-112", title: "Bán hết ghế", precondition: "Suất 20:00 còn E5, E6", steps: "Bán nốt hai ghế", data: "E5, E6", expected: "Hiển thị Suất chiếu đã hết vé; suất khác không bị ảnh hưởng", type: "State", priority: "P1", br: ["BR-06"] },
+  ],
+};
+
+export const WORKSHOPS: Record<string, Workshop> = { login, forms, cart, playground, api, otp, todo, table, leave, chat, totp, oauth, pay, orders, guard, webhooks, rbac, timezone, csv, mail, upload, bank, booking };
 
 export function toCsv(cases: TestCase[]): string {
   const head = ["ID", "Tiêu đề", "Tiền điều kiện", "Các bước", "Dữ liệu", "Kết quả mong đợi", "Loại", "Ưu tiên", "BR"];
