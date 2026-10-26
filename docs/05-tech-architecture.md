@@ -39,7 +39,8 @@ Quy tắc: tự viết component chỉ khi shadcn không có (vd. `AskAIPopover`
     /learn/*.mdx
     /labs/*.mdx            # mô tả lab + BR + TC
   /lib                     # ask-ai prompt builder, progress store, bug flags
-/starter-repo              # template Playwright (hoặc repo riêng)
+/starter-repo              # template Playwright cho người học (pages/ fixtures/ utils/ tests/)
+/scripts                   # pack-starter, generate-starter-stubs, verify-solutions
 /e2e                       # test chính site
 ```
 

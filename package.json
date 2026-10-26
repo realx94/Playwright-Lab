@@ -4,11 +4,13 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "prebuild": "node scripts/pack-starter.mjs",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
     "e2e": "playwright test",
-    "verify:solutions": "node scripts/verify-solutions.mts"
+    "verify:solutions": "node scripts/verify-solutions.mts",
+    "starter:stubs": "node scripts/generate-starter-stubs.mts"
   },
   "dependencies": {
     "@base-ui/react": "^1.9.0",
@@ -39,6 +41,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.4.3",
+    "fflate": "^0.8.3",
     "tailwindcss": "^4",
     "typescript": "^5"
   }

@@ -102,7 +102,7 @@ Persona: **L** = Learner (QA), **M** = Mentor, **A** = Admin/Content author.
 
 ## EP-06 Thực hành Playwright & bài tập
 **US-06.01 (P0)** – Là L, tôi muốn hướng dẫn từng bước cài Node/NVM, VS Code, Playwright, Git (Windows & macOS) để setup môi trường.
-- AC: 2 tab OS; checklist “Đã chạy được test đầu tiên”.
+- AC: 2 tab OS; checklist “Đã chạy được test đầu tiên”. (Đã làm ở trang `/starter`; checklist lưu localStorage.)
 
 **US-06.02 (P0)** – Là L, tôi muốn bài tập có đề, tiêu chí đạt, gợi ý, đáp án mẫu để tự học.
 - AC: đáp án ẩn mặc định; có nhãn độ khó.
@@ -159,6 +159,9 @@ Persona: **L** = Learner (QA), **M** = Mentor, **A** = Admin/Content author.
 
 ## EP-11 Starter repo, CI/CD & nâng cao
 **US-11.01 (P0)** – Là L, tôi muốn clone **starter repo** (Playwright + TS + eslint/prettier + cấu trúc `pages/ fixtures/ tests/ utils/`) trỏ tới Lab để bắt đầu nhanh.
+- AC (đã làm): thư mục `starter-repo/` cùng monorepo; có `BasePage`, `LoginPage`, `CartPage`, custom fixture, `utils/money.ts`, smoke test, ví dụ hoàn chỉnh trong `tests/examples/`, mỗi bài tập một file `test.fixme` trong `tests/exercises/<lab>/` (sinh bằng `npm run starter:stubs`), workflow GitHub Actions mẫu, README tiếng Việt.
+- AC: trang `/starter` cho tải `starter-repo.zip` (tạo tự động trước `next build` bằng `scripts/pack-starter.mjs`, không cần repo riêng).
+- AC: ví dụ và smoke test của starter phải xanh khi trỏ `BASE_URL` vào site đang chạy.
 **US-11.02 (P1)** – Là L, tôi muốn học Git/GitHub (branch, PR, conflict, amend, review) đủ dùng cho automation.
 **US-11.03 (P1)** – Là L, tôi muốn mẫu GitHub Actions (chạy theo PR, schedule, sharding, upload report) để tích hợp CI.
 **US-11.04 (P1)** – Là L, tôi muốn học quản lý biến môi trường (`.env`, secrets), multi-env (dev/stage).

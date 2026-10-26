@@ -4,6 +4,7 @@ import { FlaskConical } from "lucide-react";
 const links = [
   { href: "/learn", label: "Bài học" },
   { href: "/labs", label: "Lab" },
+  { href: "/starter", label: "Starter" },
   { href: "/stats", label: "Thống kê" },
 ];
 
