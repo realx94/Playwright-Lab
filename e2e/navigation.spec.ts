@@ -37,12 +37,12 @@ test("chuyển giao diện sáng/tối và nhớ lựa chọn", async ({ page })
 test("khối code có tô màu cú pháp và nút copy", async ({ page, context }) => {
   await context.grantPermissions(["clipboard-read", "clipboard-write"]);
   await page.goto("/learn/0-3-chay-test-dau-tien");
-  const block = page.locator("pre").filter({ hasText: "page.goto" }).first();
+  const block = page.locator("pre:has(.hljs-keyword)").filter({ hasText: "page.goto(" }).first();
   await expect(block.locator(".hljs-keyword").first()).toBeVisible();
   await block.hover();
   await block.locator("xpath=..").getByRole("button", { name: "Copy code" }).click();
   const copied = await page.evaluate(() => navigator.clipboard.readText());
-  expect(copied).toContain('page.goto("/")');
+  expect(copied).toContain("page.goto(");
 });
 
 test("trang Bài học nhóm theo level", async ({ page }) => {

@@ -92,6 +92,8 @@
 8. Quiz + Bài tập + Đáp án
 9. Từ khoá để hỏi Google AI
 
+**Khung chi tiết đang áp dụng cho file bài học (`src/content/learn/*.md`)**: Mục tiêu → Bạn cần chuẩn bị → Kiến thức cần nắm → Giải thích dễ hiểu → **Thực hành từng bước** (mỗi lệnh/đoạn code một khối riêng, kèm giải thích từng phần, kết quả mong đợi và lỗi thường gặp) → Demo code → Thử ngay trong lab → Lỗi thường gặp (triệu chứng, nguyên nhân, cách sửa) → Tóm tắt → Bài tập (có tiêu chí hoàn thành). Mọi lệnh và code trong bài phải chạy được; ví dụ dùng ứng dụng lab phải khớp nhãn, role, testid thật.
+
 ## 9. Roadmap
 | Giai đoạn | Nội dung |
 |-----------|----------|

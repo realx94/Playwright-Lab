@@ -47,3 +47,6 @@ next-env.d.ts
 /.tmp-solutions.config.ts
 /public/starter-repo.zip
 playwright.dev.config.ts
+
+# storageState của test (chứa phiên đăng nhập)
+.auth/

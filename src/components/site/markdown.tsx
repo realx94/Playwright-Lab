@@ -7,7 +7,7 @@ import { CopyCodeButton } from "@/components/site/copy-code-button";
 function Pre({ children, ...props }: ComponentProps<"pre">) {
   return (
     <div className="group relative not-prose my-4">
-      <pre {...props} className="overflow-x-auto rounded-lg border bg-muted p-4 text-sm leading-relaxed">
+      <pre {...props} tabIndex={0} className="overflow-x-auto rounded-lg border bg-muted p-4 text-sm leading-relaxed">
         {children}
       </pre>
       <CopyCodeButton />

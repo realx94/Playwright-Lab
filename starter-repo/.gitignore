@@ -4,3 +4,7 @@ playwright-report/
 .env
 grade-*.json
 .grade-*.json
+
+.auth/
+.env.*
+!.env.example
