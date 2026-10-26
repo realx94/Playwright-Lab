@@ -2,7 +2,7 @@
 
 Nguyên tắc: **mọi lab có chế độ mặc định chạy 100% trong site (chi phí 0, ổn định)** và chế độ nâng cao dùng dịch vụ thật. Gói free của các dịch vụ có thể thay đổi, cần kiểm tra lại khi đăng ký.
 
-> **Quyết định mới nhất (ưu tiên hơn các mục bên dưới):** triển khai **mock-first**. Tầng A (built-in) là phạm vi hiện tại; không build Supabase, BYO Setup Wizard, kho khoá mã hoá hay trang hướng dẫn đăng ký. Tầng B chỉ làm sau, và chỉ với dịch vụ xác nhận được đăng ký miễn phí (ví dụ Mailtrap, Stripe test mode). Các mục 6–8 giữ lại làm thiết kế tham khảo cho tầng B.
+> **Quyết định mới nhất (ưu tiên hơn các mục bên dưới):** triển khai **mock-first**. Tầng A (built-in) là phạm vi hiện tại; không build Supabase, BYO Setup Wizard, kho khoá mã hoá hay trang hướng dẫn đăng ký. Ngoại lệ: **email/OTP gửi thật** (qua Resend free, người học tự dán API key; key lưu trong trình duyệt và đi kèm từng request qua server proxy, server không lưu; Fake Inbox là chế độ dự phòng/CI). TOTP/2FA tính hoàn toàn trong code. Tầng B khác chỉ làm sau, và chỉ với dịch vụ xác nhận được đăng ký miễn phí (ví dụ Mailtrap, Stripe test mode). Cần kiểm tra lại giới hạn gói free của Resend/Brevo/Mailtrap trước khi viết hướng dẫn đăng ký. Các mục 6–8 giữ lại làm thiết kế tham khảo cho tầng B.
 
 ## 1. Chiến lược 2 tầng
 | Tầng | Mô tả | Dùng khi |
