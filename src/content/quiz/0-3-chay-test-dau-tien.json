@@ -1,0 +1,169 @@
+{
+  "questions": [
+    {
+      "id": "q1",
+      "type": "single",
+      "prompt": "Bạn muốn xem trình duyệt hiện lên và thao tác theo từng bước khi chạy test. Nên dùng tuỳ chọn nào?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Chạy với tuỳ chọn --headed để mở cửa sổ trình duyệt"
+        },
+        {
+          "id": "b",
+          "text": "Chạy với tuỳ chọn --quiet để hiển thị thao tác thật"
+        },
+        {
+          "id": "c",
+          "text": "Chạy với tuỳ chọn --list để liệt kê các bước nhấp"
+        },
+        {
+          "id": "d",
+          "text": "Chạy với tuỳ chọn --hidden để quay lại video thao tác"
+        }
+      ],
+      "answer": [
+        "a"
+      ],
+      "explanation": "--headed hiện cửa sổ trình duyệt; mặc định Playwright chạy headless. Các tuỳ chọn còn lại không phục vụ mục đích này."
+    },
+    {
+      "id": "q2",
+      "type": "single",
+      "prompt": "Trong playwright.config.ts, cấu hình nào cho phép viết page.goto(\"/lab/login\") mà không cần gõ địa chỉ đầy đủ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "testDir để chỉ định thư mục chứa các file test"
+        },
+        {
+          "id": "b",
+          "text": "reporter để chọn định dạng báo cáo sau khi chạy"
+        },
+        {
+          "id": "c",
+          "text": "retries để chạy lại test mỗi khi bị thất bại"
+        },
+        {
+          "id": "d",
+          "text": "use.baseURL để đặt địa chỉ gốc cho mọi lời gọi goto"
+        }
+      ],
+      "answer": [
+        "d"
+      ],
+      "explanation": "baseURL được ghép với đường dẫn tương đối trong goto. testDir, reporter và retries phục vụ mục đích khác."
+    },
+    {
+      "id": "q3",
+      "type": "multi",
+      "prompt": "Những việc nào KHÔNG nên bỏ qua khi bắt đầu một project Playwright mới? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Chạy npx playwright install để tải trình duyệt"
+        },
+        {
+          "id": "b",
+          "text": "Đặt baseURL đúng với website cần kiểm thử"
+        },
+        {
+          "id": "c",
+          "text": "Xoá thư mục tests để tránh test mẫu chạy nhầm"
+        },
+        {
+          "id": "d",
+          "text": "Tắt toàn bộ báo cáo để test chạy nhanh hơn"
+        }
+      ],
+      "answer": [
+        "a",
+        "b"
+      ],
+      "explanation": "Thiếu trình duyệt hoặc sai baseURL là hai lỗi khởi đầu phổ biến nhất. Không cần xoá thư mục tests, và nên giữ báo cáo để điều tra lỗi."
+    },
+    {
+      "id": "q4",
+      "type": "single",
+      "prompt": "Một test chạy xanh nhưng thao tác chưa kịp hoàn tất đã kết thúc, nguyên nhân thường gặp là gì?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Trình duyệt chạy ở chế độ headless nên bỏ qua bước click"
+        },
+        {
+          "id": "b",
+          "text": "Quên await trước lời gọi bất đồng bộ của đối tượng page"
+        },
+        {
+          "id": "c",
+          "text": "Tên file test quá dài khiến runner kết thúc sớm hơn dự kiến"
+        },
+        {
+          "id": "d",
+          "text": "Thư mục tests chứa nhiều hơn mười file nên bị cắt bớt"
+        }
+      ],
+      "answer": [
+        "b"
+      ],
+      "explanation": "Thiếu await làm test không chờ thao tác xong. Headless không bỏ qua thao tác; độ dài tên file hay số lượng file không ảnh hưởng."
+    },
+    {
+      "id": "q5",
+      "type": "multi",
+      "prompt": "Lệnh nào sau đây là cách hợp lệ để chạy test Playwright? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "b",
+          "text": "npx playwright test --ui --workers=1"
+        },
+        {
+          "id": "c",
+          "text": "npx playwright run-all --browser=chromium"
+        },
+        {
+          "id": "d",
+          "text": "npx playwright test -g \"đăng nhập\" --retries=1"
+        },
+        {
+          "id": "a",
+          "text": "npx playwright test --headed --project=chromium"
+        }
+      ],
+      "answer": [
+        "a",
+        "b",
+        "d"
+      ],
+      "explanation": "test, --ui và -g (lọc theo tên) đều hợp lệ. run-all không phải lệnh của Playwright."
+    },
+    {
+      "id": "q6",
+      "type": "single",
+      "prompt": "Sau khi test đỏ, bạn muốn đọc lại toàn bộ kết quả với ảnh chụp và chi tiết lỗi. Nên làm gì?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Chạy lại test cho đến khi kết quả chuyển sang màu xanh"
+        },
+        {
+          "id": "b",
+          "text": "Xoá thư mục node_modules rồi cài lại toàn bộ thư viện"
+        },
+        {
+          "id": "c",
+          "text": "Mở báo cáo HTML bằng lệnh npx playwright show-report"
+        },
+        {
+          "id": "d",
+          "text": "Đổi sang trình duyệt khác cho tới khi test không còn lỗi"
+        }
+      ],
+      "answer": [
+        "c"
+      ],
+      "explanation": "Báo cáo HTML chứa lỗi, ảnh chụp và trace. Chạy lại hay đổi trình duyệt chỉ che lỗi chứ không giúp tìm nguyên nhân."
+    }
+  ]
+}

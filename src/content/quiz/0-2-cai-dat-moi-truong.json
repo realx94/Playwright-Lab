@@ -1,0 +1,173 @@
+{
+  "questions": [
+    {
+      "id": "q1",
+      "type": "single",
+      "prompt": "Bạn cần chạy hai dự án: một dự án cần Node 18 và một dự án cần Node 22 trên cùng một máy. Công cụ nào giải quyết gọn nhất?",
+      "options": [
+        {
+          "id": "a",
+          "text": "NVM để cài và chuyển qua lại giữa các phiên bản Node"
+        },
+        {
+          "id": "b",
+          "text": "Git để lưu mỗi phiên bản Node vào một nhánh riêng"
+        },
+        {
+          "id": "c",
+          "text": "VS Code để mở hai cửa sổ dùng hai phiên bản khác nhau"
+        },
+        {
+          "id": "d",
+          "text": "npx để tải lại Node mỗi lần chạy lệnh của dự án"
+        }
+      ],
+      "answer": [
+        "a"
+      ],
+      "explanation": "NVM sinh ra để quản lý nhiều phiên bản Node.js và đổi qua lại bằng một lệnh. Git quản lý mã nguồn, VS Code chỉ là trình soạn thảo, npx chạy gói chứ không cài Node."
+    },
+    {
+      "id": "q2",
+      "type": "single",
+      "prompt": "Sau khi cài NVM, bạn gõ lệnh nvm trong cửa sổ terminal đang mở từ trước nhưng báo không tìm thấy lệnh. Cách xử lý hợp lý nhất là gì?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Cài lại Windows để biến môi trường được nạp đầy đủ"
+        },
+        {
+          "id": "b",
+          "text": "Gỡ Git rồi cài lại vì Git điều khiển các lệnh terminal"
+        },
+        {
+          "id": "c",
+          "text": "Đóng terminal cũ và mở một cửa sổ terminal mới"
+        },
+        {
+          "id": "d",
+          "text": "Cài thêm một bản Node nữa để lệnh nvm được kích hoạt"
+        }
+      ],
+      "answer": [
+        "c"
+      ],
+      "explanation": "Biến môi trường (PATH) chỉ được nạp khi terminal khởi động. Terminal mở trước khi cài sẽ không thấy lệnh mới; mở terminal mới là đủ."
+    },
+    {
+      "id": "q3",
+      "type": "multi",
+      "prompt": "Những mục nào là vai trò đúng của công cụ tương ứng? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Git lưu lịch sử thay đổi của mã nguồn dự án"
+        },
+        {
+          "id": "b",
+          "text": "npm quản lý và cài đặt các thư viện của dự án"
+        },
+        {
+          "id": "c",
+          "text": "NVM chịu trách nhiệm chạy các bài test Playwright"
+        },
+        {
+          "id": "d",
+          "text": "VS Code là nơi duy nhất có thể chạy được Playwright"
+        }
+      ],
+      "answer": [
+        "a",
+        "b"
+      ],
+      "explanation": "Git ghi lịch sử, npm quản lý thư viện. NVM chỉ chuyển phiên bản Node; Playwright chạy được từ terminal mà không cần VS Code."
+    },
+    {
+      "id": "q4",
+      "type": "single",
+      "prompt": "Vì sao nên cài Node.js bản LTS để học Playwright?",
+      "options": [
+        {
+          "id": "c",
+          "text": "Bản LTS là bản duy nhất được phép dùng để cài Playwright"
+        },
+        {
+          "id": "d",
+          "text": "Bản LTS chạy test nhanh hơn gấp nhiều lần các bản khác"
+        },
+        {
+          "id": "a",
+          "text": "Bản LTS ổn định và được hỗ trợ lâu dài, ít gây lỗi tương thích"
+        },
+        {
+          "id": "b",
+          "text": "Bản LTS luôn có tính năng mới nhất mà bản thường chưa có"
+        }
+      ],
+      "answer": [
+        "a"
+      ],
+      "explanation": "LTS (Long Term Support) ưu tiên sự ổn định và được vá lỗi lâu dài. Không phải bản mới nhất, không phải bản duy nhất hợp lệ, và tốc độ test không khác biệt đáng kể."
+    },
+    {
+      "id": "q5",
+      "type": "multi",
+      "prompt": "Để kiểm tra môi trường đã sẵn sàng, bạn nên chạy những lệnh nào? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "b",
+          "text": "git --version để xem Git đã được cài hay chưa"
+        },
+        {
+          "id": "c",
+          "text": "npm run nvm để xác nhận NVM đang hoạt động"
+        },
+        {
+          "id": "d",
+          "text": "npm -v để xem phiên bản trình quản lý gói"
+        },
+        {
+          "id": "e",
+          "text": "git install node để kéo Node.js về từ kho mã"
+        },
+        {
+          "id": "a",
+          "text": "node -v để xem phiên bản Node.js đang dùng"
+        }
+      ],
+      "answer": [
+        "a",
+        "b",
+        "d"
+      ],
+      "explanation": "node -v, git --version và npm -v là các lệnh kiểm tra phiên bản chuẩn. Hai lệnh còn lại không tồn tại."
+    },
+    {
+      "id": "q6",
+      "type": "single",
+      "prompt": "Điểm khác nhau chính giữa npm và npx là gì?",
+      "options": [
+        {
+          "id": "a",
+          "text": "npx chỉ dùng trên macOS còn npm chỉ dùng trên Windows"
+        },
+        {
+          "id": "b",
+          "text": "npm quản lý gói, npx chạy trực tiếp một gói trong dự án"
+        },
+        {
+          "id": "c",
+          "text": "npm chạy được test còn npx chỉ dùng để viết tài liệu"
+        },
+        {
+          "id": "d",
+          "text": "npx là phiên bản cũ đã bị loại bỏ và thay bằng npm"
+        }
+      ],
+      "answer": [
+        "b"
+      ],
+      "explanation": "npm cài và quản lý gói; npx chạy lệnh của một gói (ví dụ npx playwright test) mà không cần cài toàn cục. Cả hai đều chạy được trên mọi hệ điều hành."
+    }
+  ]
+}
