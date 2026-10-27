@@ -198,3 +198,84 @@ test.describe("OTP qua SMS giả", () => {
     await expect(page.getByTestId("sms-count")).toHaveText("0 tin nhắn");
   });
 });
+
+test.describe("Neon: database của người học", () => {
+  const TEST_URL = "postgresql://lab_test:demo@ep-demo.neon.tech/neondb?sslmode=require";
+  const H = (url: string) => ({ "x-neon-url": url });
+
+  test("lưu chuỗi kết nối, che mật khẩu, test và tạo schema ở chế độ thử", async ({ page }) => {
+    await page.goto("/settings/services");
+    await expect(page.getByTestId("neon-status")).toHaveText("Chưa cấu hình");
+    await page.getByLabel("Chuỗi kết nối Neon").fill(TEST_URL);
+    await expect(page.getByTestId("neon-status")).toHaveText("Đã lưu, chưa kiểm tra");
+    await expect(page.getByTestId("neon-masked")).toHaveText("Đang lưu: postgres://lab_test:****@ep-demo.neon.tech/neondb");
+    await expect(page.getByLabel("Chuỗi kết nối Neon")).toHaveAttribute("type", "password");
+
+    await page.getByRole("button", { name: "Test connection" }).click();
+    await expect(page.getByTestId("neon-status")).toHaveText("Đã kết nối");
+    await expect(page.getByTestId("neon-message")).toHaveText("Kết nối thành công (chế độ thử) (database neondb)");
+
+    await page.getByRole("button", { name: "Tạo schema mẫu" }).click();
+    await expect(page.getByTestId("neon-tables")).toContainText("Bảng trong schema lab: 8/8");
+    await expect(page.getByTestId("neon-tables").getByRole("listitem")).toHaveCount(8);
+    await expect(page.getByTestId("neon-tables")).toContainText("lab.orders");
+
+    page.once("dialog", (d) => d.accept());
+    await page.getByRole("button", { name: "Xoá schema mẫu" }).click();
+    await expect(page.getByTestId("neon-tables")).toContainText("Bảng trong schema lab: 0/8");
+
+    await page.reload();
+    await expect(page.getByTestId("neon-masked")).toBeVisible(); // nhớ lại sau khi tải lại
+  });
+
+  test("mật khẩu sai, chuỗi sai định dạng và host lạ đều báo lỗi rõ ràng", async ({ page }) => {
+    await page.goto("/settings/services");
+    const input = page.getByLabel("Chuỗi kết nối Neon");
+    await input.fill("postgresql://lab_test:invalid@ep-demo.neon.tech/neondb");
+    await page.getByRole("button", { name: "Test connection" }).click();
+    await expect(page.getByTestId("neon-message")).toHaveText("Sai tên đăng nhập hoặc mật khẩu trong chuỗi kết nối");
+    await expect(page.getByTestId("neon-status")).toHaveText("Lỗi");
+
+    await input.fill("postgres://a:b@localhost/db");
+    await page.getByRole("button", { name: "Test connection" }).click();
+    await expect(page.getByTestId("neon-message")).toHaveText("Chỉ hỗ trợ database Neon (host kết thúc bằng .neon.tech)");
+
+    await input.fill("không phải url");
+    await page.getByRole("button", { name: "Tạo schema mẫu" }).click();
+    await expect(page.getByTestId("neon-message")).toContainText("không đúng định dạng");
+  });
+
+  test("xuất DATABASE_URL và xoá chuỗi kết nối", async ({ page }) => {
+    await page.goto("/settings/services");
+    await page.getByLabel("Chuỗi kết nối Neon").fill(TEST_URL);
+    await expect(page.getByTestId("neon-env")).toContainText(`DATABASE_URL=${TEST_URL}`);
+    await page.getByTestId("neon-remove").click();
+    await expect(page.getByTestId("neon-status")).toHaveText("Chưa cấu hình");
+    expect(await page.evaluate(() => localStorage.getItem("byo:neon"))).toBeNull();
+  });
+
+  test("API: từ chối host lạ (SSRF), thiếu chuỗi, hành động lạ, body hỏng", async ({ request }) => {
+    for (const bad of ["", "postgres://a:b@127.0.0.1/db", "postgres://a:b@169.254.169.254/db", "postgres://a:b@neon.tech.evil.com/db", "http://x.neon.tech/db"]) {
+      expect((await request.post("/api/byo/neon", { data: { action: "test" }, headers: H(bad) })).status(), bad).toBe(401);
+    }
+    expect((await request.post("/api/byo/neon", { data: { action: "select * from users" }, headers: H(TEST_URL) })).status()).toBe(422);
+    const broken = await request.post("/api/byo/neon", { data: Buffer.from("{hỏng"), headers: { ...H(TEST_URL), "Content-Type": "application/json" } });
+    expect(broken.status()).toBe(400);
+  });
+
+  test("API chế độ thử: đủ hành động, không phản hồi lại mật khẩu, không cache", async ({ request }) => {
+    const url = "postgresql://lab_test:matkhau-bi-mat@ep-demo.neon.tech/neondb";
+    for (const action of ["test", "schema", "status", "drop"]) {
+      const res = await request.post("/api/byo/neon", { data: { action }, headers: H(url) });
+      expect(res.status(), action).toBe(200);
+      expect(res.headers()["cache-control"]).toBe("no-store");
+      const text = await res.text();
+      expect(text).not.toContain("matkhau-bi-mat");
+      expect(JSON.parse(text)).toMatchObject({ ok: true, mode: "test" });
+    }
+    const schema = await (await request.post("/api/byo/neon", { data: { action: "schema" }, headers: H(url) })).json();
+    expect(schema.tables).toEqual(["audit_log", "emails_outbox", "order_items", "orders", "otp_codes", "payments", "users", "webhook_events"]);
+    const bad = await request.post("/api/byo/neon", { data: { action: "test" }, headers: H("postgresql://lab_test:invalid@ep-demo.neon.tech/neondb") });
+    expect(bad.status()).toBe(401);
+  });
+});

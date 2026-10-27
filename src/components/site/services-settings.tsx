@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
+import { NeonCard } from "@/components/site/neon-card";
 import {
   clearConfig,
   describeMirror,
@@ -171,8 +172,10 @@ export function ServicesSettings() {
         </p>
       </section>
 
+      <NeonCard />
+
       <section aria-label="Xuất .env" className="space-y-3 rounded-xl border p-5">
-        <h2 className="text-lg font-semibold">Xuất .env cho starter repo</h2>
+        <h2 className="text-lg font-semibold">Xuất .env cho Resend</h2>
         <p className="text-sm text-muted-foreground">
           Chỉ dùng khoá free hoặc quyền tối thiểu, không dán dữ liệu thật. File .env đã được .gitignore nên không bị commit.
         </p>
@@ -185,7 +188,7 @@ export function ServicesSettings() {
         <h2 className="mb-2 text-lg font-semibold">Dịch vụ khác</h2>
         <ul className="list-disc space-y-1 pl-5 text-muted-foreground">
           <li>SMS OTP: dùng hộp tin nhắn giả tại <a className="underline" href="/lab/sms">/lab/sms</a>, không gửi SMS thật.</li>
-          <li>OAuth, thanh toán, database, CAPTCHA: đã có bản giả chạy ngay trong site.</li>
+          <li>OAuth, thanh toán, CAPTCHA: đã có bản giả chạy ngay trong site; database có bản giả (LAB-21) và bản Neon của bạn ở trên.</li>
         </ul>
       </section>
     </div>

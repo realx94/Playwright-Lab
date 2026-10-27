@@ -225,6 +225,7 @@ Persona: **L** = Learner (QA), **M** = Mentor, **A** = Admin/Content author.
 - AC: AES-256-GCM, RLS theo user, khoá không bao giờ trả về client (chỉ hiện `****abcd`); nút Xoá khoá, Xoá tài khoản + dữ liệu; trang ghi rõ chủ site giữ master key và khuyến cáo chỉ dùng khoá free/sandbox.
 
 **US-16.05 (P1)** – Là L, tôi muốn nút “Tạo schema mẫu” trên Neon của tôi và xem connection string để dùng trong test.
+- Đã làm (không cần đăng nhập, chuỗi kết nối lưu trong trình duyệt): xem docs/06-integrations.md mục trạng thái triển khai. Chưa kiểm chứng với Neon thật.
 
 **US-16.06 (P1)** – Là L, tôi muốn xuất file `.env` cho starter repo từ khoá đã nhập để chạy test trên máy.
 
