@@ -1,0 +1,249 @@
+{
+  "questions": [
+    {
+      "id": "q1",
+      "type": "single",
+      "prompt": "Cần đăng nhập và tạo dữ liệu mẫu một lần, đồng thời muốn xem trace khi bước chuẩn bị hỏng. Nên chọn cách nào?",
+      "options": [
+        {
+          "id": "a",
+          "text": "globalSetup trong playwright.config.ts vì chạy trước mọi test"
+        },
+        {
+          "id": "b",
+          "text": "Project setup kèm dependencies vì viết như một test thường"
+        },
+        {
+          "id": "c",
+          "text": "beforeEach trong từng file spec để đăng nhập lại mỗi test"
+        },
+        {
+          "id": "d",
+          "text": "Một fixture phạm vi test đăng nhập trước từng test riêng lẻ"
+        }
+      ],
+      "answer": [
+        "b"
+      ],
+      "explanation": "Project setup là test thường nên có fixture, trace, báo cáo và retry. globalSetup nằm ngoài trình chạy test nên không có trace. beforeEach và fixture phạm vi test lặp lại việc đắt ở từng test."
+    },
+    {
+      "id": "q2",
+      "type": "single",
+      "prompt": "Project setup bị đỏ trong lần chạy. Các test của project khai báo dependencies: [\"setup\"] sẽ ra sao?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Vẫn chạy bình thường vì mỗi project độc lập với nhau"
+        },
+        {
+          "id": "b",
+          "text": "Chạy lại setup ba lần rồi mới chạy các test phụ thuộc"
+        },
+        {
+          "id": "c",
+          "text": "Bị đánh dấu did not run và không được thực thi"
+        },
+        {
+          "id": "d",
+          "text": "Chạy nhưng mọi test được tự động đánh dấu là skipped"
+        }
+      ],
+      "answer": [
+        "c"
+      ],
+      "explanation": "dependencies buộc project phụ thuộc chỉ chạy sau khi setup xanh. Setup đỏ thì các test phụ thuộc không chạy và báo did not run."
+    },
+    {
+      "id": "q3",
+      "type": "multi",
+      "prompt": "Điểm nào đúng khi so sánh globalSetup với project setup? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "globalSetup không có fixture page nên phải tự mở trình duyệt"
+        },
+        {
+          "id": "b",
+          "text": "Project setup xuất hiện thành dòng test trong báo cáo HTML"
+        },
+        {
+          "id": "c",
+          "text": "globalSetup có trace và retry giống hệt như test thường"
+        },
+        {
+          "id": "d",
+          "text": "Project setup chạy trước khi Playwright nạp các file test"
+        }
+      ],
+      "answer": [
+        "a",
+        "b"
+      ],
+      "explanation": "globalSetup chạy ngoài thế giới test: không fixture, không trace, không báo cáo. Project setup là test thật nên hiện trong báo cáo, nhưng chạy sau khi danh sách test đã được tạo."
+    },
+    {
+      "id": "q4",
+      "type": "single",
+      "prompt": "Test cần mã đơn mẫu do project setup tạo. Cách truyền nào đáng tin trong mọi trường hợp, kể cả khi có nhiều worker?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Gán process.env trong test của project setup rồi đọc ở test"
+        },
+        {
+          "id": "b",
+          "text": "Dùng biến let ở cấp module trong file setup rồi import vào test"
+        },
+        {
+          "id": "c",
+          "text": "Dùng biến toàn cục globalThis đặt trong file setup cho test dùng"
+        },
+        {
+          "id": "d",
+          "text": "Ghi mã đơn ra một file JSON rồi cho các test đọc file đó"
+        }
+      ],
+      "answer": [
+        "d"
+      ],
+      "explanation": "Mỗi worker là một tiến trình riêng nên biến trong bộ nhớ không được chia sẻ. File trên đĩa thì mọi worker đều đọc được."
+    },
+    {
+      "id": "q5",
+      "type": "single",
+      "prompt": "Trong lúc viết test, bạn chạy npx playwright test --no-deps --project=chromium và gặp ENOENT khi đọc .auth/user.json. Nguyên nhân hợp lý nhất?",
+      "options": [
+        {
+          "id": "a",
+          "text": "File phiên chưa được tạo hoặc đã bị teardown xoá ở lần chạy trước"
+        },
+        {
+          "id": "b",
+          "text": "Cờ --no-deps làm Playwright xoá toàn bộ thư mục .auth khi khởi động"
+        },
+        {
+          "id": "c",
+          "text": "Project chromium không hỗ trợ storageState khi chạy riêng lẻ"
+        },
+        {
+          "id": "d",
+          "text": "Cờ --project chỉ chạy được khi đã bật chế độ headed trước đó"
+        }
+      ],
+      "answer": [
+        "a"
+      ],
+      "explanation": "--no-deps bỏ qua setup nên không ai tạo file phiên. Nếu lần trước teardown đã xoá thư mục .auth thì file không còn."
+    },
+    {
+      "id": "q6",
+      "type": "multi",
+      "prompt": "Khi setup hỏng giữa chừng, teardown vẫn chạy. Cách viết teardown nào là phòng thủ tốt? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Kiểm tra file dữ liệu có tồn tại trước khi đọc nó"
+        },
+        {
+          "id": "b",
+          "text": "Giả định setup luôn thành công nên đọc file không cần kiểm tra"
+        },
+        {
+          "id": "c",
+          "text": "Dùng fs.rmSync với force: true để không lỗi khi thiếu thư mục"
+        },
+        {
+          "id": "d",
+          "text": "Ném lỗi ngay khi thiếu file để lỗi của teardown lấn át setup"
+        }
+      ],
+      "answer": [
+        "a",
+        "c"
+      ],
+      "explanation": "Teardown chạy cả khi setup hỏng nên phải chịu được thiếu file. Lỗi thứ hai của teardown che mất lỗi gốc của setup và gây khó gỡ."
+    },
+    {
+      "id": "q7",
+      "type": "single",
+      "prompt": "Mỗi test sửa và xoá đơn hàng mẫu do setup chung tạo ra, và kết quả thay đổi tuỳ thứ tự chạy. Nên điều chỉnh thế nào?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Tăng số worker để các test kịp xoá trước khi đơn bị sửa"
+        },
+        {
+          "id": "b",
+          "text": "Dùng retries lớn hơn để test tự chạy lại cho tới khi xanh"
+        },
+        {
+          "id": "c",
+          "text": "Tạo dữ liệu riêng cho từng test bằng fixture thay vì dùng chung"
+        },
+        {
+          "id": "d",
+          "text": "Chuyển sang globalTeardown để dọn dữ liệu nhanh hơn sau test"
+        }
+      ],
+      "answer": [
+        "c"
+      ],
+      "explanation": "Dữ liệu chung bị test thay đổi làm các test phụ thuộc lẫn nhau. Dữ liệu bị sửa nên được tạo riêng cho mỗi test; setup chung chỉ nên dành cho dữ liệu chỉ đọc."
+    },
+    {
+      "id": "q8",
+      "type": "single",
+      "prompt": "Bạn đặt globalSetup trong config nhưng test báo SEED_ORDER_ID là undefined. Điều nào sau đây là nguyên nhân phù hợp?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Biến môi trường chỉ truyền được sang trình duyệt chứ không sang test"
+        },
+        {
+          "id": "b",
+          "text": "Chuỗi đơn hàng bị mã hoá nên test không đọc lại được giá trị"
+        },
+        {
+          "id": "c",
+          "text": "Giá trị bị xoá khi worker thứ hai khởi động trong cùng lần chạy"
+        },
+        {
+          "id": "d",
+          "text": "Config đang chạy không khai báo globalSetup nên hàm không được gọi"
+        }
+      ],
+      "answer": [
+        "d"
+      ],
+      "explanation": "Biến gán trong globalSetup được các worker thừa hưởng. Nếu thấy undefined thì thường hàm chưa chạy: sai config, sai đường dẫn hoặc dùng config khác."
+    },
+    {
+      "id": "q9",
+      "type": "single",
+      "prompt": "Teardown dùng fixture request và project cleanup đặt storageState: \".auth/user.json\", nhưng setup đỏ trước khi lưu phiên. Chuyện gì xảy ra?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Teardown đỏ thêm lỗi ENOENT vì Playwright cố nạp file chưa có"
+        },
+        {
+          "id": "b",
+          "text": "Teardown bị bỏ qua hoàn toàn vì project setup đã đỏ trước đó"
+        },
+        {
+          "id": "c",
+          "text": "Playwright tự tạo một file phiên rỗng để teardown vẫn chạy được"
+        },
+        {
+          "id": "d",
+          "text": "Teardown chạy bình thường và xoá dữ liệu mẫu của lần trước"
+        }
+      ],
+      "answer": [
+        "a"
+      ],
+      "explanation": "storageState được nạp khi tạo context hoặc request. Thiếu file thì lỗi ENOENT che mất lỗi gốc, nên teardown nên tự tạo client sau khi kiểm tra file tồn tại."
+    }
+  ]
+}

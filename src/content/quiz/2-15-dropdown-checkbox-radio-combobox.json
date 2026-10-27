@@ -1,0 +1,278 @@
+{
+  "questions": [
+    {
+      "id": "q1",
+      "type": "single",
+      "prompt": "Trang có thẻ select native \"Người lớn\" và bạn cần chọn dòng có chữ \"4\". Cách nào đúng?",
+      "options": [
+        {
+          "id": "a",
+          "text": "page.getByLabel(\"Người lớn\").click() rồi gõ số 4"
+        },
+        {
+          "id": "b",
+          "text": "page.getByLabel(\"Người lớn\").fill(\"4\") vào ô chọn để đổi giá trị"
+        },
+        {
+          "id": "c",
+          "text": "page.getByLabel(\"Người lớn\").selectOption({ label: \"4\" })"
+        },
+        {
+          "id": "d",
+          "text": "page.getByRole(\"option\", { name: \"4\" }).click() thẳng"
+        }
+      ],
+      "answer": [
+        "c"
+      ],
+      "explanation": "Với select native dùng selectOption, có thể chọn theo value, label hoặc index. fill không áp dụng cho select, còn getByRole('option') có thể khớp nhiều option của nhiều select."
+    },
+    {
+      "id": "q2",
+      "type": "single",
+      "prompt": "Bạn gọi selectOption trên nút mở danh sách của shadcn Select và nhận lỗi \"Element is not a <select> element\". Nên làm gì?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Bấm nút để mở danh sách rồi bấm getByRole('option', { name })"
+        },
+        {
+          "id": "b",
+          "text": "Thêm { force: true } vào selectOption để bỏ qua kiểm tra"
+        },
+        {
+          "id": "c",
+          "text": "Tăng timeout của test lên rồi chạy lại selectOption"
+        },
+        {
+          "id": "d",
+          "text": "Dùng getByLabel thay cho getByRole rồi gọi lại selectOption"
+        }
+      ],
+      "answer": [
+        "a"
+      ],
+      "explanation": "Dropdown tuỳ biến không phải thẻ select, nên selectOption không dùng được. Hãy thao tác như người dùng: mở danh sách rồi chọn option."
+    },
+    {
+      "id": "q3",
+      "type": "single",
+      "prompt": "Trang hotel có ô combobox gợi ý và hai select native. page.getByRole('option') trả về 13 phần tử. Vì sao?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Combobox luôn nhân đôi số gợi ý trong cây trợ năng"
+        },
+        {
+          "id": "b",
+          "text": "Option của select native cũng mang role option nên bị khớp theo"
+        },
+        {
+          "id": "c",
+          "text": "Playwright đếm cả các option đang bị ẩn trong trang này"
+        },
+        {
+          "id": "d",
+          "text": "Lab tạo thêm mỗi gợi ý một bản sao để phục vụ việc tạo bug"
+        }
+      ],
+      "answer": [
+        "b"
+      ],
+      "explanation": "Thẻ option của select native có role option. Thu hẹp phạm vi: page.getByRole('listbox').getByRole('option')."
+    },
+    {
+      "id": "q4",
+      "type": "multi",
+      "prompt": "Với ô autocomplete Điểm đến, những cách nào chọn được thành phố \"Huế\" đúng như người dùng? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Gõ \"hue\" rồi bấm vào option Huế trong listbox"
+        },
+        {
+          "id": "b",
+          "text": "Gõ \"hue\", nhấn ArrowDown rồi nhấn Enter để chọn"
+        },
+        {
+          "id": "c",
+          "text": "Chỉ fill \"Huế\" rồi bấm Tìm, vì ô đã có chữ Huế"
+        },
+        {
+          "id": "d",
+          "text": "Gọi selectOption(\"Huế\") trên ô Điểm đến vì nó chọn được"
+        }
+      ],
+      "answer": [
+        "a",
+        "b"
+      ],
+      "explanation": "Ứng dụng chỉ ghi nhận khi người dùng chọn một gợi ý (chuột hoặc ArrowDown + Enter). fill một mình để ô có chữ nhưng chưa chọn, còn selectOption chỉ dành cho select native."
+    },
+    {
+      "id": "q5",
+      "type": "single",
+      "prompt": "Checkbox \"Wifi miễn phí\" có thể đã bật sẵn từ lần chạy trước. Lệnh nào làm test ổn định nhất?",
+      "options": [
+        {
+          "id": "a",
+          "text": "click() vì lệnh này luôn đưa ô về trạng thái bật"
+        },
+        {
+          "id": "b",
+          "text": "dblclick() để chắc chắn ô được bật sau hai lần bấm"
+        },
+        {
+          "id": "c",
+          "text": "press(\"Space\") vì phím này luôn chọn ô đang focus"
+        },
+        {
+          "id": "d",
+          "text": "check() vì lệnh này đảm bảo ô ở trạng thái bật"
+        }
+      ],
+      "answer": [
+        "d"
+      ],
+      "explanation": "check() là thao tác idempotent: ô đã bật thì không làm gì, chưa bật thì bấm rồi xác nhận. click() đảo trạng thái nên có thể tắt ô đang bật."
+    },
+    {
+      "id": "q6",
+      "type": "single",
+      "prompt": "Bạn gọi uncheck() trên radio \"4 sao trở lên\" đang chọn. Điều gì xảy ra và cách sửa nào đúng?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Radio được bỏ chọn; không cần sửa gì thêm trong test"
+        },
+        {
+          "id": "b",
+          "text": "Báo lỗi vì radio không thể uncheck; chọn radio khác như Tất cả"
+        },
+        {
+          "id": "c",
+          "text": "Test bỏ qua im lặng; thêm toBeChecked để biết trạng thái"
+        },
+        {
+          "id": "d",
+          "text": "Báo lỗi vì radio đang bị khoá; hãy chờ ứng dụng mở khoá lại"
+        }
+      ],
+      "answer": [
+        "b"
+      ],
+      "explanation": "Radio chỉ bỏ chọn khi chọn radio khác trong cùng nhóm; Playwright báo 'Cannot uncheck radio button'."
+    },
+    {
+      "id": "q7",
+      "type": "multi",
+      "prompt": "Trên LAB-02, getByLabel(\"Đọc sách\") báo strict mode violation. Những phát biểu nào đúng? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Checkbox shadcn có phần tử role checkbox và một input ẩn đi kèm"
+        },
+        {
+          "id": "b",
+          "text": "getByRole(\"checkbox\", { name: \"Đọc sách\" }) chỉ khớp một phần tử"
+        },
+        {
+          "id": "c",
+          "text": "Cần thêm exact: true vì tên checkbox khớp nhiều nhãn khác"
+        },
+        {
+          "id": "d",
+          "text": "Lỗi này do trang tải chậm nên hãy tăng timeout của expect"
+        }
+      ],
+      "answer": [
+        "a",
+        "b"
+      ],
+      "explanation": "Nhãn trỏ tới cả phần tử hiển thị lẫn input ẩn nên getByLabel khớp hai phần tử; getByRole chọn đúng phần tử người dùng thấy. Đây không phải lỗi thời gian chờ."
+    },
+    {
+      "id": "q8",
+      "type": "single",
+      "prompt": "Select \"Sắp xếp\" có value \"price-asc\" và nhãn \"Giá tăng dần\". Muốn test đọc như yêu cầu nghiệp vụ, bạn viết gì?",
+      "options": [
+        {
+          "id": "a",
+          "text": "selectOption({ label: \"Giá tăng dần\" }) rồi toHaveValue(\"price-asc\")"
+        },
+        {
+          "id": "b",
+          "text": "selectOption({ index: 1 }) vì thứ tự các dòng đã cố định sẵn"
+        },
+        {
+          "id": "c",
+          "text": "fill(\"Giá tăng dần\") vào select rồi nhấn phím Enter"
+        },
+        {
+          "id": "d",
+          "text": "selectOption(\"Giá tăng dần\") theo value rồi toHaveText(\"price-asc\")"
+        }
+      ],
+      "answer": [
+        "a"
+      ],
+      "explanation": "Chọn theo nhãn cho dễ đọc, kiểm tra value bằng toHaveValue. Chọn theo index dễ sai khi thêm dòng; chuỗi trần được hiểu là value nên không khớp nhãn."
+    },
+    {
+      "id": "q9",
+      "type": "multi",
+      "prompt": "Select multiple có ba lựa chọn Đỏ, Xanh, Lam. Những lệnh nào đúng? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "selectOption([\"r\", \"b\"]) để chọn đồng thời hai giá trị"
+        },
+        {
+          "id": "b",
+          "text": "expect(select).toHaveValues([\"r\", \"b\"]) để kiểm tra lại"
+        },
+        {
+          "id": "c",
+          "text": "selectOption([]) để bỏ chọn mọi lựa chọn đang có"
+        },
+        {
+          "id": "d",
+          "text": "Mỗi lần gọi selectOption sẽ cộng dồn thêm vào lựa chọn cũ"
+        }
+      ],
+      "answer": [
+        "a",
+        "b",
+        "c"
+      ],
+      "explanation": "Mảng cho phép chọn nhiều giá trị, toHaveValues kiểm tra danh sách, mảng rỗng bỏ chọn tất cả. Mỗi lần gọi thay thế lựa chọn cũ chứ không cộng dồn."
+    },
+    {
+      "id": "q10",
+      "type": "single",
+      "prompt": "Với dropdown tuỳ biến, sau khi chọn \"Đà Nẵng\" bạn muốn kiểm tra ứng dụng đã nhận. Assertion nào phù hợp?",
+      "options": [
+        {
+          "id": "a",
+          "text": "toHaveValue(\"Đà Nẵng\") trên nút mở danh sách"
+        },
+        {
+          "id": "b",
+          "text": "toBeChecked() trên nút mở danh sách của Select"
+        },
+        {
+          "id": "c",
+          "text": "toContainText(\"Đà Nẵng\") trên nút hiển thị giá trị"
+        },
+        {
+          "id": "d",
+          "text": "inputValue() trên nút rồi so sánh với chuỗi Đà Nẵng"
+        }
+      ],
+      "answer": [
+        "c"
+      ],
+      "explanation": "Nút của Select tuỳ biến không phải ô nhập, nên kiểm tra chữ hiển thị bằng toContainText. toHaveValue và inputValue chỉ dành cho input, select, textarea."
+    }
+  ]
+}

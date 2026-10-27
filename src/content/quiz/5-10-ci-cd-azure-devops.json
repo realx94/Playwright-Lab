@@ -1,0 +1,280 @@
+{
+  "questions": [
+    {
+      "id": "q1",
+      "type": "single",
+      "prompt": "Pipeline đỏ vì test hỏng và tab Tests hoàn toàn trống. Nguyên nhân hợp lý nhất?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Reporter list của Playwright chưa được cài vào project"
+        },
+        {
+          "id": "b",
+          "text": "Bước PublishTestResults thiếu condition succeededOrFailed()"
+        },
+        {
+          "id": "c",
+          "text": "Máy ảo ubuntu-latest không hỗ trợ định dạng JUnit"
+        },
+        {
+          "id": "d",
+          "text": "Tab Tests chỉ hiển thị dữ liệu của các lần chạy xanh"
+        }
+      ],
+      "answer": [
+        "b"
+      ],
+      "explanation": "Bước đứng sau một bước hỏng mặc định bị bỏ qua. Gắn succeededOrFailed() để publish kết quả đúng lúc test đỏ."
+    },
+    {
+      "id": "q2",
+      "type": "single",
+      "prompt": "Test đọc process.env.API_TOKEN nhưng nhận rỗng dù biến secret có trong Variable Group. Cách sửa?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Ánh xạ API_TOKEN: $(API_TOKEN) vào khối env của bước"
+        },
+        {
+          "id": "b",
+          "text": "Bỏ dấu ổ khoá để biến không còn là secret nữa"
+        },
+        {
+          "id": "c",
+          "text": "Đổi tên biến thành chữ thường toàn bộ cho khớp"
+        },
+        {
+          "id": "d",
+          "text": "Thêm npm install dotenv vào bước cài thư viện"
+        }
+      ],
+      "answer": [
+        "a"
+      ],
+      "explanation": "Biến secret không tự xuất hiện trong môi trường của script; phải ánh xạ tường minh vào env. Bỏ khoá làm lộ bí mật, không phải cách sửa đúng."
+    },
+    {
+      "id": "q3",
+      "type": "multi",
+      "prompt": "Điều nào đúng về schedules trong azure-pipelines.yml? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Giờ của cron được tính theo múi giờ UTC"
+        },
+        {
+          "id": "b",
+          "text": "always: true chạy dù code không thay đổi"
+        },
+        {
+          "id": "c",
+          "text": "Lịch đặt trong giao diện có thể đè lịch YAML"
+        },
+        {
+          "id": "d",
+          "text": "Lịch được đọc từ nhánh mặc định cho mọi nhánh"
+        }
+      ],
+      "answer": [
+        "a",
+        "b",
+        "c"
+      ],
+      "explanation": "Lịch được đọc từ file YAML ở chính nhánh được lập lịch. Ba ý đầu đúng theo tài liệu Microsoft."
+    },
+    {
+      "id": "q4",
+      "type": "single",
+      "prompt": "Một pipeline cũ dùng task NodeTool@0 versionSpec. Tài liệu Microsoft khuyến nghị gì?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Giữ nguyên vì NodeTool@0 là phiên bản mới nhất hiện nay"
+        },
+        {
+          "id": "b",
+          "text": "Thay bằng script gọi apt install nodejs trên máy ảo"
+        },
+        {
+          "id": "c",
+          "text": "Chuyển sang UseNode@1 với đầu vào version tương ứng"
+        },
+        {
+          "id": "d",
+          "text": "Bỏ bước cài Node vì máy ảo luôn có sẵn đúng phiên bản"
+        }
+      ],
+      "answer": [
+        "c"
+      ],
+      "explanation": "Tài liệu đánh dấu NodeTool@0 là deprecated và hướng dẫn dùng UseNode@1."
+    },
+    {
+      "id": "q5",
+      "type": "single",
+      "prompt": "Nên lưu báo cáo HTML của Playwright bằng task nào theo hướng dẫn hiện tại?",
+      "options": [
+        {
+          "id": "a",
+          "text": "PublishBuildArtifacts@1 vì là cách duy nhất còn hỗ trợ"
+        },
+        {
+          "id": "b",
+          "text": "PublishPipelineArtifact@1 với targetPath và artifact"
+        },
+        {
+          "id": "c",
+          "text": "PublishTestResults@2 với testResultsFormat đặt là HTML"
+        },
+        {
+          "id": "d",
+          "text": "CopyFiles@2 rồi chờ Azure tự tải về máy của bạn"
+        }
+      ],
+      "answer": [
+        "b"
+      ],
+      "explanation": "Pipeline artifacts là thế hệ mới được khuyến nghị; PublishBuildArtifacts@1 là cách cũ. PublishTestResults chỉ nhận JUnit, NUnit, VSTest, XUnit, CTest."
+    },
+    {
+      "id": "q6",
+      "type": "multi",
+      "prompt": "Dùng Variable Group trong pipeline YAML, bước nào cần làm? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Tạo nhóm ở Pipelines, Library rồi thêm biến"
+        },
+        {
+          "id": "b",
+          "text": "Bấm ổ khoá để đánh dấu biến nhạy cảm là secret"
+        },
+        {
+          "id": "c",
+          "text": "Khai báo variables: - group: tên-nhóm trong YAML"
+        },
+        {
+          "id": "d",
+          "text": "Lưu giá trị secret trực tiếp trong file azure-pipelines.yml"
+        }
+      ],
+      "answer": [
+        "a",
+        "b",
+        "c"
+      ],
+      "explanation": "Bí mật không được ghi trong YAML của repo. Có thể cần thêm cấp quyền cho pipeline ở tab Pipeline permissions."
+    },
+    {
+      "id": "q7",
+      "type": "single",
+      "prompt": "Bạn muốn pipeline chạy lúc 6:00 sáng giờ Việt Nam (UTC+7). Dòng cron đúng cho giờ chạy là gì?",
+      "options": [
+        {
+          "id": "a",
+          "text": "0 6 * * * vì cron dùng giờ địa phương của người tạo"
+        },
+        {
+          "id": "b",
+          "text": "0 13 * * * vì cần cộng bảy giờ vào giờ địa phương"
+        },
+        {
+          "id": "c",
+          "text": "0 23 * * * vì 23:00 UTC là 6:00 sáng hôm sau ở Việt Nam"
+        },
+        {
+          "id": "d",
+          "text": "0 7 * * * vì cần đổi múi giờ bằng cách cộng thêm một giờ"
+        }
+      ],
+      "answer": [
+        "c"
+      ],
+      "explanation": "Cron của Azure Pipelines là UTC: 6:00 UTC+7 tương ứng 23:00 UTC của ngày hôm trước. Nhớ rằng ngày trong tuần cũng lệch một ngày."
+    },
+    {
+      "id": "q8",
+      "type": "single",
+      "prompt": "Test Plans trong Azure DevOps chủ yếu phục vụ việc gì?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Thay thế hoàn toàn tab Tests của pipeline tự động"
+        },
+        {
+          "id": "b",
+          "text": "Quản lý test case và đợt chạy kiểm thử thủ công"
+        },
+        {
+          "id": "c",
+          "text": "Cấp máy ảo agent để chạy test Playwright song song"
+        },
+        {
+          "id": "d",
+          "text": "Lưu trữ báo cáo HTML và trace của mỗi lần chạy"
+        }
+      ],
+      "answer": [
+        "b"
+      ],
+      "explanation": "Test Plans quản lý test plan, suite, test case và kết quả chạy thủ công, có liên kết với Boards. Kết quả tự động của pipeline nằm ở tab Tests."
+    },
+    {
+      "id": "q9",
+      "type": "single",
+      "prompt": "Tổ chức mới tạo báo lỗi No hosted parallelism has been purchased or granted. Hướng xử lý?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Xin cấp quyền chạy agent miễn phí hoặc dùng self-hosted agent"
+        },
+        {
+          "id": "b",
+          "text": "Đổi vmImage từ ubuntu-latest sang windows-latest rồi chạy lại"
+        },
+        {
+          "id": "c",
+          "text": "Xoá khối schedules vì lịch làm hết hạn mức song song"
+        },
+        {
+          "id": "d",
+          "text": "Thêm retries lên 5 trong playwright.config.ts của project"
+        }
+      ],
+      "answer": [
+        "a"
+      ],
+      "explanation": "Lỗi nằm ở việc tổ chức chưa được cấp agent do Microsoft cung cấp, không liên quan tới cấu hình test."
+    },
+    {
+      "id": "q10",
+      "type": "multi",
+      "prompt": "Cặp tương đương giữa GitHub Actions và Azure Pipelines nào đúng? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "on: push tương ứng với trigger"
+        },
+        {
+          "id": "b",
+          "text": "runs-on tương ứng với pool và vmImage"
+        },
+        {
+          "id": "c",
+          "text": "run: tương ứng với script"
+        },
+        {
+          "id": "d",
+          "text": "secrets tương ứng với hàm UseNode@1"
+        }
+      ],
+      "answer": [
+        "a",
+        "b",
+        "c"
+      ],
+      "explanation": "UseNode@1 tương ứng actions/setup-node, không phải secrets. Phần lớn khái niệm có tương đương, chỉ khác tên gọi."
+    }
+  ]
+}

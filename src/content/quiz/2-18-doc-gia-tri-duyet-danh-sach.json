@@ -1,0 +1,277 @@
+{
+  "questions": [
+    {
+      "id": "q1",
+      "type": "single",
+      "prompt": "Bạn chạy cards.all() ngay sau khi bấm sắp xếp trên bảng đang hiện Đang tải và nhận mảng rỗng. Vì sao?",
+      "options": [
+        {
+          "id": "a",
+          "text": "all() chỉ trả về các phần tử đang nằm ngoài vùng nhìn thấy"
+        },
+        {
+          "id": "b",
+          "text": "all() chỉ hoạt động khi locator được tạo từ getByRole"
+        },
+        {
+          "id": "c",
+          "text": "all() luôn trả mảng rỗng cho tới khi trang được tải lại"
+        },
+        {
+          "id": "d",
+          "text": "all() chỉ chụp danh sách tại thời điểm gọi và không chờ trang"
+        }
+      ],
+      "answer": [
+        "d"
+      ],
+      "explanation": "all(), count() và allInnerTexts() đọc một lần, không chờ. Phải chờ chỉ báo ổn định như toHaveCount hoặc hết trạng thái tải trước."
+    },
+    {
+      "id": "q2",
+      "type": "single",
+      "prompt": "Một phần tử chứa span ẩn bằng display:none. Bạn muốn đọc đúng chữ người dùng nhìn thấy. Dùng gì?",
+      "options": [
+        {
+          "id": "a",
+          "text": "getAttribute('text'), vì nó trả về chữ đã hiển thị"
+        },
+        {
+          "id": "b",
+          "text": "innerText, vì nó bỏ qua phần bị ẩn bằng CSS"
+        },
+        {
+          "id": "c",
+          "text": "textContent, vì nó chỉ lấy phần chữ đang hiển thị"
+        },
+        {
+          "id": "d",
+          "text": "inputValue, vì nó đọc chữ nằm trong mọi phần tử"
+        }
+      ],
+      "answer": [
+        "b"
+      ],
+      "explanation": "innerText phản ánh phần hiển thị; textContent đọc DOM thô gồm cả chữ ẩn; inputValue chỉ dùng cho phần tử nhập liệu."
+    },
+    {
+      "id": "q3",
+      "type": "single",
+      "prompt": "Làm thế nào để đổi chuỗi '3.200.000 ₫' thành số 3200000 một cách an toàn?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Number(s.replace(/\\D/g, '')) để bỏ mọi ký tự không phải chữ số"
+        },
+        {
+          "id": "b",
+          "text": "Number(s) vì JavaScript hiểu dấu chấm phân cách hàng nghìn"
+        },
+        {
+          "id": "c",
+          "text": "parseFloat(s) vì hàm này bỏ qua ký hiệu tiền tệ ở cuối chuỗi"
+        },
+        {
+          "id": "d",
+          "text": "s.split(' ')[1] vì số luôn nằm sau khoảng trắng đầu tiên"
+        }
+      ],
+      "answer": [
+        "a"
+      ],
+      "explanation": "Number('3.200.000 ₫') là NaN và parseFloat('3.200.000') chỉ ra 3.2. Cần xoá dấu chấm và ký hiệu trước khi đổi sang số."
+    },
+    {
+      "id": "q4",
+      "type": "single",
+      "prompt": "Để kiểm tra mảng giá đã sắp xếp tăng dần, cách viết nào đúng?",
+      "options": [
+        {
+          "id": "a",
+          "text": "expect(a).toEqual([...a].sort())"
+        },
+        {
+          "id": "b",
+          "text": "expect(a).toEqual(a.sort((x, y) => x - y))"
+        },
+        {
+          "id": "c",
+          "text": "expect(a).toEqual([...a].sort((x, y) => x - y))"
+        },
+        {
+          "id": "d",
+          "text": "expect(a).toEqual([...a].sort((x, y) => y - x))"
+        }
+      ],
+      "answer": [
+        "c"
+      ],
+      "explanation": "Cần sao chép mảng trước khi sort vì sort đổi mảng tại chỗ, và cần hàm so sánh số vì sort mặc định so sánh theo chuỗi."
+    },
+    {
+      "id": "q5",
+      "type": "single",
+      "prompt": "Danh sách vừa được lọc và bạn cần khẳng định mọi giá đều nhỏ hơn hoặc bằng 1.000.000 mà không bị ảnh hưởng bởi lúc trang đang cập nhật. Cách nào hợp lý nhất?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Đọc mảng giá một lần ngay sau khi fill ô lọc rồi dùng every"
+        },
+        {
+          "id": "b",
+          "text": "Dùng waitForTimeout 500 ms rồi đọc mảng giá bằng allInnerTexts"
+        },
+        {
+          "id": "c",
+          "text": "Đọc phần tử đầu tiên và suy ra các phần tử còn lại cũng đúng"
+        },
+        {
+          "id": "d",
+          "text": "Dùng expect.poll đọc mảng giá rồi kiểm tra every cho tới khi true"
+        }
+      ],
+      "answer": [
+        "d"
+      ],
+      "explanation": "expect.poll thử lại cho tới khi điều kiện đúng, nên chịu được lúc trang chưa cập nhật. Đọc một lần hoặc sleep cố định đều dễ gây flaky."
+    },
+    {
+      "id": "q6",
+      "type": "single",
+      "prompt": "Vòng for...of trên await list.all() chạy xanh nhưng khi ứng dụng lỗi vẫn xanh. Nguy cơ nào được nhắc tới trong bài?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Biến lặp trong for...of luôn là chuỗi thay vì một locator"
+        },
+        {
+          "id": "b",
+          "text": "Danh sách rỗng nên vòng lặp chạy 0 lần mà không có kiểm tra nào"
+        },
+        {
+          "id": "c",
+          "text": "Vòng for...of bỏ qua các phần tử có thuộc tính data-price"
+        },
+        {
+          "id": "d",
+          "text": "Mỗi vòng lặp tự động chờ hết trạng thái tải của cả trang"
+        }
+      ],
+      "answer": [
+        "b"
+      ],
+      "explanation": "Mảng rỗng khiến vòng lặp không kiểm gì và every trả true. Luôn khẳng định số phần tử bằng toHaveCount trước khi duyệt."
+    },
+    {
+      "id": "q7",
+      "type": "single",
+      "prompt": "Bạn cần tính tổng data-price của hàng trăm thẻ trong một lần gọi nhanh và nhất quán. Lệnh nào hợp lý?",
+      "options": [
+        {
+          "id": "a",
+          "text": "locator.count() nhân với giá của thẻ đầu tiên trong danh sách"
+        },
+        {
+          "id": "b",
+          "text": "locator.allTextContents() rồi cộng trực tiếp các chuỗi lại"
+        },
+        {
+          "id": "c",
+          "text": "locator.evaluateAll với hàm reduce chạy ngay trong trình duyệt"
+        },
+        {
+          "id": "d",
+          "text": "Vòng for...of gọi getAttribute cho từng thẻ rồi cộng dồn lại"
+        }
+      ],
+      "answer": [
+        "c"
+      ],
+      "explanation": "evaluateAll đọc cả danh sách trong một lần trao đổi với trình duyệt, nhanh và nguyên tử. getAttribute từng thẻ tốn nhiều lần gọi hơn."
+    },
+    {
+      "id": "q8",
+      "type": "multi",
+      "prompt": "Những lệnh nào sau đây chỉ đọc một lần và không tự chờ cho tới khi dữ liệu đúng?",
+      "options": [
+        {
+          "id": "a",
+          "text": "await locator.allInnerTexts() lấy mảng chữ hiện có"
+        },
+        {
+          "id": "b",
+          "text": "await expect(locator).toHaveCount(5) chờ đủ 5 phần tử"
+        },
+        {
+          "id": "c",
+          "text": "await expect(locator).toHaveText('3 đêm') chờ chữ khớp"
+        },
+        {
+          "id": "d",
+          "text": "await locator.count() lấy số phần tử hiện có"
+        }
+      ],
+      "answer": [
+        "d",
+        "a"
+      ],
+      "explanation": "count và allInnerTexts đọc ngay. toHaveCount và toHaveText là assertion web-first, tự thử lại."
+    },
+    {
+      "id": "q9",
+      "type": "multi",
+      "prompt": "Khi đọc thứ tự các hàng của bảng sau khi bấm sắp xếp, bước chờ nào hợp lý trước khi đọc?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Gọi all() thật nhanh để lấy danh sách trước khi nó đổi"
+        },
+        {
+          "id": "b",
+          "text": "Gọi waitForTimeout đúng bằng độ trễ mặc định của lab"
+        },
+        {
+          "id": "c",
+          "text": "Chờ trạng thái Đang tải biến mất bằng toBeHidden"
+        },
+        {
+          "id": "d",
+          "text": "Chờ số hàng đạt đúng giá trị mong đợi bằng toHaveCount"
+        }
+      ],
+      "answer": [
+        "c",
+        "d"
+      ],
+      "explanation": "Chờ chỉ báo ổn định có điều kiện rõ ràng. Sleep cố định và đọc quá sớm đều không đáng tin."
+    },
+    {
+      "id": "q10",
+      "type": "multi",
+      "prompt": "Những điều nào đúng về locator.filter?",
+      "options": [
+        {
+          "id": "a",
+          "text": "filter trả về mảng chuỗi thay vì một locator"
+        },
+        {
+          "id": "b",
+          "text": "hasText giữ phần tử có chứa chữ cần tìm"
+        },
+        {
+          "id": "c",
+          "text": "has giữ phần tử chứa một locator con khớp"
+        },
+        {
+          "id": "d",
+          "text": "hasNot giữ phần tử có chứa locator con khớp"
+        }
+      ],
+      "answer": [
+        "b",
+        "c"
+      ],
+      "explanation": "filter trả về locator; has giữ phần tử có chứa locator con, còn hasNot làm ngược lại, giữ phần tử không chứa."
+    }
+  ]
+}

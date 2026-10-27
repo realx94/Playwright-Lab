@@ -1,17 +1,21 @@
 import { test, expect } from "@playwright/test";
+import fs from "node:fs";
+
+// Số lab lấy từ registry thật.
+const LABS = (fs.readFileSync("src/lib/labs/registry.ts", "utf8").match(/id: "LAB-\d+"/g) ?? []).length;
 
 test.beforeEach(async ({ page }) => {
   await page.goto("/labs");
 });
 
 test("xếp theo độ khó rồi theo mã lab, chia nhóm Dễ / Vừa / Khó", async ({ page }) => {
-  await expect(page.getByTestId("lab-count")).toHaveText("Hiển thị 28/28 lab");
+  await expect(page.getByTestId("lab-count")).toHaveText(`Hiển thị ${LABS}/${LABS} lab`);
   await expect(page.getByRole("heading", { level: 2, name: /^Dễ/ })).toBeVisible();
   const headings = await page.getByRole("region", { name: /^Lab mức/ }).getByRole("heading", { level: 2 }).allInnerTexts();
   expect(headings.map((h) => h.split(" ")[0])).toEqual(["Dễ", "Vừa", "Khó"]);
 
   const cards = page.getByTestId("lab-card");
-  await expect(cards).toHaveCount(28);
+  await expect(cards).toHaveCount(LABS);
   const info = await cards.evaluateAll((els) =>
     els.map((el) => ({
       id: /LAB-(\d+)/.exec(el.textContent ?? "")![1],
@@ -30,7 +34,7 @@ test("lọc theo độ khó, chọn nhiều mức", async ({ page }) => {
   await page.getByRole("button", { name: /^Dễ/ }).click();
   await expect(page.getByRole("button", { name: /^Dễ/ })).toHaveAttribute("aria-pressed", "true");
   const easy = await page.getByTestId("lab-card").count();
-  await expect(page.getByTestId("lab-count")).toHaveText(`Hiển thị ${easy}/28 lab`);
+  await expect(page.getByTestId("lab-count")).toHaveText(`Hiển thị ${easy}/${LABS} lab`);
   await expect(page.getByRole("heading", { level: 2, name: /^Khó/ })).toHaveCount(0);
 
   await page.getByRole("button", { name: /^Khó/ }).click();
@@ -55,10 +59,10 @@ test("kết hợp bộ lọc, không có kết quả và xoá bộ lọc", async
   await page.getByRole("button", { name: /^Dễ/ }).click();
   await page.getByLabel("Tìm theo tên hoặc kỹ năng").fill("webhook");
   await expect(page.getByTestId("lab-empty")).toBeVisible();
-  await expect(page.getByTestId("lab-count")).toHaveText("Hiển thị 0/28 lab");
+  await expect(page.getByTestId("lab-count")).toHaveText(`Hiển thị 0/${LABS} lab`);
 
   await page.getByRole("button", { name: "Xoá bộ lọc" }).click();
-  await expect(page.getByTestId("lab-count")).toHaveText("Hiển thị 28/28 lab");
+  await expect(page.getByTestId("lab-count")).toHaveText(`Hiển thị ${LABS}/${LABS} lab`);
   await expect(page.getByRole("button", { name: "Xoá bộ lọc" })).toBeDisabled();
 });
 

@@ -1,0 +1,279 @@
+{
+  "questions": [
+    {
+      "id": "q1",
+      "type": "single",
+      "prompt": "Jenkinsfile dùng image mcr.microsoft.com/playwright:v1.64.1-noble nhưng project cài @playwright/test bản khác. Chuyện gì thường xảy ra?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Playwright báo không tìm thấy trình duyệt của phiên bản đó"
+        },
+        {
+          "id": "b",
+          "text": "Jenkins tự tải image mới cho khớp với package.json"
+        },
+        {
+          "id": "c",
+          "text": "Test vẫn chạy nhưng bỏ qua toàn bộ các bước chụp ảnh"
+        },
+        {
+          "id": "d",
+          "text": "Docker từ chối khởi động container vì tag bị lệch"
+        }
+      ],
+      "answer": [
+        "a"
+      ],
+      "explanation": "Mỗi phiên bản Playwright dùng bản trình duyệt riêng nằm sẵn trong image. Tag image phải khớp npx playwright --version."
+    },
+    {
+      "id": "q2",
+      "type": "single",
+      "prompt": "Test chạy trong container của agent docker và gọi http://localhost:3000, nhưng site chạy trên máy host. Kết quả?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Kết nối thành công vì container dùng chung mạng với host"
+        },
+        {
+          "id": "b",
+          "text": "Lỗi ECONNREFUSED vì localhost lúc này là chính container"
+        },
+        {
+          "id": "c",
+          "text": "Jenkins tự chuyển localhost sang địa chỉ máy chủ thật"
+        },
+        {
+          "id": "d",
+          "text": "Playwright tự dò và sửa lại baseURL cho đúng địa chỉ"
+        }
+      ],
+      "answer": [
+        "b"
+      ],
+      "explanation": "Trong container, localhost trỏ về chính nó. Dùng host.docker.internal (Docker Desktop) hoặc một URL công khai."
+    },
+    {
+      "id": "q3",
+      "type": "multi",
+      "prompt": "Pipeline dùng agent docker, bước publishHTML và khối nodejs. Plugin nào cần cài? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Docker Pipeline cho cú pháp agent docker"
+        },
+        {
+          "id": "b",
+          "text": "HTML Publisher cho bước publishHTML"
+        },
+        {
+          "id": "c",
+          "text": "NodeJS cho khối nodejs với tên đã cấu hình"
+        },
+        {
+          "id": "d",
+          "text": "Playwright Trace cho việc mở trace trong Jenkins"
+        }
+      ],
+      "answer": [
+        "a",
+        "b",
+        "c"
+      ],
+      "explanation": "Ba plugin đầu được tài liệu Jenkins và trang plugin nêu rõ; không có plugin mang tên Playwright Trace cần thiết cho bài này."
+    },
+    {
+      "id": "q4",
+      "type": "single",
+      "prompt": "Muốn Jenkins hiện kết quả test và lưu báo cáo cả khi test đỏ, nên đặt junit và publishHTML ở đâu?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Trong post { success { ... } } sau khi stage chạy test"
+        },
+        {
+          "id": "b",
+          "text": "Trong cuối steps của stage ngay sau lệnh npx playwright"
+        },
+        {
+          "id": "c",
+          "text": "Trong options { } cùng chỗ khai báo timeout của build"
+        },
+        {
+          "id": "d",
+          "text": "Trong post { always { ... } } chạy dù stage thất bại"
+        }
+      ],
+      "answer": [
+        "d"
+      ],
+      "explanation": "Khi sh trả mã khác 0, các steps phía sau bị bỏ qua. post always luôn chạy nên kết quả vẫn được ghi nhận."
+    },
+    {
+      "id": "q5",
+      "type": "single",
+      "prompt": "Build báo lỗi Could not find credentials entry with ID 'playwright-api-token'. Nên kiểm tra gì trước?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Credential có đúng ID và nằm đúng domain (global) hay không"
+        },
+        {
+          "id": "b",
+          "text": "Plugin NodeJS đã được cài phiên bản mới nhất hay chưa"
+        },
+        {
+          "id": "c",
+          "text": "Cổng 50000 đã được mở ra ngoài máy chủ hay chưa"
+        },
+        {
+          "id": "d",
+          "text": "Image Playwright đã được kéo về máy chủ hay chưa"
+        }
+      ],
+      "answer": [
+        "a"
+      ],
+      "explanation": "credentials('id') phải trùng chính xác ID của credential trong kho. Các lựa chọn còn lại không liên quan tới lỗi tra cứu credential."
+    },
+    {
+      "id": "q6",
+      "type": "single",
+      "prompt": "Bạn thêm khối parameters vào Jenkinsfile nhưng chưa thấy nút Build with Parameters. Giải thích đúng?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Cần khởi động lại máy chủ Jenkins để nhận tham số mới"
+        },
+        {
+          "id": "b",
+          "text": "Cần chạy một build để Jenkins đọc khai báo tham số"
+        },
+        {
+          "id": "c",
+          "text": "Tham số chỉ hiện khi job được tạo bằng Freestyle project"
+        },
+        {
+          "id": "d",
+          "text": "Cần cài thêm plugin Parameters riêng rồi mới dùng được"
+        }
+      ],
+      "answer": [
+        "b"
+      ],
+      "explanation": "Jenkins chỉ biết tham số sau khi đọc Jenkinsfile ở một lần chạy; lần đầu chạy với giá trị mặc định, từ lần sau mới có form."
+    },
+    {
+      "id": "q7",
+      "type": "multi",
+      "prompt": "Điều nào đúng về cron('H 23 * * 1-5') trong Jenkinsfile? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Ký tự H để Jenkins tự chọn phút nhằm rải đều tải"
+        },
+        {
+          "id": "b",
+          "text": "Lịch chạy từ thứ Hai đến thứ Sáu vào giờ 23"
+        },
+        {
+          "id": "c",
+          "text": "Giờ được tính theo múi giờ của máy chủ Jenkins"
+        },
+        {
+          "id": "d",
+          "text": "H nghĩa là chạy đúng vào phút 0 của giờ 23"
+        }
+      ],
+      "answer": [
+        "a",
+        "b",
+        "c"
+      ],
+      "explanation": "H hash theo tên job nên không chọn được đúng phút. Muốn đúng phút phải viết số cụ thể."
+    },
+    {
+      "id": "q8",
+      "type": "single",
+      "prompt": "Báo cáo HTML của Playwright trong Jenkins hiện trắng trang. Nguyên nhân thường gặp nhất?",
+      "options": [
+        {
+          "id": "a",
+          "text": "File index.html của báo cáo đã bị hỏng khi lưu trữ"
+        },
+        {
+          "id": "b",
+          "text": "Chính sách Content-Security-Policy của Jenkins chặn script"
+        },
+        {
+          "id": "c",
+          "text": "Image Playwright không hỗ trợ sinh báo cáo định dạng HTML"
+        },
+        {
+          "id": "d",
+          "text": "Bước junit ghi đè lên file index.html của báo cáo"
+        }
+      ],
+      "answer": [
+        "b"
+      ],
+      "explanation": "Jenkins mặc định áp CSP chặt. Cách an toàn là tải artifact về mở cục bộ; nới CSP chỉ nên làm trên máy học tập vì có rủi ro bảo mật."
+    },
+    {
+      "id": "q9",
+      "type": "single",
+      "prompt": "Đội muốn test hỏng ra trạng thái UNSTABLE (vàng) còn lỗi hạ tầng vẫn là FAILURE. Cách làm trong Jenkinsfile?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Thêm || true vào cuối lệnh sh chạy Playwright"
+        },
+        {
+          "id": "b",
+          "text": "Đặt timeout rất ngắn cho stage chạy test"
+        },
+        {
+          "id": "c",
+          "text": "Bao lệnh sh bằng catchError với buildResult UNSTABLE"
+        },
+        {
+          "id": "d",
+          "text": "Xoá khối post để Jenkins bỏ qua kết quả test"
+        }
+      ],
+      "answer": [
+        "c"
+      ],
+      "explanation": "catchError(buildResult: 'UNSTABLE', stageResult: 'FAILURE') đánh dấu build chung là UNSTABLE mà các bước post vẫn chạy. || true làm mất tín hiệu hỏng."
+    },
+    {
+      "id": "q10",
+      "type": "multi",
+      "prompt": "Vì sao cách dùng image Playwright được ưu tiên hơn NodeJS plugin cho CI? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Image đã có sẵn trình duyệt và thư viện hệ điều hành"
+        },
+        {
+          "id": "b",
+          "text": "Môi trường giống nhau ở mọi máy chủ chạy build"
+        },
+        {
+          "id": "c",
+          "text": "NodeJS plugin không thể cài được Node phiên bản 22"
+        },
+        {
+          "id": "d",
+          "text": "Image giúp bỏ qua bước npm ci của project"
+        }
+      ],
+      "answer": [
+        "a",
+        "b"
+      ],
+      "explanation": "Image chuẩn hoá môi trường. NodeJS plugin vẫn cài được Node, nhưng việc cài trình duyệt và thư viện hệ điều hành cần quyền cài gói. Bước npm ci vẫn cần."
+    }
+  ]
+}

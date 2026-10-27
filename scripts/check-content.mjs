@@ -2,6 +2,7 @@
 // Chạy: npm run check:content   (CONTENT_ROOT=<thư mục> để kiểm tra thư mục khác, dùng cho test của chính script này)
 import fs from "node:fs";
 import path from "node:path";
+import matter from "gray-matter";
 
 const root = process.env.CONTENT_ROOT ? path.resolve(process.env.CONTENT_ROOT) : process.cwd();
 const learnDir = path.join(root, "src", "content", "learn");
@@ -41,6 +42,16 @@ for (const f of files) {
   const fm = /^---\r?\n([\s\S]*?)\r?\n---/.exec(raw);
   if (!fm) {
     fail(file, "thiếu frontmatter");
+    continue;
+  }
+  // YAML hợp lệ (tiêu đề có dấu hai chấm phải bọc nháy) và đúng kiểu: lỗi này làm hỏng build production.
+  try {
+    const data = matter(raw).data;
+    for (const k of ["level", "order", "minutes"]) if (data[k] !== undefined && typeof data[k] !== "number") fail(file, `frontmatter "${k}" phải là số`);
+    if (typeof data.title !== "string" || !data.title.trim()) fail(file, 'frontmatter "title" phải là chuỗi');
+    if (!Array.isArray(data.keywords)) fail(file, 'frontmatter "keywords" phải là danh sách');
+  } catch (e) {
+    fail(file, `frontmatter không phải YAML hợp lệ: ${String(e.reason ?? e.message).split(String.fromCharCode(10))[0]}`);
     continue;
   }
   for (const k of REQUIRED) if (!new RegExp(`^${k}:`, "m").test(fm[1])) fail(file, `frontmatter thiếu "${k}"`);

@@ -33,6 +33,10 @@ Mỗi lab = **bài toán nghiệp vụ + app chạy tại `/lab/<slug>` + test c
 | LAB-26 | Phân quyền RBAC & Multi-tenant | Authorization | ★★★ | nhiều context/role, 403, IDOR | permission matrix, security | P1 |
 | LAB-27 | Import/Export CSV & báo cáo | Reporting | ★★ | download, parse CSV, so sánh với UI/DB | data validation | P1 |
 | LAB-28 | Lịch/Booking với múi giờ & Clock | Time | ★★★ | `page.clock`, timezone, DST, hết hạn | BVA thời gian, state | P1 |
+| LAB-29 | Tìm & đặt phòng khách sạn | Travel | ★★ | date picker tuỳ biến, combobox/autocomplete, dropdown, checkbox/radio, duyệt danh sách (all/count/nth), sắp xếp/lọc | BVA, EP, Decision Table, State Transition | P1 |
+| LAB-30 | Bảng công việc Kanban | Productivity | ★★★ | drag and drop (dragTo), hover, double click, context menu, phím tắt, focus, undo | state, BVA, decision table | P1 |
+| LAB-31 | Xuất báo cáo nhiều định dạng | Reporting | ★★★ | download, đọc Excel/XML/Word/PDF, Content-Disposition, đối chiếu xuyên định dạng | cross-format reconciliation, decision table | P1 |
+| LAB-32 | Báo giá bảo hiểm xe (form nhiều bước) | Insurance | ★★★ | form nhiều bước, validation từng bước, trường điều kiện, ngày sinh/điện thoại, tính phí, page.clock | BVA, decision table, pairwise, state | P1 |
 
 ---
 ## Mẫu mô tả 1 lab (template)
@@ -88,6 +92,111 @@ Bao phủ: text/number/email, radio, checkbox nhóm, dropdown (native + custom),
 **Kỹ thuật:** decision table (mã × ngưỡng × ship), BVA ở 499.999/500.000/500.001, state transition đơn hàng.
 **Bài tập:** tính tổng tiền chính xác bằng data-driven; mock API tồn kho bằng `page.route`; tạo đơn bằng API rồi verify UI.
 **Bug gợi ý:** làm tròn VAT sai, giảm giá vượt trần, huỷ được đơn đang giao.
+
+### LAB-29 Tìm & đặt phòng khách sạn
+
+**Bối cảnh**: trang tìm phòng giống Booking/Agoda. Chọn thành phố (combobox autocomplete), khoảng ngày trên lịch tuỳ biến, số khách và số phòng; lọc, sắp xếp, phân trang danh sách 30 khách sạn cố định (Hà Nội có 12 để thử phân trang); chọn khách sạn, xem tóm tắt giá, nhập thông tin liên hệ và nhận mã xác nhận. Trang chi tiết khách sạn ở `/lab/hotel/<id>`. "Hôm nay" lấy từ `Date` của trình duyệt nên test dùng `page.clock.setFixedTime`.
+
+**BR mẫu**
+- BR-01: điểm đến là combobox trong 8 thành phố, lọc không phân biệt dấu, ArrowDown/ArrowUp/Enter/Escape; phải chọn một gợi ý mới tìm được, nếu không báo "Vui lòng chọn một thành phố trong danh sách".
+- BR-02: lịch tuỳ biến: ngày quá khứ bị vô hiệu; ngày trả phải sau ngày nhận (tối thiểu 1 đêm; chọn ngày không sau ngày nhận thì bắt đầu lại từ ngày nhận mới); tối đa 30 đêm; khoảng ngày được tô nổi bật; xem tối đa 12 tháng tới.
+- BR-03: số đêm = ngày trả - ngày nhận, hiển thị dưới ô ngày, kể cả qua cuối tháng.
+- BR-04: người lớn 1–6, trẻ em 0–4, số phòng 1–5; mỗi phòng ≥ 1 người lớn và ≤ 4 khách.
+- BR-05: bộ lọc AND: tiện nghi phải có đủ mọi mục đã chọn; hạng sao Tất cả/3+/4+/5; giá mỗi đêm từ–đến (gồm biên), min > max báo lỗi; không khớp báo "Không tìm thấy".
+- BR-06: sắp xếp (phù hợp nhất, giá tăng, giá giảm, đánh giá); phân trang 5 mỗi trang, đổi lọc/sắp xếp về trang 1; thẻ có `data-price`, `data-rating`, ảnh `alt`, sao `aria-label`, link chi tiết.
+- BR-07: giá phòng = đêm × giá × phòng; bữa sáng 150.000 ₫/đêm/phòng nếu chọn (không áp dụng khách sạn đã gồm bữa sáng); thuế 10% trên (giá phòng + bữa sáng).
+- BR-08: họ tên ≥ 2 ký tự, email hợp lệ, điện thoại 10 số bắt đầu 0; mã xác nhận `HT-yyyymmdd-<mã khách sạn>`.
+
+**Kỹ thuật**: Boundary Value Analysis (1 và 30 đêm, ngày hôm nay/quá khứ, trẻ em 0 và 4, giá biên), Equivalence Partitioning, Decision Table (số phòng/khách, bữa sáng × khách sạn đã gồm bữa sáng), State Transition (chọn ngày nhận → ngày trả).
+
+**Bài tập**
+1. Lịch tuỳ biến: khoảng ngày, biên 1 và 30 đêm (BUG-01).
+2. Lọc tiện nghi: duyệt mọi thẻ bằng `all()` (BUG-03).
+3. Sắp xếp: đọc `data-price`/`data-rating`, so sánh mảng, phân trang, thuộc tính trợ năng.
+4. Combobox bàn phím và đặt phòng qua cuối tháng (BUG-02).
+
+**Bug gợi ý** (bật bằng `?bugs=` hoặc cookie `lab_bugs`)
+- BUG-01: cho chọn ngày trả trùng hoặc trước ngày nhận, tạo khoảng 0 đêm (hoặc âm) mà vẫn tìm được.
+- BUG-02: số đêm lệch +1 khi khoảng ngày vượt qua cuối tháng (28/03 → 02/04 ra 6 đêm thay vì 5), kéo theo sai tiền.
+- BUG-03: lọc nhiều tiện nghi dùng OR thay vì AND, hiện cả khách sạn thiếu tiện nghi.
+
+## (c) Dòng trạng thái
+
+### LAB-30 Bảng công việc Kanban
+`/lab/kanban`. Bảng ba cột Cần làm, Đang làm, Xong; thẻ có tiêu đề, nhãn màu và người phụ trách; dùng HTML5 drag and drop thật nên `locator.dragTo` hoạt động; dữ liệu trong `localStorage`, có Reset. Vùng thả của từng cột có `data-testid="drop-<cột>"`.
+- **Bối cảnh**: công cụ quản lý công việc kiểu Kanban có giới hạn WIP, sửa tại chỗ, menu chuột phải, phím tắt và hoàn tác.
+- **BR mẫu**:
+  - BR-01 dữ liệu gốc (Cần làm 3, Đang làm 2, Xong 1), lưu `localStorage`, Reset.
+  - BR-02 kéo thả: thả lên vùng thả của cột thì xếp cuối cột, thả lên thẻ khác thì chèn trước thẻ đó, cùng cột là sắp xếp lại.
+  - BR-03 giới hạn WIP: Đang làm tối đa 3 thẻ (kéo thả, Alt+mũi tên, nhân bản đều bị chặn ở thẻ thứ 4; sắp xếp lại trong cột đầy vẫn được).
+  - BR-04 sửa tiêu đề tại chỗ (double click): Enter lưu, Escape huỷ, không rỗng, tối đa 80 ký tự.
+  - BR-05 menu chuột phải (Mở chi tiết, Đổi màu, Nhân bản, Xoá), đóng bằng Escape/click ngoài; mọi cách xoá đều có hộp xác nhận (menu, nút Xoá nhanh khi hover, Delete).
+  - BR-06 phím tắt khi không đang gõ: N thêm thẻ, / focus ô tìm, Alt+ArrowRight/Left đổi cột (thẻ giữ focus), Delete xoá có xác nhận.
+  - BR-07 Ctrl+Z hoàn tác một bước di chuyển gần nhất về đúng cột và vị trí cũ.
+  - BR-08 ô tìm lọc theo tiêu đề không phân biệt hoa thường; bộ đếm cột luôn tính toàn bộ thẻ.
+- **Kỹ thuật**: State Transition (di chuyển, hoàn tác), BVA (3/4 thẻ WIP, 80/81 ký tự), Equivalence Partitioning, Decision Table (cách thao tác × cột đích × cột đầy), Error Guessing.
+- **Bài tập** (4 bài): kéo thả và kiểm cột đích (dragTo, targetPosition); giới hạn WIP (bắt BUG-01); sửa tiêu đề Enter/Escape/biên 80 (bắt BUG-02); phím tắt, hoàn tác và menu chuột phải (bắt BUG-03).
+- **Bug gợi ý**: BUG-01 giới hạn WIP không được kiểm khi kéo thả (phím tắt vẫn kiểm); BUG-02 nhấn Escape khi sửa tiêu đề lại lưu thay vì huỷ; BUG-03 Ctrl+Z đưa thẻ về cột liền trước (vòng tròn) thay vì cột gốc.
+
+## (c) Dòng trạng thái
+
+### LAB-31 Xuất báo cáo nhiều định dạng (bản đã làm)
+`/lab/reports`: báo cáo đơn hàng bán lẻ (14 đơn cố định, 02–04/2026). Lọc theo tháng và trạng thái, xem trước trên trang, rồi tải **Excel / XML / Word / PDF / CSV** từ Route Handler `GET /api/lab/report/<xlsx|xml|docx|pdf|csv>?month=&status=`. Ngày giờ xuất cố định `2026-04-30T09:00:00+07:00` (header `X-Report-Generated`). Mở rộng LAB-27 (CSV) sang các định dạng nhị phân/có cấu trúc: bắt sự kiện `download`, **đọc lại và kiểm tra nội dung tệp**.
+
+**Bối cảnh**: dữ liệu có tên khách chứa `&`, `<`, `"`, `'` và tiếng Việt có dấu, hai trạng thái (Hoàn tất / Đã huỷ), số tiền lẻ (2 chữ số thập phân), nên mỗi định dạng phải xử lý escape/mã hoá riêng.
+
+**BR mẫu**
+- BR-01 14 đơn cố định; mỗi đơn có mã, ngày giờ, khách hàng, trạng thái, số tiền thập phân; tên khách có ký tự đặc biệt.
+- BR-02 bộ lọc Tháng (Tất cả/2026-02/03/04) AND Trạng thái (Tất cả/Hoàn tất/Đã huỷ); trang hiện số đơn, tổng tiền, tổng hợp theo trạng thái.
+- BR-03 mỗi nút tải tệp từ API đúng bộ lọc đang chọn; định dạng lạ → 404, bộ lọc sai → 400.
+- BR-04 tên tệp `bao-cao-<tháng|tat-ca>[-<trạng-thái-không-dấu>].<đuôi>`; `Content-Disposition: attachment`; MIME đúng từng định dạng.
+- BR-05 Excel: sheet "Đơn hàng" (tiêu đề, dữ liệu, dòng Tổng cộng có công thức SUM + giá trị) và sheet "Tổng hợp" theo trạng thái; ô tiền/ngày có định dạng.
+- BR-06 XML hợp lệ, `order` có thuộc tính `id`, `status` và phần tử `date`, `customer`, `amount`; escape `& < > " '`; `count`, `total` của `report` khớp dữ liệu.
+- BR-07 Word: tiêu đề, tóm tắt, bảng; PDF: văn bản trích xuất được, dùng font chuẩn Helvetica nên **chữ không dấu** (giao diện có ghi chú); chỉ gồm các đơn đúng bộ lọc.
+- BR-08 CSV RFC 4180 (BOM, CRLF), một dòng tiêu đề + một dòng cho mỗi đơn, không có dòng tổng.
+
+**Kỹ thuật**: Equivalence Partitioning, Decision Table (bộ lọc × định dạng), đối chiếu xuyên định dạng (trang = CSV = Excel = XML), input ký tự đặc biệt.
+
+**Bài tập** (4 bài, độ khó ★★★): (1) tải Excel, so tổng với trang [BUG-01]; (2) parse XML và so từng đơn [BUG-02]; (3) tên tệp + MIME + nội dung Word/PDF theo bộ lọc [BUG-03]; (4) so khớp số dòng/tổng tiền xuyên trang, CSV, Excel, XML với 3 bộ lọc.
+
+**Bug gợi ý** (`?bugs=` hoặc cookie `lab_bugs`; route đọc bằng `bugsOf`)
+- BUG-01 tổng tiền trong Excel thiếu dòng cuối cùng (công thức `SUM(E2:E<n>)` thay vì `E<n+1>`, giá trị tổng lệch).
+- BUG-02 XML không escape `&` (tệp không parse được khi có đơn tên chứa `&`).
+- BUG-03 xuất PDF/Word bỏ qua bộ lọc trạng thái (vẫn gồm đơn đã huỷ); Excel/XML/CSV vẫn đúng.
+
+**Thư viện** (đã cài vào repo chính; Node 22+, kiểm tra trên Node 26.4 và Playwright 1.64)
+- Runtime (dependencies, dùng trong Route Handler; Route Handler mặc định chạy Node, KHÔNG khai báo `export const runtime`): `exceljs@4.4.0` (tạo .xlsx), `docx@9.14.0` (tạo .docx), `pdf-lib@1.17.1` (tạo .pdf, font chuẩn Helvetica nên chữ không dấu).
+- Test, đọc lại tệp (devDependencies, dùng trong spec và `solution` của bài tập; **cần thêm vào `starter-repo/package.json`**): `exceljs@4.4.0` (đọc .xlsx; cũng là dependency của site), `fast-xml-parser@5.11.2` (`XMLParser`, `XMLValidator`), `mammoth@1.13.0` (`extractRawText` cho .docx), `pdf-parse@2.4.5` (`new PDFParse({ data }).getText()`, nhớ `destroy()`), `jszip@3.10.2` (cài sẵn, không bắt buộc cho solution hiện tại; dùng khi muốn giải nén .docx/.xlsx).
+- Trong `solution` của bài tập: import `ExcelJS from "exceljs"`, `{ XMLParser, XMLValidator } from "fast-xml-parser"`, `mammoth from "mammoth"`, `{ PDFParse } from "pdf-parse"`. Starter repo cần `npm i exceljs fast-xml-parser mammoth pdf-parse`.
+- Bài học liên quan nên nói rõ: đọc tệp qua `download.path()` (hoặc `createReadStream`), kiểm tra `suggestedFilename()` và, ở tầng HTTP, `Content-Type`/`Content-Disposition` qua `page.request`.
+
+## (c) Dòng trạng thái
+
+### LAB-32 Báo giá bảo hiểm xe (form nhiều bước)
+`/lab/insurance`: form 4 bước (Chủ xe, Thông tin xe, Gói bảo hiểm, Xem lại và xác nhận), thanh tiến trình, tạm tính phí ở bước 3 và 4, kết thúc bằng số hợp đồng. "Hôm nay" lấy qua một hàm module-level nên test cố định bằng `page.clock.setFixedTime`. Luật nằm ở `src/lib/labs/insurance-rules.ts`.
+
+**Bối cảnh:** công ty bảo hiểm cho khách tự báo giá bảo hiểm vật chất xe trực tuyến.
+
+**BR mẫu**
+- BR-01 bước 1: họ tên 2–60 ký tự; tuổi tròn 18–70 tính đến hôm nay (đúng 18 và đúng 70 hợp lệ); điện thoại 10 số đầu 03/05/07/08/09; email đúng định dạng.
+- BR-02 bước 2: năm sản xuất từ (năm hiện tại − 15) đến năm hiện tại; giá trị xe 50 triệu – 5 tỷ ₫; biển số dạng `30A-123.45`.
+- BR-03 trường điều kiện: Ô tô tải nhẹ hiện ô Tải trọng 0,5–3,5 tấn; Xe máy không có gói Toàn diện (đổi sang Xe máy thì chọn lại gói).
+- BR-04 kiểm tra từng bước (lỗi dưới từng ô, chặn sang bước sau); Quay lại giữ nguyên dữ liệu; thanh tiến trình theo bước.
+- BR-05 phí gốc = giá trị × tỉ lệ gói (1,0% / 1,5% / 2,0%) × hệ số loại xe (1,0 / 1,2 / 0,6); dưới 25 tuổi phụ phí +20%.
+- BR-06 giảm giá 0/5/10/15% theo 0/1/2/3+ năm không bồi thường (trên phí sau phụ phí); quyền lợi thêm cộng cố định sau giảm (300.000 / 500.000 / 200.000); phí năm làm tròn xuống nghìn đồng.
+- BR-07 kỳ tháng = phí năm × 1,08 / 12; tạm tính hiển thị ở bước 3 và 4.
+- BR-08 bước 4 bắt buộc đồng ý điều khoản; số hợp đồng `BH-<năm>-<0001>` tăng dần; Reset đặt lại.
+
+**Kỹ thuật:** Boundary Value Analysis (tuổi, năm sản xuất, giá trị, tải trọng), Decision Table (loại xe × gói × giảm giá), Pairwise (loại xe, gói, tuổi, quyền lợi, năm không bồi thường, kỳ thanh toán), Equivalence Partitioning (điện thoại, biển số), State Transition (điều hướng bước).
+
+**Bài tập:** (1) biên tuổi và năm sản xuất data-driven với `page.clock` (bắt BUG-01); (2) trường điều kiện theo loại xe; (3) tính phí qua 12 tổ hợp bằng bảng dữ liệu (bắt BUG-02); (4) giữ dữ liệu khi quay lại giữa các bước (bắt BUG-03).
+
+**Bug gợi ý**
+- BUG-01: biên tuổi so sánh sai, đúng 18 và đúng 70 tuổi bị từ chối.
+- BUG-02: mức giảm giá nhảy sai ở ngưỡng 2 năm (2 năm đã được 15% thay vì 10%).
+- BUG-03: nút Quay lại ở bước 3 làm mất dữ liệu bước 2.
+
+## (c) Dòng trạng thái
 
 ## Nguyên tắc thiết kế lab
 1. **Deterministic**: seed cố định, `?seed=`; reset nhanh.
@@ -324,6 +433,10 @@ Vai trò Admin/Manager/Staff/Guest; ma trận quyền; thử IDOR (đổi id tro
 | LAB-11 Hỗ trợ khách hàng (ticket & SLA) | `/lab/tickets` | Đã làm |
 | LAB-16 Đa ngôn ngữ & responsive | `/lab/i18n` | Đã làm |
 | LAB-09 Quản lý kho & đơn nhập hàng | `/lab/inventory` | Đã làm |
+| LAB-29 Tìm & đặt phòng khách sạn | `/lab/hotel` | Đã làm (combobox autocomplete, lịch tuỳ biến, lọc/sắp xếp/phân trang, đặt phòng; 3 bug, 4 bài tập) |
+| LAB-30 Bảng công việc Kanban | `/lab/kanban` | Đã làm (kéo thả HTML5, WIP, sửa tại chỗ, menu chuột phải, phím tắt, hoàn tác; 3 bug; 4 bài tập) |
+| LAB-31 Xuất báo cáo nhiều định dạng | `/lab/reports` | Đã làm (Excel/XML/Word/PDF/CSV, 3 bug, 4 bài tập) |
+| LAB-32 Báo giá bảo hiểm xe (form nhiều bước) | `/lab/insurance` | Đã làm (BR, bug toggle, bài tập, test case) |
 
 ### Quy tắc kỹ thuật của trang lab
 - `/lab/<slug>` là **ứng dụng thuần**: không header, không thanh tìm kiếm của site (chỉ một liên kết quay lại ở layout lab) để locator của người học không bị trùng.

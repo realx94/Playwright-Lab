@@ -37,4 +37,8 @@ export const LABS: LabInfo[] = [
   { slug: "tickets", id: "LAB-11", title: "Hỗ trợ khách hàng (ticket & SLA)", domain: "CRM", difficulty: 2, skills: ["setInputFiles", "luồng trạng thái", "ma trận chuyển đổi", "SLA + page.clock", "bình luận"], ready: true },
   { slug: "i18n", id: "LAB-16", title: "Đa ngôn ngữ & responsive", domain: "i18n", difficulty: 2, skills: ["locale", "viewport", "Intl", "điểm gãy 640px", "không cuộn ngang"], ready: true },
   { slug: "inventory", id: "LAB-09", title: "Quản lý kho & đơn nhập hàng", domain: "ERP", difficulty: 3, skills: ["nhiều trang", "dữ liệu dùng chung", "state đơn nhập", "nhãn theo ngưỡng", "decision table"], ready: true },
+  { slug: "hotel", id: "LAB-29", title: "Tìm & đặt phòng khách sạn", domain: "Travel", difficulty: 2, skills: ["date picker tuỳ biến", "combobox/autocomplete", "dropdown", "checkbox/radio", "duyệt danh sách (all, count)", "sắp xếp/lọc"], ready: true },
+  { slug: "kanban", id: "LAB-30", title: "Bảng công việc Kanban", domain: "Productivity", difficulty: 3, skills: ["Drag and drop", "Hover", "Double click", "Context menu", "Keyboard shortcuts", "Focus"], ready: true },
+  { slug: "reports", id: "LAB-31", title: "Xuất báo cáo nhiều định dạng (Excel, XML, Word, PDF, CSV)", domain: "Reporting", difficulty: 3, skills: ["download", "đọc Excel", "parse XML", "đọc Word/PDF", "Content-Disposition", "đối chiếu xuyên định dạng"], ready: true },
+  { slug: "insurance", id: "LAB-32", title: "Báo giá bảo hiểm xe (form nhiều bước)", domain: "Insurance", difficulty: 3, skills: ["form nhiều bước", "validation từng bước", "trường điều kiện", "ngày sinh & điện thoại", "tính phí", "page.clock"], ready: true },
 ];

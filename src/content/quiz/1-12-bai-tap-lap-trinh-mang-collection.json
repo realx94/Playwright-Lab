@@ -1,0 +1,277 @@
+{
+  "questions": [
+    {
+      "id": "q1",
+      "type": "single",
+      "prompt": "Danh sách mã đơn hàng lấy từ trang có 50.000 dòng và cần kiểm tra có mã nào bị trùng. Cách nào vừa đúng vừa nhanh nhất?",
+      "options": [
+        {
+          "id": "a",
+          "text": "So từng cặp phần tử bằng hai vòng for lồng nhau"
+        },
+        {
+          "id": "b",
+          "text": "Duyệt một lượt, dùng Set để nhớ các mã đã gặp trước đó"
+        },
+        {
+          "id": "c",
+          "text": "Gọi includes trên mảng kết quả cho mỗi mã đang duyệt"
+        },
+        {
+          "id": "d",
+          "text": "Sắp xếp mảng bằng sort() mặc định rồi so các cặp kề nhau"
+        }
+      ],
+      "answer": [
+        "b"
+      ],
+      "explanation": "Set cho phép hỏi đã gặp chưa trong khoảng một bước nên cả bài là O(n). Hai vòng lặp và includes đều O(n²). sort() mặc định so sánh như chuỗi, không phải lựa chọn tối ưu và thay đổi mảng gốc."
+    },
+    {
+      "id": "q2",
+      "type": "single",
+      "prompt": "Chạy [10, 9, 1].sort() trong Node cho kết quả [1, 10, 9]. Vì sao kết quả không tăng dần theo giá trị số?",
+      "options": [
+        {
+          "id": "a",
+          "text": "sort mặc định so sánh các phần tử như chuỗi ký tự"
+        },
+        {
+          "id": "b",
+          "text": "sort chỉ hoạt động đúng với mảng có tối đa hai chữ số"
+        },
+        {
+          "id": "c",
+          "text": "sort sắp xếp giảm dần nên phần tử 1 đứng ở đầu"
+        },
+        {
+          "id": "d",
+          "text": "sort bỏ qua phần tử có giá trị lớn hơn độ dài mảng"
+        }
+      ],
+      "answer": [
+        "a"
+      ],
+      "explanation": "Không có hàm so sánh thì sort đổi phần tử sang chuỗi và so theo thứ tự ký tự, nên 10 đứng trước 9. Truyền (a, b) => a - b để so sánh theo số."
+    },
+    {
+      "id": "q3",
+      "type": "multi",
+      "prompt": "Cần giữ nguyên mảng gốc khi sắp xếp và đảo mảng. Những cách nào đáp ứng yêu cầu này? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Sao chép trước bằng [...mang] rồi mới gọi sort trên bản sao"
+        },
+        {
+          "id": "b",
+          "text": "Gọi mang.sort() trực tiếp vì sort luôn trả về mảng mới"
+        },
+        {
+          "id": "c",
+          "text": "Gọi [...mang].reverse() để đảo trên một bản sao của mảng"
+        },
+        {
+          "id": "d",
+          "text": "Gọi mang.reverse() vì phương thức này không đổi mảng gốc"
+        }
+      ],
+      "answer": [
+        "a",
+        "c"
+      ],
+      "explanation": "sort và reverse đều thay đổi mảng gốc tại chỗ. Muốn giữ bản gốc phải sao chép bằng spread trước khi gọi."
+    },
+    {
+      "id": "q4",
+      "type": "single",
+      "prompt": "secondLargest([5, 9, 9, 3]) phải trả về 5 chứ không phải 9. Điều kiện nào trong vòng lặp bảo đảm hành vi này?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Chỉ cập nhật second khi n lớn hơn first và nhỏ hơn second"
+        },
+        {
+          "id": "b",
+          "text": "Chỉ cập nhật second khi n nhỏ hơn first và lớn hơn second"
+        },
+        {
+          "id": "c",
+          "text": "Cập nhật second mỗi khi n khác với giá trị của first"
+        },
+        {
+          "id": "d",
+          "text": "Cập nhật second mỗi khi n bằng với giá trị của first"
+        }
+      ],
+      "answer": [
+        "b"
+      ],
+      "explanation": "Số bằng first bị bỏ qua nên cặp 9, 9 không biến 9 thành số lớn thứ hai. Chỉ số nằm giữa, nhỏ hơn first và lớn hơn second, mới được ghi vào second."
+    },
+    {
+      "id": "q5",
+      "type": "single",
+      "prompt": "Hàm twoSum viết if (j) thay cho if (j !== undefined) để kiểm tra chỉ số lấy từ Map. Test nào bị sai kết quả?",
+      "options": [
+        {
+          "id": "a",
+          "text": "twoSum([2, 7, 11, 15], 9) vì cặp nằm ở đầu mảng"
+        },
+        {
+          "id": "b",
+          "text": "twoSum([0, 4, 3], 3) vì chỉ số 0 bị coi là giá trị falsy"
+        },
+        {
+          "id": "c",
+          "text": "twoSum([1, 2], 10) vì mảng không có cặp nào thoả mãn"
+        },
+        {
+          "id": "d",
+          "text": "twoSum([3, 3], 6) vì hai phần tử trong mảng bằng nhau"
+        }
+      ],
+      "answer": [
+        "b"
+      ],
+      "explanation": "Chỉ số 0 là falsy nên if (j) bỏ qua cặp có phần tử ở vị trí đầu tiên (0 và 3 cho k = 3). Phải so sánh rõ ràng với undefined."
+    },
+    {
+      "id": "q6",
+      "type": "multi",
+      "prompt": "Điều nào đúng khi nói về hai cách giải bài two sum: hai vòng for và Map? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Bản dùng Map chạy trong O(n) nhưng tốn thêm bộ nhớ O(n)"
+        },
+        {
+          "id": "b",
+          "text": "Bản hai vòng for chạy O(n) và không dùng thêm bộ nhớ"
+        },
+        {
+          "id": "c",
+          "text": "Bản hai vòng for tốn O(n²) thời gian và gần như O(1) bộ nhớ"
+        },
+        {
+          "id": "d",
+          "text": "Bản dùng Map phải sắp xếp mảng trước khi duyệt để tra cứu"
+        }
+      ],
+      "answer": [
+        "a",
+        "c"
+      ],
+      "explanation": "Map đổi bộ nhớ lấy tốc độ: O(n) thời gian, O(n) bộ nhớ. Hai vòng for thử mọi cặp nên O(n²) thời gian. Bản Map không cần sắp xếp."
+    },
+    {
+      "id": "q7",
+      "type": "single",
+      "prompt": "Có mảng object bug và cần biết mỗi module có những bug nào. Cấu trúc dữ liệu nào hợp để gom nhóm theo module?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Set chứa các object bug theo đúng thứ tự xuất hiện"
+        },
+        {
+          "id": "b",
+          "text": "Mảng hai chiều có chỉ số hàng trùng với số thứ tự bug"
+        },
+        {
+          "id": "c",
+          "text": "Map với khoá là tên module và giá trị là mảng bug"
+        },
+        {
+          "id": "d",
+          "text": "Một chuỗi nối tên mọi module cách nhau bằng dấu phẩy"
+        }
+      ],
+      "answer": [
+        "c"
+      ],
+      "explanation": "Map<module, bug[]> là mẫu group by: lấy khoá, có nhóm rồi thì push, chưa có thì tạo nhóm mới. Set không có khái niệm nhóm và chuỗi nối không giữ được danh sách bug."
+    },
+    {
+      "id": "q8",
+      "type": "single",
+      "prompt": "Dùng new Set(arrayOfObjects) để loại các object có cùng id nhưng không loại được. Nguyên nhân và cách khắc phục đúng là gì?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Set so sánh object theo tham chiếu, nên cần Set chứa khoá id"
+        },
+        {
+          "id": "b",
+          "text": "Set không nhận object nên phải đổi sang kiểu Map trước"
+        },
+        {
+          "id": "c",
+          "text": "Set chỉ loại được số, nên phải đổi id thành kiểu số"
+        },
+        {
+          "id": "d",
+          "text": "Set loại trùng ngẫu nhiên, nên phải gọi sort trước khi dùng"
+        }
+      ],
+      "answer": [
+        "a"
+      ],
+      "explanation": "Hai object khác nhau luôn là hai tham chiếu khác nhau nên Set coi là hai phần tử. Giữ Set các khoá (id) đã gặp và chỉ giữ object đầu tiên của mỗi khoá."
+    },
+    {
+      "id": "q9",
+      "type": "single",
+      "prompt": "reverseInPlace đổi chỗ hai phần tử ở hai đầu rồi tiến vào giữa. Vì sao bài này thường được hỏi về độ phức tạp bộ nhớ?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Vì nó dùng thêm mảng bằng kích thước mảng đầu vào"
+        },
+        {
+          "id": "b",
+          "text": "Vì nó cần sắp xếp mảng trước khi bắt đầu đảo chỗ"
+        },
+        {
+          "id": "c",
+          "text": "Vì nó phải đệ quy với độ sâu bằng độ dài của mảng"
+        },
+        {
+          "id": "d",
+          "text": "Vì nó chỉ dùng vài biến phụ, tức bộ nhớ thêm là O(1)"
+        }
+      ],
+      "answer": [
+        "d"
+      ],
+      "explanation": "Đảo tại chỗ chỉ cần hai con trỏ và một phép đổi chỗ nên bộ nhớ thêm là O(1), khác với cách tạo mảng mới tốn O(n). Thời gian vẫn là O(n)."
+    },
+    {
+      "id": "q10",
+      "type": "multi",
+      "prompt": "Trong test Playwright, allInnerTexts() trả về mảng tên người dùng của trang bảng. Kiểm tra nào làm được với mảng đó? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "new Set(emails).size bằng emails.length để khẳng định không trùng"
+        },
+        {
+          "id": "b",
+          "text": "Dùng map đếm tần suất để thống kê số người theo từng vai trò"
+        },
+        {
+          "id": "c",
+          "text": "Gọi locator.click() trực tiếp trên mảng chuỗi vừa lấy được"
+        },
+        {
+          "id": "d",
+          "text": "Dùng toHaveCount trực tiếp trên mảng chuỗi vừa lấy được"
+        }
+      ],
+      "answer": [
+        "a",
+        "b"
+      ],
+      "explanation": "allInnerTexts cho mảng chuỗi thông thường nên dùng được Set và Map. click và toHaveCount là hàm của Locator, không dùng được trên mảng chuỗi."
+    }
+  ]
+}

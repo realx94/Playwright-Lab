@@ -106,13 +106,13 @@ test('test', async ({ page }) => {
   await page.goto('http://localhost:3000/lab/login');
   await page.getByRole('textbox', { name: 'Email' }).click();
   await page.getByRole('textbox', { name: 'Email' }).fill('user@lab.dev');
-  await page.getByRole('textbox', { name: 'Mật khẩu' }).fill('Passw0rd!');
+  await page.getByLabel('Mật khẩu').fill('Passw0rd!');
   await page.getByRole('checkbox', { name: 'Ghi nhớ đăng nhập' }).click();
   await page.getByRole('button', { name: 'Đăng nhập' }).click();
 });
 ```
 
-Cách đọc: mọi locator đều là `getByRole` kèm `name`. Codegen có thể chọn `getByRole` hoặc `getByLabel` tuỳ phiên bản. Đừng chép nguyên: hãy rút gọn (bỏ `.click()` thừa trước `fill`, dùng `check()` cho checkbox) và đặt vào test theo cấu trúc bài 2.4.
+Cách đọc: hầu hết locator là `getByRole` kèm `name`; riêng ô mật khẩu (`type="password"`) không có role `textbox` theo chuẩn ARIA nên dùng `getByLabel`. Codegen có thể chọn `getByRole` hoặc `getByLabel` tuỳ phiên bản. Đừng chép nguyên: hãy rút gọn (bỏ `.click()` thừa trước `fill`, dùng `check()` cho checkbox) và đặt vào test theo cấu trúc bài 2.4.
 
 ### Bước 3. Dùng Pick locator để thử một phần tử cụ thể
 

@@ -595,6 +595,110 @@
       "bugs": [
         "BUG-02"
       ]
+    },
+    "hotel-1": {
+      "lab": "hotel",
+      "spec": "tests/exercises/hotel/hotel-1.spec.ts",
+      "bugs": [
+        "BUG-01"
+      ]
+    },
+    "hotel-2": {
+      "lab": "hotel",
+      "spec": "tests/exercises/hotel/hotel-2.spec.ts",
+      "bugs": [
+        "BUG-03"
+      ]
+    },
+    "hotel-3": {
+      "lab": "hotel",
+      "spec": "tests/exercises/hotel/hotel-3.spec.ts",
+      "bugs": []
+    },
+    "hotel-4": {
+      "lab": "hotel",
+      "spec": "tests/exercises/hotel/hotel-4.spec.ts",
+      "bugs": [
+        "BUG-02"
+      ]
+    },
+    "kanban-1": {
+      "lab": "kanban",
+      "spec": "tests/exercises/kanban/kanban-1.spec.ts",
+      "bugs": []
+    },
+    "kanban-2": {
+      "lab": "kanban",
+      "spec": "tests/exercises/kanban/kanban-2.spec.ts",
+      "bugs": [
+        "BUG-01"
+      ]
+    },
+    "kanban-3": {
+      "lab": "kanban",
+      "spec": "tests/exercises/kanban/kanban-3.spec.ts",
+      "bugs": [
+        "BUG-02"
+      ]
+    },
+    "kanban-4": {
+      "lab": "kanban",
+      "spec": "tests/exercises/kanban/kanban-4.spec.ts",
+      "bugs": [
+        "BUG-03"
+      ]
+    },
+    "reports-1": {
+      "lab": "reports",
+      "spec": "tests/exercises/reports/reports-1.spec.ts",
+      "bugs": [
+        "BUG-01"
+      ]
+    },
+    "reports-2": {
+      "lab": "reports",
+      "spec": "tests/exercises/reports/reports-2.spec.ts",
+      "bugs": [
+        "BUG-02"
+      ]
+    },
+    "reports-3": {
+      "lab": "reports",
+      "spec": "tests/exercises/reports/reports-3.spec.ts",
+      "bugs": [
+        "BUG-03"
+      ]
+    },
+    "reports-4": {
+      "lab": "reports",
+      "spec": "tests/exercises/reports/reports-4.spec.ts",
+      "bugs": []
+    },
+    "insurance-1": {
+      "lab": "insurance",
+      "spec": "tests/exercises/insurance/insurance-1.spec.ts",
+      "bugs": [
+        "BUG-01"
+      ]
+    },
+    "insurance-2": {
+      "lab": "insurance",
+      "spec": "tests/exercises/insurance/insurance-2.spec.ts",
+      "bugs": []
+    },
+    "insurance-3": {
+      "lab": "insurance",
+      "spec": "tests/exercises/insurance/insurance-3.spec.ts",
+      "bugs": [
+        "BUG-02"
+      ]
+    },
+    "insurance-4": {
+      "lab": "insurance",
+      "spec": "tests/exercises/insurance/insurance-4.spec.ts",
+      "bugs": [
+        "BUG-03"
+      ]
     }
   }
 }

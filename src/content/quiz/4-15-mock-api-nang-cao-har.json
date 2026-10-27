@@ -1,0 +1,278 @@
+{
+  "questions": [
+    {
+      "id": "q1",
+      "type": "single",
+      "prompt": "Test đăng ký page.route với times: 1 trước page.goto để POST trả lỗi một lần, nhưng POST vẫn thành công. Nguyên nhân?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Lượt duy nhất đã bị request GET tải danh sách dùng hết"
+        },
+        {
+          "id": "b",
+          "text": "times: 1 chỉ có tác dụng với request kiểu PUT trở đi"
+        },
+        {
+          "id": "c",
+          "text": "route.fulfill không áp dụng được cho phản hồi của POST"
+        },
+        {
+          "id": "d",
+          "text": "Handler đăng ký trước goto luôn bị trình duyệt bỏ qua"
+        }
+      ],
+      "answer": [
+        "a"
+      ],
+      "explanation": "times đếm mọi lần handler được gọi, kể cả GET khi tải trang. Hãy đăng ký route sau khi trang tải xong hoặc lọc theo method."
+    },
+    {
+      "id": "q2",
+      "type": "multi",
+      "prompt": "Để ghi HAR bằng page.routeFromHAR với update: true, điều nào đúng? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "File HAR chỉ được ghi xuống đĩa khi context đóng"
+        },
+        {
+          "id": "b",
+          "text": "Tuỳ chọn url giới hạn việc ghi ở các request khớp mẫu"
+        },
+        {
+          "id": "c",
+          "text": "Request vẫn đi ra mạng thật khi đang ở chế độ ghi"
+        },
+        {
+          "id": "d",
+          "text": "File HAR được ghi ngay sau khi mỗi request hoàn tất"
+        }
+      ],
+      "answer": [
+        "a",
+        "b",
+        "c"
+      ],
+      "explanation": "Ở chế độ ghi, request đi ra mạng thật và response được lưu; file chỉ xuất hiện khi đóng context, nên test cần tự tạo và tự đóng context."
+    },
+    {
+      "id": "q3",
+      "type": "single",
+      "prompt": "Khi phát lại HAR, bạn muốn request thiếu trong HAR lộ ra ngay thay vì âm thầm gọi server thật. Chọn tuỳ chọn nào?",
+      "options": [
+        {
+          "id": "a",
+          "text": "notFound: 'fallback' để request đi tiếp ra mạng thật"
+        },
+        {
+          "id": "b",
+          "text": "update: true để HAR tự bổ sung bản ghi còn thiếu"
+        },
+        {
+          "id": "c",
+          "text": "notFound: 'abort' để chặn request không có trong HAR"
+        },
+        {
+          "id": "d",
+          "text": "url: '**/*' để HAR khớp với mọi request của trang"
+        }
+      ],
+      "answer": [
+        "c"
+      ],
+      "explanation": "abort là mặc định và an toàn nhất. fallback tiện cho mock một phần nhưng dễ gọi nhầm server thật mà không biết."
+    },
+    {
+      "id": "q4",
+      "type": "single",
+      "prompt": "Handler gọi route.fulfill({ response, json, headers: { 'x-mocked': '1' } }) và các header cũ của phản hồi thật biến mất. Cách sửa?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Gọi thêm route.continue() sau lời gọi fulfill đó"
+        },
+        {
+          "id": "b",
+          "text": "Bỏ tham số response vì nó xoá toàn bộ header"
+        },
+        {
+          "id": "c",
+          "text": "Chuyển x-mocked vào body JSON thay vì đặt vào header"
+        },
+        {
+          "id": "d",
+          "text": "Trải response.headers() vào đối tượng headers mới"
+        }
+      ],
+      "answer": [
+        "d"
+      ],
+      "explanation": "headers truyền vào thay thế toàn bộ header, nên phải trải header của response thật rồi mới thêm header riêng."
+    },
+    {
+      "id": "q5",
+      "type": "multi",
+      "prompt": "Tình huống nào hợp lý để dùng mock thay vì gọi server thật? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Kiểm tra giao diện báo lỗi khi server trả 500"
+        },
+        {
+          "id": "b",
+          "text": "Tránh gọi dịch vụ SMS bên thứ ba tốn tiền"
+        },
+        {
+          "id": "c",
+          "text": "Kiểm chứng luồng đặt hàng đầu cuối hoạt động"
+        },
+        {
+          "id": "d",
+          "text": "Chứng minh API trả đúng hợp đồng đã công bố"
+        }
+      ],
+      "answer": [
+        "a",
+        "b"
+      ],
+      "explanation": "Mock hợp với lỗi khó tạo và dịch vụ ngoài. Luồng đầu cuối và hợp đồng API cần gọi thật vì mock không chứng minh gì về server."
+    },
+    {
+      "id": "q6",
+      "type": "single",
+      "prompt": "Bạn muốn kiểm tra giao diện trong lúc server trả lời chậm 1,5 giây. Cách làm đúng nhất?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Chờ trong handler của route rồi mới fulfill hoặc fallback"
+        },
+        {
+          "id": "b",
+          "text": "Gọi page.waitForTimeout(1500) ngay sau khi bấm nút"
+        },
+        {
+          "id": "c",
+          "text": "Dùng route.abort('timedout') để request thật sự chờ lâu"
+        },
+        {
+          "id": "d",
+          "text": "Tăng timeout toàn cục của test lên đúng 1500 mili giây"
+        }
+      ],
+      "answer": [
+        "a"
+      ],
+      "explanation": "Độ trễ cố ý trong handler tạo ra tình huống chậm. abort làm request thất bại ngay chứ không chờ, và waitForTimeout trong thân test nên tránh."
+    },
+    {
+      "id": "q7",
+      "type": "single",
+      "prompt": "Sau route.abort('timedout') cho POST, trang ném Failed to fetch và không hiện thông báo nào. Bạn nên làm gì?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Sửa test để bỏ qua lỗi chưa xử lý của trang"
+        },
+        {
+          "id": "b",
+          "text": "Ghi nhận thành bug thiếu xử lý lỗi mạng của ứng dụng"
+        },
+        {
+          "id": "c",
+          "text": "Đổi sang route.fulfill với status 200 cho test xanh"
+        },
+        {
+          "id": "d",
+          "text": "Đăng ký thêm handler thứ hai để che lỗi của handler đầu"
+        }
+      ],
+      "answer": [
+        "b"
+      ],
+      "explanation": "Phát hiện thiếu xử lý lỗi mạng chính là giá trị của test mô phỏng mạng đứt. Che lỗi để test xanh làm mất giá trị đó."
+    },
+    {
+      "id": "q8",
+      "type": "single",
+      "prompt": "Bạn muốn giao diện gửi số lượng 1 nhưng server nhận 3, rồi xem phản hồi thật của server. Dùng gì?",
+      "options": [
+        {
+          "id": "a",
+          "text": "route.fulfill với JSON giả có tổng tiền của số lượng 3"
+        },
+        {
+          "id": "b",
+          "text": "route.continue({ postData }) với body đã sửa số lượng"
+        },
+        {
+          "id": "c",
+          "text": "route.abort rồi tự gọi request.post với số lượng 3"
+        },
+        {
+          "id": "d",
+          "text": "page.routeFromHAR với notFound đặt là abort"
+        }
+      ],
+      "answer": [
+        "b"
+      ],
+      "explanation": "continue gửi request đã sửa ra mạng thật nên bạn nhận phản hồi thật. fulfill tạo phản hồi giả nên không kiểm tra được server."
+    },
+    {
+      "id": "q9",
+      "type": "multi",
+      "prompt": "Về thứ tự và hành vi của các handler route, điều nào đúng? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Handler đăng ký sau được thử trước handler đăng ký trước"
+        },
+        {
+          "id": "b",
+          "text": "route.fallback chuyển request cho handler đăng ký trước đó"
+        },
+        {
+          "id": "c",
+          "text": "route.continue vẫn cho các handler còn lại xử lý tiếp"
+        },
+        {
+          "id": "d",
+          "text": "Một request có thể vừa fulfill vừa continue thành công"
+        }
+      ],
+      "answer": [
+        "a",
+        "b"
+      ],
+      "explanation": "continue gửi thẳng ra mạng và bỏ qua handler còn lại. Mỗi request chỉ được xử lý một lần, xử lý hai lần gây lỗi Route is already handled."
+    },
+    {
+      "id": "q10",
+      "type": "single",
+      "prompt": "Vì sao cần mở file .har bằng trình soạn thảo kiểm tra trước khi commit?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Vì định dạng HAR dễ hỏng khi mở bằng trình soạn thảo"
+        },
+        {
+          "id": "b",
+          "text": "Vì file HAR có thể chứa cookie, token và dữ liệu cá nhân"
+        },
+        {
+          "id": "c",
+          "text": "Vì Playwright từ chối đọc HAR có chứa ký tự tiếng Việt"
+        },
+        {
+          "id": "d",
+          "text": "Vì HAR luôn tăng dung lượng repo lên hàng trăm megabyte"
+        }
+      ],
+      "answer": [
+        "b"
+      ],
+      "explanation": "HAR lưu cả header như Cookie và Authorization cùng body của response. Cần rà soát hoặc ghi từ môi trường dữ liệu giả."
+    }
+  ]
+}

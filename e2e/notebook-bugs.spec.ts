@@ -119,4 +119,11 @@ test.describe("Kiểm tra nội dung (npm run check:content)", () => {
     const r = run(root);
     expect(r.code, r.out).toBe(0);
   });
+
+  test("phát hiện frontmatter YAML sai (tiêu đề có dấu hai chấm không bọc nháy) làm hỏng build", () => {
+    const bad = ["---", "title: Upload: Excel, XML", "level: 1", "order: 1", "minutes: 5", "summary: s", "keywords: [x]", "---", "ok"].join(String.fromCharCode(10));
+    const r = run(fixture({ "1-01-a.md": bad }));
+    expect(r.code).toBe(1);
+    expect(r.out).toContain("frontmatter không phải YAML hợp lệ");
+  });
 });

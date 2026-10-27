@@ -1,0 +1,249 @@
+{
+  "questions": [
+    {
+      "id": "q1",
+      "type": "single",
+      "prompt": "Đọc file CSV xuất từ Excel, cột đầu tên id nhưng code báo id là undefined. Nguyên nhân phổ biến nhất?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Excel luôn đổi tên cột đầu tiên của mọi file CSV thành chữ hoa"
+        },
+        {
+          "id": "b",
+          "text": "File có BOM nên tên cột thật là ký tự lạ cộng với id"
+        },
+        {
+          "id": "c",
+          "text": "csv-parse không đọc được cột nào có tên chỉ gồm hai chữ cái"
+        },
+        {
+          "id": "d",
+          "text": "Dòng đầu tiên của file CSV luôn bị thư viện bỏ qua khi đọc"
+        }
+      ],
+      "answer": [
+        "b"
+      ],
+      "explanation": "BOM là ký tự đánh dấu UTF-8 ở đầu file, dính vào tên cột đầu. Tuỳ chọn bom: true của csv-parse loại bỏ nó."
+    },
+    {
+      "id": "q2",
+      "type": "single",
+      "prompt": "Ô \"Mật khẩu cần chữ hoa, chữ thường\" trong CSV bị tách thành hai cột. Cách sửa đúng là gì?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Xoá toàn bộ dấu phẩy trong nội dung ô trước khi lưu thành CSV"
+        },
+        {
+          "id": "b",
+          "text": "Bao ô bằng dấu ngoặc kép trong file nguồn để dấu phẩy thuộc về ô"
+        },
+        {
+          "id": "c",
+          "text": "Tăng giá trị tuỳ chọn trim để thư viện gộp các phần lại với nhau"
+        },
+        {
+          "id": "d",
+          "text": "Đổi đuôi file từ csv sang txt để thư viện không tách theo dấu phẩy"
+        }
+      ],
+      "answer": [
+        "b"
+      ],
+      "explanation": "CSV quy ước ô chứa dấu phẩy phải nằm trong ngoặc kép. Excel tự làm khi lưu; bạn cũng có thể đổi dấu ngăn cách sang chấm phẩy và khai báo delimiter."
+    },
+    {
+      "id": "q3",
+      "type": "single",
+      "prompt": "exceljs đọc file bằng await, còn test() cần được gọi ngay khi nạp file spec. Giải pháp gọn trong dự án CommonJS là gì?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Dùng await ở mức cao nhất của file spec để chờ đọc xong dữ liệu"
+        },
+        {
+          "id": "b",
+          "text": "Dùng project setup đọc Excel rồi sinh test sau khi setup chạy xong"
+        },
+        {
+          "id": "c",
+          "text": "Gọi test() bên trong beforeAll sau khi dữ liệu Excel đã đọc xong"
+        },
+        {
+          "id": "d",
+          "text": "Dùng globalSetup đổi Excel thành JSON rồi spec đọc JSON đồng bộ"
+        }
+      ],
+      "answer": [
+        "d"
+      ],
+      "explanation": "globalSetup chạy trước khi nạp file test nên JSON đã có sẵn. Project setup chạy sau khi danh sách test đã tạo, còn test() không khai báo được trong hook."
+    },
+    {
+      "id": "q4",
+      "type": "multi",
+      "prompt": "Ô Excel mà exceljs có thể trả về dưới dạng khác với chuỗi thường là những loại nào? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Ô ngày được trả về dưới dạng đối tượng Date"
+        },
+        {
+          "id": "b",
+          "text": "Ô công thức được trả về dạng object có formula và result"
+        },
+        {
+          "id": "c",
+          "text": "Ô số nguyên luôn được trả về dưới dạng chuỗi có dấu nháy"
+        },
+        {
+          "id": "d",
+          "text": "Ô rỗng luôn được trả về dưới dạng chuỗi chỉ gồm một dấu cách"
+        }
+      ],
+      "answer": [
+        "a",
+        "b"
+      ],
+      "explanation": "Ngày thành Date, công thức thành object {formula, result}. Ô số trả về number và ô rỗng trả về null, nên cần hàm đổi sang chuỗi chung."
+    },
+    {
+      "id": "q5",
+      "type": "single",
+      "prompt": "Chạy lệnh từ thư mục con thì gặp lỗi ENOENT với đường dẫn có hai chữ tests lặp lại. Cách khắc phục bền vững là gì?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Luôn chạy lệnh từ thư mục gốc và nhắc mọi người trong nhóm làm vậy"
+        },
+        {
+          "id": "b",
+          "text": "Dựng đường dẫn từ __dirname của file code thay vì đường dẫn tương đối"
+        },
+        {
+          "id": "c",
+          "text": "Chép file dữ liệu vào mọi thư mục mà test có thể được chạy từ đó"
+        },
+        {
+          "id": "d",
+          "text": "Đổi đường dẫn tương đối thành tên file trần không kèm thư mục nào"
+        }
+      ],
+      "answer": [
+        "b"
+      ],
+      "explanation": "Đường dẫn tương đối tính từ thư mục đang đứng. __dirname là vị trí file code nên không đổi theo nơi chạy lệnh."
+    },
+    {
+      "id": "q6",
+      "type": "single",
+      "prompt": "Hai dòng dữ liệu có cùng tiêu đề nên Playwright báo duplicate test title. Cách sửa phù hợp nhất?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Đưa cột id duy nhất vào tên test và kiểm tra trùng id khi nạp dữ liệu"
+        },
+        {
+          "id": "b",
+          "text": "Thêm một số ngẫu nhiên vào cuối tên test ở mỗi lần chạy lại"
+        },
+        {
+          "id": "c",
+          "text": "Bọc các lệnh test() trong try catch để bỏ qua lỗi trùng tên đó"
+        },
+        {
+          "id": "d",
+          "text": "Gộp các dòng trùng tiêu đề thành một test với dữ liệu của dòng đầu"
+        }
+      ],
+      "answer": [
+        "a"
+      ],
+      "explanation": "Tên ổn định và duy nhất giúp đọc báo cáo và chạy lại đúng ca. Số ngẫu nhiên làm tên đổi mỗi lần, còn bỏ qua lỗi hoặc gộp dòng làm mất ca."
+    },
+    {
+      "id": "q7",
+      "type": "multi",
+      "prompt": "Muốn chạy bộ dữ liệu theo môi trường mà không sửa code. Những cách nào dùng được trong bài này? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Cột env trong file kết hợp biến TEST_ENV để lọc dòng"
+        },
+        {
+          "id": "b",
+          "text": "Cột enabled bật hoặc tắt từng dòng mà không phải xoá dòng"
+        },
+        {
+          "id": "c",
+          "text": "Sửa tên các file spec mỗi lần chuyển sang môi trường mới"
+        },
+        {
+          "id": "d",
+          "text": "Tạo một file Excel riêng và chép toàn bộ code test cho từng môi trường"
+        }
+      ],
+      "answer": [
+        "a",
+        "b"
+      ],
+      "explanation": "env và enabled là dữ liệu nên đổi được mà không đụng code. Đổi tên spec hoặc nhân bản code là cách làm khó bảo trì."
+    },
+    {
+      "id": "q8",
+      "type": "single",
+      "prompt": "Ô ngày xuất sang CSV là 01/03/2026 và bị hiểu thành ngày 3 tháng 1. Cách phòng tránh tốt nhất là gì?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Dùng định dạng yyyy-mm-dd trong file để không còn mơ hồ ngày tháng"
+        },
+        {
+          "id": "b",
+          "text": "Luôn đổi múi giờ máy chạy test sang UTC trước khi đọc các ô ngày"
+        },
+        {
+          "id": "c",
+          "text": "Đọc ngày bằng Number() vì số thì không bị hiểu sai thứ tự ngày"
+        },
+        {
+          "id": "d",
+          "text": "Chuyển các ô ngày sang chữ thường để Date tự nhận dạng đúng"
+        }
+      ],
+      "answer": [
+        "a"
+      ],
+      "explanation": "Định dạng ISO yyyy-mm-dd không mơ hồ và new Date hiểu theo UTC nhất quán. Múi giờ không giải quyết nhầm lẫn giữa ngày và tháng."
+    },
+    {
+      "id": "q9",
+      "type": "single",
+      "prompt": "Ô priority để trống trong dữ liệu. Cách xử lý nào được khuyến khích trong hàm chuyển kiểu?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Để Number(\"\") tự trả về 0 rồi dùng luôn giá trị đó cho test"
+        },
+        {
+          "id": "b",
+          "text": "Quy định rõ ô rỗng nghĩa là gì, ví dụ mặc định ưu tiên 3"
+        },
+        {
+          "id": "c",
+          "text": "Bỏ qua dòng có ô rỗng mà không báo cho người nhập dữ liệu"
+        },
+        {
+          "id": "d",
+          "text": "Để giá trị NaN đi tiếp vào bộ lọc và hy vọng test vẫn chạy"
+        }
+      ],
+      "answer": [
+        "b"
+      ],
+      "explanation": "Number(\"\") là 0 nên vô tình thành ưu tiên cao nhất. Hãy quyết định rõ ô rỗng nghĩa gì, và báo lỗi kèm số dòng khi giá trị sai."
+    }
+  ]
+}

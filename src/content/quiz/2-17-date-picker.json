@@ -1,0 +1,277 @@
+{
+  "questions": [
+    {
+      "id": "q1",
+      "type": "single",
+      "prompt": "Ô Ngày khám là input type=\"date\". Bạn muốn chọn ngày 3 tháng 3 năm 2026. Lệnh nào đúng?",
+      "options": [
+        {
+          "id": "a",
+          "text": "fill(\"03/03/2026\") theo đúng định dạng ngày/tháng/năm"
+        },
+        {
+          "id": "b",
+          "text": "fill(\"3-3-2026\") vì trình duyệt tự chuẩn hoá cách viết"
+        },
+        {
+          "id": "c",
+          "text": "pressSequentially(\"03032026\") rồi nhấn phím Tab để rời ô"
+        },
+        {
+          "id": "d",
+          "text": "fill(\"2026-03-03\") theo định dạng ISO năm-tháng-ngày"
+        }
+      ],
+      "answer": [
+        "d"
+      ],
+      "explanation": "Giá trị của input type=date luôn là yyyy-mm-dd bất kể trình duyệt hiển thị thế nào. Chuỗi khác dạng này gây lỗi 'Malformed value'."
+    },
+    {
+      "id": "q2",
+      "type": "single",
+      "prompt": "Test đặt phòng xanh hôm nay nhưng đỏ sau một tuần vì ghi cứng \"ngày 12 tháng này\". Cách sửa tốt nhất?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Cố định hôm nay bằng page.clock.setFixedTime rồi tính ngày tương đối"
+        },
+        {
+          "id": "b",
+          "text": "Đặt retries cao hơn để test tự chạy lại cho tới khi qua"
+        },
+        {
+          "id": "c",
+          "text": "Đọc ngày hệ thống của máy chạy test rồi ghép vào chuỗi ngày"
+        },
+        {
+          "id": "d",
+          "text": "Chọn ngày bằng chỉ số của nút trong lưới thay vì theo tên"
+        }
+      ],
+      "answer": [
+        "a"
+      ],
+      "explanation": "Cố định đồng hồ làm mọi phép tính hôm nay cho cùng kết quả; tính ngày từ cùng hằng số đó. Retry không sửa nguyên nhân, còn ngày hệ thống thì vẫn thay đổi."
+    },
+    {
+      "id": "q3",
+      "type": "multi",
+      "prompt": "Với lịch tuỳ biến, những locator nào chọn được ngày 15/03/2026 một cách ổn định? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "getByRole(\"button\", { name: \"15/03/2026\" }) theo aria-label"
+        },
+        {
+          "id": "b",
+          "text": "getByTestId(\"day-2026-03-15\") theo mã kiểm thử chứa ngày ISO"
+        },
+        {
+          "id": "c",
+          "text": "getByText(\"15\") vì chữ 15 chỉ xuất hiện một lần trong lịch"
+        },
+        {
+          "id": "d",
+          "text": "locator(\"button\").nth(14) vì ngày 15 là nút thứ mười lăm"
+        }
+      ],
+      "answer": [
+        "a",
+        "b"
+      ],
+      "explanation": "aria-label hoặc data-testid chứa đủ ngày tháng năm là định danh ổn định. getByText('15') dễ khớp thêm ngày của tháng khác, nth phụ thuộc thứ tự lưới."
+    },
+    {
+      "id": "q4",
+      "type": "single",
+      "prompt": "Lịch đang ở tháng 3 nhưng bạn cần ngày 15/06. Cách viết nào bền nhất khi \"hôm nay\" có thể đổi?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Bấm Tháng sau đúng ba lần rồi bấm ngày 15 tháng 6"
+        },
+        {
+          "id": "b",
+          "text": "Bấm Tháng sau tới khi tiêu đề là Tháng 6 2026 rồi bấm ngày"
+        },
+        {
+          "id": "c",
+          "text": "Bấm Tháng sau một lần rồi chờ hai giây cho lịch cập nhật"
+        },
+        {
+          "id": "d",
+          "text": "Dùng page.mouse.click với toạ độ cố định của ngày cần chọn"
+        }
+      ],
+      "answer": [
+        "b"
+      ],
+      "explanation": "Lặp theo tiêu đề không phụ thuộc số lần bấm cố định hay vị trí. Đếm cứng số lần sẽ hỏng khi hôm nay thay đổi, còn toạ độ phụ thuộc kích thước trang."
+    },
+    {
+      "id": "q5",
+      "type": "single",
+      "prompt": "Hôm nay cố định 10/03/2026. Nhận phòng 10/03, bạn kiểm tra biên tối đa 30 đêm. Cặp assertion nào đủ cả hai phía?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Ngày 09/04 bị vô hiệu, ngày 10/04 được bật vì đã đủ 30 đêm"
+        },
+        {
+          "id": "b",
+          "text": "Chỉ cần ngày 10/04 bị vô hiệu vì đó là ngày vượt giới hạn"
+        },
+        {
+          "id": "c",
+          "text": "Ngày 09/04 được bật (30 đêm), 10/04 bị vô hiệu (31 đêm)"
+        },
+        {
+          "id": "d",
+          "text": "Cả hai ngày 09/04 và 10/04 đều phải được bật cho người dùng"
+        }
+      ],
+      "answer": [
+        "c"
+      ],
+      "explanation": "Phân tích giá trị biên cần kiểm tra ngày cuối cùng hợp lệ (30 đêm) và ngày đầu tiên không hợp lệ (31 đêm). Chỉ kiểm tra một phía sẽ bỏ sót lỗi lệch một ngày."
+    },
+    {
+      "id": "q6",
+      "type": "multi",
+      "prompt": "Vì sao toISOString().slice(0, 10) dễ gây lỗi khi lấy \"hôm nay\" ở Việt Nam? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Nó đổi sang UTC nên sau nửa đêm giờ Việt Nam có thể ra ngày hôm trước"
+        },
+        {
+          "id": "b",
+          "text": "Kết quả phụ thuộc thời điểm và múi giờ nên test có thể đỏ trên CI"
+        },
+        {
+          "id": "c",
+          "text": "Nó luôn trả về định dạng dd/mm/yyyy nên không khớp input type=date"
+        },
+        {
+          "id": "d",
+          "text": "Nó bị Playwright chặn trong mọi test chạy với đồng hồ cố định"
+        }
+      ],
+      "answer": [
+        "a",
+        "b"
+      ],
+      "explanation": "toISOString dùng UTC, nên ngày có thể lệch so với giờ địa phương. Hãy dùng getFullYear, getMonth, getDate (giờ địa phương) và ép timezoneId."
+    },
+    {
+      "id": "q7",
+      "type": "single",
+      "prompt": "Bạn muốn test chạy giống nhau trên máy dev và CI dù hai nơi khác múi giờ. Cấu hình nào phù hợp?",
+      "options": [
+        {
+          "id": "a",
+          "text": "test.use({ offline: true }) để ngừng mọi phụ thuộc mạng"
+        },
+        {
+          "id": "b",
+          "text": "test.use({ viewport: { width: 1280, height: 720 } }) cho ổn định"
+        },
+        {
+          "id": "c",
+          "text": "test.use({ colorScheme: \"dark\" }) để đồng nhất giao diện"
+        },
+        {
+          "id": "d",
+          "text": "test.use({ timezoneId: \"Asia/Ho_Chi_Minh\", locale: \"vi-VN\" })"
+        }
+      ],
+      "answer": [
+        "d"
+      ],
+      "explanation": "timezoneId và locale ép trình duyệt dùng múi giờ và định dạng cố định, bất kể máy chạy test. Các tuỳ chọn còn lại không liên quan tới ngày giờ."
+    },
+    {
+      "id": "q8",
+      "type": "single",
+      "prompt": "Sau khi chọn ngày nhận phòng 12/03, test bấm tiếp ngày trả nhưng báo timeout vì không thấy nút. Nguyên nhân nào hợp lý nhất?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Playwright không hỗ trợ chọn hai ngày liên tiếp trên một lịch"
+        },
+        {
+          "id": "b",
+          "text": "Ngày trả nằm ở tháng khác với tháng lịch đang hiển thị"
+        },
+        {
+          "id": "c",
+          "text": "Nút ngày trả đã bị xoá khỏi trang để chống bấm hai lần"
+        },
+        {
+          "id": "d",
+          "text": "page.clock.setFixedTime làm lịch ngừng cập nhật vĩnh viễn"
+        }
+      ],
+      "answer": [
+        "b"
+      ],
+      "explanation": "Lịch chỉ vẽ một tháng tại một thời điểm; ngày trả ở tháng khác cần bấm Tháng sau trước. Cố định đồng hồ không làm lịch ngừng cập nhật."
+    },
+    {
+      "id": "q9",
+      "type": "multi",
+      "prompt": "Trong test dùng page.clock.setFixedTime, những phát biểu nào đúng? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "new Date() trong trang trả về thời điểm đã cố định"
+        },
+        {
+          "id": "b",
+          "text": "Nên gọi trước page.goto để trang thấy ngay thời gian đã cố định"
+        },
+        {
+          "id": "c",
+          "text": "Nó cũng làm setTimeout chạy nhanh gấp đôi so với thường lệ"
+        },
+        {
+          "id": "d",
+          "text": "Nó đồng thời đổi ngày hệ thống thật của máy đang chạy test"
+        }
+      ],
+      "answer": [
+        "a",
+        "b"
+      ],
+      "explanation": "setFixedTime chỉ cố định giá trị thời gian mà trang đọc được, không đổi tốc độ timer và không đổi đồng hồ máy. Gọi trước goto để trang dùng thời gian này ngay từ lúc vẽ."
+    },
+    {
+      "id": "q10",
+      "type": "single",
+      "prompt": "Ô ngày dạng text có mask dd/mm/yyyy tự chèn dấu gạch chéo khi gõ. Cách nào mô phỏng người dùng gõ tay sát nhất?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Dùng evaluate gán thẳng value rồi phát sự kiện change"
+        },
+        {
+          "id": "b",
+          "text": "Dùng setInputFiles để nạp ngày từ một tệp văn bản nhỏ"
+        },
+        {
+          "id": "c",
+          "text": "Dùng pressSequentially gõ từng chữ số rồi toHaveValue kiểm tra"
+        },
+        {
+          "id": "d",
+          "text": "Dùng check() vì ô ngày được xem như một ô đánh dấu"
+        }
+      ],
+      "answer": [
+        "c"
+      ],
+      "explanation": "Mask phản ứng theo từng phím, nên pressSequentially mô phỏng sát người dùng; sau đó kiểm tra bằng toHaveValue. Gán thẳng value bỏ qua xử lý phím của mask."
+    }
+  ]
+}

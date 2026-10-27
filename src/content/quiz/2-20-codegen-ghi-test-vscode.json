@@ -1,0 +1,223 @@
+{
+  "questions": [
+    {
+      "id": "q1",
+      "type": "single",
+      "prompt": "Bạn ghi quy trình thêm việc trên LAB-04 bằng codegen, dán vào file và test xanh. Bật ?bugs=BUG-02 vẫn xanh. Nguyên nhân khả dĩ nhất là gì?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Codegen tắt các bug của lab trong lúc đang ghi lại thao tác"
+        },
+        {
+          "id": "b",
+          "text": "Locator do codegen sinh ra không khớp được với giao diện của lab"
+        },
+        {
+          "id": "c",
+          "text": "Bản ghi chỉ có hành động, chưa có assertion nào kiểm tra kết quả"
+        },
+        {
+          "id": "d",
+          "text": "Test ghi bằng codegen không chạy được với tham số trên đường dẫn"
+        }
+      ],
+      "answer": [
+        "c"
+      ],
+      "explanation": "Codegen ghi hành động chứ không biết kỳ vọng nghiệp vụ. Không có expect thì test xanh dù ứng dụng sai. Hãy thêm assertion rồi chạy lại với bug bật."
+    },
+    {
+      "id": "q2",
+      "type": "multi",
+      "prompt": "Những nút nào là công cụ của extension Playwright trong khung Testing của VS Code? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Record new, để ghi một test mới từ thao tác trên trình duyệt"
+        },
+        {
+          "id": "b",
+          "text": "Deploy site, để đưa trang đang kiểm thử lên môi trường thật"
+        },
+        {
+          "id": "c",
+          "text": "Record at cursor, để chèn thao tác mới tại vị trí con trỏ"
+        },
+        {
+          "id": "d",
+          "text": "Generate report, để tự động viết tài liệu yêu cầu cho dự án"
+        }
+      ],
+      "answer": [
+        "a",
+        "c"
+      ],
+      "explanation": "Record new tạo test mới, Record at cursor chèn thao tác vào test sẵn có, và Pick locator giúp lấy locator. Extension không triển khai site hay viết tài liệu yêu cầu."
+    },
+    {
+      "id": "q3",
+      "type": "single",
+      "prompt": "Dùng Pick locator trên ô Mật khẩu (type=password) của LAB-01. Locator gợi ý nhiều khả năng là gì và vì sao?",
+      "options": [
+        {
+          "id": "a",
+          "text": "getByRole('textbox', { name: 'Mật khẩu' }) vì mọi ô nhập đều là textbox"
+        },
+        {
+          "id": "b",
+          "text": "getByTestId('password') vì codegen luôn ưu tiên test id trước hết"
+        },
+        {
+          "id": "c",
+          "text": "getByText('Mật khẩu') vì chữ này nằm ngay phía trên ô nhập"
+        },
+        {
+          "id": "d",
+          "text": "getByLabel('Mật khẩu') vì ô mật khẩu không có role textbox theo ARIA"
+        }
+      ],
+      "answer": [
+        "d"
+      ],
+      "explanation": "Ô type=password không có role textbox theo chuẩn ARIA nên getByRole textbox không khớp. getByLabel theo nhãn hiển thị là lựa chọn đúng và ngắn gọn."
+    },
+    {
+      "id": "q4",
+      "type": "single",
+      "prompt": "Bạn muốn lần sau mở codegen ở trạng thái đã đăng nhập vào LAB-01 mà không gõ lại mật khẩu. Cách làm nào đúng?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Ghi bằng --output=auth.json rồi mở lại bằng --target=auth.json"
+        },
+        {
+          "id": "b",
+          "text": "Ghi bằng --save-storage=auth.json rồi mở lại bằng --load-storage=auth.json"
+        },
+        {
+          "id": "c",
+          "text": "Ghi bằng --device=auth.json rồi mở lại bằng --lang=auth.json"
+        },
+        {
+          "id": "d",
+          "text": "Ghi bằng --save-har=auth.json rồi mở lại bằng --load-har=auth.json"
+        }
+      ],
+      "answer": [
+        "b"
+      ],
+      "explanation": "--save-storage lưu cookie và localStorage (LAB-01 giữ phiên trong localStorage), --load-storage nạp lại. Các cờ còn lại có nghĩa khác hoặc không tồn tại."
+    },
+    {
+      "id": "q5",
+      "type": "multi",
+      "prompt": "Bản ghi có hai dòng: getByRole('textbox', { name: 'Email' }).click() rồi .fill('user@lab.dev'). Cách biên tập nào hợp lý? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Giữ nguyên cả hai dòng vì codegen sinh ra thì luôn là tối ưu"
+        },
+        {
+          "id": "b",
+          "text": "Bỏ dòng click vì fill đã tự đặt focus vào ô trước khi nhập"
+        },
+        {
+          "id": "c",
+          "text": "Đổi sang getByLabel('Email') để ngắn gọn và bám theo nhãn"
+        },
+        {
+          "id": "d",
+          "text": "Đổi sang locator CSS dài để chọn đúng một phần tử duy nhất"
+        }
+      ],
+      "answer": [
+        "b",
+        "c"
+      ],
+      "explanation": "fill tự focus nên click thừa; getByLabel ngắn và hướng người dùng. Bản ghi cần biên tập, và CSS dài mong manh hơn locator theo role hoặc nhãn."
+    },
+    {
+      "id": "q6",
+      "type": "single",
+      "prompt": "Bản ghi dùng page.goto('http://localhost:3000/lab/todo'). Chuyển sang môi trường staging thì phải sửa mọi test. Cách xử lý tốt nhất là gì?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Dùng tìm và thay thế để đổi địa chỉ trong từng tệp mỗi khi đổi môi trường"
+        },
+        {
+          "id": "b",
+          "text": "Dùng page.goto('/lab/todo') và đặt baseURL trong playwright.config.ts"
+        },
+        {
+          "id": "c",
+          "text": "Thêm biến toàn cục chứa địa chỉ đầy đủ rồi ghép chuỗi trong từng test"
+        },
+        {
+          "id": "d",
+          "text": "Sao chép toàn bộ tệp test cho mỗi môi trường rồi sửa địa chỉ riêng"
+        }
+      ],
+      "answer": [
+        "b"
+      ],
+      "explanation": "Đường dẫn tương đối kèm baseURL trong config cho phép đổi môi trường ở một nơi. Các cách còn lại vẫn lặp lại hoặc dễ sai."
+    },
+    {
+      "id": "q7",
+      "type": "single",
+      "prompt": "Sau khi biên tập bản ghi Todo thành test có TodoPage, bạn bật ?bugs=BUG-02 và dòng expectRemaining(0) đỏ, còn bản thô vẫn xanh. Điều này chứng minh gì?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Bản thô chạy nhanh hơn bản đã biên tập nên bỏ qua được bug"
+        },
+        {
+          "id": "b",
+          "text": "Page Object tự động phát hiện bug mà không cần viết assertion"
+        },
+        {
+          "id": "c",
+          "text": "Chính assertion thêm vào khi biên tập mới làm test bắt được bug"
+        },
+        {
+          "id": "d",
+          "text": "Bug của lab chỉ xuất hiện khi dùng lớp Page Object trong test"
+        }
+      ],
+      "answer": [
+        "c"
+      ],
+      "explanation": "Giá trị của test nằm ở kỳ vọng. Bản thô không có expect nên xanh dù ứng dụng sai; assertion đếm số việc còn lại mới làm lộ bug."
+    },
+    {
+      "id": "q8",
+      "type": "multi",
+      "prompt": "Việc nào nên viết tay thay vì trông cậy vào codegen? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Tìm nhanh locator cho một nút chưa biết gọi là gì"
+        },
+        {
+          "id": "b",
+          "text": "Kiểm tra giá trị biên của phí chuyển tiền bằng bảng dữ liệu"
+        },
+        {
+          "id": "c",
+          "text": "Cố định đồng hồ để kiểm tra mã OTP hết hạn sau 60 giây"
+        },
+        {
+          "id": "d",
+          "text": "Dựng khung nhanh cho một quy trình đơn giản để làm nháp"
+        }
+      ],
+      "answer": [
+        "b",
+        "c"
+      ],
+      "explanation": "Dữ liệu theo bảng và điều khiển thời gian cần thiết kế rồi viết tay. Tìm locator và dựng khung nháp là việc codegen làm tốt."
+    }
+  ]
+}

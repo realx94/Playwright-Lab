@@ -1,0 +1,277 @@
+{
+  "questions": [
+    {
+      "id": "q1",
+      "type": "single",
+      "prompt": "Test so sánh innerText của một tiêu đề đỏ, dù chữ nhìn giống hệt kỳ vọng. Chữ lấy được có xuống dòng và dấu cách thừa. Nên xử lý thế nào?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Tăng timeout của expect lên gấp đôi để chữ kịp ổn định"
+        },
+        {
+          "id": "b",
+          "text": "Chuẩn hoá chuỗi bằng replace(/\\s+/g, \" \") rồi trim trước khi so"
+        },
+        {
+          "id": "c",
+          "text": "Chuyển sang locator CSS để lấy chữ chính xác hơn từ trang"
+        },
+        {
+          "id": "d",
+          "text": "Dùng toBeTruthy thay cho toBe để bỏ qua khác biệt về chữ"
+        }
+      ],
+      "answer": [
+        "b"
+      ],
+      "explanation": "Khoảng trắng và xuống dòng thừa là chuyện trình bày. Gộp mọi cụm trắng thành một dấu cách rồi cắt hai đầu cho kết quả ổn định. Tăng timeout, đổi locator hay nới lỏng assertion không loại bỏ khác biệt trong chuỗi."
+    },
+    {
+      "id": "q2",
+      "type": "single",
+      "prompt": "Hàm countWords dùng trimmed.split(/\\s+/).length. Với chuỗi rỗng \"\" mà không chặn riêng, kết quả là bao nhiêu và vì sao?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Bằng 0 vì chuỗi rỗng thì không chứa từ nào để tách ra"
+        },
+        {
+          "id": "b",
+          "text": "Bằng 1 vì split trả về mảng có một phần tử là chuỗi rỗng"
+        },
+        {
+          "id": "c",
+          "text": "Bằng -1 vì split báo không tìm thấy dấu phân tách nào"
+        },
+        {
+          "id": "d",
+          "text": "Gây lỗi chạy vì split không nhận được chuỗi có độ dài 0"
+        }
+      ],
+      "answer": [
+        "b"
+      ],
+      "explanation": "\"\".split(/\\s+/) trả về [\"\"], một mảng có đúng một phần tử rỗng nên length là 1. Vì vậy cần kiểm tra chuỗi sau trim có rỗng không trước khi split."
+    },
+    {
+      "id": "q3",
+      "type": "single",
+      "prompt": "isPalindrome(\"Madam\") trả false dù từ này đọc xuôi ngược giống nhau. Nguyên nhân thường gặp nhất là gì?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Chữ M hoa khác chữ m thường nên chưa đưa về chữ thường"
+        },
+        {
+          "id": "b",
+          "text": "Hai con trỏ left và right bị tăng nhầm cùng một lúc"
+        },
+        {
+          "id": "c",
+          "text": "Chuỗi có số lẻ ký tự nên không thể thành palindrome"
+        },
+        {
+          "id": "d",
+          "text": "Phương thức replace đã xoá mất ký tự đầu tiên của chuỗi"
+        }
+      ],
+      "answer": [
+        "a"
+      ],
+      "explanation": "So sánh M với m cho kết quả khác nhau. Phải toLowerCase trước khi so. Độ dài lẻ vẫn có thể là palindrome vì ký tự giữa không cần so với ai."
+    },
+    {
+      "id": "q4",
+      "type": "multi",
+      "prompt": "Khi kiểm tra dấu ngoặc cân bằng bằng stack, những mô tả nào đúng? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Gặp ngoặc đóng thì lấy đỉnh stack ra và so với ngoặc mở tương ứng"
+        },
+        {
+          "id": "b",
+          "text": "Chỉ cần đếm số ngoặc mở bằng số ngoặc đóng là đủ kết luận"
+        },
+        {
+          "id": "c",
+          "text": "Kết thúc chuỗi mà stack còn phần tử nghĩa là còn ngoặc chưa đóng"
+        },
+        {
+          "id": "d",
+          "text": "Nên dùng Set để ghi nhớ các ngoặc mở đã từng xuất hiện"
+        }
+      ],
+      "answer": [
+        "a",
+        "c"
+      ],
+      "explanation": "Stack giữ ngoặc mở theo thứ tự lồng nhau; ngoặc đóng phải khớp với đỉnh và cuối chuỗi stack phải rỗng. Chỉ đếm số lượng không bắt được ca đóng sai thứ tự như {[(])}, còn Set không nhớ thứ tự."
+    },
+    {
+      "id": "q5",
+      "type": "single",
+      "prompt": "Vì sao chỉ so sánh hai Set ký tự là chưa đủ để kết luận hai chuỗi là anagram của nhau?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Set chỉ nhận được các ký tự có trong bảng chữ cái tiếng Anh"
+        },
+        {
+          "id": "b",
+          "text": "Set sắp xếp lại ký tự nên làm mất thứ tự ban đầu của chuỗi"
+        },
+        {
+          "id": "c",
+          "text": "Set bỏ mất số lần xuất hiện nên aab và abb bị coi là giống nhau"
+        },
+        {
+          "id": "d",
+          "text": "Set không so sánh được với chuỗi có chứa khoảng trắng bên trong"
+        }
+      ],
+      "answer": [
+        "c"
+      ],
+      "explanation": "Anagram cần cùng bộ chữ với cùng số lần. Set chỉ biết một ký tự có mặt hay không, nên aab và abb cùng tập {a, b} dù khác nhau. Cần Map đếm tần suất hoặc sắp xếp chữ."
+    },
+    {
+      "id": "q6",
+      "type": "single",
+      "prompt": "Chuỗi \"{[(])}\" bị kết luận không cân bằng. Chính xác thì chuyện gì xảy ra trong thuật toán stack?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Số ngoặc mở và số ngoặc đóng của chuỗi này không bằng nhau"
+        },
+        {
+          "id": "b",
+          "text": "Chuỗi kết thúc khi stack vẫn còn một ngoặc mở chưa được đóng"
+        },
+        {
+          "id": "c",
+          "text": "Ngoặc đóng ] gặp đỉnh stack là ( nên hai loại ngoặc không khớp"
+        },
+        {
+          "id": "d",
+          "text": "Ngoặc đầu tiên của chuỗi là ngoặc nhọn nên không hợp lệ"
+        }
+      ],
+      "answer": [
+        "c"
+      ],
+      "explanation": "Chuỗi có đủ số lượng ngoặc mở và đóng, nhưng khi gặp ] thì đỉnh stack là ( chứ không phải [. Đóng sai thứ tự lồng nhau là lỗi mà việc đếm số lượng không phát hiện được."
+    },
+    {
+      "id": "q7",
+      "type": "multi",
+      "prompt": "Những nhận xét nào về bài đảo chuỗi bằng vòng lặp và bằng [...s].reverse().join(\"\") là đúng? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Chuỗi bất biến nên cả hai cách đều phải tạo ra chuỗi mới"
+        },
+        {
+          "id": "b",
+          "text": "Có thể gọi s.reverse() trực tiếp trên chuỗi để đảo tại chỗ"
+        },
+        {
+          "id": "c",
+          "text": "Bản dùng spread duyệt theo ký tự thật nên an toàn hơn với emoji"
+        },
+        {
+          "id": "d",
+          "text": "Vòng lặp lùi từ s.length cho kết quả đúng với mọi chuỗi"
+        }
+      ],
+      "answer": [
+        "a",
+        "c"
+      ],
+      "explanation": "Chuỗi JavaScript bất biến nên không thể đảo tại chỗ và reverse chỉ có trên mảng. Chỉ số bắt đầu ở s.length là ngoài giới hạn; phải bắt đầu từ s.length - 1. Spread tách theo ký tự thật nên không vỡ emoji."
+    },
+    {
+      "id": "q8",
+      "type": "single",
+      "prompt": "Loại ký tự trùng bằng result.includes(c) ngay trong vòng lặp qua chuỗi. So với dùng Set, độ phức tạp thời gian thay đổi thế nào?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Giữ nguyên là O(n) vì includes chỉ kiểm tra một ký tự"
+        },
+        {
+          "id": "b",
+          "text": "Giảm xuống O(1) vì includes được trình duyệt tối ưu sẵn"
+        },
+        {
+          "id": "c",
+          "text": "Tăng lên O(n log n) vì includes phải sắp xếp kết quả trước"
+        },
+        {
+          "id": "d",
+          "text": "Tăng lên O(n²) vì mỗi lần includes lại duyệt cả kết quả"
+        }
+      ],
+      "answer": [
+        "d"
+      ],
+      "explanation": "includes duyệt tuần tự chuỗi kết quả nên mỗi ký tự tốn tới n bước, tổng cộng O(n²). Set.has tra cứu trong khoảng một bước nên tổng thể giữ O(n)."
+    },
+    {
+      "id": "q9",
+      "type": "single",
+      "prompt": "parseMoney dùng replace(/[^\\d-]/g, \"\") đổi \"1.234.500đ\" thành số. Nếu giao diện đổi sang \"1,234.50\" thì điều gì xảy ra?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Kết quả vẫn đúng là 1234.5 vì hàm hiểu được dấu thập phân"
+        },
+        {
+          "id": "b",
+          "text": "Hàm ném lỗi vì chuỗi chứa dấu phẩy ở giữa các chữ số"
+        },
+        {
+          "id": "c",
+          "text": "Hàm trả về NaN vì có hai ký tự phân cách khác nhau"
+        },
+        {
+          "id": "d",
+          "text": "Dấu thập phân bị xoá nên được 123450, sai giá trị thật"
+        }
+      ],
+      "answer": [
+        "d"
+      ],
+      "explanation": "Biểu thức chỉ giữ chữ số và dấu trừ nên mọi dấu chấm phẩy đều bị xoá, 1,234.50 thành 123450. Với tiền có phần thập phân cần quy tắc riêng theo định dạng vùng."
+    },
+    {
+      "id": "q10",
+      "type": "multi",
+      "prompt": "Với hàm countWords, những ca biên nào đáng thử đầu tiên? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Chuỗi chỉ chứa toàn khoảng trắng như \"   \""
+        },
+        {
+          "id": "b",
+          "text": "Chuỗi chứa một số nguyên rất lớn như \"99999999999\""
+        },
+        {
+          "id": "c",
+          "text": "Nhiều dấu cách liền nhau giữa hai từ liên tiếp"
+        },
+        {
+          "id": "d",
+          "text": "Chuỗi có độ dài đúng bằng 1000 ký tự chữ cái"
+        }
+      ],
+      "answer": [
+        "a",
+        "c"
+      ],
+      "explanation": "Chuỗi toàn khoảng trắng và nhiều dấu cách liền nhau là hai ca dễ làm split sinh ra phần tử rỗng. Hai ca còn lại không chạm vào logic tách từ."
+    }
+  ]
+}

@@ -232,9 +232,9 @@ Kết quả mong đợi: với `--loop=claude`, lệnh in ra (đã chạy thật
  Using project "chromium" as a primary project
  specs\README.md - directory for test plans
  tests\seed.spec.ts - default environment seed file
- .claudegents\playwright-test-generator.md - agent definition
- .claudegents\playwright-test-healer.md - agent definition
- .claudegents\playwright-test-planner.md - agent definition
+ .claude\agents\playwright-test-generator.md - agent definition
+ .claude\agents\playwright-test-healer.md - agent definition
+ .claude\agents\playwright-test-planner.md - agent definition
  .mcp.json - mcp configuration
  Done.
 ```

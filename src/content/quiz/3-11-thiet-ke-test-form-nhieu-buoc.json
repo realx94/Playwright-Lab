@@ -1,0 +1,124 @@
+{
+  "questions": [
+    {
+      "id": "q1",
+      "type": "single",
+      "prompt": "Ngày giả lập là 15/06/2026. Chủ xe sinh ngày 15/06/2008 nhập ở bước 1 (luật tuổi 18 đến 70). Kết quả mong đợi là gì?",
+      "options": [
+        { "id": "a", "text": "Báo lỗi vì chủ xe chưa đủ 18 tuổi tròn" },
+        { "id": "b", "text": "Báo lỗi vì ngày sinh trùng với ngày hôm nay" },
+        { "id": "c", "text": "Hợp lệ, vì đúng hôm nay chủ xe tròn 18 tuổi" },
+        { "id": "d", "text": "Hợp lệ nhưng bị cộng phụ phí dưới 25 tuổi" }
+      ],
+      "answer": ["c"],
+      "explanation": "Tuổi tròn tính đến hôm nay, đúng ngày sinh nhật thì đã tròn 18 và nằm trong biên hợp lệ. Phụ phí 20% là chuyện của bước tính phí, không phải lỗi ngày sinh."
+    },
+    {
+      "id": "q2",
+      "type": "single",
+      "prompt": "Với ngày giả lập 15/06/2026, chủ xe nào bị cộng phụ phí 20% vì dưới 25 tuổi?",
+      "options": [
+        { "id": "a", "text": "Sinh ngày 15/06/2001, đúng 25 tuổi hôm nay" },
+        { "id": "b", "text": "Sinh ngày 16/06/2001, còn một ngày nữa mới đủ 25" },
+        { "id": "c", "text": "Sinh ngày 15/06/2000, đã qua sinh nhật thứ 26" },
+        { "id": "d", "text": "Sinh ngày 01/01/2001, đã qua sinh nhật năm nay" }
+      ],
+      "answer": ["b"],
+      "explanation": "Phụ phí áp dụng cho người dưới 25 tuổi. Người sinh 16/06/2001 mới 24 tuổi 364 ngày nên bị phụ phí, người sinh 15/06/2001 vừa tròn 25 thì không."
+    },
+    {
+      "id": "q3",
+      "type": "single",
+      "prompt": "Ô tô con, gói Cơ bản (1,0%), giá trị 1 tỷ, chủ xe 36 tuổi, 2 năm không bồi thường, không quyền lợi thêm. Phí năm đúng là bao nhiêu?",
+      "options": [
+        { "id": "a", "text": "8.500.000 đồng, giảm 15% từ mốc 2 năm" },
+        { "id": "b", "text": "9.500.000 đồng, giảm 5% cho mỗi năm" },
+        { "id": "c", "text": "10.000.000 đồng, chưa áp dụng giảm giá" },
+        { "id": "d", "text": "9.000.000 đồng, giảm 10% trên phí gốc" }
+      ],
+      "answer": ["d"],
+      "explanation": "Phí gốc 1 tỷ x 1,0% x 1,0 = 10.000.000. Hai năm không bồi thường giảm 10% còn 9.000.000. Con số 8.500.000 chính là kết quả sai khi bật BUG-02."
+    },
+    {
+      "id": "q4",
+      "type": "multi",
+      "prompt": "Những khẳng định nào đúng về thứ tự tính phí của form báo giá? (chọn tất cả đáp án đúng)",
+      "options": [
+        { "id": "a", "text": "Giảm giá được tính trên phí đã cộng phụ phí tuổi" },
+        { "id": "b", "text": "Quyền lợi thêm được cộng trước khi áp dụng giảm giá" },
+        { "id": "c", "text": "Quyền lợi thêm được cộng sau khi đã giảm giá xong" },
+        { "id": "d", "text": "Phí năm được làm tròn xuống đến nghìn đồng ở bước cuối" },
+        { "id": "e", "text": "Mỗi bước trung gian đều được làm tròn lên đến nghìn đồng" }
+      ],
+      "answer": ["a", "c", "d"],
+      "explanation": "Công thức là phí gốc, nhân phụ phí, nhân giảm giá, cộng quyền lợi rồi mới làm tròn xuống nghìn đồng một lần. Cộng quyền lợi trước giảm giá hoặc làm tròn từng bước đều cho kết quả lệch."
+    },
+    {
+      "id": "q5",
+      "type": "single",
+      "prompt": "Bạn sinh bảng pairwise cho gói, loại xe và các tham số khác. Vì sao phải loại tổ hợp Xe máy với gói Toàn diện trước khi sinh?",
+      "options": [
+        { "id": "a", "text": "Tổ hợp đó không thể chọn trên giao diện nên test sẽ treo" },
+        { "id": "b", "text": "Tổ hợp đó làm tổng số cặp lớn hơn cận dưới của bảng" },
+        { "id": "c", "text": "Xe máy có hệ số thấp nhất nên phí không đáng test" },
+        { "id": "d", "text": "Pairwise chỉ cho phép đúng hai giá trị cho mỗi tham số" }
+      ],
+      "answer": ["a"],
+      "explanation": "Ràng buộc nghiệp vụ (BR-03) làm tổ hợp này không tồn tại; nếu để lọt vào bảng thì test không thể thực hiện được và bảng còn tính sai số cặp cần phủ."
+    },
+    {
+      "id": "q6",
+      "type": "single",
+      "prompt": "Sáu tham số có 3, 3, 2, 3, 4 và 2 giá trị. Cận dưới số dòng của bộ pairwise là bao nhiêu?",
+      "options": [
+        { "id": "a", "text": "9 dòng, tích của hai tham số có 3 giá trị" },
+        { "id": "b", "text": "15 dòng, bằng số cặp tham số trong bộ" },
+        { "id": "c", "text": "432 dòng, tích của mọi giá trị các tham số" },
+        { "id": "d", "text": "12 dòng, tích của hai tham số nhiều giá trị nhất" }
+      ],
+      "answer": ["d"],
+      "explanation": "Mọi cặp giá trị của hai tham số lớn nhất (4 và 3) đều phải xuất hiện nên cần ít nhất 4 x 3 = 12 dòng. Bộ thực tế sinh ra có 15 dòng."
+    },
+    {
+      "id": "q7",
+      "type": "multi",
+      "prompt": "Những test nào thuộc lớp kiểm tra chuyển trạng thái của form nhiều bước? (chọn tất cả đáp án đúng)",
+      "options": [
+        { "id": "a", "text": "Ở bước 1 không tồn tại nút Quay lại" },
+        { "id": "b", "text": "Đầu số 03, 05, 07, 08, 09 đều được nhận" },
+        { "id": "c", "text": "Tải trọng 0,5 và 3,5 tấn đều hợp lệ" },
+        { "id": "d", "text": "Quay lại từ bước 3 vẫn giữ dữ liệu bước 2" },
+        { "id": "e", "text": "Giá trị xe 50 triệu đồng được chấp nhận" }
+      ],
+      "answer": ["a", "d"],
+      "explanation": "Chuyển trạng thái kiểm tra sự kiện điều hướng và dữ liệu giữ lại giữa các bước. Đầu số điện thoại là EP, tải trọng và giá trị xe là BVA."
+    },
+    {
+      "id": "q8",
+      "type": "single",
+      "prompt": "Đồng nghiệp lấy phí mong đợi trong spec bằng cách chạy ứng dụng rồi chép số hiển thị. Vấn đề chính của cách làm này là gì?",
+      "options": [
+        { "id": "a", "text": "Test chạy chậm hơn vì phải mở trình duyệt thêm một lần" },
+        { "id": "b", "text": "Công thức sai trong ứng dụng vẫn cho test xanh vì cùng một nguồn" },
+        { "id": "c", "text": "Số tiền chép tay thường bị thiếu dấu chấm phân cách nghìn" },
+        { "id": "d", "text": "Playwright không cho phép so sánh số tiền định dạng tiếng Việt" }
+      ],
+      "answer": ["b"],
+      "explanation": "Kết quả mong đợi phải đến từ nguồn độc lập (tính tay hoặc oracle viết từ BR). Chép từ ứng dụng thì lỗi công thức được ghi nhận thành đáp án đúng."
+    },
+    {
+      "id": "q9",
+      "type": "multi",
+      "prompt": "Bảng pairwise 15 dòng có các dòng sau (NCB là số năm không bồi thường). Dòng nào làm lộ BUG-02, tức là 2 năm bị giảm 15% thay vì 10%? (chọn tất cả đáp án đúng)",
+      "options": [
+        { "id": "a", "text": "Dòng 1: ô tô con, Cơ bản, dưới 25 tuổi, NCB 0" },
+        { "id": "b", "text": "Dòng 12: tải nhẹ, Cơ bản, dưới 25 tuổi, NCB 1" },
+        { "id": "c", "text": "Dòng 8: ô tô con, Toàn diện, từ 25 tuổi, NCB 2" },
+        { "id": "d", "text": "Dòng 5: tải nhẹ, Nâng cao, dưới 25 tuổi, NCB 3" },
+        { "id": "e", "text": "Dòng 9: xe máy, Nâng cao, dưới 25 tuổi, NCB 2" }
+      ],
+      "answer": ["c", "e"],
+      "explanation": "BUG-02 chỉ đổi mức giảm tại đúng 2 năm (10% thành 15%). Chỉ các dòng có NCB 2 là dòng 8 và dòng 9 làm phí năm lệch; NCB 0, 1 và 3 vẫn đúng."
+    }
+  ]
+}

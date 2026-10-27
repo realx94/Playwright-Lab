@@ -2,12 +2,13 @@
 
 Website học **Playwright Automation từ Zero đến Hero** cho QA: bài học, lab nghiệp vụ, thiết kế test case, bài tập kèm chấm tự động và starter repo.
 
-- **55 bài học** (Level 0–5), mỗi bài có quiz xáo trộn chống đoán mẹo
-- **28 lab** trong chính website (`/lab/*`), đủ 28 lab của danh mục; mỗi lab có business rule, test case mẫu, bug có chủ đích (bật bằng `?bugs=`) và bài tập chấm tự động:
+- **72 bài học** (Level 0–5), mỗi bài có quiz xáo trộn chống đoán mẹo
+- **32 lab** trong chính website (`/lab/*`), gồm 28 lab của danh mục và 4 lab bổ sung; mỗi lab có business rule, test case mẫu, bug có chủ đích (bật bằng `?bugs=`) và bài tập chấm tự động:
   - **Cơ bản:** Login, Form, Giỏ hàng, Todo, Bảng dữ liệu, Playground (iframe, shadow DOM, dialog, kéo thả…)
-  - **API và dữ liệu:** Mock REST API, Đơn hàng & xác minh DB, Webhook (HMAC, idempotency, retry), CSV nhập/xuất, Tải tệp lên
+  - **Thao tác và web elements:** Tìm & đặt phòng khách sạn (date picker, combobox, lọc, đọc danh sách), Kanban (kéo thả, chuột phải, phím tắt, hoàn tác)
+  - **API và dữ liệu:** Mock REST API, Đơn hàng & xác minh DB, Webhook (HMAC, idempotency, retry), CSV nhập/xuất, Tải tệp lên, Xuất báo cáo Excel/XML/Word/PDF (kiểm tra nội dung tệp)
   - **Auth và bảo mật:** Email OTP, 2FA TOTP, OAuth (Fake IdP), CAPTCHA & rate limit, RBAC & multi-tenant
-  - **Nghiệp vụ:** Thanh toán thẻ, Chuyển tiền ngân hàng, Đặt vé (giữ chỗ), Đặt lịch khám, Ticket & SLA, Kho & đơn nhập, Nghỉ phép, Dashboard
+  - **Nghiệp vụ:** Thanh toán thẻ, Chuyển tiền ngân hàng, Đặt vé (giữ chỗ), Đặt lịch khám, Ticket & SLA, Kho & đơn nhập, Nghỉ phép, Dashboard, Báo giá bảo hiểm (form nhiều bước)
   - **Thời gian và đa môi trường:** Múi giờ & đồng hồ, Chat thời gian thực, Email giao dịch, Đa ngôn ngữ & responsive
 - **Starter repo** (`starter-repo/`) tải về làm bài, có `npm run grade` chấm bằng mutation grading
 - Tra cứu: tìm kiếm `Ctrl+K`, thuật ngữ, cheat sheet; bôi đen bất kỳ chữ nào để **hỏi Google AI**

@@ -5434,4 +5434,1200 @@ test("huỷ đơn không đổi tồn kho; số lượng đặt có biên 1 và 
   },
 ];
 
-export const EXERCISES: Record<string, Exercise[]> = { login, forms, cart, playground, api, otp, todo, table, leave, chat, totp, oauth, pay, orders, guard, webhooks, rbac, timezone, csv, mail, upload, bank, booking, dashboard, clinic, tickets, i18n, inventory };
+const hotel: Exercise[] = [
+  {
+    id: "hotel-1",
+    title: "Lịch tuỳ biến: khoảng ngày, biên 1 và 30 đêm",
+    difficulty: 2,
+    bugs: ["BUG-01"],
+    task: "Điều khiển lịch tuỳ biến (không phải input type=date) với hôm nay cố định bằng page.clock.setFixedTime. Kiểm tra ngày quá khứ bị vô hiệu, chọn khoảng 1 đêm và 30 đêm (ngày thứ 31 bị vô hiệu), chọn lại ngày trả không sau ngày nhận thì bắt đầu lại từ ngày nhận mới, và khoảng ngày được tô nổi bật. Test phải đỏ khi bật BUG-01.",
+    criteria: [
+      "Cố định ngày hiện tại bằng page.clock.setFixedTime trước khi mở trang",
+      "Chọn ngày bằng data-testid day-YYYY-MM-DD, chuyển tháng bằng nút Tháng sau",
+      "Kiểm tra số đêm ở biên 1 và 30, ngày thứ 31 bị vô hiệu (toBeDisabled)",
+      "Kiểm tra trạng thái tô nổi bật qua thuộc tính data-state",
+      "Test đỏ với BUG-01",
+      ...COMMON_CRITERIA,
+    ],
+    hints: [
+      "Đồng hồ của trình duyệt quyết định hôm nay là ngày nào; hãy cố định nó trước page.goto.",
+      "Mỗi ô ngày có data-testid dạng day-2026-03-12; ngày bị vô hiệu là thuộc tính disabled thật.",
+      "Chọn ngày trả trùng ngày nhận không được tạo ra khoảng 0 đêm: kiểm tra nút Trả phòng quay lại Chọn ngày.",
+    ],
+    solution: `import { test, expect, type Page } from "@playwright/test";
+
+async function open(page: Page) {
+  await page.clock.setFixedTime(new Date("2026-03-10T09:00:00"));
+  await page.goto("/lab/hotel");
+  await page.getByTestId("reset-data").click();
+}
+
+const day = (page: Page, iso: string) => page.getByTestId("day-" + iso);
+
+test("ngày quá khứ bị vô hiệu, hôm nay chọn được", async ({ page }) => {
+  await open(page);
+  await page.getByLabel("Nhận phòng").click();
+  await expect(day(page, "2026-03-09")).toBeDisabled();
+  await expect(day(page, "2026-03-10")).toBeEnabled();
+});
+
+test("biên 1 đêm và 30 đêm", async ({ page }) => {
+  await open(page);
+  await page.getByLabel("Nhận phòng").click();
+  await day(page, "2026-03-10").click();
+  await day(page, "2026-03-11").click();
+  await expect(page.getByTestId("nights")).toHaveText("1 đêm");
+
+  await page.getByLabel("Nhận phòng").click();
+  await day(page, "2026-03-10").click();
+  await page.getByRole("button", { name: "Tháng sau" }).click();
+  await expect(day(page, "2026-04-10")).toBeDisabled();
+  await day(page, "2026-04-09").click();
+  await expect(page.getByTestId("nights")).toHaveText("30 đêm");
+});
+
+test("chọn ngày trả không sau ngày nhận thì chọn lại ngày nhận", async ({ page }) => {
+  await open(page);
+  await page.getByLabel("Nhận phòng").click();
+  await day(page, "2026-03-12").click();
+  await day(page, "2026-03-12").click();
+  await expect(page.getByTestId("checkin-btn")).toHaveText("12/03/2026");
+  await expect(page.getByTestId("checkout-btn")).toHaveText("Chọn ngày");
+  await day(page, "2026-03-11").click();
+  await expect(page.getByTestId("checkin-btn")).toHaveText("11/03/2026");
+  await expect(page.getByTestId("checkout-btn")).toHaveText("Chọn ngày");
+});
+
+test("khoảng ngày được tô nổi bật", async ({ page }) => {
+  await open(page);
+  await page.getByLabel("Nhận phòng").click();
+  await day(page, "2026-03-12").click();
+  await day(page, "2026-03-15").click();
+  await expect(page.getByTestId("nights")).toHaveText("3 đêm");
+  await page.getByLabel("Trả phòng").click();
+  await expect(day(page, "2026-03-12")).toHaveAttribute("data-state", "checkin");
+  await expect(day(page, "2026-03-13")).toHaveAttribute("data-state", "in-range");
+  await expect(day(page, "2026-03-15")).toHaveAttribute("data-state", "checkout");
+});`,
+  },
+  {
+    id: "hotel-2",
+    title: "Lọc tiện nghi: duyệt mọi thẻ kết quả bằng all()",
+    difficulty: 2,
+    bugs: ["BUG-03"],
+    task: "Tìm khách sạn ở Hà Nội rồi chọn nhiều tiện nghi. Dùng locator.all() duyệt từng thẻ, đọc data-amenities và khẳng định mọi thẻ đều có đủ các tiện nghi đã chọn (AND); kiểm tra số kết quả giảm dần khi thêm tiện nghi, và trường hợp không có kết quả. Test phải đỏ khi bật BUG-03.",
+    criteria: [
+      "Đưa phần tìm kiếm (thành phố, ngày) vào một hàm dùng lại",
+      "Duyệt mọi thẻ bằng all() và vòng lặp, kiểm tra từng thẻ",
+      "Kiểm tra số lượng kết quả bằng toHaveCount hoặc result-count",
+      "Kiểm tra thông báo Không tìm thấy khi không khớp",
+      "Test đỏ với BUG-03",
+      ...COMMON_CRITERIA,
+    ],
+    hints: [
+      "Mỗi thẻ có data-testid hotel-card và thuộc tính data-amenities dạng wifi,pool.",
+      "locator.all() trả về mảng locator; dùng for...of và getAttribute.",
+      "Checkbox của shadcn có input ẩn: dùng getByRole('checkbox', { name }) thay vì getByLabel.",
+    ],
+    solution: `import { test, expect, type Page } from "@playwright/test";
+
+async function searchHanoi(page: Page) {
+  await page.clock.setFixedTime(new Date("2026-03-10T09:00:00"));
+  await page.goto("/lab/hotel");
+  await page.getByTestId("reset-data").click();
+  await page.getByRole("combobox", { name: "Điểm đến" }).fill("Hà Nội");
+  await page.getByRole("option", { name: "Hà Nội", exact: true }).click();
+  await page.getByLabel("Nhận phòng").click();
+  await page.getByTestId("day-2026-03-12").click();
+  await page.getByTestId("day-2026-03-15").click();
+  await page.getByRole("button", { name: "Tìm khách sạn" }).click();
+  await expect(page.getByTestId("result-count")).toHaveText("12 khách sạn tại Hà Nội");
+}
+
+test("lọc Wifi + Hồ bơi: mọi thẻ phải có đủ cả hai tiện nghi", async ({ page }) => {
+  await searchHanoi(page);
+  await page.getByRole("checkbox", { name: "Wifi miễn phí" }).check();
+  await page.getByRole("checkbox", { name: "Hồ bơi" }).check();
+  await expect(page.getByTestId("result-count")).toHaveText("5 khách sạn tại Hà Nội");
+
+  const cards = await page.getByTestId("hotel-card").all();
+  expect(cards.length).toBe(5);
+  for (const card of cards) {
+    const amenities = (await card.getAttribute("data-amenities"))!.split(",");
+    expect(amenities).toContain("wifi");
+    expect(amenities).toContain("pool");
+  }
+});
+
+test("thêm tiện nghi thì kết quả thu hẹp dần", async ({ page }) => {
+  await searchHanoi(page);
+  await page.getByRole("checkbox", { name: "Wifi miễn phí" }).check();
+  await page.getByRole("checkbox", { name: "Hồ bơi" }).check();
+  await page.getByRole("checkbox", { name: "Bữa sáng" }).check();
+  await expect(page.getByTestId("hotel-card")).toHaveCount(3);
+  await page.getByRole("checkbox", { name: "Bãi đỗ xe" }).check();
+  await expect(page.getByTestId("hotel-card")).toHaveCount(2);
+  await page.getByRole("checkbox", { name: "Hồ bơi" }).uncheck();
+  await expect(page.getByTestId("result-count")).not.toHaveText("2 khách sạn tại Hà Nội");
+});
+
+test("kết hợp hạng sao với giá; không khớp thì báo Không tìm thấy", async ({ page }) => {
+  await searchHanoi(page);
+  await page.getByRole("radio", { name: "5 sao" }).check();
+  await expect(page.getByTestId("hotel-card")).toHaveCount(2);
+  await page.getByLabel("Giá tối thiểu").fill("3300000");
+  await expect(page.getByTestId("no-results")).toContainText("Không tìm thấy");
+});`,
+  },
+  {
+    id: "hotel-3",
+    title: "Sắp xếp: đọc data-price và so sánh mảng",
+    difficulty: 2,
+    task: "Đọc data-price và data-rating của các thẻ kết quả thành mảng số, rồi so sánh với bản sao đã sắp xếp để chứng minh giá tăng dần, giá giảm dần và đánh giá cao nhất. Kiểm tra phân trang giữ đúng thứ tự, đổi sắp xếp quay về trang 1, và các thuộc tính trợ năng của thẻ (alt của ảnh, aria-label của sao, href của link chi tiết).",
+    criteria: [
+      "Đọc giá trị bằng getAttribute rồi chuyển sang số (Number), không so sánh chuỗi",
+      "So sánh bằng toEqual với bản sao đã sort, không sort bằng chính mảng gốc",
+      "Kiểm tra trang 2 tiếp nối thứ tự của trang 1",
+      "Kiểm tra alt của ảnh, aria-label của sao và href của link",
+      ...COMMON_CRITERIA,
+    ],
+    hints: [
+      "Dùng Promise.all với map để đọc thuộc tính của nhiều thẻ.",
+      "[...mảng].sort((a, b) => a - b) tạo bản sao đã sắp xếp theo số.",
+      "Select sắp xếp có label Sắp xếp; chọn bằng selectOption với value price-asc, price-desc hoặc rating.",
+    ],
+    solution: `import { test, expect, type Page } from "@playwright/test";
+
+async function searchHanoi(page: Page) {
+  await page.clock.setFixedTime(new Date("2026-03-10T09:00:00"));
+  await page.goto("/lab/hotel");
+  await page.getByTestId("reset-data").click();
+  await page.getByRole("combobox", { name: "Điểm đến" }).fill("Hà Nội");
+  await page.getByRole("option", { name: "Hà Nội", exact: true }).click();
+  await page.getByLabel("Nhận phòng").click();
+  await page.getByTestId("day-2026-03-12").click();
+  await page.getByTestId("day-2026-03-15").click();
+  await page.getByRole("button", { name: "Tìm khách sạn" }).click();
+}
+
+async function readNumbers(page: Page, attr: string): Promise<number[]> {
+  const cards = await page.getByTestId("hotel-card").all();
+  return Promise.all(cards.map(async (c) => Number(await c.getAttribute(attr))));
+}
+
+test("sắp xếp giá tăng dần: mảng data-price đã sắp xếp", async ({ page }) => {
+  await searchHanoi(page);
+  await page.getByLabel("Sắp xếp").selectOption("price-asc");
+  const prices = await readNumbers(page, "data-price");
+  expect(prices).toHaveLength(5);
+  expect(prices).toEqual([...prices].sort((a, b) => a - b));
+  expect(prices[0]).toBe(480000);
+});
+
+test("sắp xếp giá giảm dần và đánh giá cao nhất", async ({ page }) => {
+  await searchHanoi(page);
+  await page.getByLabel("Sắp xếp").selectOption("price-desc");
+  const prices = await readNumbers(page, "data-price");
+  expect(prices).toEqual([...prices].sort((a, b) => b - a));
+  expect(prices[0]).toBe(3200000);
+
+  await page.getByLabel("Sắp xếp").selectOption("rating");
+  const ratings = await readNumbers(page, "data-rating");
+  expect(ratings).toEqual([...ratings].sort((a, b) => b - a));
+  expect(ratings[0]).toBe(9.4);
+});
+
+test("phân trang giữ thứ tự sắp xếp; đổi sắp xếp quay về trang 1", async ({ page }) => {
+  await searchHanoi(page);
+  await page.getByLabel("Sắp xếp").selectOption("price-asc");
+  const first = await readNumbers(page, "data-price");
+  await page.getByRole("button", { name: "Trang sau" }).click();
+  await expect(page.getByTestId("page-info")).toHaveText("Trang 2/3");
+  const second = await readNumbers(page, "data-price");
+  expect(second[0]).toBeGreaterThan(first[first.length - 1]);
+  expect(second).toEqual([...second].sort((a, b) => a - b));
+
+  await page.getByLabel("Sắp xếp").selectOption("price-desc");
+  await expect(page.getByTestId("page-info")).toHaveText("Trang 1/3");
+});
+
+test("thẻ kết quả có ảnh alt, sao aria-label và link chi tiết", async ({ page }) => {
+  await searchHanoi(page);
+  const card = page.getByTestId("hotel-card").first();
+  await expect(card.getByRole("img", { name: /Ảnh khách sạn/ })).toBeVisible();
+  await expect(card.getByTestId("hotel-stars")).toHaveAttribute("aria-label", /trên 5 sao$/);
+  const href = await card.getByRole("link", { name: "Xem chi tiết" }).getAttribute("href");
+  expect(href).toMatch(/^\\/lab\\/hotel\\/h\\d+$/);
+});`,
+  },
+  {
+    id: "hotel-4",
+    title: "Combobox bàn phím và đặt phòng qua cuối tháng",
+    difficulty: 3,
+    bugs: ["BUG-02"],
+    task: "Chọn thành phố hoàn toàn bằng bàn phím (gõ để lọc không phân biệt dấu, ArrowDown, Enter), kiểm tra lỗi khi gõ chữ nhưng không chọn gợi ý. Sau đó đặt phòng với khoảng ngày vắt qua cuối tháng (30/03 → 02/04), kiểm tra số đêm, tiền phòng, phí bữa sáng, thuế 10%, tổng và mã xác nhận. Test phải đỏ khi bật BUG-02.",
+    criteria: [
+      "Điều khiển combobox bằng press (ArrowDown, Enter), không click vào gợi ý",
+      "Kiểm tra giá trị ô sau khi chọn và listbox đã đóng",
+      "Tính tay số đêm, thuế 10% và tổng rồi đối chiếu với tóm tắt",
+      "Điền form liên hệ bằng getByLabel và kiểm tra mã xác nhận",
+      "Test đỏ với BUG-02",
+      ...COMMON_CRITERIA,
+    ],
+    hints: [
+      "Gõ hue sẽ ra Huế vì lọc không phân biệt dấu; sau khi gõ, ArrowDown chọn gợi ý đầu rồi Enter.",
+      "Số đêm = ngày trả trừ ngày nhận: 30/03 đến 02/04 là 3 đêm.",
+      "Thuế là 10% của (giá phòng + bữa sáng); bữa sáng 150.000 ₫ mỗi đêm mỗi phòng.",
+    ],
+    solution: `import { test, expect, type Page } from "@playwright/test";
+
+async function open(page: Page) {
+  await page.clock.setFixedTime(new Date("2026-03-10T09:00:00"));
+  await page.goto("/lab/hotel");
+  await page.getByTestId("reset-data").click();
+}
+
+test("chọn thành phố bằng bàn phím: ArrowDown + Enter", async ({ page }) => {
+  await open(page);
+  const city = page.getByRole("combobox", { name: "Điểm đến" });
+  await city.fill("da");
+  await expect(page.getByRole("listbox").getByRole("option")).toHaveText(["Đà Nẵng", "Đà Lạt"]);
+  await city.press("ArrowDown");
+  await city.press("Enter");
+  await expect(city).toHaveValue("Đà Lạt");
+  await expect(page.getByRole("listbox")).toBeHidden();
+});
+
+test("gõ chữ không chọn gợi ý thì báo lỗi khi tìm", async ({ page }) => {
+  await open(page);
+  await page.getByRole("combobox", { name: "Điểm đến" }).fill("Xyz");
+  await expect(page.getByTestId("city-empty")).toBeVisible();
+  await page.getByRole("button", { name: "Tìm khách sạn" }).click();
+  await expect(page.getByTestId("search-error")).toHaveText("Vui lòng chọn một thành phố trong danh sách");
+});
+
+test("đặt phòng qua cuối tháng: số đêm, tiền và mã xác nhận", async ({ page }) => {
+  await open(page);
+  const city = page.getByRole("combobox", { name: "Điểm đến" });
+  await city.fill("hue");
+  await city.press("ArrowDown");
+  await city.press("Enter");
+  await expect(city).toHaveValue("Huế");
+
+  await page.getByLabel("Nhận phòng").click();
+  await page.getByTestId("day-2026-03-30").click();
+  await page.getByRole("button", { name: "Tháng sau" }).click();
+  await page.getByTestId("day-2026-04-02").click();
+  await expect(page.getByTestId("nights")).toHaveText("3 đêm");
+  await page.getByRole("button", { name: "Tìm khách sạn" }).click();
+
+  await page.getByRole("button", { name: "Đặt phòng Đại Nội Homestay" }).click();
+  await expect(page.getByTestId("sum-nights")).toHaveText("3");
+  await expect(page.getByTestId("sum-subtotal")).toHaveText("1.350.000 ₫");
+  await page.getByRole("checkbox", { name: /Thêm bữa sáng/ }).check();
+  await expect(page.getByTestId("sum-breakfast")).toHaveText("450.000 ₫");
+  await expect(page.getByTestId("sum-tax")).toHaveText("180.000 ₫");
+  await expect(page.getByTestId("sum-total")).toHaveText("1.980.000 ₫");
+
+  await page.getByRole("button", { name: "Tiếp tục" }).click();
+  await page.getByLabel("Họ tên").fill("Trần Thị Bình");
+  await page.getByLabel("Email").fill("binh@example.com");
+  await page.getByLabel("Số điện thoại").fill("0987654321");
+  await page.getByRole("button", { name: "Xác nhận đặt phòng" }).click();
+  await expect(page.getByTestId("booking-code")).toHaveText("HT-20260330-E02");
+});`,
+  },
+];
+
+const kanban: Exercise[] = [
+  {
+    id: "kanban-1",
+    title: "Kéo thả thẻ giữa các cột và sắp xếp lại trong cột",
+    difficulty: 2,
+    task: "Dùng locator.dragTo để chuyển thẻ giữa các cột và kiểm tra cột đích: thả lên vùng thả của cột thì thẻ nằm cuối cột; thả lên một thẻ khác thì thẻ được chèn trước thẻ đó (sắp xếp lại ngay trong cột). Kiểm tra bộ đếm cột, thông báo và dữ liệu còn nguyên sau khi tải lại trang.",
+    criteria: [
+      "Dùng dragTo với data-testid của vùng thả (drop-<cột>) và của thẻ",
+      "Kiểm tra thứ tự thẻ trong cột bằng toHaveText với mảng, không đếm vị trí thủ công",
+      "Có ca sắp xếp lại trong cùng cột và ca thả xuống phần trống ở đáy cột (targetPosition)",
+      "Kiểm tra dữ liệu giữ nguyên sau page.reload()",
+      ...COMMON_CRITERIA,
+    ],
+    hints: [
+      "Mỗi thẻ có data-testid card, tiêu đề ở card-title; mỗi cột là col-todo, col-doing, col-done.",
+      "Vùng thả của cột là drop-<cột>; tâm vùng thả có thể đang nằm trên một thẻ, nên muốn thả xuống cuối cột hãy truyền targetPosition gần đáy.",
+      "Thả lên thẻ khác thì chèn trước thẻ đó; thông báo kết quả nằm ở kb-message.",
+    ],
+    solution: `import { test, expect, type Page } from "@playwright/test";
+
+async function open(page: Page) {
+  await page.goto("/lab/kanban");
+  await page.getByTestId("reset-data").click();
+}
+
+const card = (page: Page, title: string) => page.getByTestId("card").filter({ hasText: title });
+const titles = (page: Page, col: string) => page.getByTestId("col-" + col).getByTestId("card-title");
+
+test("kéo thẻ sang cột khác: nằm cuối cột đích, bộ đếm và dữ liệu được giữ", async ({ page }) => {
+  await open(page);
+  await card(page, "Sửa lỗi giỏ hàng").dragTo(page.getByTestId("drop-done"));
+  await expect(titles(page, "done")).toHaveText(["Cấu hình CI", "Sửa lỗi giỏ hàng"]);
+  await expect(titles(page, "todo")).toHaveText(["Thiết kế trang đăng nhập", "Viết tài liệu API"]);
+  await expect(page.getByTestId("kb-message")).toHaveText("Đã chuyển “Sửa lỗi giỏ hàng” sang Xong");
+  await expect(page.getByTestId("count-done")).toHaveText("2");
+  await page.reload();
+  await expect(titles(page, "done")).toHaveText(["Cấu hình CI", "Sửa lỗi giỏ hàng"]);
+});
+
+test("thả lên thẻ khác thì chèn trước thẻ đó (cả khác cột lẫn cùng cột)", async ({ page }) => {
+  await open(page);
+  await card(page, "Cấu hình CI").dragTo(card(page, "Tối ưu truy vấn"));
+  await expect(titles(page, "doing")).toHaveText(["Cấu hình CI", "Tối ưu truy vấn", "Review PR số 42"]);
+  await card(page, "Sửa lỗi giỏ hàng").dragTo(card(page, "Thiết kế trang đăng nhập"));
+  await expect(titles(page, "todo")).toHaveText(["Sửa lỗi giỏ hàng", "Thiết kế trang đăng nhập", "Viết tài liệu API"]);
+});
+
+test("sắp xếp lại: thả xuống phần trống ở đáy cột thì xếp cuối", async ({ page }) => {
+  await open(page);
+  const zone = page.getByTestId("drop-todo");
+  const box = (await zone.boundingBox())!;
+  await card(page, "Thiết kế trang đăng nhập").dragTo(zone, { targetPosition: { x: box.width / 2, y: box.height - 6 } });
+  await expect(titles(page, "todo")).toHaveText(["Viết tài liệu API", "Sửa lỗi giỏ hàng", "Thiết kế trang đăng nhập"]);
+  await expect(page.getByTestId("kb-message")).toHaveText("Đã sắp xếp lại “Thiết kế trang đăng nhập” trong Cần làm");
+});`,
+  },
+  {
+    id: "kanban-2",
+    title: "Giới hạn WIP của cột Đang làm",
+    difficulty: 3,
+    bugs: ["BUG-01"],
+    task: "Cột Đang làm tối đa 3 thẻ. Đưa cột này lên 3 thẻ rồi kéo thêm thẻ thứ 4 vào: phải bị từ chối kèm thông báo, bộ đếm vẫn 3/3 và thẻ ở lại cột cũ. Kiểm tra thêm: sắp xếp lại trong cột đầy vẫn được phép, và chuyển bằng phím tắt Alt+ArrowRight cũng bị chặn như nhau. Test phải đỏ khi bật BUG-01.",
+    criteria: [
+      "Kiểm tra bộ đếm count-doing đổi từ 2/3 sang 3/3 và giữ nguyên 3/3 sau lần thả thứ 4",
+      "Kiểm tra nội dung thông báo từ chối và thẻ vẫn nằm ở cột nguồn",
+      "Kiểm tra sắp xếp lại ngay trong cột đầy không bị chặn",
+      "Kiểm tra đường phím tắt (focus thẻ rồi Alt+ArrowRight) cũng bị chặn",
+      "Test đỏ với BUG-01",
+      ...COMMON_CRITERIA,
+    ],
+    hints: [
+      "Cột Đang làm có sẵn 2 thẻ; kéo thêm một thẻ từ Cần làm là đủ 3.",
+      "Thông báo lỗi ở data-testid kb-message; bộ đếm ở count-doing (dạng 3/3).",
+      "Để dùng phím tắt: card.focus() rồi page.keyboard.press('Alt+ArrowRight'). Cùng một luật phải đúng với cả hai cách thao tác.",
+    ],
+    solution: `import { test, expect, type Page } from "@playwright/test";
+
+async function open(page: Page) {
+  await page.goto("/lab/kanban");
+  await page.getByTestId("reset-data").click();
+}
+
+const card = (page: Page, title: string) => page.getByTestId("card").filter({ hasText: title });
+const titles = (page: Page, col: string) => page.getByTestId("col-" + col).getByTestId("card-title");
+const FULL = "Cột Đang làm đã đủ 3 thẻ, không thể thêm thẻ nữa";
+
+test("thẻ thứ 4 kéo vào cột Đang làm bị từ chối", async ({ page }) => {
+  await open(page);
+  await expect(page.getByTestId("count-doing")).toHaveText("2/3");
+  await card(page, "Sửa lỗi giỏ hàng").dragTo(page.getByTestId("drop-doing"));
+  await expect(page.getByTestId("count-doing")).toHaveText("3/3");
+
+  await card(page, "Viết tài liệu API").dragTo(page.getByTestId("drop-doing"));
+  await expect(page.getByTestId("kb-message")).toHaveText(FULL);
+  await expect(page.getByTestId("count-doing")).toHaveText("3/3");
+  await expect(titles(page, "doing")).toHaveCount(3);
+  await expect(titles(page, "todo")).toHaveText(["Thiết kế trang đăng nhập", "Viết tài liệu API"]);
+});
+
+test("sắp xếp lại trong cột đầy vẫn được phép", async ({ page }) => {
+  await open(page);
+  await card(page, "Sửa lỗi giỏ hàng").dragTo(page.getByTestId("drop-doing"));
+  await card(page, "Review PR số 42").dragTo(card(page, "Tối ưu truy vấn"));
+  await expect(titles(page, "doing")).toHaveText(["Review PR số 42", "Tối ưu truy vấn", "Sửa lỗi giỏ hàng"]);
+});
+
+test("phím tắt Alt+ArrowRight cũng bị chặn khi cột Đang làm đã đủ", async ({ page }) => {
+  await open(page);
+  await card(page, "Sửa lỗi giỏ hàng").dragTo(page.getByTestId("drop-doing"));
+  await card(page, "Thiết kế trang đăng nhập").focus();
+  await page.keyboard.press("Alt+ArrowRight");
+  await expect(page.getByTestId("kb-message")).toHaveText(FULL);
+  await expect(titles(page, "doing")).toHaveCount(3);
+  await expect(titles(page, "todo")).toHaveText(["Thiết kế trang đăng nhập", "Viết tài liệu API"]);
+});`,
+  },
+  {
+    id: "kanban-3",
+    title: "Sửa tiêu đề tại chỗ: double click, Enter, Escape",
+    difficulty: 2,
+    bugs: ["BUG-02"],
+    task: "Double click tiêu đề để sửa tại chỗ. Enter lưu, Escape huỷ (tiêu đề giữ nguyên giá trị cũ), tiêu đề rỗng hoặc toàn khoảng trắng bị từ chối và vẫn ở chế độ sửa, tối đa 80 ký tự (80 được, 81 bị từ chối). Test phải đỏ khi bật BUG-02.",
+    criteria: [
+      "Dùng dblclick để vào chế độ sửa và kiểm tra ô nhập title-input xuất hiện",
+      "Có test Enter lưu và test Escape huỷ, kiểm tra tiêu đề sau khi thoát",
+      "Kiểm tra biên 80 và 81 ký tự, và tiêu đề rỗng, cùng nội dung thông báo lỗi",
+      "Kiểm tra giá trị đã lưu vẫn còn sau page.reload()",
+      "Test đỏ với BUG-02",
+      ...COMMON_CRITERIA,
+    ],
+    hints: [
+      "Ô sửa có data-testid title-input; thông báo lỗi ở title-error.",
+      "Dùng fill rồi press('Enter') hoặc press('Escape') trên chính ô nhập.",
+      "Chuỗi 81 ký tự: 'x'.repeat(81). Sau khi bị từ chối, ô nhập vẫn hiển thị.",
+    ],
+    solution: `import { test, expect, type Page } from "@playwright/test";
+
+async function open(page: Page) {
+  await page.goto("/lab/kanban");
+  await page.getByTestId("reset-data").click();
+}
+
+const card = (page: Page, title: string) => page.getByTestId("card").filter({ hasText: title });
+const titles = (page: Page, col: string) => page.getByTestId("col-" + col).getByTestId("card-title");
+
+async function startEdit(page: Page, title: string, text: string) {
+  await card(page, title).getByTestId("card-title").dblclick();
+  await expect(page.getByTestId("title-input")).toBeVisible();
+  await page.getByTestId("title-input").fill(text);
+}
+
+test("Enter lưu tiêu đề mới và dữ liệu được giữ sau khi tải lại", async ({ page }) => {
+  await open(page);
+  await startEdit(page, "Cấu hình CI", "Cấu hình CI/CD");
+  await page.getByTestId("title-input").press("Enter");
+  await expect(titles(page, "done")).toHaveText(["Cấu hình CI/CD"]);
+  await page.reload();
+  await expect(titles(page, "done")).toHaveText(["Cấu hình CI/CD"]);
+});
+
+test("Escape huỷ: tiêu đề giữ nguyên giá trị cũ", async ({ page }) => {
+  await open(page);
+  await startEdit(page, "Cấu hình CI", "Tên bị huỷ");
+  await page.getByTestId("title-input").press("Escape");
+  await expect(page.getByTestId("title-input")).toHaveCount(0);
+  await expect(titles(page, "done")).toHaveText(["Cấu hình CI"]);
+});
+
+test("tiêu đề rỗng bị từ chối và vẫn ở chế độ sửa", async ({ page }) => {
+  await open(page);
+  await startEdit(page, "Cấu hình CI", "   ");
+  await page.getByTestId("title-input").press("Enter");
+  await expect(page.getByTestId("title-error")).toHaveText("Tiêu đề không được để trống");
+  await expect(page.getByTestId("title-input")).toBeVisible();
+});
+
+test("biên độ dài tiêu đề: 81 ký tự bị từ chối, 80 ký tự được lưu", async ({ page }) => {
+  await open(page);
+  await startEdit(page, "Cấu hình CI", "x".repeat(81));
+  await page.getByTestId("title-input").press("Enter");
+  await expect(page.getByTestId("title-error")).toHaveText("Tiêu đề tối đa 80 ký tự");
+  await page.getByTestId("title-input").fill("y".repeat(80));
+  await page.getByTestId("title-input").press("Enter");
+  await expect(titles(page, "done")).toHaveText(["y".repeat(80)]);
+});`,
+  },
+  {
+    id: "kanban-4",
+    title: "Phím tắt, hoàn tác và menu chuột phải",
+    difficulty: 3,
+    bugs: ["BUG-03"],
+    task: "Kiểm tra các thao tác bàn phím và chuột phải: N thêm thẻ (vào Cần làm, sửa tiêu đề ngay), / focus ô tìm, Alt+ArrowRight/Alt+ArrowLeft đổi cột trên thẻ đang focus (focus vẫn ở thẻ), Delete xoá có hộp xác nhận (Escape huỷ), Ctrl+Z hoàn tác thao tác di chuyển gần nhất về đúng cột gốc. Thêm một test cho menu chuột phải: 4 mục, đóng bằng Escape, Nhân bản và Xoá. Test hoàn tác phải đỏ khi bật BUG-03 (gợi ý: dùng thẻ xuất phát từ cột Đang làm).",
+    criteria: [
+      "Dùng click({ button: 'right' }) và getByRole('menuitem') cho menu chuột phải",
+      "Kiểm tra menu đóng bằng Escape và hộp xác nhận xoá huỷ được bằng Escape",
+      "Kiểm tra hoàn tác đưa thẻ về đúng cột gốc và đúng vị trí, và lần hoàn tác thứ hai báo không còn gì để hoàn tác",
+      "Kiểm tra ô tìm lọc thẻ theo tiêu đề không phân biệt hoa thường",
+      "Test đỏ với BUG-03",
+      ...COMMON_CRITERIA,
+    ],
+    hints: [
+      "Thẻ có tabindex nên card.focus() hoạt động; sau Alt+ArrowRight thẻ vẫn giữ focus nên bấm tiếp được.",
+      "Phím tắt toàn cục chỉ hoạt động khi không đang gõ trong ô nhập; hoàn tác là page.keyboard.press('Control+z').",
+      "Một thẻ xuất phát từ Cần làm rồi hoàn tác chưa chắc lộ lỗi; chọn thẻ ở Đang làm, đưa sang Xong rồi hoàn tác và so với cột gốc.",
+    ],
+    solution: `import { test, expect, type Page } from "@playwright/test";
+
+async function open(page: Page) {
+  await page.goto("/lab/kanban");
+  await page.getByTestId("reset-data").click();
+}
+
+const card = (page: Page, title: string) => page.getByTestId("card").filter({ hasText: title });
+const titles = (page: Page, col: string) => page.getByTestId("col-" + col).getByTestId("card-title");
+
+test("Alt+mũi tên đổi cột và giữ focus; Delete cần xác nhận", async ({ page }) => {
+  await open(page);
+  await card(page, "Sửa lỗi giỏ hàng").focus();
+  await page.keyboard.press("Alt+ArrowRight");
+  await expect(titles(page, "doing")).toHaveText(["Tối ưu truy vấn", "Review PR số 42", "Sửa lỗi giỏ hàng"]);
+  await page.keyboard.press("Alt+ArrowRight");
+  await expect(titles(page, "done")).toHaveText(["Cấu hình CI", "Sửa lỗi giỏ hàng"]);
+  await page.keyboard.press("Alt+ArrowLeft");
+  await expect(titles(page, "doing")).toHaveCount(3);
+
+  await page.keyboard.press("Delete");
+  await expect(page.getByTestId("confirm-dialog")).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect(page.getByTestId("confirm-dialog")).toHaveCount(0);
+  await expect(titles(page, "doing")).toHaveCount(3);
+  await page.keyboard.press("Delete");
+  await page.getByTestId("confirm-ok").click();
+  await expect(titles(page, "doing")).toHaveText(["Tối ưu truy vấn", "Review PR số 42"]);
+});
+
+test("N thêm thẻ vào Cần làm và / focus ô tìm để lọc", async ({ page }) => {
+  await open(page);
+  await page.keyboard.press("n");
+  await expect(page.getByTestId("title-input")).toBeFocused();
+  await page.keyboard.type("Thẻ từ phím tắt");
+  await page.keyboard.press("Enter");
+  await expect(titles(page, "todo")).toHaveCount(4);
+  await expect(titles(page, "todo").last()).toHaveText("Thẻ từ phím tắt");
+
+  await page.keyboard.press("/");
+  await expect(page.getByLabel("Tìm thẻ")).toBeFocused();
+  await page.keyboard.type("api");
+  await expect(page.getByTestId("card")).toHaveText([/Viết tài liệu API/]);
+  await expect(page.getByTestId("empty-doing")).toHaveText("Không có thẻ khớp");
+});
+
+test("Ctrl+Z hoàn tác di chuyển gần nhất về đúng cột gốc", async ({ page }) => {
+  await open(page);
+  await card(page, "Review PR số 42").dragTo(page.getByTestId("drop-done"));
+  await expect(titles(page, "done")).toHaveText(["Cấu hình CI", "Review PR số 42"]);
+  await page.keyboard.press("Control+z");
+  await expect(titles(page, "doing")).toHaveText(["Tối ưu truy vấn", "Review PR số 42"]);
+  await expect(titles(page, "done")).toHaveText(["Cấu hình CI"]);
+  await expect(page.getByTestId("kb-message")).toHaveText("Đã hoàn tác: “Review PR số 42” về Đang làm");
+  await page.keyboard.press("Control+z");
+  await expect(page.getByTestId("kb-message")).toHaveText("Không có thao tác nào để hoàn tác");
+});
+
+test("menu chuột phải: đủ 4 mục, đóng bằng Escape, Nhân bản và Xoá", async ({ page }) => {
+  await open(page);
+  const c = card(page, "Viết tài liệu API");
+  await c.click({ button: "right" });
+  const menu = page.getByTestId("context-menu");
+  await expect(menu.getByRole("menuitem")).toHaveText(["Mở chi tiết", "Đổi màu", "Nhân bản", "Xoá"]);
+  await page.keyboard.press("Escape");
+  await expect(menu).toHaveCount(0);
+
+  await c.click({ button: "right" });
+  await page.getByRole("menuitem", { name: "Nhân bản" }).click();
+  await expect(titles(page, "todo")).toHaveText([
+    "Thiết kế trang đăng nhập",
+    "Viết tài liệu API",
+    "Viết tài liệu API (bản sao)",
+    "Sửa lỗi giỏ hàng",
+  ]);
+
+  await card(page, "(bản sao)").click({ button: "right" });
+  await page.getByRole("menuitem", { name: "Xoá" }).click();
+  await page.getByTestId("confirm-ok").click();
+  await expect(titles(page, "todo")).toHaveCount(3);
+});`,
+  },
+];
+
+const reports: Exercise[] = [
+  {
+    id: "reports-1",
+    title: "Tải Excel và so tổng tiền với bảng trên trang",
+    difficulty: 3,
+    bugs: ["BUG-01"],
+    task: "Lọc tháng 2026-03, trạng thái Hoàn tất, bấm Xuất Excel, bắt sự kiện download và đọc tệp .xlsx bằng thư viện exceljs. Kiểm tra tên tệp, tên hai sheet, dòng tiêu đề, số dòng dữ liệu bằng số đơn trên trang, công thức SUM của dòng tổng phủ hết các dòng dữ liệu và giá trị tổng bằng tổng tiền hiển thị trên trang. Test phải đỏ khi bật BUG-01.",
+    criteria: [
+      "Dùng page.waitForEvent('download') cùng lúc với thao tác bấm nút",
+      "Đọc tệp qua download.path() rồi mở bằng ExcelJS",
+      "Kiểm tra tên sheet, dòng tiêu đề và số dòng (tiêu đề + dữ liệu + tổng)",
+      "So tổng trong Excel (công thức và giá trị) với tổng tiền trên trang, có dung sai số thực",
+      "Tự cộng các ô số tiền để đối chiếu với dòng tổng",
+      "Test đỏ với BUG-01",
+      ...COMMON_CRITERIA,
+    ],
+    hints: [
+      "Cài exceljs rồi import ExcelJS from 'exceljs'; workbook.xlsx.readFile(đường dẫn).",
+      "Ô công thức có dạng { formula, result }; dùng toBeCloseTo thay vì toBe cho số tiền lẻ.",
+      "Tổng trên trang là chuỗi kiểu 13.715.501,14: bỏ dấu chấm, đổi dấu phẩy thành chấm rồi Number().",
+    ],
+    solution: `import { test, expect, type Page } from "@playwright/test";
+import ExcelJS from "exceljs";
+
+async function open(page: Page) {
+  await page.goto("/lab/reports");
+  await page.getByTestId("reset-data").click();
+}
+
+const toNumber = (vi: string) => Number(vi.replace(/\\./g, "").replace(",", "."));
+
+test("Excel: tên tệp, sheet, số dòng và tổng tiền khớp bảng trên trang", async ({ page }) => {
+  await open(page);
+  await page.getByLabel("Tháng").selectOption("2026-03");
+  await page.getByLabel("Trạng thái đơn").selectOption("Hoàn tất");
+  const pageRows = Number(await page.getByTestId("report-count").textContent());
+  const pageTotal = toNumber((await page.getByTestId("report-total").textContent())!);
+
+  const [download] = await Promise.all([page.waitForEvent("download"), page.getByRole("button", { name: "Xuất Excel" }).click()]);
+  expect(download.suggestedFilename()).toBe("bao-cao-2026-03-hoan-tat.xlsx");
+
+  const wb = new ExcelJS.Workbook();
+  await wb.xlsx.readFile((await download.path())!);
+  expect(wb.worksheets.map((w) => w.name)).toEqual(["Đơn hàng", "Tổng hợp"]);
+
+  const ws = wb.getWorksheet("Đơn hàng")!;
+  expect((ws.getRow(1).values as unknown[]).slice(1)).toEqual(["Mã đơn", "Ngày", "Khách hàng", "Trạng thái", "Số tiền"]);
+  expect(ws.rowCount).toBe(1 + pageRows + 1); // tiêu đề + dữ liệu + dòng tổng
+
+  const lastData = pageRows + 1;
+  const total = ws.getCell("E" + (lastData + 1)).value as { formula: string; result: number };
+  expect(total.formula).toBe("SUM(E2:E" + lastData + ")"); // công thức phải phủ hết các dòng dữ liệu
+  expect(total.result).toBeCloseTo(pageTotal, 2);
+
+  let sum = 0;
+  for (let r = 2; r <= lastData; r++) sum += ws.getCell("E" + r).value as number;
+  expect(sum).toBeCloseTo(pageTotal, 2);
+
+  const summary = wb.getWorksheet("Tổng hợp")!;
+  expect(summary.getCell("A2").value).toBe("Hoàn tất");
+  expect(summary.getCell("B2").value).toBe(pageRows);
+});
+`,
+  },
+  {
+    id: "reports-2",
+    title: "Parse XML xuất ra và so từng đơn với bảng trên trang",
+    difficulty: 3,
+    bugs: ["BUG-02"],
+    task: "Lọc tháng 2026-03 (mọi trạng thái), bấm Xuất XML, đọc tệp, kiểm tra tệp là XML hợp lệ (tên khách có &, < và dấu nháy phải được escape), rồi parse bằng fast-xml-parser và so từng phần tử order (mã, khách hàng, trạng thái, số tiền) với từng dòng của bảng trên trang. Test phải đỏ khi bật BUG-02.",
+    criteria: [
+      "Kiểm tra tên tệp .xml từ download.suggestedFilename()",
+      "Dùng XMLValidator.validate để khẳng định tệp parse được",
+      "Kiểm tra văn bản thô có &amp; và &lt;&gt; ở đúng chỗ",
+      "Duyệt từng order và so với từng dòng trang (mã, khách hàng, trạng thái, số tiền)",
+      "Xử lý trường hợp chỉ có một order (parser trả về object, không phải mảng)",
+      "Test đỏ với BUG-02",
+      ...COMMON_CRITERIA,
+    ],
+    hints: [
+      "import { XMLParser, XMLValidator } from 'fast-xml-parser'; XMLValidator.validate(text) trả true khi hợp lệ, ngược lại trả object lỗi.",
+      "Đặt ignoreAttributes: false để đọc thuộc tính; attributeNamePrefix mặc định cần khai báo rõ như '@_'.",
+      "Dùng [report.order].flat() để luôn có mảng; parseTagValue: false giữ nguyên chuỗi.",
+    ],
+    solution: `import { test, expect, type Page } from "@playwright/test";
+import { readFile } from "node:fs/promises";
+import { XMLParser, XMLValidator } from "fast-xml-parser";
+
+async function open(page: Page) {
+  await page.goto("/lab/reports");
+  await page.getByTestId("reset-data").click();
+}
+
+test("XML: hợp lệ, escape đúng ký tự đặc biệt và khớp từng đơn trên trang", async ({ page }) => {
+  await open(page);
+  await page.getByLabel("Tháng").selectOption("2026-03");
+  const [download] = await Promise.all([page.waitForEvent("download"), page.getByRole("button", { name: "Xuất XML" }).click()]);
+  expect(download.suggestedFilename()).toBe("bao-cao-2026-03.xml");
+
+  const text = await readFile((await download.path())!, "utf8");
+  // Tệp phải là XML hợp lệ (nếu & chưa được escape thì bước này đỏ)
+  expect(XMLValidator.validate(text)).toBe(true);
+  expect(text).toContain("Cửa hàng Hoa &amp; Quà");
+  expect(text).toContain("Phạm &lt;Minh&gt; Đức");
+
+  const parser = new XMLParser({ ignoreAttributes: false, attributeNamePrefix: "@_", parseTagValue: false });
+  const report = parser.parse(text).report;
+  const orders = [report.order].flat();
+  const rows = page.getByTestId("report-row");
+  await expect(rows).toHaveCount(orders.length);
+  expect(Number(report["@_count"])).toBe(orders.length);
+
+  for (let i = 0; i < orders.length; i++) {
+    const cells = rows.nth(i).locator("td");
+    await expect(cells.nth(0)).toHaveText(orders[i]["@_id"]);
+    await expect(cells.nth(2)).toHaveText(orders[i].customer); // parser đã giải escape: so được với văn bản trên trang
+    await expect(cells.nth(3)).toHaveText(orders[i]["@_status"]);
+    const amount = Number(orders[i].amount["#text"]);
+    await expect(cells.nth(4)).toHaveText(amount.toLocaleString("vi-VN", { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+  }
+});
+`,
+  },
+  {
+    id: "reports-3",
+    title: "Tên tệp, MIME và nội dung Word/PDF theo bộ lọc",
+    difficulty: 3,
+    bugs: ["BUG-03"],
+    task: "Lọc tháng 2026-03, trạng thái Hoàn tất. Tải Word và PDF: kiểm tra tên tệp, đọc nội dung (mammoth cho .docx, pdf-parse cho .pdf) và khẳng định chỉ có 5 đơn Hoàn tất, không có đơn đã huỷ DH-006. Ghi nhớ PDF dùng chữ không dấu. Ngoài ra dùng page.request kiểm tra Content-Type và Content-Disposition của cả 5 định dạng. Test phải đỏ khi bật BUG-03.",
+    criteria: [
+      "Đọc suggestedFilename() của cả Word và PDF",
+      "Trích văn bản .docx bằng mammoth và .pdf bằng pdf-parse; kiểm tra chữ ký %PDF-",
+      "Khẳng định tiêu đề, dòng tóm tắt và các mã đơn mong đợi có mặt",
+      "Khẳng định đơn đã huỷ KHÔNG có mặt trong cả hai tệp",
+      "Kiểm tra MIME và Content-Disposition của 5 định dạng qua page.request",
+      "Test đỏ với BUG-03",
+      ...COMMON_CRITERIA,
+    ],
+    hints: [
+      "mammoth.extractRawText({ path }) trả { value } là văn bản thuần.",
+      "pdf-parse bản 2: new PDFParse({ data: buffer }) rồi await parser.getText() lấy .text; gọi parser.destroy() sau khi xong.",
+      "Trên giao diện có ghi chú: PDF dùng chữ không dấu nên tìm 'Bao cao don hang' chứ không phải 'Báo cáo đơn hàng'.",
+    ],
+    solution: `import { test, expect, type Page } from "@playwright/test";
+import mammoth from "mammoth";
+import { PDFParse } from "pdf-parse";
+import { readFile } from "node:fs/promises";
+
+async function open(page: Page) {
+  await page.goto("/lab/reports");
+  await page.getByTestId("reset-data").click();
+  await page.getByLabel("Tháng").selectOption("2026-03");
+  await page.getByLabel("Trạng thái đơn").selectOption("Hoàn tất");
+}
+
+test("Word và PDF: tên tệp, MIME, nội dung đúng bộ lọc (không có đơn đã huỷ)", async ({ page }) => {
+  await open(page);
+
+  // Tên tệp qua sự kiện download
+  const [docx] = await Promise.all([page.waitForEvent("download"), page.getByRole("button", { name: "Xuất Word" }).click()]);
+  expect(docx.suggestedFilename()).toBe("bao-cao-2026-03-hoan-tat.docx");
+  const docText = (await mammoth.extractRawText({ path: (await docx.path())! })).value;
+  expect(docText).toContain("Báo cáo đơn hàng");
+  expect(docText).toContain("Tổng cộng 5 đơn, tổng tiền 13.715.501,14 ₫.");
+  expect(docText).toContain('Lê "Bobby" Hoàng');
+  expect(docText).not.toContain("DH-006"); // đơn đã huỷ không được xuất hiện
+
+  const [pdf] = await Promise.all([page.waitForEvent("download"), page.getByRole("button", { name: "Xuất PDF" }).click()]);
+  expect(pdf.suggestedFilename()).toBe("bao-cao-2026-03-hoan-tat.pdf");
+  const buffer = await readFile((await pdf.path())!);
+  expect(buffer.subarray(0, 5).toString()).toBe("%PDF-");
+  const parser = new PDFParse({ data: buffer });
+  const pdfText = (await parser.getText()).text;
+  await parser.destroy();
+  expect(pdfText).toContain("Bao cao don hang"); // PDF dùng chữ không dấu
+  expect(pdfText).toContain("Tong cong 5 don");
+  for (const id of ["DH-004", "DH-005", "DH-007", "DH-008", "DH-009"]) expect(pdfText).toContain(id);
+  expect(pdfText).not.toContain("DH-006");
+
+  // Kiểu MIME và Content-Disposition kiểm tra ở tầng HTTP
+  const query = "?month=2026-03&status=" + encodeURIComponent("Hoàn tất");
+  const expected: Record<string, string> = {
+    xlsx: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    xml: "application/xml; charset=utf-8",
+    docx: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    pdf: "application/pdf",
+    csv: "text/csv; charset=utf-8",
+  };
+  for (const [ext, mime] of Object.entries(expected)) {
+    const res = await page.request.get("/api/lab/report/" + ext + query);
+    expect(res.status()).toBe(200);
+    expect(res.headers()["content-type"]).toBe(mime);
+    expect(res.headers()["content-disposition"]).toBe('attachment; filename="bao-cao-2026-03-hoan-tat.' + ext + '"');
+  }
+});
+`,
+  },
+  {
+    id: "reports-4",
+    title: "So khớp xuyên định dạng: trang, CSV, Excel, XML",
+    difficulty: 3,
+    task: "Với ba bộ lọc (tất cả; tháng 2026-04; tháng 2026-02 + Đã huỷ), tải CSV, Excel và XML rồi khẳng định số dòng dữ liệu bằng số đơn trên trang ở cả ba tệp, và tổng tiền trong Excel/XML bằng tổng tiền hiển thị. Sinh test theo vòng lặp trên bảng dữ liệu các bộ lọc.",
+    criteria: [
+      "Sinh một test cho mỗi bộ lọc từ mảng dữ liệu",
+      "CSV: bỏ BOM, tách dòng CRLF, trừ dòng tiêu đề",
+      "Excel: trừ dòng tiêu đề và dòng tổng; đọc giá trị công thức",
+      "XML: đếm phần tử order (chú ý trường hợp 0 hoặc 1 phần tử) và đọc thuộc tính total",
+      "Đối chiếu tổng tiền giữa trang, Excel và XML",
+      ...COMMON_CRITERIA,
+    ],
+    hints: [
+      "CSV bắt đầu bằng BOM \\uFEFF; bỏ bằng replace(/^\\uFEFF/, '').",
+      "Dòng tổng của Excel là dòng cuối: ws.getCell('E' + ws.rowCount).",
+      "Khi chỉ có 1 order, fast-xml-parser trả object chứ không phải mảng; dùng [x].flat().",
+    ],
+    solution: `import { test, expect, type Page, type Download } from "@playwright/test";
+import { readFile } from "node:fs/promises";
+import ExcelJS from "exceljs";
+import { XMLParser } from "fast-xml-parser";
+
+async function exportAs(page: Page, name: string): Promise<Download> {
+  const [download] = await Promise.all([page.waitForEvent("download"), page.getByRole("button", { name }).click()]);
+  return download;
+}
+
+const toNumber = (vi: string) => Number(vi.replace(/\\./g, "").replace(",", "."));
+
+const cases = [
+  { month: "", status: "" },
+  { month: "2026-04", status: "" },
+  { month: "2026-02", status: "Đã huỷ" },
+];
+
+for (const c of cases) {
+  test("số dòng và tổng tiền khớp giữa trang, CSV, Excel, XML (tháng '" + c.month + "', trạng thái '" + c.status + "')", async ({ page }) => {
+    await page.goto("/lab/reports");
+    await page.getByTestId("reset-data").click();
+    await page.getByLabel("Tháng").selectOption(c.month);
+    await page.getByLabel("Trạng thái đơn").selectOption(c.status);
+    const rows = Number(await page.getByTestId("report-count").textContent());
+    const total = toNumber((await page.getByTestId("report-total").textContent())!);
+    await expect(page.getByTestId("report-row")).toHaveCount(rows);
+
+    // CSV: bỏ BOM, tách dòng, trừ dòng tiêu đề
+    const csv = await exportAs(page, "Xuất CSV");
+    const lines = (await readFile((await csv.path())!, "utf8")).replace(/^﻿/, "").trim().split("\\r\\n");
+    expect(lines.length - 1).toBe(rows);
+
+    // Excel: trừ dòng tiêu đề và dòng tổng
+    const xlsx = await exportAs(page, "Xuất Excel");
+    const wb = new ExcelJS.Workbook();
+    await wb.xlsx.readFile((await xlsx.path())!);
+    const ws = wb.getWorksheet("Đơn hàng")!;
+    expect(ws.rowCount - 2).toBe(rows);
+    const totalCell = ws.getCell("E" + ws.rowCount).value as { result: number };
+    expect(totalCell.result).toBeCloseTo(total, 2);
+
+    // XML: số phần tử order và thuộc tính total
+    const xml = await exportAs(page, "Xuất XML");
+    const parser = new XMLParser({ ignoreAttributes: false, attributeNamePrefix: "@_", parseTagValue: false });
+    const report = parser.parse(await readFile((await xml.path())!, "utf8")).report;
+    expect([report.order].flat().filter(Boolean)).toHaveLength(rows);
+    expect(Number(report["@_total"])).toBeCloseTo(total, 2);
+  });
+}
+`,
+  },
+];
+
+const insurance: Exercise[] = [
+  {
+    id: "insurance-1",
+    title: "Biên tuổi chủ xe và năm sản xuất (data-driven)",
+    difficulty: 3,
+    bugs: ["BUG-01"],
+    task: "Cố định hôm nay là 15/06/2026 bằng page.clock.setFixedTime. Dùng một bảng dữ liệu để kiểm tra biên tuổi chủ xe 18–70 (17 tuổi 364 ngày, đúng 18, 19, 69, đúng 70, 70 tuổi 364 ngày, đúng 71), rồi kiểm tra năm sản xuất hợp lệ từ 2011 đến 2026 (2010 và 2027 bị từ chối). Test phải đỏ khi bật BUG-01.",
+    criteria: [
+      "Gọi page.clock.setFixedTime trước page.goto để kết quả không phụ thuộc ngày chạy",
+      "Một bảng dữ liệu sinh ra nhiều test, mỗi dòng có ngày sinh và kết quả mong đợi",
+      "Kiểm tra cả hai phía của mỗi biên (18 và 70) và thông báo lỗi dưới ô Ngày sinh",
+      "Kiểm tra biên năm sản xuất ở hai đầu (2011 và 2026) và ngoài biên (2010, 2027)",
+      "Test đỏ với BUG-01",
+      ...COMMON_CRITERIA,
+    ],
+    hints: [
+      "Tuổi tính theo ngày: sinh ngày 15/06/2008 thì đúng 18 tuổi vào 15/06/2026.",
+      "Đặt page.clock.setFixedTime(new Date('2026-06-15T10:00:00')) ngay trước page.goto; ô Ngày sinh là input type date nên fill dạng yyyy-mm-dd.",
+      "Thông báo lỗi nằm trong data-testid err-dob và err-year; bước 2 hiển thị 'Bước 2/4' trong data-testid step-label.",
+    ],
+    solution: `import { test, expect, type Page } from "@playwright/test";
+
+// Cố định "hôm nay" là 15/06/2026 để biên tuổi và năm sản xuất không đổi theo ngày chạy.
+async function open(page: Page) {
+  await page.clock.setFixedTime(new Date("2026-06-15T10:00:00"));
+  await page.goto("/lab/insurance");
+  await page.getByTestId("reset-data").click();
+}
+
+async function fillOwner(page: Page, dob: string) {
+  await page.getByLabel("Họ và tên").fill("Nguyễn Văn An");
+  await page.getByLabel("Ngày sinh").fill(dob);
+  await page.getByLabel("Số điện thoại").fill("0912345678");
+  await page.getByLabel("Email").fill("an@example.com");
+}
+
+const ageCases = [
+  { dob: "2008-06-16", ok: false }, // 17 tuổi 364 ngày
+  { dob: "2008-06-15", ok: true }, // đúng 18 tuổi
+  { dob: "2007-06-15", ok: true }, // 19 tuổi
+  { dob: "1956-06-16", ok: true }, // 69 tuổi
+  { dob: "1956-06-15", ok: true }, // đúng 70 tuổi
+  { dob: "1955-06-16", ok: true }, // 70 tuổi 364 ngày
+  { dob: "1955-06-15", ok: false }, // đúng 71 tuổi
+];
+
+for (const c of ageCases) {
+  test("biên tuổi " + c.dob + (c.ok ? " được chấp nhận" : " bị từ chối"), async ({ page }) => {
+    await open(page);
+    await fillOwner(page, c.dob);
+    await page.getByRole("button", { name: "Tiếp tục" }).click();
+    if (c.ok) {
+      await expect(page.getByTestId("step-label")).toHaveText("Bước 2/4 · Thông tin xe");
+    } else {
+      await expect(page.getByTestId("err-dob")).toHaveText("Chủ xe phải từ 18 đến 70 tuổi");
+      await expect(page.getByTestId("step-label")).toHaveText("Bước 1/4 · Chủ xe");
+    }
+  });
+}
+
+test("năm sản xuất hợp lệ từ 2011 đến 2026", async ({ page }) => {
+  await open(page);
+  await fillOwner(page, "1990-05-15");
+  await page.getByRole("button", { name: "Tiếp tục" }).click();
+  await page.getByLabel("Loại xe").selectOption("car");
+  await page.getByLabel("Giá trị xe (VNĐ)").fill("500000000");
+  await page.getByLabel("Biển số xe").fill("30A-123.45");
+
+  for (const year of ["2010", "2027"]) {
+    await page.getByLabel("Năm sản xuất").fill(year);
+    await page.getByRole("button", { name: "Tiếp tục" }).click();
+    await expect(page.getByTestId("err-year")).toHaveText("Năm sản xuất từ 2011 đến 2026");
+  }
+  for (const year of ["2011", "2026"]) {
+    await page.getByLabel("Năm sản xuất").fill(year);
+    await page.getByRole("button", { name: "Tiếp tục" }).click();
+    await expect(page.getByTestId("step-label")).toHaveText("Bước 3/4 · Gói bảo hiểm");
+    await page.getByRole("button", { name: "Quay lại" }).click();
+  }
+});
+`,
+  },
+  {
+    id: "insurance-2",
+    title: "Trường điều kiện theo loại xe",
+    difficulty: 3,
+    task: "Kiểm tra: ô Tải trọng (tấn) chỉ hiện với Ô tô tải nhẹ và ẩn lại khi đổi loại xe; tải trọng chỉ hợp lệ trong khoảng 0,5 đến 3,5 (thử 0,4, 3,6, chữ, để trống, rồi 0,5 và 3,5); gói Toàn diện không tồn tại với Xe máy nhưng có với Ô tô con.",
+    criteria: [
+      "Khẳng định ô Tải trọng không có trong DOM với Ô tô con và Xe máy (toHaveCount(0))",
+      "Thử cả bốn giá trị tải trọng sai và hai giá trị biên đúng",
+      "Dùng getByRole('radio', { name, exact: true }) cho các gói bảo hiểm",
+      "Kiểm tra gói Toàn diện xuất hiện lại sau khi đổi từ Xe máy sang Ô tô con",
+      ...COMMON_CRITERIA,
+    ],
+    hints: [
+      "selectOption đổi loại xe; trường điều kiện hiện hoặc biến mất ngay sau đó, không cần chờ cố định.",
+      "Radio của shadcn và radio gốc đều nên tìm bằng getByRole('radio'); dùng exact để 'Cơ bản' không khớp nhãn khác.",
+      "Muốn đổi loại xe sau khi sang bước 3, bấm Quay lại: dữ liệu bước 2 được giữ.",
+    ],
+    solution: `import { test, expect, type Page } from "@playwright/test";
+
+async function open(page: Page) {
+  await page.clock.setFixedTime(new Date("2026-06-15T10:00:00"));
+  await page.goto("/lab/insurance");
+  await page.getByTestId("reset-data").click();
+  await page.getByLabel("Họ và tên").fill("Nguyễn Văn An");
+  await page.getByLabel("Ngày sinh").fill("1990-05-15");
+  await page.getByLabel("Số điện thoại").fill("0912345678");
+  await page.getByLabel("Email").fill("an@example.com");
+  await page.getByRole("button", { name: "Tiếp tục" }).click();
+}
+
+test("ô tải trọng chỉ hiện khi chọn ô tô tải nhẹ", async ({ page }) => {
+  await open(page);
+  const payload = page.getByLabel("Tải trọng (tấn)");
+  await expect(payload).toHaveCount(0);
+  await page.getByLabel("Loại xe").selectOption("truck");
+  await expect(payload).toBeVisible();
+  await page.getByLabel("Loại xe").selectOption("moto");
+  await expect(payload).toHaveCount(0);
+  await page.getByLabel("Loại xe").selectOption("car");
+  await expect(payload).toHaveCount(0);
+});
+
+test("tải trọng có biên 0,5 và 3,5 tấn", async ({ page }) => {
+  await open(page);
+  await page.getByLabel("Loại xe").selectOption("truck");
+  await page.getByLabel("Năm sản xuất").fill("2022");
+  await page.getByLabel("Giá trị xe (VNĐ)").fill("500000000");
+  await page.getByLabel("Biển số xe").fill("30A-123.45");
+
+  for (const bad of ["0,4", "3,6", "abc", ""]) {
+    await page.getByLabel("Tải trọng (tấn)").fill(bad);
+    await page.getByRole("button", { name: "Tiếp tục" }).click();
+    await expect(page.getByTestId("err-payload")).toBeVisible();
+    await expect(page.getByTestId("step-label")).toHaveText("Bước 2/4 · Thông tin xe");
+  }
+  for (const good of ["0,5", "3,5"]) {
+    await page.getByLabel("Tải trọng (tấn)").fill(good);
+    await page.getByRole("button", { name: "Tiếp tục" }).click();
+    await expect(page.getByTestId("step-label")).toHaveText("Bước 3/4 · Gói bảo hiểm");
+    await page.getByRole("button", { name: "Quay lại" }).click();
+  }
+});
+
+test("xe máy không có gói Toàn diện, ô tô con có", async ({ page }) => {
+  await open(page);
+  await page.getByLabel("Loại xe").selectOption("moto");
+  await page.getByLabel("Năm sản xuất").fill("2022");
+  await page.getByLabel("Giá trị xe (VNĐ)").fill("60000000");
+  await page.getByLabel("Biển số xe").fill("30A-123.45");
+  await page.getByRole("button", { name: "Tiếp tục" }).click();
+
+  await expect(page.getByRole("radio", { name: "Cơ bản", exact: true })).toBeVisible();
+  await expect(page.getByRole("radio", { name: "Nâng cao", exact: true })).toBeVisible();
+  await expect(page.getByRole("radio", { name: "Toàn diện", exact: true })).toHaveCount(0);
+
+  await page.getByRole("button", { name: "Quay lại" }).click();
+  await page.getByLabel("Loại xe").selectOption("car");
+  await page.getByRole("button", { name: "Tiếp tục" }).click();
+  await expect(page.getByRole("radio", { name: "Toàn diện", exact: true })).toBeVisible();
+});
+`,
+  },
+  {
+    id: "insurance-3",
+    title: "Tính phí qua nhiều tổ hợp (bảng dữ liệu)",
+    difficulty: 3,
+    bugs: ["BUG-02"],
+    task: "Tính tay phí cho 12 tổ hợp (loại xe, gói, tuổi dưới 25, quyền lợi thêm, số năm không bồi thường 0/1/2/3, kỳ tháng, làm tròn xuống nghìn) theo công thức trong BR rồi viết test data-driven so với tạm tính ở bước 3. Test phải đỏ khi bật BUG-02.",
+    criteria: [
+      "Một mảng dữ liệu có cột phí năm và số tiền phải trả mỗi kỳ, vòng lặp sinh test",
+      "Có đủ bốn mức số năm không bồi thường 0, 1, 2, 3",
+      "Có trường hợp tuổi 24 (phụ phí) và đúng 25 (không phụ phí)",
+      "Có trường hợp kỳ tháng và trường hợp làm tròn xuống nghìn đồng",
+      "Đọc kết quả qua data-testid premium-annual và premium-payable",
+      "Test đỏ với BUG-02",
+      ...COMMON_CRITERIA,
+    ],
+    hints: [
+      "Thứ tự: phí gốc = giá trị × tỉ lệ gói × hệ số loại xe; nhân 1,2 nếu dưới 25 tuổi; trừ giảm giá; cộng quyền lợi thêm; làm tròn xuống nghìn.",
+      "Quyền lợi thêm: Thuỷ kích 300.000, Mất cắp bộ phận 500.000, Cứu hộ 24/7 200.000 (cộng sau khi giảm giá). Kỳ tháng = phí năm × 1,08 / 12.",
+      "Viết hàm trợ giúp đi tới bước 3 theo dữ liệu từng dòng, rồi chọn gói, tick quyền lợi và selectOption số năm không bồi thường.",
+    ],
+    solution: `import { test, expect, type Page } from "@playwright/test";
+
+// Bảng dữ liệu: mỗi dòng là một tổ hợp (loại xe × gói × tuổi × quyền lợi × năm không bồi thường × kỳ thanh toán).
+const cases = [
+  { name: "ô tô con, Cơ bản", dob: "1990-05-15", type: "car", value: "500000000", pkg: "Cơ bản", extras: [], ncb: "0", month: false, annual: "5.000.000 ₫", payable: "5.000.000 ₫" },
+  { name: "tải nhẹ, Nâng cao (hệ số 1,2)", dob: "1990-05-15", type: "truck", value: "800000000", pkg: "Nâng cao", extras: [], ncb: "0", month: false, annual: "14.400.000 ₫", payable: "14.400.000 ₫" },
+  { name: "xe máy, Cơ bản (hệ số 0,6)", dob: "1990-05-15", type: "moto", value: "60000000", pkg: "Cơ bản", extras: [], ncb: "0", month: false, annual: "360.000 ₫", payable: "360.000 ₫" },
+  { name: "24 tuổi: phụ phí 20%", dob: "2001-06-16", type: "car", value: "500000000", pkg: "Cơ bản", extras: [], ncb: "0", month: false, annual: "6.000.000 ₫", payable: "6.000.000 ₫" },
+  { name: "đúng 25 tuổi: không phụ phí", dob: "2001-06-15", type: "car", value: "500000000", pkg: "Cơ bản", extras: [], ncb: "0", month: false, annual: "5.000.000 ₫", payable: "5.000.000 ₫" },
+  { name: "1 năm không bồi thường: giảm 5%", dob: "1990-05-15", type: "car", value: "1000000000", pkg: "Cơ bản", extras: [], ncb: "1", month: false, annual: "9.500.000 ₫", payable: "9.500.000 ₫" },
+  { name: "2 năm không bồi thường: giảm 10%", dob: "1990-05-15", type: "car", value: "1000000000", pkg: "Cơ bản", extras: [], ncb: "2", month: false, annual: "9.000.000 ₫", payable: "9.000.000 ₫" },
+  { name: "3 năm trở lên: giảm 15%", dob: "1990-05-15", type: "car", value: "1000000000", pkg: "Cơ bản", extras: [], ncb: "3", month: false, annual: "8.500.000 ₫", payable: "8.500.000 ₫" },
+  { name: "ba quyền lợi thêm", dob: "1990-05-15", type: "car", value: "500000000", pkg: "Cơ bản", extras: ["Thuỷ kích", "Mất cắp bộ phận", "Cứu hộ 24/7"], ncb: "0", month: false, annual: "6.000.000 ₫", payable: "6.000.000 ₫" },
+  { name: "kỳ tháng: phí năm × 1,08 / 12", dob: "1990-05-15", type: "car", value: "1000000000", pkg: "Toàn diện", extras: ["Cứu hộ 24/7"], ncb: "1", month: true, annual: "19.200.000 ₫", payable: "1.728.000 ₫" },
+  { name: "kết hợp: 24 tuổi, tải nhẹ, Nâng cao, 3 năm, 2 quyền lợi", dob: "2001-06-16", type: "truck", value: "800000000", pkg: "Nâng cao", extras: ["Thuỷ kích", "Cứu hộ 24/7"], ncb: "3", month: false, annual: "15.188.000 ₫", payable: "15.188.000 ₫" },
+  { name: "làm tròn xuống nghìn đồng", dob: "1990-05-15", type: "truck", value: "833333333", pkg: "Nâng cao", extras: [], ncb: "0", month: false, annual: "14.999.000 ₫", payable: "14.999.000 ₫" },
+];
+
+async function toPackageStep(page: Page, c: (typeof cases)[number]) {
+  await page.clock.setFixedTime(new Date("2026-06-15T10:00:00"));
+  await page.goto("/lab/insurance");
+  await page.getByTestId("reset-data").click();
+  await page.getByLabel("Họ và tên").fill("Nguyễn Văn An");
+  await page.getByLabel("Ngày sinh").fill(c.dob);
+  await page.getByLabel("Số điện thoại").fill("0912345678");
+  await page.getByLabel("Email").fill("an@example.com");
+  await page.getByRole("button", { name: "Tiếp tục" }).click();
+
+  await page.getByLabel("Loại xe").selectOption(c.type);
+  if (c.type === "truck") await page.getByLabel("Tải trọng (tấn)").fill("1");
+  await page.getByLabel("Năm sản xuất").fill("2022");
+  await page.getByLabel("Giá trị xe (VNĐ)").fill(c.value);
+  await page.getByLabel("Biển số xe").fill("30A-123.45");
+  await page.getByRole("button", { name: "Tiếp tục" }).click();
+}
+
+for (const c of cases) {
+  test("tính phí: " + c.name, async ({ page }) => {
+    await toPackageStep(page, c);
+    await page.getByRole("radio", { name: c.pkg, exact: true }).check();
+    for (const extra of c.extras) await page.getByRole("checkbox", { name: extra }).check();
+    await page.getByLabel("Số năm không bồi thường").selectOption(c.ncb);
+    if (c.month) await page.getByRole("radio", { name: /theo tháng/ }).check();
+
+    await expect(page.getByTestId("premium-annual")).toHaveText(c.annual);
+    await expect(page.getByTestId("premium-payable")).toHaveText(c.payable);
+  });
+}
+`,
+  },
+  {
+    id: "insurance-4",
+    title: "Giữ dữ liệu khi quay lại giữa các bước",
+    difficulty: 3,
+    bugs: ["BUG-03"],
+    task: "Đi tới bước 3 rồi bấm Quay lại hai lần và khẳng định mọi trường của bước 2 và bước 1 vẫn còn nguyên; đi tiếp tới bước 4 không phải nhập lại và nhận số hợp đồng sau khi đồng ý điều khoản. Thêm một test: chưa đồng ý điều khoản thì không có số hợp đồng, và gói đã chọn vẫn được giữ khi quay lại từ bước 4. Test phải đỏ khi bật BUG-03.",
+    criteria: [
+      "Kiểm tra giá trị từng ô bằng toHaveValue sau mỗi lần Quay lại",
+      "Kiểm tra thanh tiến trình đổi theo bước (aria-valuenow hoặc step-label)",
+      "Đi tiếp tới cuối mà không nhập lại dữ liệu và nhận số hợp đồng BH-2026-0001",
+      "Kiểm tra radio và checkbox của bước 3 còn được tick sau khi quay lại từ bước 4",
+      "Test đỏ với BUG-03",
+      ...COMMON_CRITERIA,
+    ],
+    hints: [
+      "Số hợp đồng tăng dần và được đặt lại bởi nút Reset dữ liệu lab; mở trang xong hãy bấm reset-data.",
+      "Bug chỉ xuất hiện khi quay lại từ bước 3 về bước 2, nên phải kiểm tra giá trị ô ngay sau lần Quay lại đó.",
+      "Ô tick điều khoản có nhãn 'Tôi đồng ý với điều khoản bảo hiểm'; thông báo lỗi nằm trong data-testid err-agree.",
+    ],
+    solution: `import { test, expect, type Page } from "@playwright/test";
+
+async function open(page: Page) {
+  await page.clock.setFixedTime(new Date("2026-06-15T10:00:00"));
+  await page.goto("/lab/insurance");
+  await page.getByTestId("reset-data").click();
+}
+
+test("quay lại giữ nguyên dữ liệu ở mọi bước và hoàn tất được báo giá", async ({ page }) => {
+  await open(page);
+  await page.getByLabel("Họ và tên").fill("Nguyễn Văn An");
+  await page.getByLabel("Ngày sinh").fill("1990-05-15");
+  await page.getByLabel("Số điện thoại").fill("0912345678");
+  await page.getByLabel("Email").fill("an@example.com");
+  await page.getByRole("button", { name: "Tiếp tục" }).click();
+
+  await page.getByLabel("Loại xe").selectOption("truck");
+  await page.getByLabel("Tải trọng (tấn)").fill("2");
+  await page.getByLabel("Năm sản xuất").fill("2022");
+  await page.getByLabel("Giá trị xe (VNĐ)").fill("700000000");
+  await page.getByLabel("Biển số xe").fill("30A-999.99");
+  await page.getByRole("button", { name: "Tiếp tục" }).click();
+  await expect(page.getByTestId("step-label")).toHaveText("Bước 3/4 · Gói bảo hiểm");
+  await expect(page.getByRole("progressbar")).toHaveAttribute("aria-valuenow", "3");
+
+  // Quay lại bước 2: dữ liệu còn nguyên.
+  await page.getByRole("button", { name: "Quay lại" }).click();
+  await expect(page.getByTestId("step-label")).toHaveText("Bước 2/4 · Thông tin xe");
+  await expect(page.getByLabel("Loại xe")).toHaveValue("truck");
+  await expect(page.getByLabel("Tải trọng (tấn)")).toHaveValue("2");
+  await expect(page.getByLabel("Năm sản xuất")).toHaveValue("2022");
+  await expect(page.getByLabel("Giá trị xe (VNĐ)")).toHaveValue("700000000");
+  await expect(page.getByLabel("Biển số xe")).toHaveValue("30A-999.99");
+
+  // Quay lại bước 1: dữ liệu còn nguyên.
+  await page.getByRole("button", { name: "Quay lại" }).click();
+  await expect(page.getByLabel("Họ và tên")).toHaveValue("Nguyễn Văn An");
+  await expect(page.getByLabel("Ngày sinh")).toHaveValue("1990-05-15");
+  await expect(page.getByLabel("Số điện thoại")).toHaveValue("0912345678");
+  await expect(page.getByLabel("Email")).toHaveValue("an@example.com");
+
+  // Đi tiếp tới cuối mà không phải nhập lại.
+  await page.getByRole("button", { name: "Tiếp tục" }).click();
+  await page.getByRole("button", { name: "Tiếp tục" }).click();
+  await page.getByRole("radio", { name: "Nâng cao", exact: true }).check();
+  await page.getByRole("button", { name: "Tiếp tục" }).click();
+  await expect(page.getByTestId("rv-vehicle")).toHaveText("Ô tô tải nhẹ, tải trọng 2 tấn, đời 2022, 30A-999.99");
+  await page.getByLabel("Tôi đồng ý với điều khoản bảo hiểm").check();
+  await page.getByRole("button", { name: "Xác nhận mua bảo hiểm" }).click();
+  await expect(page.getByTestId("contract-no")).toHaveText("BH-2026-0001");
+});
+
+test("chưa đồng ý điều khoản thì chưa có số hợp đồng; lựa chọn gói được giữ khi quay lại từ bước 4", async ({ page }) => {
+  await open(page);
+  await page.getByLabel("Họ và tên").fill("Trần Thị Bình");
+  await page.getByLabel("Ngày sinh").fill("1985-01-20");
+  await page.getByLabel("Số điện thoại").fill("0387654321");
+  await page.getByLabel("Email").fill("binh@example.com");
+  await page.getByRole("button", { name: "Tiếp tục" }).click();
+  await page.getByLabel("Loại xe").selectOption("car");
+  await page.getByLabel("Năm sản xuất").fill("2020");
+  await page.getByLabel("Giá trị xe (VNĐ)").fill("600000000");
+  await page.getByLabel("Biển số xe").fill("51F-111.22");
+  await page.getByRole("button", { name: "Tiếp tục" }).click();
+  await page.getByRole("radio", { name: "Toàn diện", exact: true }).check();
+  await page.getByRole("checkbox", { name: "Cứu hộ 24/7" }).check();
+  await page.getByRole("button", { name: "Tiếp tục" }).click();
+
+  await page.getByRole("button", { name: "Xác nhận mua bảo hiểm" }).click();
+  await expect(page.getByTestId("err-agree")).toBeVisible();
+  await expect(page.getByTestId("contract-no")).toHaveCount(0);
+
+  await page.getByRole("button", { name: "Quay lại" }).click();
+  await expect(page.getByRole("radio", { name: "Toàn diện", exact: true })).toBeChecked();
+  await expect(page.getByRole("checkbox", { name: "Cứu hộ 24/7" })).toBeChecked();
+});
+`,
+  },
+];
+
+export const EXERCISES: Record<string, Exercise[]> = { login, forms, cart, playground, api, otp, todo, table, leave, chat, totp, oauth, pay, orders, guard, webhooks, rbac, timezone, csv, mail, upload, bank, booking, dashboard, clinic, tickets, i18n, inventory, hotel, kanban, reports, insurance };

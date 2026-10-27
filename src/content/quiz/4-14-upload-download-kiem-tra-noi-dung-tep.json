@@ -1,0 +1,280 @@
+{
+  "questions": [
+    {
+      "id": "q1",
+      "type": "single",
+      "prompt": "Test bấm nút xuất báo cáo thỉnh thoảng báo timeout ở waitForEvent(\"download\") dù tệp vẫn tải được bằng tay. Cách viết nào đúng?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Bấm nút trước, sau đó mới gọi waitForEvent để chờ tệp"
+        },
+        {
+          "id": "b",
+          "text": "Bấm nút rồi chờ cố định hai giây trước khi đọc tệp"
+        },
+        {
+          "id": "c",
+          "text": "Gọi page.reload sau khi bấm để sự kiện được phát lại"
+        },
+        {
+          "id": "d",
+          "text": "Đặt waitForEvent và lệnh bấm trong cùng một Promise.all"
+        }
+      ],
+      "answer": [
+        "d"
+      ],
+      "explanation": "Sự kiện có thể xảy ra ngay sau cú bấm, nên phải đăng ký chờ trước hoặc cùng lúc với hành động gây ra nó."
+    },
+    {
+      "id": "q2",
+      "type": "single",
+      "prompt": "Ô nhập tệp đã nhận hai tệp ở lần chọn trước. Bạn muốn xoá lựa chọn hiện tại của chính thẻ input trong test. Lệnh nào phù hợp?",
+      "options": [
+        {
+          "id": "a",
+          "text": "input.clear() để xoá giá trị của ô"
+        },
+        {
+          "id": "b",
+          "text": "input.setInputFiles(null) với giá trị rỗng"
+        },
+        {
+          "id": "c",
+          "text": "input.setInputFiles([]) với mảng rỗng"
+        },
+        {
+          "id": "d",
+          "text": "input.fill(\"\") như với một ô văn bản"
+        }
+      ],
+      "answer": [
+        "c"
+      ],
+      "explanation": "Mảng rỗng xoá lựa chọn của input. Danh sách tệp đã tải lên của ứng dụng là chuyện khác: phải bấm nút xoá của ứng dụng."
+    },
+    {
+      "id": "q3",
+      "type": "multi",
+      "prompt": "Những cách nào đưa tệp vào ô chọn tệp mà không cần tệp thật trên đĩa? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "setInputFiles với đối tượng có name, mimeType và buffer"
+        },
+        {
+          "id": "b",
+          "text": "Truyền mảng gồm nhiều đối tượng buffer vào setInputFiles"
+        },
+        {
+          "id": "c",
+          "text": "Truyền chuỗi nội dung tệp trực tiếp vào setInputFiles"
+        },
+        {
+          "id": "d",
+          "text": "Dùng fileChooser.setFiles với đối tượng buffer tương tự"
+        }
+      ],
+      "answer": [
+        "a",
+        "b",
+        "d"
+      ],
+      "explanation": "Buffer trong bộ nhớ dùng được ở setInputFiles (một hoặc nhiều tệp) và fileChooser.setFiles. Chuỗi trần được hiểu là đường dẫn tệp, không phải nội dung."
+    },
+    {
+      "id": "q4",
+      "type": "single",
+      "prompt": "Test đọc ô tổng trong Excel bằng exceljs và chỉ so result của công thức với tổng trên trang; bản xuất lỗi vẫn xanh. Cách sửa hợp lý nhất là gì?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Tăng timeout vì tệp lớn nên đọc chưa xong"
+        },
+        {
+          "id": "b",
+          "text": "Đọc ô bằng cell.text thay cho cell.value"
+        },
+        {
+          "id": "c",
+          "text": "Cộng lại các ô dữ liệu và kiểm tra cả chuỗi công thức"
+        },
+        {
+          "id": "d",
+          "text": "Mở tệp bằng Excel thật rồi chụp ảnh màn hình"
+        }
+      ],
+      "answer": [
+        "c"
+      ],
+      "explanation": "result là giá trị đã ghi sẵn trong tệp, có thể khớp với một công thức sai. Tự tính lại từ các ô dữ liệu và kiểm tra phạm vi công thức mới bắt được lỗi."
+    },
+    {
+      "id": "q5",
+      "type": "single",
+      "prompt": "XML xuất ra có đơn tên khách là Hoa & Quà viết thẳng dấu & trong thẻ customer. Kiểm tra nào phát hiện được lỗi này?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Đếm số thẻ order bằng biểu thức chính quy"
+        },
+        {
+          "id": "b",
+          "text": "So sánh tên tệp với giá trị suggestedFilename"
+        },
+        {
+          "id": "c",
+          "text": "Kiểm tra Content-Type của response là application/xml"
+        },
+        {
+          "id": "d",
+          "text": "XMLValidator.validate(text) phải trả về true"
+        }
+      ],
+      "answer": [
+        "d"
+      ],
+      "explanation": "Dấu & không escape làm XML sai cú pháp; trình kiểm tra hợp lệ trả về đối tượng lỗi thay vì true. Tên tệp và MIME vẫn đúng nên không lộ lỗi."
+    },
+    {
+      "id": "q6",
+      "type": "multi",
+      "prompt": "Điều nào đúng khi đọc PDF báo cáo bằng pdf-parse 2.x trong spec? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Gọi hàm pdf(buffer) như API của bản 1.x"
+        },
+        {
+          "id": "b",
+          "text": "Gọi destroy() trong finally để giải phóng tài nguyên"
+        },
+        {
+          "id": "c",
+          "text": "Tạo new PDFParse({ data }) với buffer của tệp"
+        },
+        {
+          "id": "d",
+          "text": "getText() trả về text và total là số trang"
+        }
+      ],
+      "answer": [
+        "b",
+        "c",
+        "d"
+      ],
+      "explanation": "Bản 2.x dùng lớp PDFParse: khởi tạo bằng data, getText() cho text và total, rồi destroy(). Hàm pdf(buffer) là API cũ của bản 1.x."
+    },
+    {
+      "id": "q7",
+      "type": "single",
+      "prompt": "Trong PDF của lab, tên khách xuất hiện là Nguyen Van An dù giao diện hiển thị Nguyễn Văn An. Hướng xử lý nào hợp lý?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Báo lỗi tức thì vì PDF mất dấu là lỗi nghiêm trọng"
+        },
+        {
+          "id": "b",
+          "text": "Bỏ qua kiểm tra tên khách trong PDF hoàn toàn"
+        },
+        {
+          "id": "c",
+          "text": "Đổi font của trình duyệt chạy test sang font tiếng Việt"
+        },
+        {
+          "id": "d",
+          "text": "So sánh bản không dấu của giao diện với văn bản PDF"
+        }
+      ],
+      "answer": [
+        "d"
+      ],
+      "explanation": "Lab dùng font chuẩn không có dấu và ghi rõ điều đó. Chuẩn hoá bỏ dấu ở cả hai phía vẫn kiểm tra được nội dung; phản ánh với dev nếu BR đòi chữ có dấu."
+    },
+    {
+      "id": "q8",
+      "type": "single",
+      "prompt": "Dòng tiêu đề CSV đọc ra là \"\\uFEFFMã đơn\" khiến so sánh với \"Mã đơn\" thất bại. Nguyên nhân là gì?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Cột đầu tiên được bọc trong cặp ngoặc kép"
+        },
+        {
+          "id": "b",
+          "text": "Tệp lưu bằng bảng mã Latin-1 thay vì UTF-8"
+        },
+        {
+          "id": "c",
+          "text": "Tệp có BOM đầu tệp mà parser chưa bỏ đi"
+        },
+        {
+          "id": "d",
+          "text": "Tệp dùng CRLF thay vì LF ở cuối mỗi dòng"
+        }
+      ],
+      "answer": [
+        "c"
+      ],
+      "explanation": "BOM là ký tự \\uFEFF ở đầu tệp UTF-8, thường thêm để Excel nhận đúng mã hoá. Cần bỏ trước khi so tiêu đề."
+    },
+    {
+      "id": "q9",
+      "type": "multi",
+      "prompt": "Những kiểm tra nào thuộc đối chiếu xuyên định dạng cho cùng một bộ lọc? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Số dòng dữ liệu của CSV bằng số dòng trên trang"
+        },
+        {
+          "id": "b",
+          "text": "Tổng ở phần tử report của XML bằng tổng trên trang"
+        },
+        {
+          "id": "c",
+          "text": "Kích thước tệp Excel bằng kích thước tệp CSV"
+        },
+        {
+          "id": "d",
+          "text": "Mã đơn ở từng hàng Excel khớp với hàng trên trang"
+        }
+      ],
+      "answer": [
+        "a",
+        "b",
+        "d"
+      ],
+      "explanation": "Đối chiếu so cùng dữ liệu nghiệp vụ (số dòng, tổng, mã đơn) giữa các nơi. Kích thước tệp khác nhau theo định dạng nên không có ý nghĩa so sánh."
+    },
+    {
+      "id": "q10",
+      "type": "single",
+      "prompt": "Test đọc download.path() trong một hàm chạy sau khi context đã đóng và gặp ENOENT. Cách nào tránh lỗi này ổn định nhất?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Tăng expect.timeout trong cấu hình Playwright"
+        },
+        {
+          "id": "b",
+          "text": "Đổi sang trình duyệt khác để tệp tạm được giữ lại"
+        },
+        {
+          "id": "c",
+          "text": "Dùng saveAs vào thư mục tạm riêng rồi xoá khi test xong"
+        },
+        {
+          "id": "d",
+          "text": "Đọc tệp lặp lại nhiều lần cho tới khi thấy tệp"
+        }
+      ],
+      "answer": [
+        "c"
+      ],
+      "explanation": "Tệp tạm của Playwright bị xoá khi context đóng. Lưu sang thư mục do mình quản lý (kèm bước dọn) cho vòng đời rõ ràng."
+    }
+  ]
+}

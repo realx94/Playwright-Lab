@@ -1,0 +1,277 @@
+{
+  "questions": [
+    {
+      "id": "q1",
+      "type": "single",
+      "prompt": "Bạn kéo thẻ vào cột Đang làm đã có hai thẻ bằng dragTo mặc định, nhưng thẻ lại nằm giữa cột chứ không ở cuối. Nguyên nhân chính là gì?",
+      "options": [
+        {
+          "id": "a",
+          "text": "dragTo luôn chèn thẻ vào vị trí thứ hai của cột đích khi thả"
+        },
+        {
+          "id": "b",
+          "text": "Cột Đang làm bị giới hạn WIP nên thứ tự bị đảo lại ngẫu nhiên"
+        },
+        {
+          "id": "c",
+          "text": "Trình duyệt tự sắp xếp thẻ theo bảng chữ cái sau mỗi lần thả"
+        },
+        {
+          "id": "d",
+          "text": "Điểm giữa vùng thả đang nằm trên một thẻ khác nên thẻ chèn trước nó"
+        }
+      ],
+      "answer": [
+        "d"
+      ],
+      "explanation": "dragTo thả vào điểm giữa đích. Nếu điểm đó trùng một thẻ thì ứng dụng chèn trước thẻ đó; dùng targetPosition để trỏ vào chỗ trống ở đáy cột."
+    },
+    {
+      "id": "q2",
+      "type": "single",
+      "prompt": "Ứng dụng hiện nút Xoá nhanh chỉ khi rê chuột vào thẻ. Test nên làm gì để kiểm tra nút này?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Gọi focus trên thẻ rồi bấm phím Tab cho tới khi nút hiện ra"
+        },
+        {
+          "id": "b",
+          "text": "Gọi hover trên thẻ rồi kiểm tra nút hiển thị bằng toBeVisible"
+        },
+        {
+          "id": "c",
+          "text": "Gọi click trên thẻ rồi chờ nút xuất hiện sau một giây cố định"
+        },
+        {
+          "id": "d",
+          "text": "Đọc nội dung HTML của trang và tìm chữ Xoá nhanh trong chuỗi"
+        }
+      ],
+      "answer": [
+        "b"
+      ],
+      "explanation": "hover kích hoạt mouseenter, là sự kiện ứng dụng đang lắng nghe; assertion toBeVisible tự chờ cho tới khi nút hiện."
+    },
+    {
+      "id": "q3",
+      "type": "single",
+      "prompt": "Để mở menu ngữ cảnh của một thẻ trong test, lệnh nào đúng?",
+      "options": [
+        {
+          "id": "a",
+          "text": "card.click({ button: 'right' }) rồi chờ phần tử role menu hiện ra"
+        },
+        {
+          "id": "b",
+          "text": "card.dblclick() rồi chờ phần tử role menu hiện ra trên trang"
+        },
+        {
+          "id": "c",
+          "text": "card.click({ modifiers: ['Alt'] }) rồi chờ menu hiện ra trên trang"
+        },
+        {
+          "id": "d",
+          "text": "card.hover() rồi giữ chuột hơn một giây để menu tự hiện ra"
+        }
+      ],
+      "answer": [
+        "a"
+      ],
+      "explanation": "Menu ngữ cảnh gắn với sự kiện contextmenu, được phát bởi click chuột phải."
+    },
+    {
+      "id": "q4",
+      "type": "single",
+      "prompt": "Test bấm Alt+ArrowRight bằng page.keyboard.press nhưng thẻ không đổi cột. Bước nào nên thêm trước lệnh bấm phím?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Thêm tuỳ chọn delay lớn hơn vào lệnh bấm phím cho chậm lại"
+        },
+        {
+          "id": "b",
+          "text": "Gọi page.mouse.wheel để trang cuộn sát tới vị trí của thẻ"
+        },
+        {
+          "id": "c",
+          "text": "Gọi focus trên thẻ và xác nhận bằng toBeFocused rồi mới bấm"
+        },
+        {
+          "id": "d",
+          "text": "Gọi hover trên thẻ để con trỏ nằm sẵn bên trong vùng của thẻ"
+        }
+      ],
+      "answer": [
+        "c"
+      ],
+      "explanation": "keyboard.press chỉ gửi phím tới phần tử đang focus. Phím tắt trên thẻ chỉ chạy khi thẻ giữ focus."
+    },
+    {
+      "id": "q5",
+      "type": "single",
+      "prompt": "Bạn cần nhập 'api' vào ô tìm và muốn ứng dụng nhận từng phím như người gõ thật. Lệnh nào phù hợp nhất?",
+      "options": [
+        {
+          "id": "a",
+          "text": "search.fill('api') để gán nhanh toàn bộ giá trị vào ô nhập"
+        },
+        {
+          "id": "b",
+          "text": "search.press('api') để bấm một tổ hợp phím có tên là api"
+        },
+        {
+          "id": "c",
+          "text": "search.setAttribute('value', 'api') để đổi thuộc tính của ô"
+        },
+        {
+          "id": "d",
+          "text": "search.pressSequentially('api') để gõ từng ký tự vào ô này"
+        }
+      ],
+      "answer": [
+        "d"
+      ],
+      "explanation": "pressSequentially tự focus ô rồi gõ từng ký tự, sinh keydown cho mỗi phím. fill gán thẳng giá trị."
+    },
+    {
+      "id": "q6",
+      "type": "single",
+      "prompt": "Vùng danh sách có thanh cuộn riêng không phản ứng với page.mouse.wheel dù lệnh chạy không lỗi. Điều gì nên kiểm tra đầu tiên?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Locator của vùng cuộn có dùng getByTestId thay vì getByRole"
+        },
+        {
+          "id": "b",
+          "text": "Con trỏ chuột có đang nằm bên trong vùng cuộn hay không"
+        },
+        {
+          "id": "c",
+          "text": "Ứng dụng có đang tắt thuộc tính draggable trên các mục không"
+        },
+        {
+          "id": "d",
+          "text": "Phiên bản trình duyệt có hỗ trợ sự kiện contextmenu hay không"
+        }
+      ],
+      "answer": [
+        "b"
+      ],
+      "explanation": "mouse.wheel xoay bánh xe tại vị trí con trỏ hiện tại. Hãy hover vào vùng cần cuộn trước."
+    },
+    {
+      "id": "q7",
+      "type": "single",
+      "prompt": "Thư viện kéo thả của một dự án chỉ lắng nghe mousemove nên dragTo không có tác dụng. Hướng xử lý hợp lý là gì?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Đổi sang locator.click hai lần liên tiếp tại nguồn rồi tại đích"
+        },
+        {
+          "id": "b",
+          "text": "Tăng timeout của test lên gấp đôi rồi chạy lại cùng một lệnh"
+        },
+        {
+          "id": "c",
+          "text": "Dùng page.mouse.move, down, nhiều bước move có steps, rồi up"
+        },
+        {
+          "id": "d",
+          "text": "Thêm force: true vào dragTo để ép trình duyệt bỏ qua kiểm tra"
+        }
+      ],
+      "answer": [
+        "c"
+      ],
+      "explanation": "Thư viện theo dõi mousemove cần chuỗi sự kiện chuột đầy đủ: nhấn giữ, di nhiều bước để vượt ngưỡng kéo, rồi thả."
+    },
+    {
+      "id": "q8",
+      "type": "multi",
+      "prompt": "Những lệnh nào sau đây thuộc nhóm thao tác cấp thấp, không tự chờ actionability của phần tử?",
+      "options": [
+        {
+          "id": "a",
+          "text": "page.keyboard.press"
+        },
+        {
+          "id": "b",
+          "text": "locator.hover"
+        },
+        {
+          "id": "c",
+          "text": "locator.dragTo"
+        },
+        {
+          "id": "d",
+          "text": "page.mouse.move"
+        }
+      ],
+      "answer": [
+        "d",
+        "a"
+      ],
+      "explanation": "page.mouse và page.keyboard chỉ biết toạ độ và phím. locator.hover và locator.dragTo kiểm tra actionability trước khi thao tác."
+    },
+    {
+      "id": "q9",
+      "type": "multi",
+      "prompt": "Khi nào nên dùng page.mouse từng bước thay cho locator.dragTo?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Kéo thả HTML5 đơn giản giữa hai phần tử có draggable"
+        },
+        {
+          "id": "b",
+          "text": "Muốn test ngắn hơn cho các thẻ có sẵn thuộc tính testid"
+        },
+        {
+          "id": "c",
+          "text": "Thư viện kéo thả cần nhiều sự kiện mousemove trung gian"
+        },
+        {
+          "id": "d",
+          "text": "Cần vượt một ngưỡng khoảng cách trước khi bắt đầu kéo"
+        }
+      ],
+      "answer": [
+        "c",
+        "d"
+      ],
+      "explanation": "Kéo thả HTML5 chuẩn đã chạy tốt với dragTo. Mouse từng bước dành cho thư viện cần chuỗi di chuột và ngưỡng kéo."
+    },
+    {
+      "id": "q10",
+      "type": "multi",
+      "prompt": "Test đang gõ trong ô tìm rồi bấm phím N để thêm thẻ nhưng không có thẻ mới. Những nguyên nhân nào hợp lý?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Cột Cần làm bị khoá nên không nhận thêm thẻ mới nào"
+        },
+        {
+          "id": "b",
+          "text": "Phím tắt toàn trang bị bỏ qua khi focus đang ở ô nhập"
+        },
+        {
+          "id": "c",
+          "text": "Ký tự n được gõ vào ô tìm thay vì kích hoạt phím tắt"
+        },
+        {
+          "id": "d",
+          "text": "Playwright không hỗ trợ bấm các phím chữ cái thường"
+        }
+      ],
+      "answer": [
+        "b",
+        "c"
+      ],
+      "explanation": "Ô nhập nhận ký tự và ứng dụng bỏ qua phím tắt khi đang gõ. Cần đưa focus ra khỏi ô nhập trước khi bấm N."
+    }
+  ]
+}

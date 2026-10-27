@@ -1,0 +1,224 @@
+{
+  "questions": [
+    {
+      "id": "q1",
+      "type": "single",
+      "prompt": "Test gửi PATCH tới /api/lab/books/b-1 nhưng route sách chỉ cài PUT. Server trả mã nào?",
+      "options": [
+        {
+          "id": "a",
+          "text": "200 vì PATCH và PUT cùng sửa dữ liệu sách"
+        },
+        {
+          "id": "b",
+          "text": "405 vì route không hỗ trợ method PATCH ở đường dẫn đó"
+        },
+        {
+          "id": "c",
+          "text": "404 vì sách b-1 bị server coi như không tồn tại"
+        },
+        {
+          "id": "d",
+          "text": "422 vì body gửi lên không đúng cấu trúc yêu cầu của server"
+        }
+      ],
+      "answer": [
+        "b"
+      ],
+      "explanation": "Route sách chỉ khai báo GET, PUT, DELETE nên PATCH nhận 405 Method Not Allowed. Đừng suy luận method từ tên gọi, hãy đọc tài liệu API và gọi thử."
+    },
+    {
+      "id": "q2",
+      "type": "single",
+      "prompt": "res.json() ném lỗi 'Unexpected end of JSON input' sau khi xoá sách thành công. Nguyên nhân hợp lý nhất là gì?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Token admin đã hết hạn nên server trả body bị cắt dở"
+        },
+        {
+          "id": "b",
+          "text": "Header Content-Type bị thiếu nên Playwright không đọc được"
+        },
+        {
+          "id": "c",
+          "text": "Phản hồi 204 không có body nên không có gì để parse JSON"
+        },
+        {
+          "id": "d",
+          "text": "Fixture request chưa kịp nhận hết dữ liệu từ máy chủ"
+        }
+      ],
+      "answer": [
+        "c"
+      ],
+      "explanation": "DELETE thành công trả 204 No Content, body rỗng. ApiClient của bài đọc text trước rồi mới parse nếu có nội dung nên xử lý được cả trường hợp này."
+    },
+    {
+      "id": "q3",
+      "type": "multi",
+      "prompt": "Vì sao nên tạo và xoá dữ liệu test trong fixture (phần trước và sau use) thay vì viết dòng xoá ở cuối thân test? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Phần dọn sau use vẫn chạy khi test đỏ giữa chừng"
+        },
+        {
+          "id": "b",
+          "text": "Test chỉ nhận đối tượng có sẵn nên ngắn và dễ đọc hơn"
+        },
+        {
+          "id": "c",
+          "text": "Fixture làm request chạy nhanh hơn gấp nhiều lần"
+        },
+        {
+          "id": "d",
+          "text": "Fixture giúp server bỏ qua bước kiểm tra quyền ghi của token"
+        }
+      ],
+      "answer": [
+        "a",
+        "b"
+      ],
+      "explanation": "Dòng xoá ở cuối thân test bị bỏ qua nếu assertion phía trên thất bại, để lại dữ liệu rác. Fixture tách chuẩn bị và dọn khỏi nội dung kiểm thử. Fixture không đổi tốc độ hay quyền."
+    },
+    {
+      "id": "q4",
+      "type": "single",
+      "prompt": "Test đăng nhập ở /api/lab/guard/login nhận token session-ok, rồi dùng token này gọi /api/lab/rbac/docs và nhận 401. Giải thích đúng là gì?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Token chỉ có giá trị với dịch vụ đã cấp ra nó"
+        },
+        {
+          "id": "b",
+          "text": "Header Authorization phải viết thường toàn bộ tên"
+        },
+        {
+          "id": "c",
+          "text": "Fixture request không cho phép gửi header tuỳ chỉnh"
+        },
+        {
+          "id": "d",
+          "text": "Token đăng nhập chỉ dùng được đúng một lần duy nhất"
+        }
+      ],
+      "answer": [
+        "a"
+      ],
+      "explanation": "Mỗi hệ thống tự quy định token hợp lệ: RBAC chấp nhận tên người dùng như alice, sách chấp nhận admin-token. Mẫu cần nhớ là đăng nhập một lần, lưu token, gắn vào ApiClient."
+    },
+    {
+      "id": "q5",
+      "type": "single",
+      "prompt": "Làm sao chứng minh một PUT chỉ gửi trường price vẫn giữ nguyên các trường khác?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Kiểm tra status của phản hồi PUT bằng 200 là đủ"
+        },
+        {
+          "id": "b",
+          "text": "Gửi PUT rồi GET lại và so sánh toàn bộ bản ghi với bản cũ"
+        },
+        {
+          "id": "c",
+          "text": "Gửi PUT hai lần liên tiếp và so sánh hai phản hồi với nhau"
+        },
+        {
+          "id": "d",
+          "text": "Đọc tài liệu API và tin rằng server làm đúng như mô tả"
+        }
+      ],
+      "answer": [
+        "b"
+      ],
+      "explanation": "Status 200 chỉ cho biết request được nhận. Phải đọc lại bản ghi (hoặc so sánh toàn bộ phản hồi) và so với dữ liệu trước khi sửa để biết trường nào đổi."
+    },
+    {
+      "id": "q6",
+      "type": "multi",
+      "prompt": "Phát biểu nào về kiểu TypeScript và schema zod trong test API là đúng? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Interface chỉ giúp lúc gõ code và không kiểm tra dữ liệu lúc chạy"
+        },
+        {
+          "id": "b",
+          "text": "zod.parse ném lỗi nêu rõ trường sai khi dữ liệu không khớp"
+        },
+        {
+          "id": "c",
+          "text": "Ép kiểu bằng as Book sẽ kiểm tra hình dạng response thật sự lúc chạy"
+        },
+        {
+          "id": "d",
+          "text": "Schema strict cho phép response thừa thêm trường bất kỳ"
+        }
+      ],
+      "answer": [
+        "a",
+        "b"
+      ],
+      "explanation": "as chỉ là lời hứa với trình biên dịch. zod kiểm tra lúc chạy, và chế độ strict coi trường thừa là lỗi."
+    },
+    {
+      "id": "q7",
+      "type": "single",
+      "prompt": "Test tạo sách với ISBN cố định xanh lần đầu nhưng đỏ 409 ở lần chạy thứ hai, vì sao và sửa thế nào?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Server giới hạn số lần gọi POST nên cần chờ lâu hơn"
+        },
+        {
+          "id": "b",
+          "text": "Sách lần trước chưa được dọn nên cần ISBN sinh động và dọn sau"
+        },
+        {
+          "id": "c",
+          "text": "Token admin chỉ tạo được một sách trong cùng một ngày"
+        },
+        {
+          "id": "d",
+          "text": "Fixture request lưu cache nên cần tạo lại context mới"
+        }
+      ],
+      "answer": [
+        "b"
+      ],
+      "explanation": "409 Conflict báo trùng ISBN. Dùng hàm sinh dữ liệu động như makeBook và dọn trong fixture để test chạy lặp lại được."
+    },
+    {
+      "id": "q8",
+      "type": "multi",
+      "prompt": "Cặp tình huống và mã trạng thái nào đúng với API sách của lab? (chọn tất cả đáp án đúng)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Ẩn danh tạo sách bị 401"
+        },
+        {
+          "id": "b",
+          "text": "Token reader xoá sách bị 403"
+        },
+        {
+          "id": "c",
+          "text": "Giá âm khi tạo sách bị 422"
+        },
+        {
+          "id": "d",
+          "text": "Tạo sách thành công trả 204"
+        }
+      ],
+      "answer": [
+        "a",
+        "b",
+        "c"
+      ],
+      "explanation": "Tạo thành công trả 201 kèm header Location; 204 dành cho xoá thành công. 401, 403 và 422 đúng như bài 4.7 và 4.13."
+    }
+  ]
+}

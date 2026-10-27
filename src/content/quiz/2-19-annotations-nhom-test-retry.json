@@ -1,0 +1,121 @@
+{
+  "questions": [
+    {
+      "id": "q1",
+      "type": "single",
+      "prompt": "Test có test.fail(true, \"BUG-01\") đã chạy được vài tuần. Hôm nay đội backend sửa xong BUG-01. Điều gì xảy ra ở lần chạy kế tiếp?",
+      "options": [
+        { "id": "a", "text": "Test được bỏ qua và ghi nhận là skipped trong báo cáo" },
+        { "id": "b", "text": "Test vẫn được tính là đạt vì annotation đã khai báo trước" },
+        { "id": "c", "text": "Test chạy xanh bình thường và annotation tự động bị gỡ" },
+        { "id": "d", "text": "Test bị báo đỏ vì nó xanh trái với kỳ vọng sẽ đỏ, nhắc gỡ test.fail" }
+      ],
+      "answer": ["d"],
+      "explanation": "test.fail đảo kỳ vọng: test vẫn chạy và phải đỏ. Khi bug được sửa, test bất ngờ xanh nên Playwright báo lỗi để bạn gỡ annotation. Nó không bỏ qua test và cũng không tự gỡ."
+    },
+    {
+      "id": "q2",
+      "type": "single",
+      "prompt": "Một nhóm mode serial có ba test. Test thứ hai đỏ. Kết quả của test thứ ba là gì?",
+      "options": [
+        { "id": "a", "text": "Test thứ ba không được chạy và hiện ở mục did not run" },
+        { "id": "b", "text": "Test thứ ba vẫn chạy và có kết quả xanh hoặc đỏ riêng" },
+        { "id": "c", "text": "Test thứ ba bị đánh dấu failed theo test thứ hai" },
+        { "id": "d", "text": "Test thứ ba chạy lại ngay trong một worker mới khác" }
+      ],
+      "answer": ["a"],
+      "explanation": "Trong serial, một test đỏ làm các test sau không chạy (did not run), nên bạn không biết chúng còn đúng hay không. Đó là hậu quả chính của serial."
+    },
+    {
+      "id": "q3",
+      "type": "multi",
+      "prompt": "Những phát biểu nào đúng về các annotation dựng sẵn? (chọn tất cả đáp án đúng)",
+      "options": [
+        { "id": "a", "text": "test.slow nhân ba thời gian chờ của test đang chạy" },
+        { "id": "b", "text": "test.fixme vẫn chạy test nhưng bỏ qua kết quả của nó" },
+        { "id": "c", "text": "test.fail chạy test và mong nó thất bại trong lần chạy" },
+        { "id": "d", "text": "test.skip tăng thời gian chờ cho các test chạy chậm" }
+      ],
+      "answer": ["a", "c"],
+      "explanation": "slow nhân ba timeout; fail vẫn chạy test và mong đỏ. fixme không chạy test (giống skip nhưng mang nghĩa cần sửa); skip không liên quan tới timeout."
+    },
+    {
+      "id": "q4",
+      "type": "single",
+      "prompt": "Vì sao nên đặt forbidOnly: !!process.env.CI trong cấu hình?",
+      "options": [
+        { "id": "a", "text": "Để test.only không hoạt động khi bạn chạy test ở máy mình" },
+        { "id": "b", "text": "Để CI dừng với lỗi nếu ai đó lỡ commit test.only vào mã" },
+        { "id": "c", "text": "Để mọi test trên CI chạy nối tiếp trong đúng một worker" },
+        { "id": "d", "text": "Để test.only tự chuyển thành test.skip khi chạy trên CI" }
+      ],
+      "answer": ["b"],
+      "explanation": "Nếu commit nhầm test.only, CI chỉ chạy một test và báo xanh giả. forbidOnly biến tình huống đó thành lỗi rõ ràng. Ở máy bạn CI không có nên only vẫn dùng được."
+    },
+    {
+      "id": "q5",
+      "type": "single",
+      "prompt": "Bạn muốn bỏ qua cả một nhóm describe khi chạy ở project mobile. Cách viết nào đúng ở cấp nhóm?",
+      "options": [
+        { "id": "a", "text": "Đặt test.skip(isMobile, \"lý do\") ở ngoài mọi test và nhóm" },
+        { "id": "b", "text": "Đặt test.fixme(\"mobile\") trong từng test của nhóm một lần" },
+        { "id": "c", "text": "Đặt test.skip(({ isMobile }) => isMobile, \"lý do\") trong nhóm" },
+        { "id": "d", "text": "Đặt test.only(({ isMobile }) => !isMobile) ngay đầu tệp" }
+      ],
+      "answer": ["c"],
+      "explanation": "Ở cấp nhóm fixture chưa có, nên test.skip nhận một hàm dùng fixture. Gọi test.skip với giá trị ở ngoài mọi test và nhóm không có ngữ cảnh nên báo lỗi."
+    },
+    {
+      "id": "q6",
+      "type": "multi",
+      "prompt": "Một test đỏ ở lần chạy đầu và xanh ở lần retry thứ nhất. Điều nào sau đây đúng? (chọn tất cả đáp án đúng)",
+      "options": [
+        { "id": "a", "text": "Báo cáo xếp nó vào nhóm flaky, không xếp vào failed" },
+        { "id": "b", "text": "Test được tính là thất bại và lệnh thoát với mã khác 0" },
+        { "id": "c", "text": "Lệnh vẫn thoát mã 0 nếu chưa bật failOnFlakyTests" },
+        { "id": "d", "text": "Playwright tự xoá test này khỏi bộ test ở lần sau" }
+      ],
+      "answer": ["a", "c"],
+      "explanation": "Test đỏ rồi xanh khi retry được báo là flaky và không làm lệnh thoát lỗi, trừ khi bật failOnFlakyTests hoặc --fail-on-flaky-tests. Playwright không tự xoá test."
+    },
+    {
+      "id": "q7",
+      "type": "single",
+      "prompt": "Bạn cần chạy chỉ những test mang đồng thời hai tag @smoke và @security. Lệnh nào đúng?",
+      "options": [
+        { "id": "a", "text": "npx playwright test --grep \"@smoke|@security\"" },
+        { "id": "b", "text": "npx playwright test --grep @smoke --grep-invert @security" },
+        { "id": "c", "text": "npx playwright test --grep \"@smoke&@security\"" },
+        { "id": "d", "text": "npx playwright test --grep \"(?=.*@smoke)(?=.*@security)\"" }
+      ],
+      "answer": ["d"],
+      "explanation": "--grep là biểu thức chính quy; hai lookahead buộc cả hai tag cùng xuất hiện (AND). Dấu thanh đứng là OR, còn --grep-invert loại bỏ chứ không yêu cầu có tag."
+    },
+    {
+      "id": "q8",
+      "type": "single",
+      "prompt": "Bạn vừa sửa test đỏ và chạy lại toàn bộ bộ test, mọi test xanh. Sau đó chạy npx playwright test --last-failed. Điều gì xảy ra?",
+      "options": [
+        { "id": "a", "text": "Playwright chạy lại các test đỏ của hai lần chạy gần nhất" },
+        { "id": "b", "text": "Playwright chạy lại toàn bộ bộ test vì không có gì để lọc" },
+        { "id": "c", "text": "Playwright báo không tìm thấy test nào vì lần trước đã xanh" },
+        { "id": "d", "text": "Playwright chỉ chạy lại các test được gắn tag flaky" }
+      ],
+      "answer": ["c"],
+      "explanation": "Tệp .last-run.json bị ghi đè sau mỗi lần chạy. Lần chạy gần nhất xanh nên danh sách test đỏ rỗng và Playwright báo No tests found."
+    },
+    {
+      "id": "q9",
+      "type": "single",
+      "prompt": "Nhóm ngoài có beforeEach mở trang và reset dữ liệu; nhóm trong có beforeEach thêm hai việc. Thứ tự chạy trước một test của nhóm trong là gì?",
+      "options": [
+        { "id": "a", "text": "Hook nhóm trong chạy trước rồi mới tới hook nhóm ngoài" },
+        { "id": "b", "text": "Hook nhóm ngoài chạy trước, rồi hook nhóm trong, rồi thân test" },
+        { "id": "c", "text": "Hai hook chạy song song để rút ngắn thời gian chuẩn bị" },
+        { "id": "d", "text": "Chỉ hook của nhóm trong chạy vì nó ghi đè hook nhóm ngoài" }
+      ],
+      "answer": ["b"],
+      "explanation": "Hook beforeEach chạy từ ngoài vào trong rồi tới thân test; afterEach chạy ngược lại. Hook nhóm trong không ghi đè hook nhóm ngoài."
+    }
+  ]
+}

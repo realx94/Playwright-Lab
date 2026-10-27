@@ -13,7 +13,7 @@ Mỗi bài liệt kê **kiến thức phải làm chủ**. Cột *Hỏi AI* là 
 | 0.2 Cài đặt môi trường (Win/Mac) | NVM, Node.js LTS, npm, VS Code + extension Playwright, Git | nvm là gì, npm vs npx |
 | 0.3 Chạy test đầu tiên | `npm init playwright@latest`, cấu trúc project, `npx playwright test`, HTML report | playwright.config.ts, headed vs headless |
 
-## Level 1 – Nền tảng lập trình & Git (≈ 10 bài)
+## Level 1 – Nền tảng lập trình & Git (≈ 12 bài)
 | Bài | Kiến thức | Hỏi AI |
 |-----|-----------|--------|
 | 1.1 Git cơ bản | Repo, working dir/staging/commit, `init/add/commit/status/log`, `.gitignore` | git staging area |
@@ -26,8 +26,10 @@ Mỗi bài liệt kê **kiến thức phải làm chủ**. Cột *Hỏi AI* là 
 | 1.8 JavaScript: function & class | arrow function, `this`, class, constructor, kế thừa (`extends`) | arrow function this |
 | 1.9 TypeScript cơ bản | type, interface, generic nhẹ, enum, union | type vs interface |
 | 1.10 Async/await & Promise | event loop, Promise, `await`, vì sao Playwright toàn `await` | javascript promise là gì |
+| 1.11 Bài tập lập trình cho QA: chuỗi | đảo chuỗi, palindrome, anagram, ký tự lặp đầu tiên, dấu ngoặc cân bằng; chuẩn hoá chuỗi khi so sánh | javascript string interview questions |
+| 1.12 Bài tập lập trình cho QA: mảng, Map, Set | tìm trùng, max/min, tần suất bằng Map, loại trùng bằng Set, nhóm theo khoá, hai số có tổng k | javascript array interview questions |
 
-## Level 2 – Web & Playwright cơ bản (≈ 14 bài)
+## Level 2 – Web & Playwright cơ bản (≈ 20 bài)
 | Bài | Kiến thức | Hỏi AI |
 |-----|-----------|--------|
 | 2.1 HTML & DOM | cây DOM, tag/attr, element phổ biến (input, radio, checkbox, select, table, iframe, dialog) | DOM là gì, shadow DOM |
@@ -44,8 +46,14 @@ Mỗi bài liệt kê **kiến thức phải làm chủ**. Cột *Hỏi AI* là 
 | 2.12 Browser/Context/Page | cô lập session, multi-context, storageState | browser context isolation |
 | 2.13 Debug | Inspector, UI Mode, Trace Viewer, Codegen, `--debug` | playwright trace viewer |
 | 2.14 Báo cáo, screenshot, video | reporter, `screenshot`, `video`, `trace` option | playwright reporters |
+| 2.15 Dropdown, checkbox, radio, combobox | `selectOption`, listbox/option, autocomplete bằng bàn phím, `check/setChecked`, nhóm radio, `inputValue` | playwright select dropdown |
+| 2.16 Chuột và bàn phím, kéo thả | `hover`, `dblclick`, chuột phải, `dragTo`, `mouse.move/down/up`, `keyboard.press`, phím tắt | playwright drag and drop |
+| 2.17 Date picker | `input[type=date]`, lịch tuỳ biến, khoảng ngày, `page.clock.setFixedTime`, ngày tương đối | playwright date picker |
+| 2.18 Đọc giá trị và duyệt danh sách | `textContent`, `getAttribute`, `inputValue`, `count`, `all()`, `allTextContents`, kiểm tra thứ tự sắp xếp | playwright locator all |
+| 2.19 Annotation, nhóm test, retry | `skip/fixme/fail/slow/only`, `describe.configure({ mode })`, tag, `retries`, `--last-failed`, `--repeat-each` | playwright test annotations |
+| 2.20 Codegen và VS Code | Record new / Record at cursor, `codegen`, biến bản ghi thô thành test tốt | playwright codegen vscode |
 
-## Level 3 – Tư duy kiểm thử & nghiệp vụ (≈ 10 bài) ⭐ điểm khác biệt
+## Level 3 – Tư duy kiểm thử & nghiệp vụ (≈ 11 bài) ⭐ điểm khác biệt
 | Bài | Kiến thức | Hỏi AI |
 |-----|-----------|--------|
 | 3.1 Phân tích yêu cầu | actor, use case, business rule, acceptance criteria, ambiguity | acceptance criteria là gì |
@@ -58,8 +66,9 @@ Mỗi bài liệt kê **kiến thức phải làm chủ**. Cột *Hỏi AI* là 
 | 3.8 Negative / Security / A11y cơ bản | XSS, SQLi input, phân quyền, tab order | OWASP top 10 cho tester |
 | 3.9 Chọn test nào để automate | tiêu chí, smoke/regression/sanity | regression vs smoke vs sanity |
 | 3.10 Từ test case → Playwright spec | map BR→TC→spec, data-driven | data driven testing playwright |
+| 3.11 Thiết kế test cho form nhiều bước | kết hợp EP, BVA, bảng quyết định, pairwise trên form có trường điều kiện và công thức phí | multi step form testing |
 
-## Level 4 – Framework & kiến trúc (≈ 10 bài)
+## Level 4 – Framework & kiến trúc (≈ 15 bài)
 | Bài | Kiến thức | Hỏi AI |
 |-----|-----------|--------|
 | 4.1 Page Object Model | class, locator trong constructor, method nghiệp vụ, không assert lẫn lộn | page object model |
@@ -72,8 +81,13 @@ Mỗi bài liệt kê **kiến thức phải làm chủ**. Cột *Hỏi AI* là 
 | 4.8 POM cho API & kết hợp UI+API | API helper, seed data qua API, `page.route` mock | playwright route mock |
 | 4.9 Visual comparison & emulation | `toHaveScreenshot`, device, geolocation, locale, timezone | visual regression testing |
 | 4.10 Tối ưu framework | parallel, sharding, retry, tag, tổ chức thư mục | playwright sharding |
+| 4.11 Global setup, teardown, project dependencies | `globalSetup`/`globalTeardown`, project `setup` + `dependencies`, dữ liệu dùng chung | playwright global setup |
+| 4.12 Test theo dữ liệu Excel, CSV, JSON | `exceljs`, `csv-parse`, kiểu TypeScript, sinh test động, dữ liệu theo môi trường | playwright data driven excel |
+| 4.13 API automation đầy đủ | GET/POST/PUT/PATCH/DELETE, query, token, kiểu TypeScript, `ApiClient`, dọn dữ liệu | playwright api testing |
+| 4.14 Upload, download, kiểm tra nội dung tệp | `setInputFiles`, `download`, đọc Excel/XML/Word/PDF/CSV, so khớp xuyên định dạng | playwright download file validate |
+| 4.15 Mock API nâng cao và HAR | `route.fetch` sửa response, lỗi/chậm, `routeFromHAR` ghi và phát lại | playwright routeFromHAR |
 
-## Level 5 – Chuyên nghiệp (≈ 8 bài)
+## Level 5 – Chuyên nghiệp (≈ 11 bài)
 | Bài | Kiến thức | Hỏi AI |
 |-----|-----------|--------|
 | 5.1 CI/CD GitHub Actions | workflow YAML, cache, matrix, artifact, cron | github actions workflow |
@@ -84,6 +98,9 @@ Mỗi bài liệt kê **kiến thức phải làm chủ**. Cột *Hỏi AI* là 
 | 5.6 Flaky test & độ ổn định | nguyên nhân, cách chẩn đoán | cách giảm flaky test |
 | 5.7 Dùng AI hiệu quả | prompt viết test, Playwright MCP/agents, review output AI | playwright mcp |
 | 5.8 Capstone & phỏng vấn | xây framework từ đầu; câu hỏi phỏng vấn | playwright interview questions |
+| 5.9 CI/CD với Jenkins | `Jenkinsfile`, stages, credentials, image Playwright, HTML Publisher, JUnit, cron | playwright jenkins |
+| 5.10 CI/CD với Azure DevOps | `azure-pipelines.yml`, `UseNode`, `PublishTestResults`, artifact, Variable Group, lịch | playwright azure devops pipeline |
+| 5.11 Playwright MCP (dự án ngân hàng) | MCP, snapshot trợ năng, planner/generator/healer, kiểm chứng test do AI sinh | playwright mcp |
 
 ## Câu hỏi phỏng vấn (ngân hàng)
 Chia chủ đề: Tổng quan · Cài đặt/cấu trúc · Browser/context/page · Locator · CI/CD & sharding · Shadow DOM · TypeScript · POM · Env · API & fixture. Mỗi câu: đáp án ngắn + đáp án sâu + ví dụ code.
