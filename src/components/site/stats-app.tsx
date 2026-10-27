@@ -7,6 +7,7 @@ import { Download, FileCheck, Trash2, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { attemptFromGrade } from "@/lib/labs/grading";
 import { Badge } from "@/components/ui/badge";
+import { notifyDataChanged, onDataChanged } from "@/lib/storage/events";
 import { Progress } from "@/components/ui/progress";
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -48,6 +49,7 @@ export function StatsApp({ lessons }: { lessons: LessonRef[] }) {
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     refresh().catch(() => setProgress([]));
+    return onDataChanged(() => void refresh().catch(() => {}));
   }, [refresh]);
 
   async function exportData() {
@@ -66,6 +68,7 @@ export function StatsApp({ lessons }: { lessons: LessonRef[] }) {
       const data = JSON.parse(await file.text()) as ExportData;
       await storage.importAll(data);
       await refresh();
+      notifyDataChanged();
       toast.success("Đã nhập dữ liệu");
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "File không hợp lệ");
@@ -77,6 +80,7 @@ export function StatsApp({ lessons }: { lessons: LessonRef[] }) {
       const attempt = attemptFromGrade(JSON.parse(await file.text()));
       await storage.saveExercise(attempt);
       await refresh();
+      notifyDataChanged();
       toast.success(`Đã lưu kết quả chấm: ${attempt.checked}/${attempt.total}`);
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "File kết quả không hợp lệ");
@@ -237,19 +241,6 @@ export function StatsApp({ lessons }: { lessons: LessonRef[] }) {
               </li>
             ))}
           </ul>
-        </section>
-      )}
-
-      {asks.length > 0 && (
-        <section className="space-y-2">
-          <h2 className="text-lg font-semibold">Thuật ngữ đã hỏi AI</h2>
-          <div className="flex flex-wrap gap-2">
-            {[...new Set(asks.map((a) => a.term))].slice(-30).map((t) => (
-              <Badge key={t} variant="secondary">
-                {t}
-              </Badge>
-            ))}
-          </div>
         </section>
       )}
 

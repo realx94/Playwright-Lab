@@ -51,6 +51,7 @@ Persona: **L** = Learner (QA), **M** = Mentor, **A** = Admin/Content author.
 
 **US-02.04 (P1)** – Là L, tôi muốn xem sơ đồ/hình minh hoạ (DOM tree, kiến trúc POM, flow CI) để hình dung.
 - AC: ảnh/SVG/Mermaid hiển thị tốt cả dark/light.
+- Đã làm: SVG nhúng theo token theme (khối code `diagram` trong bài, `src/components/site/diagrams.tsx`): kim tự tháp test (0.1), ba vùng Git (1.1), cây DOM (2.1), thứ tự locator (2.5), Page Object Model (4.1), luồng CI (5.1).
 
 **US-02.05 (P1)** – Là L, tôi muốn có “Lỗi thường gặp” để tránh sai lầm phổ biến (flaky, wait cứng…).
 
@@ -66,6 +67,7 @@ Persona: **L** = Learner (QA), **M** = Mentor, **A** = Admin/Content author.
 - AC: dropdown trong popover; ghi nhớ lựa chọn.
 
 **US-03.04 (P2)** – Là L, tôi muốn lưu lại các từ đã hỏi vào “Sổ tay của tôi”.
+- Đã làm: mục “Sổ tay của tôi” ở /stats, gộp theo thuật ngữ (số lần hỏi, lần gần nhất), tìm, hỏi lại, xoá.
 
 ## EP-04 Lab App nghiệp vụ
 **US-04.01 (P0)** – Là L, tôi muốn mỗi lab có trang mô tả bài toán (bối cảnh, actor, business rules, luồng) để hiểu trước khi test.
@@ -146,6 +148,7 @@ Persona: **L** = Learner (QA), **M** = Mentor, **A** = Admin/Content author.
 **US-08.02 (P1)** – Là L, tôi muốn viết bug report chuẩn (tiêu đề, bước, expected/actual, evidence) từ trace/screenshot.
 
 **US-08.03 (P2)** – Là L, tôi muốn bảng xếp hạng “số bug tìm được” (local).
+- Đã làm: mục “Bug đã tìm” ở /stats; một bài bắt bug được tính khi lần làm đạt đủ tiêu chí, mỗi cặp lab+bug tính một lần, lab xếp theo số bug tìm được.
 
 ## EP-09 Quiz, tiến độ, thành tích
 **US-09.01 (P1)** – Là L, tôi muốn quiz cuối bài kèm giải thích để kiểm tra hiểu bài.
@@ -179,6 +182,7 @@ Persona: **L** = Learner (QA), **M** = Mentor, **A** = Admin/Content author.
 **US-13.01 (P0)** – Là A, tôi muốn viết bài bằng MDX với frontmatter (title, level, thời lượng, tags, keywords) để thêm nội dung không cần sửa code.
 **US-13.02 (P0)** – Là A, tôi muốn component MDX tái sử dụng (`<Callout>`, `<Quiz>`, `<TestCaseTable>`, `<AskAI>`, `<LabLink>`, `<Solution>`) để nhất quán.
 **US-13.03 (P1)** – Là A, tôi muốn kiểm tra link hỏng/lint nội dung trong CI.
+- Đã làm: `npm run check:content` (frontmatter, code fence, link nội bộ, tham chiếu glossary/interview), chạy trong CI.
 **US-13.04 (P1)** – Là A, tôi muốn **chính site Lab được test bởi Playwright e2e** (smoke) để không vỡ lab khi cập nhật.
 
 ## EP-14 Giao diện, hiệu năng, a11y, deploy
@@ -186,6 +190,7 @@ Persona: **L** = Learner (QA), **M** = Mentor, **A** = Admin/Content author.
 **US-14.02 (P0)** – Là A, tôi muốn deploy tự động lên Vercel/Netlify từ GitHub (preview mỗi PR).
 **US-14.03 (P1)** – Là L, tôi muốn điều hướng bàn phím và screen-reader đạt WCAG AA.
 **US-14.04 (P1)** – Là A, tôi muốn analytics ẩn danh (Vercel Analytics/Plausible) để biết bài nào khó.
+- Đã làm: `@vercel/analytics`, chỉ bật khi chạy trên Vercel và không áp dụng cho /lab/*.
 
 ---
 

@@ -73,7 +73,7 @@ test("trang đăng nhập không có vi phạm a11y", async ({ page }) => {
 
 | Dòng | Ý nghĩa |
 |------|---------|
-| `import AxeBuilder from "@axe-core/playwright"` | `AxeBuilder` là export mặc định của gói. |
+| `import AxeBuilder from "@axe-core/playwright"` | `AxeBuilder` là export mặc định của gói (cũng có named export cùng tên). |
 | `waitForLoadState("networkidle")` | Chờ mạng yên để trang vẽ xong trước khi quét; tránh quét giữa chừng. Với app có kết nối liên tục, thay bằng chờ một phần tử cụ thể. |
 | `new AxeBuilder({ page })` | Tạo bộ quét gắn với trang hiện tại. |
 | `.withTags(["wcag2a", "wcag2aa"])` | Chỉ chạy các luật thuộc WCAG 2 mức A và AA. Không đặt tag thì axe chạy mọi luật (kể cả luật "best practice"). |
@@ -304,7 +304,7 @@ Mở `/lab/login` và `/lab/forms`. Chạy test quét ở Bước 2 trên từng
 - Triệu chứng: toàn bộ test đỏ vì lỗi cũ của widget bên thứ ba. Nguyên nhân: quét cả phần không thuộc quyền sửa. Cách sửa: `exclude` đúng phần đó và ghi chú, hoặc tạm chặn theo `impact`.
 - Triệu chứng: chỉ quét trang chủ, bỏ qua hộp thoại, trạng thái lỗi. Nguyên nhân: quét một lần ngay khi tải. Cách sửa: quét lại sau khi đưa trang vào từng trạng thái.
 - Triệu chứng: `color-contrast` báo lỗi mà bạn thấy "vẫn đọc được". Nguyên nhân: màn hình và mắt bạn không đại diện mọi người dùng. Cách sửa: sửa màu theo tỉ lệ tương phản AA thay vì tắt luật.
-- Triệu chứng: `Cannot find module '@axe-core/playwright'` hoặc lỗi kiểu khi import. Nguyên nhân: chưa cài gói, hoặc dùng `import { AxeBuilder }` thay vì mặc định. Cách sửa: `npm i -D @axe-core/playwright` và `import AxeBuilder from "@axe-core/playwright"`.
+- Triệu chứng: `Cannot find module '@axe-core/playwright'` hoặc lỗi kiểu khi import. Nguyên nhân: chưa cài gói, hoặc cấu hình TypeScript/module không khớp. Cách sửa: `npm i -D @axe-core/playwright` và `import AxeBuilder from "@axe-core/playwright"` (bản 4.14 cũng cho phép `import { AxeBuilder } from "@axe-core/playwright"`, hai cách tương đương).
 
 ## Tóm tắt
 - a11y đảm bảo ứng dụng dùng được với mọi người; WCAG mức AA là mục tiêu phổ biến.

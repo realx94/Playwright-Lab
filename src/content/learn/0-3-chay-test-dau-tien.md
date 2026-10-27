@@ -61,26 +61,42 @@ npm init playwright@latest
 
 Lần đầu, npm có thể hỏi "Need to install the following packages ... Ok to proceed?": nhấn `y` rồi Enter. Sau đó trình cài đặt hỏi một loạt câu. Dùng phím mũi tên để chọn, Enter để xác nhận:
 
-| Câu hỏi (gần đúng) | Nên chọn | Lý do |
-|--------------------|----------|-------|
-| Do you want to use TypeScript or JavaScript? | TypeScript | Khoá học này dùng TypeScript |
-| Where to put your end-to-end tests? | `tests` | Thư mục mặc định, giữ nguyên |
-| Add a GitHub Actions workflow? | `false` (No) | Bài CI sẽ dạy riêng ở Level 5 |
-| Install Playwright browsers? | `true` (Yes) | Tải Chromium, Firefox, WebKit để chạy test |
+| Câu hỏi (theo mã nguồn `create-playwright`) | Mặc định | Nên chọn | Lý do |
+|--------------------|----------|----------|-------|
+| Do you want to use TypeScript or JavaScript? | TypeScript | TypeScript | Khoá học này dùng TypeScript |
+| Where to put your end-to-end tests? | `tests` (nếu đã có thư mục `tests` thì là `e2e`) | `tests` | Thư mục mặc định, giữ nguyên |
+| Add a GitHub Actions workflow? | Yes | Chọn No | Bài CI sẽ dạy riêng ở Level 5 (nếu lỡ chọn Yes thì sẽ có thêm file `.github/workflows/playwright.yml`, xoá đi cũng được) |
+| Install Playwright browsers (can be done manually via 'npx playwright install')? | Yes | Yes | Tải Chromium, Firefox, WebKit để chạy test |
 
-Nội dung câu hỏi có thể thay đổi nhẹ giữa các phiên bản; nếu có thêm câu hỏi, chọn mặc định.
+Riêng trên Linux còn có thêm câu "Install Playwright operating system dependencies (requires sudo / root ...)?" (mặc định No); Windows và macOS không có câu này. Nội dung câu hỏi có thể thay đổi nhẹ giữa các phiên bản; nếu có thêm câu hỏi, chọn mặc định. Muốn bỏ qua mọi câu hỏi (dùng trong script), thêm cờ: `npm init playwright@latest -- --quiet --lang=ts` (có thể thêm `--browser=chromium` để chỉ tải Chromium; ở chế độ `--quiet` trình cài đặt không tạo workflow GitHub Actions).
 
 Kết quả mong đợi: sau vài phút (có thể lâu vì phải tải trình duyệt), bạn thấy thông báo cuối như:
 
 ```text
+Getting started with writing end-to-end tests with Playwright:
+Initializing project in '.'
 Initializing NPM project (npm init -y)…
 Installing Playwright Test (npm install --save-dev @playwright/test)…
-Downloading browsers (npx playwright install)…
+Installing Types (npm install --save-dev @types/node)…
 Writing playwright.config.ts.
 Writing tests\example.spec.ts.
 Writing package.json.
+Downloading browsers (npx playwright install)…
 ✔ Success! Created a Playwright Test project at ...
+
+Inside that directory, you can run several commands:
+
+  npx playwright test
+    Runs the end-to-end tests.
+  npx playwright test --ui
+    Starts the interactive UI mode.
+  ...
+We suggest that you begin by typing:
+
+  npx playwright test
 ```
+
+Trình cài đặt còn in thêm nội dung `package.json` vừa tạo và tiến trình tải trình duyệt; đoạn trên là các dòng chính (đối chiếu với `create-playwright` và bản chạy thật với Playwright 1.64). Playwright 1.64 chỉ sinh một file test mẫu `tests/example.spec.ts`; thư mục `tests-examples/` của các bản cũ không còn.
 
 Nếu gặp lỗi: `npm ERR! network` nghĩa là mạng yếu, chạy lại lệnh; `EACCES` (macOS) nghĩa là thư mục không có quyền ghi, đừng dùng `sudo`, hãy chọn thư mục thuộc quyền bạn như Documents.
 
@@ -94,12 +110,13 @@ playwright-first/
   node_modules/          thư viện đã cài (không chỉnh sửa, không commit)
   tests/
     example.spec.ts      test mẫu do Playwright tạo
+  .gitignore             đã chặn node_modules, test-results, playwright-report...
   package.json           khai báo dự án và thư viện
   package-lock.json      khoá chính xác phiên bản thư viện
   playwright.config.ts   cấu hình Playwright
 ```
 
-Bạn cũng sẽ thấy `playwright-report/` và `test-results/` sau lần chạy đầu: đó là kết quả sinh ra, không cần sửa.
+Bạn cũng sẽ thấy `playwright-report/` (báo cáo HTML) và `test-results/` (ảnh, trace, file lỗi của lần chạy) sau lần chạy đầu: đó là kết quả sinh ra, không cần sửa. Nếu lúc cài bạn chọn thêm GitHub Actions, sẽ có thêm `.github/workflows/playwright.yml`.
 
 ### Bước 4. Chạy test mẫu
 Mục đích: chắc chắn mọi thứ hoạt động.
@@ -113,17 +130,20 @@ npx playwright test
 | `npx` | Chạy chương trình nằm trong `node_modules` của dự án |
 | `playwright test` | Lệnh con: tìm và chạy mọi test |
 
-Kết quả mong đợi (số lượng có thể khác vì mẫu chạy trên nhiều trình duyệt):
+Kết quả mong đợi (số lượng và thời gian có thể khác; ở bản chạy thử, một project chỉ có Chromium cho kết quả như dưới; với cấu hình mặc định đủ ba trình duyệt thì là "Running 6 tests"):
 
 ```text
-Running 6 tests using 4 workers
-  6 passed (8.2s)
+Running 2 tests using 2 workers
+
+[1/2] [chromium] › tests\example.spec.ts:10:5 › get started link
+[2/2] [chromium] › tests\example.spec.ts:3:5 › has title
+  2 passed (5.4s)
 
 To open last HTML report run:
   npx playwright show-report
 ```
 
-Mỗi test mẫu chạy trên ba trình duyệt (Chromium, Firefox, WebKit) nên 2 test thành 6 lượt. Chạy ở chế độ headless nên bạn không thấy cửa sổ trình duyệt.
+Mỗi test mẫu chạy trên mọi project trong `playwright.config.ts`: với cấu hình mặc định là ba trình duyệt (Chromium, Firefox, WebKit) nên 2 test thành 6 lượt. Chạy ở chế độ headless nên bạn không thấy cửa sổ trình duyệt. Lưu ý: test mẫu truy cập `https://playwright.dev` nên cần có mạng. Dòng "To open last HTML report run" chỉ hiện khi test xanh và chạy trong terminal tương tác; reporter mặc định của file cấu hình sinh ra là `html`, nên không có danh sách từng test.
 
 ### Bước 5. Xem báo cáo HTML
 Mục đích: biết cách đọc kết quả khi có nhiều test.
@@ -132,7 +152,7 @@ Mục đích: biết cách đọc kết quả khi có nhiều test.
 npx playwright show-report
 ```
 
-Lệnh mở một trang web cục bộ hiển thị danh sách test, trạng thái xanh hoặc đỏ, thời gian chạy từng bước. Bấm vào một test để xem chi tiết từng dòng lệnh. Khi test đỏ, trang này hiển thị dòng lỗi, ảnh chụp màn hình và trace (nếu có). Nhấn Ctrl + C trong terminal để dừng máy chủ báo cáo.
+Lệnh mở một trang web cục bộ (mặc định cổng 9323) hiển thị danh sách test, trạng thái xanh hoặc đỏ, thời gian chạy từng bước. Bấm vào một test để xem chi tiết từng dòng lệnh. Khi test đỏ, trang này hiển thị dòng lỗi, ảnh chụp màn hình và trace (nếu có). Nhấn Ctrl + C trong terminal để dừng máy chủ báo cáo. Với cấu hình mặc định (`reporter: 'html'`, `open` là `on-failure`), khi có test đỏ báo cáo tự mở trong trình duyệt và terminal in `Serving HTML report at http://localhost:9323. Press Ctrl+C to quit.`
 
 ### Bước 6. Tuỳ chỉnh `playwright.config.ts`
 Mục đích: trỏ Playwright đến ứng dụng cần test.
@@ -236,18 +256,26 @@ npx playwright test -g "đăng nhập đúng"
 Có thể chạy một file: `npx playwright test tests/first.spec.ts`. Ngoài ra, extension VS Code cho phép bấm tam giác xanh cạnh mỗi test để chạy.
 
 ### Bước 9. Cố ý làm test đỏ và đọc báo cáo
-Mục đích: quen với thông báo lỗi. Sửa dòng đầu của test thứ nhất thành `name: "Danh sách Labb"` rồi chạy lại. Kết quả mong đợi (rút gọn):
+Mục đích: quen với thông báo lỗi. Sửa dòng đầu của test thứ nhất thành `name: "Danh sách Labb"` rồi chạy lại. Kết quả mong đợi (rút gọn; thông báo thật từ Playwright 1.64):
 
 ```text
-Error: expect(locator).toBeVisible() failed
+  1) [chromium] › testsirst.spec.ts:3:5 › trang danh sách lab hiện tiêu đề ──────
 
-Locator: getByRole('heading', { name: 'Danh sách Labb' })
-Expected: visible
-Timeout: 5000ms
-Error: element(s) not found
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByRole('heading', { name: 'Danh sách Labb' })
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" getByRole('heading', { name: 'Danh sách Labb' }) with timeout 5000ms
+      - waiting for getByRole('heading', { name: 'Danh sách Labb' })
+    ...
+    Error Context: test-results\...\error-context.md
 ```
 
-Cách đọc: dòng `Locator` cho biết Playwright tìm gì, `Expected` là kỳ vọng, `Timeout` là thời gian chờ tối đa trước khi bỏ cuộc, `element(s) not found` là lý do. Mở `npx playwright show-report` để xem ảnh chụp trang lúc lỗi. Sửa lại tên đúng và chạy lại để test xanh.
+Cách đọc: dòng `Locator` cho biết Playwright tìm gì, `Expected` là kỳ vọng, `Timeout` là thời gian chờ tối đa trước khi bỏ cuộc, `element(s) not found` là lý do, `Call log` là nhật ký các lần chờ. Playwright cũng ghi file `error-context.md` (mô tả trang lúc lỗi) vào `test-results`. Mở `npx playwright show-report` để xem ảnh chụp trang lúc lỗi. Sửa lại tên đúng và chạy lại để test xanh.
 
 ## Demo code
 Bản đầy đủ của một file test có hai trường hợp (đúng và sai) cho đăng nhập, dùng cho cả cuộc thử ở Bước 7 và bài tập:

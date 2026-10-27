@@ -38,6 +38,10 @@ Có hai lợi ích khác ít người để ý:
 
 POM không phải phép màu. Nếu bạn nhồi assertion và logic nghiệp vụ vào POM, nó biến thành một "cục" khó dùng lại. Quy tắc nhớ nhanh: **POM trả lời "làm thế nào để thao tác trên trang"; test trả lời "kết quả đúng là gì"**.
 
+```diagram
+pom
+```
+
 ## Thực hành từng bước
 Chúng ta xây dần từng file trong thư mục `pages/` của starter repo. Mọi lệnh chạy trong thư mục gốc của starter repo (nơi có `package.json` và `playwright.config.ts`). Cấu trúc đích:
 

@@ -93,7 +93,7 @@ Mục đích: quản lý phiên bản Node.js.
 winget install --id CoreyButler.NVMforWindows -e
 ```
 
-Kết quả mong đợi: "Successfully installed". Nếu không dùng được winget, vào trang các bản phát hành của dự án nvm-windows trên GitHub (corey-butler/nvm-windows) và tải file `nvm-setup.exe`, chạy và giữ mặc định. **Đóng hết cửa sổ PowerShell và mở lại**, rồi kiểm tra:
+Kết quả mong đợi: "Successfully installed". Nếu không dùng được winget, vào trang các bản phát hành của dự án nvm-windows trên GitHub (coreybutler/nvm-windows) và tải file `nvm-setup.exe`, chạy và giữ mặc định. **Đóng hết cửa sổ PowerShell và mở lại**, rồi kiểm tra:
 
 ```powershell
 nvm version
@@ -104,7 +104,7 @@ Kết quả mong đợi: một số phiên bản như `1.2.2`. (Ở nvm-windows,
 **macOS** dùng script chính thức của nvm (dự án nvm-sh). Chạy:
 
 ```bash
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.8/install.sh | bash
 ```
 
 | Phần của lệnh | Ý nghĩa |
@@ -115,13 +115,13 @@ curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
 
 Ký hiệu thanh đứng giữa hai lệnh là **pipe** (ống dẫn): nó chuyển đầu ra của `curl` làm đầu vào của `bash`.
 
-Số `v0.40.3` là phiên bản script; bạn có thể xem phiên bản mới nhất ở trang GitHub của nvm-sh/nvm. Sau đó **đóng và mở lại Terminal**, rồi chạy:
+Số `v0.40.8` là phiên bản script; bạn có thể xem phiên bản mới nhất ở trang GitHub của nvm-sh/nvm. Sau đó **đóng và mở lại Terminal**, rồi chạy:
 
 ```bash
 nvm --version
 ```
 
-Kết quả mong đợi: `0.40.3` (hoặc phiên bản bạn cài). Nếu báo `nvm: command not found`, script chưa ghi vào file cấu hình shell; macOS mặc định dùng zsh nên chạy `source ~/.zshrc` rồi thử lại. Nếu vẫn lỗi, mở `~/.zshrc` kiểm tra có các dòng `export NVM_DIR=...` do script thêm vào không.
+Kết quả mong đợi: `0.40.8` (hoặc phiên bản bạn cài). Nếu báo `nvm: command not found`, script chưa ghi vào file cấu hình shell; macOS mặc định dùng zsh nên chạy `source ~/.zshrc` rồi thử lại. Nếu vẫn lỗi, mở `~/.zshrc` kiểm tra có các dòng `export NVM_DIR=...` do script thêm vào không.
 
 ### Bước 3. Cài Node.js LTS bằng NVM
 Mục đích: có Node.js và npm để chạy Playwright.
@@ -138,7 +138,7 @@ nvm use lts
 | `nvm install lts` | Tải và cài bản Node LTS mới nhất |
 | `nvm use lts` | Chọn bản đó làm bản đang dùng cho mọi terminal |
 
-Kết quả mong đợi: sau `nvm install lts` bạn thấy dòng tải về và "Installation complete". Sau `nvm use lts` thấy `Now using node v22.x.x (64-bit)` (số cụ thể phụ thuộc thời điểm).
+Kết quả mong đợi: sau `nvm install lts` bạn thấy dòng tải về và "Installation complete". Sau `nvm use lts` thấy dòng dạng `Now using node vXX.x.x (64-bit)` (XX là số bản LTS hiện hành) (số cụ thể phụ thuộc thời điểm).
 
 **macOS:**
 
@@ -147,7 +147,7 @@ nvm install --lts
 nvm use --lts
 ```
 
-Cờ `--lts` nói với nvm chọn nhánh LTS. Kết quả mong đợi: `Now using node v22.x.x (npm v10.x.x)`.
+Cờ `--lts` nói với nvm chọn nhánh LTS. Kết quả mong đợi: dòng dạng `Now using node vXX.x.x (npm vY.x.x)` với bản LTS hiện hành.
 
 Kiểm tra phiên bản (cả hai hệ điều hành):
 

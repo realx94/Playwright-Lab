@@ -61,6 +61,13 @@ export const localAdapter: StorageAdapter = {
   async addAsk(e) {
     await (await db()).add("askAiHistory", e);
   },
+  async removeAsk(term) {
+    const tx = (await db()).transaction("askAiHistory", "readwrite");
+    for (let c = await tx.store.openCursor(); c; c = await c.continue()) {
+      if (c.value.term === term) await c.delete();
+    }
+    await tx.done;
+  },
   async saveExercise(a) {
     await (await db()).put("exerciseAttempts", a);
   },

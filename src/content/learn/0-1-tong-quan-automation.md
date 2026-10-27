@@ -74,6 +74,10 @@ Ví dụ: một kịch bản đăng nhập mất 3 phút để test tay. Viết 
 
 > Mẹo: **bôi đen** bất kỳ thuật ngữ nào trong bài để hỏi Google AI giải thích.
 
+```diagram
+pyramid
+```
+
 ## Thực hành từng bước
 Bài này không có lệnh để gõ. Thay vào đó bạn sẽ làm một bài phân tích có số liệu cụ thể, rất giống việc bạn sẽ làm ở công ty khi được hỏi "test nào nên automate?".
 

@@ -147,7 +147,7 @@ dòng: 16, cặp cần: 73, cặp thiếu: 0
 
 Nếu bạn thêm hoặc đổi giá trị, script cho biết ngay còn thiếu cặp nào (in `missing`).
 
-Công cụ có sẵn: **PICT** của Microsoft nhận file mô hình mỗi dòng một tham số, ví dụ `Vai trò: Tất cả, Admin, Editor, Viewer`, rồi chạy `pict model.txt` để in bảng tổ hợp. Nếu cài được PICT, hãy so sánh số dòng của nó với 16; thường khác nhau, miễn là phủ đủ cặp. Công cụ cũng cho phép khai báo ràng buộc để loại tổ hợp bất khả thi.
+Công cụ có sẵn: **PICT** của Microsoft nhận file mô hình mỗi dòng một tham số, ví dụ `Vai trò: Tất cả, Admin, Editor, Viewer`, rồi chạy `pict model.txt` để in bảng tổ hợp (cột cách nhau bằng dấu Tab; có thể chuyển hướng ra file: `pict model.txt > out.tsv`; mặc định sinh tổ hợp từng cặp, đổi bằng `/o:3`). Chi tiết cú pháp ở docs/pict.md trong repo github.com/microsoft/pict. Nếu cài được PICT, hãy so sánh số dòng của nó với 16; thường khác nhau, miễn là phủ đủ cặp. Công cụ cũng cho phép khai báo ràng buộc để loại tổ hợp bất khả thi.
 
 ### Bước 6. Tính kết quả mong đợi bằng oracle độc lập
 Mục đích: mỗi dòng phải có đáp án không lấy từ ứng dụng.

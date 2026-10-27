@@ -226,6 +226,10 @@ npx lighthouse http://localhost:3000/labs --only-categories=performance --output
 | `--only-categories=performance` | Chỉ chấm hiệu năng, chạy nhanh hơn. |
 | `--output=html` và `--output-path` | Xuất báo cáo HTML ra file. |
 | `--chrome-flags="--headless"` | Chạy Chrome không giao diện. |
+| `--view` (tuỳ chọn) | Tự mở báo cáo HTML trong trình duyệt khi chạy xong. |
+| `--preset=desktop` (tuỳ chọn) | Chấm theo cấu hình máy tính để bàn; mặc định Lighthouse giả lập điện thoại (mobile) với mạng và CPU bị làm chậm. |
+
+Các cờ trên đã kiểm tra thật với Lighthouse 13.5.0 (`npx lighthouse --help`; yêu cầu Node 22.19 trở lên). `--only-categories` nhận `performance`, `accessibility`, `best-practices`, `seo` (có thể liệt kê nhiều, cách nhau dấu phẩy); `--output` nhận `html`, `json`, `csv`. Terminal in nhiều dòng log `LH:status Auditing: ...`, kết thúc bằng `LH:Printer html output written to ./lighthouse-labs.html`; thêm `--quiet` nếu muốn bớt log. Trên Windows có thể thấy cảnh báo `Could not delete temporary directory ... EPERM`: vô hại, báo cáo vẫn được tạo.
 
 Kết quả mong đợi: tạo file `lighthouse-labs.html`; mở bằng trình duyệt thấy điểm 0 đến 100 và các chỉ số LCP, CLS, Total Blocking Time (TBT: tổng thời gian luồng chính bị chặn, gần với INP khi đo trong phòng lab). Hãy đo trang đã **build production** (`npm run build` rồi `npm start`), vì dev server chậm hơn rõ rệt và cho điểm không phản ánh người dùng thật.
 

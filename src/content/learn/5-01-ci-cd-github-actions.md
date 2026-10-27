@@ -37,6 +37,10 @@ Vì sao không chạy test ở máy mình là đủ? Có ba lý do. Thứ nhất
 
 Mô hình hoạt động rất đơn giản: GitHub thuê cho bạn một **máy ảo sạch** (ví dụ Ubuntu) mỗi lần chạy. Máy này hoàn toàn trống: chưa có code, chưa có Node, chưa có trình duyệt. Vì vậy workflow phải làm lần lượt như bạn làm trên máy mới: tải code về, cài Node, cài thư viện, cài trình duyệt, chạy test, rồi lưu báo cáo trước khi máy bị huỷ.
 
+```diagram
+ci-flow
+```
+
 ## Thực hành từng bước
 
 ### Bước 1. Kiểm tra project chạy được ở máy mình trước
@@ -129,10 +133,10 @@ Mục đích: dựng lại môi trường trên máy ảo trống. Dán tiếp (
 ```yaml
     steps:
       - name: Lấy mã nguồn
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Cài Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: 22
           cache: npm
@@ -146,14 +150,14 @@ Mục đích: dựng lại môi trường trên máy ảo trống. Dán tiếp (
 | `steps` | Danh sách bước chạy tuần tự; bước nào lỗi thì các bước sau bị bỏ qua (trừ khi có `if`). Mỗi bước bắt đầu bằng dấu `-`. |
 | `name` | Tên hiển thị của bước trong log (tuỳ chọn). |
 | `uses` | Dùng một **action** dựng sẵn, viết dạng `chủ-sở-hữu/tên@phiên-bản`. |
-| `actions/checkout@v4` | Tải mã nguồn của repo về runner. Thiếu bước này, máy ảo không có file nào. |
-| `actions/setup-node@v4` | Cài Node. |
+| `actions/checkout@v7` | Tải mã nguồn của repo về runner. Thiếu bước này, máy ảo không có file nào. |
+| `actions/setup-node@v7` | Cài Node. |
 | `with` | Truyền **tham số đầu vào** cho action. |
 | `node-version: 22` | Dùng Node 22. Starter repo dùng `node-version-file: .nvmrc` để đọc phiên bản từ file `.nvmrc`, cách này giữ máy bạn và CI luôn cùng phiên bản. |
 | `cache: npm` | Lưu thư mục cache của npm giữa các lần chạy, cài nhanh hơn. |
 | `run` | Chạy một lệnh shell trên runner. |
 
-Phiên bản của action (`@v4`) có thể được GitHub nâng lên. Khi bạn thấy cảnh báo "Node.js 20 actions are deprecated" trong log, hãy đổi sang `@v5` hoặc bản mới theo trang của action.
+Phiên bản của action (số sau `@`, ví dụ `@v7`) liên tục được nâng. Tại thời điểm kiểm chứng (tháng 10/2026), bản major mới nhất trên trang Releases là `actions/checkout` v7, `actions/setup-node` v7, `actions/upload-artifact` v7 và `actions/download-artifact` v8. Hãy mở trang Releases của từng action (ví dụ `github.com/actions/checkout/releases`) để xem bản mới nhất và đọc ghi chú thay đổi; bản cũ vẫn chạy được nhưng log có thể cảnh báo về runtime Node đã lỗi thời.
 
 ### Bước 6. Cài trình duyệt và chạy test
 Mục đích: runner chưa có trình duyệt mà Playwright cần.
@@ -183,7 +187,7 @@ Mục đích: máy ảo bị huỷ sau khi chạy, nên phải tải báo cáo r
 
 ```yaml
       - name: Lưu báo cáo
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         if: ${{ !cancelled() }}
         with:
           name: playwright-report
@@ -225,16 +229,16 @@ Giao diện GitHub có thể thay đổi nhẹ theo thời gian, nhưng đườn
 1. Vào trang repo, bấm tab **Actions** (hàng tab trên cùng, cạnh Pull requests).
 2. Cột trái liệt kê các workflow, bạn sẽ thấy **Playwright Tests**. Cột phải là danh sách lần chạy, mỗi lần có biểu tượng: vòng vàng (đang chạy), dấu tích xanh (thành công), X đỏ (thất bại).
 3. Bấm vào một lần chạy để vào trang tóm tắt. Bên trái là danh sách job (`test`), phía dưới là mục **Artifacts**.
-4. Bấm vào job `test`. Màn hình chia theo từng bước; bấm mũi tên cạnh bước để mở log của bước đó.
+4. Bấm vào job `test` (dưới mục **Jobs**). Màn hình chia theo từng bước; bước lỗi được tự mở sẵn, các bước khác bấm vào để mở log.
 
 Trên chính trang PR, ở cuối có khung "Checks": tên workflow kèm dấu tích xanh hoặc X đỏ. Nếu repo bật bảo vệ nhánh (Settings, Branches, Branch protection rules), bạn có thể bắt buộc check này xanh mới được merge.
 
 ### Bước 10. Đọc log khi test đỏ và tải artifact
 Mục đích: biết vì sao đỏ mà không cần chạy lại ở máy.
 
-1. Vào lần chạy đỏ, bấm job `test`, bước "Chạy test" sẽ tự mở và hiển thị lỗi y như terminal: tên test, dòng code lỗi, `Expected` và `Received`.
-2. Ở góc phải khung log có biểu tượng bánh răng, chọn **View raw logs** để xem log thô, hoặc **Download log archive** ở menu của trang chạy để tải toàn bộ log.
-3. Quay lại trang tóm tắt, cuộn xuống mục **Artifacts**, bấm `playwright-report` để tải file zip về.
+1. Vào lần chạy đỏ, bấm job `test`, bước "Chạy test" (bước lỗi) sẽ tự mở và hiển thị lỗi y như terminal: tên test, dòng code lỗi, `Expected` và `Received`.
+2. Ở góc trên bên phải khung log có biểu tượng bánh răng (**Show options**); bấm vào và chọn **Download log archive** để tải toàn bộ log. Menu này còn có thể có thêm tuỳ chọn xem log thô (raw logs), tên và vị trí có thể khác theo giao diện hiện tại.
+3. Quay lại trang tóm tắt của lần chạy, cuộn xuống mục **Artifacts**, bấm tên `playwright-report` để tải file zip về. Mặc định artifact được giữ 90 ngày trừ khi bạn đặt `retention-days` hoặc repo cấu hình khác.
 4. Giải nén vào một thư mục, rồi mở báo cáo:
 
 ```bash
@@ -248,19 +252,19 @@ npx playwright show-report ./playwright-report
 
 Kết quả mong đợi: trình duyệt mở danh sách test; bấm test đỏ để thấy các bước, ảnh chụp và (nếu có) trace. Với trace, bấm vào ảnh trace trong báo cáo hoặc chạy `npx playwright show-trace duong-dan/trace.zip` để tua lại từng thao tác (xem bài 2.13).
 
-Trong giao diện cũng có nút **Re-run all jobs** hoặc **Re-run failed jobs** ở góc phải trang chạy; dùng khi nghi lỗi do hạ tầng. Tuy vậy, nếu một test cứ đỏ rồi xanh khi chạy lại thì đó là test flaky (xem bài 5.6), đừng chỉ bấm chạy lại cho qua.
+Trong giao diện cũng có nút chạy lại (thường tên **Re-run all jobs** hoặc **Re-run failed jobs**, ở góc phải trang chạy; tên và vị trí có thể khác); dùng khi nghi lỗi do hạ tầng. Tuy vậy, nếu một test cứ đỏ rồi xanh khi chạy lại thì đó là test flaky (xem bài 5.6), đừng chỉ bấm chạy lại cho qua.
 
 ### Bước 11. Dùng Variables và Secrets
 Mục đích: tách cấu hình ra khỏi code. Quy tắc: giá trị ai thấy cũng được (URL của môi trường test) dùng **Variables**; giá trị bí mật (mật khẩu, token, API key) dùng **Secrets**.
 
 Tạo một Variable:
-1. Vào repo, bấm **Settings**, ở thanh bên trái chọn **Secrets and variables**, rồi **Actions**.
+1. Vào repo, bấm tab **Settings** (nếu không thấy, mở menu **More** rồi chọn **Settings**; bạn cần quyền ghi hoặc là chủ repo). Ở thanh bên trái, trong mục **Security**, mở **Secrets and variables**, rồi chọn **Actions**.
 2. Chọn tab **Variables**, bấm **New repository variable**.
-3. Name: `BASE_URL`; Value: địa chỉ site cần test (ví dụ địa chỉ site lab bạn đã triển khai). Bấm **Add variable**.
+3. Ô **Name**: `BASE_URL`; ô **Value**: địa chỉ site cần test (ví dụ địa chỉ site lab bạn đã triển khai). Bấm **Add variable**.
 
 Tạo một Secret:
 1. Cũng ở trang đó, chọn tab **Secrets**, bấm **New repository secret**.
-2. Name: `LAB_ADMIN_PASSWORD`; Secret: giá trị mật khẩu (ví dụ của tài khoản test riêng cho CI). Bấm **Add secret**.
+2. Ô **Name**: `LAB_ADMIN_PASSWORD`; ô **Secret**: giá trị mật khẩu (ví dụ của tài khoản test riêng cho CI). Bấm **Add secret**.
 
 Sau khi lưu, bạn không xem lại được nội dung secret, chỉ có thể sửa hoặc xoá. Dùng trong workflow:
 
@@ -272,7 +276,7 @@ Sau khi lưu, bạn không xem lại được nội dung secret, chỉ có thể
           ADMIN_PASSWORD: ${{ secrets.LAB_ADMIN_PASSWORD }}
 ```
 
-Trong test đọc bằng `process.env.ADMIN_PASSWORD`. GitHub tự che giá trị secret trong log bằng `***`, nhưng đừng cố in nó ra, và đừng bao giờ ghi bí mật thẳng vào file YAML hay code. Lưu ý: workflow chạy từ PR của người ngoài (fork) mặc định không được đọc secrets, đó là cơ chế bảo vệ chứ không phải lỗi.
+Trong test đọc bằng `process.env.ADMIN_PASSWORD`. GitHub tự che giá trị secret trong log bằng `***`, nhưng đừng cố in nó ra, và đừng bao giờ ghi bí mật thẳng vào file YAML hay code. Lưu ý: workflow chạy từ PR của repo fork không được truyền secrets (trừ `GITHUB_TOKEN`), đó là cơ chế bảo vệ chứ không phải lỗi.
 
 Nếu `BASE_URL` rỗng: bạn quên tạo Variable hoặc tạo nhầm trong tab Secrets. Khi đó biến môi trường `BASE_URL` có mặt nhưng rỗng, `baseURL` của Playwright rỗng theo, và các test dùng `page.goto("/lab/login")` báo lỗi dạng `Cannot navigate to invalid URL`. Nếu thay vào đó biến không được đặt hẳn, cấu hình starter repo rơi về `http://localhost:3000` và test báo `ECONNREFUSED` vì CI không có server nào ở cổng đó.
 
@@ -292,7 +296,7 @@ on:
 | Đổi sang giờ Việt Nam | Việt Nam là UTC+7 nên 23:00 UTC là 6:00 sáng hôm sau giờ VN. |
 | `0 1 * * 1-5` | 8:00 giờ VN các ngày từ thứ Hai đến thứ Sáu. |
 
-Cần biết: lịch chỉ chạy trên nhánh mặc định của repo; thời điểm chạy thực tế có thể trễ vài phút đến vài chục phút khi hệ thống GitHub đông; repo public không có hoạt động trong 60 ngày thì lịch bị tạm dừng.
+Cần biết (theo tài liệu GitHub): mặc định lịch tính theo UTC; lịch chỉ chạy trên nhánh mặc định của repo (commit mới nhất); khoảng cách ngắn nhất là 5 phút; thời điểm chạy thực tế có thể trễ khi hệ thống GitHub đông, nhất là đầu mỗi giờ nên tránh đặt đúng phút 0; repo public không có hoạt động trong 60 ngày thì lịch bị tự động tắt (có thể bật lại). Nút **Run workflow** của `workflow_dispatch` chỉ hiện khi file workflow đã có trên nhánh mặc định.
 
 ### Bước 13. Chia nhỏ bộ test với matrix và shard
 Mục đích: bộ test 40 phút chia ba máy chạy song song còn khoảng 14 phút. Khác với `workers` (nhiều tiến trình trên một máy), **shard** chia bộ test ra nhiều máy.
@@ -330,7 +334,7 @@ Mỗi shard upload thư mục `blob-report/` với tên khác nhau (ví dụ `bl
 npx playwright merge-reports --reporter html ./all-blob-reports
 ```
 
-Kết quả mong đợi: sinh ra một thư mục `playwright-report` chứa báo cáo của toàn bộ ba shard. Chi tiết cú pháp job gộp xem phần Sharding trong tài liệu Playwright; dùng `actions/download-artifact@v4` với `pattern` và `merge-multiple`.
+Kết quả mong đợi: sinh ra một thư mục `playwright-report` chứa báo cáo của toàn bộ ba shard. Chi tiết cú pháp job gộp xem phần Sharding trong tài liệu Playwright; dùng `actions/download-artifact@v8` với `pattern` và `merge-multiple`.
 
 ## Demo code
 Đây là file hoàn chỉnh, gần với `starter-repo/.github/workflows/e2e.yml` nhưng có thêm `workflow_dispatch`, cron, timeout và lưu cả `test-results/`. Có thể dùng làm `.github/workflows/playwright.yml`.
@@ -356,10 +360,10 @@ jobs:
       BASE_URL: ${{ vars.BASE_URL }}   # lấy từ Settings > Secrets and variables > Actions > Variables
     steps:
       - name: Lấy mã nguồn
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Cài Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc     # cùng phiên bản Node với máy bạn
           cache: npm
@@ -377,7 +381,7 @@ jobs:
         run: npx playwright test
 
       - name: Lưu báo cáo HTML
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         if: ${{ !cancelled() }}
         with:
           name: playwright-report
@@ -385,7 +389,7 @@ jobs:
           retention-days: 14
 
       - name: Lưu trace và ảnh chụp
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         if: ${{ !cancelled() }}
         with:
           name: test-results

@@ -190,7 +190,7 @@ Kiểm tra nhanh còn sót marker không:
 git diff --check
 ```
 
-`--check` báo các lỗi như marker conflict còn sót hoặc khoảng trắng thừa. Kết quả mong đợi khi sạch: không in gì. Nếu còn marker, nó in `config.ts:3: leftover conflict marker`.
+`--check` báo các lỗi như marker conflict còn sót hoặc khoảng trắng thừa. Kết quả mong đợi khi sạch: không in gì. Nếu còn marker, nó in mỗi dòng marker một thông báo, ví dụ `config.ts:3: leftover conflict marker` (cùng thông báo cho các dòng `=======` và `>>>>>>>`, số dòng tuỳ file).
 
 ### Bước 7. Đánh dấu đã giải quyết và hoàn tất merge
 Mục đích: báo cho Git biết file đã ổn.
@@ -264,21 +264,21 @@ git fetch origin
 git merge origin/main
 ```
 
-Gặp conflict thì làm Bước 5 đến 7, rồi `git push`. PR trên GitHub sẽ tự cập nhật và biết hết xung đột. GitHub cũng có nút **Resolve conflicts** trong trang PR để sửa trên web cho các xung đột đơn giản, nhưng làm trên máy giúp bạn chạy lại test trước khi đẩy.
+Gặp conflict thì làm Bước 5 đến 7, rồi `git push`. PR trên GitHub sẽ tự cập nhật và biết hết xung đột. GitHub cũng có nút **Resolve conflicts** gần cuối trang PR để sửa trên web (xoá marker, bấm **Mark as resolved**, rồi **Commit merge**), nhưng chỉ dùng được cho xung đột đơn giản (hai bên sửa cùng dòng); nút có thể bị vô hiệu hoá với xung đột phức tạp. Lưu ý GitHub cảnh báo cách này merge toàn bộ nhánh base vào nhánh head. Làm trên máy giúp bạn chạy lại test trước khi đẩy.
 
 ### Bước 11. Review Pull Request trên GitHub
 Mục đích: cho phản hồi hữu ích. Giao diện GitHub có thể thay đổi nhẹ. Khi được giao review một PR:
 
 1. Mở PR, đọc phần mô tả để hiểu mục tiêu.
 2. Bấm tab **Files changed**. Mỗi file hiện các dòng thêm (nền xanh) và xoá (nền đỏ).
-3. Rê chuột vào số dòng, bấm dấu **+** xanh, viết bình luận gắn vào đúng dòng đó, chọn **Start a review** (gom nhiều bình luận rồi gửi một lần), hoặc **Add single comment**.
-4. Khi đọc xong, bấm nút **Review changes** (góc trên bên phải), viết nhận xét tổng, và chọn một trong ba:
+3. Rê chuột vào số dòng, bấm dấu **+** xanh (biểu tượng bình luận), viết bình luận gắn vào đúng dòng đó. Muốn bình luận nhiều dòng thì bấm số dòng đầu rồi kéo (hoặc giữ Shift và bấm) số dòng cuối. Sau đó bấm **Start a review** (gom nhiều bình luận, chỉ mình bạn thấy cho đến khi gửi; nếu đã có review đang soạn thì nút là **Add review comment**) hoặc **Comment** để đăng bình luận lẻ ngay.
+4. Khi đọc xong, bấm nút **Review changes** (phía trên phần code thay đổi), viết nhận xét tổng, và chọn một trong ba:
    - **Comment**: chỉ góp ý, không chặn.
    - **Approve**: đồng ý cho merge.
-   - **Request changes**: yêu cầu sửa trước khi merge.
+   - **Request changes**: yêu cầu sửa trước khi merge (chỉ thực sự chặn merge khi repo có branch protection hoặc ruleset bắt buộc review).
 5. Bấm **Submit review**.
 
-Người viết PR sửa theo góp ý, đẩy commit mới lên cùng nhánh (PR tự cập nhật), rồi bấm **Resolve conversation** ở các bình luận đã xử lý.
+Người viết PR sửa theo góp ý, đẩy commit mới lên cùng nhánh (PR tự cập nhật), rồi bấm **Resolve conversation** dưới các luồng bình luận đã xử lý (ở tab **Files changed**).
 
 Phong cách phản hồi tốt: nói về code chứ không về con người; nêu lý do ("`waitForTimeout` dễ làm test flaky vì..."); đề xuất cách sửa; khen khi có điểm tốt.
 

@@ -38,6 +38,10 @@ working directory  --git add-->  staging area  --git commit-->  repository
 
 Một điểm cần nhớ: Git theo dõi **thay đổi nội dung của file**, không theo dõi thư mục rỗng. Và Git chạy hoàn toàn trên máy bạn; GitHub (bài 1.2) chỉ là nơi lưu bản sao để chia sẻ.
 
+```diagram
+git-areas
+```
+
 ## Thực hành từng bước
 
 ### Bước 1. Cài Git và kiểm tra
@@ -182,7 +186,7 @@ Changes to be committed:
 
 Chữ màu xanh `new file` nghĩa là file đã nằm trong vùng chờ.
 
-Nếu thấy cảnh báo `LF will be replaced by CRLF` trên Windows: đây chỉ là thông báo về ký tự xuống dòng, không phải lỗi.
+Nếu thấy cảnh báo `warning: in the working copy of 'README.md', LF will be replaced by CRLF the next time Git touches it` trên Windows: đây chỉ là thông báo về ký tự xuống dòng, không phải lỗi. Mã `index 9d632e5..ea069c3` ở ví dụ `git diff` bên dưới sẽ khác trên máy bạn.
 
 ### Bước 7. Tạo commit đầu tiên
 Mục đích: lưu ảnh chụp vào repository.
@@ -243,6 +247,7 @@ git diff
 
 ```text
 diff --git a/README.md b/README.md
+index 9d632e5..ea069c3 100644
 --- a/README.md
 +++ b/README.md
 @@ -1 +1,2 @@

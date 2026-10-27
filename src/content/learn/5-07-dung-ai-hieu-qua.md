@@ -207,7 +207,7 @@ Mục đích: cho AI tự khám phá trang thay vì đoán locator. **Playwright
 | `command` và `args` | Lệnh khởi chạy máy chủ: chạy gói `@playwright/mcp` bằng `npx`. |
 | `@latest` | Lấy bản mới nhất; có thể ghim phiên bản cụ thể để ổn định. |
 
-Một số công cụ cho thêm bằng lệnh; ví dụ với Claude Code: `claude mcp add playwright npx @playwright/mcp@latest`. Tên file và lệnh cấu hình khác nhau giữa các công cụ, nên hãy đối chiếu tài liệu của công cụ bạn dùng.
+Một số công cụ cho thêm bằng lệnh; ví dụ với Claude Code: `claude mcp add playwright npx @playwright/mcp@latest` (cú pháp theo tài liệu playwright.dev/docs/getting-started-mcp). Cần Node.js 20 trở lên. Mặc định trình duyệt chạy có giao diện; thêm `"--headless"` vào `args` để chạy ngầm, `"--browser=firefox"` để đổi trình duyệt (`chrome`, `firefox`, `webkit`, `msedge`). Tên file và lệnh cấu hình khác nhau giữa các công cụ, nên hãy đối chiếu tài liệu của công cụ bạn dùng.
 
 Dùng thử, đưa cho AI yêu cầu: "Mở `/lab/cart` của site, thêm một sản phẩm, áp mã SALE10 và mô tả các phần tử bạn tương tác cùng locator Playwright phù hợp". Kết quả mong đợi: AI mở trình duyệt, thao tác và đề xuất locator dựa trên cây truy cập (thường là `getByRole` và `getByLabel`). Bạn vẫn phải kiểm tra, vì AI có thể chọn locator đúng với trang lúc đó nhưng chưa có `data-testid` ổn định.
 
@@ -223,9 +223,23 @@ npx playwright init-agents --loop=claude
 | Phần | Ý nghĩa |
 |------|---------|
 | `init-agents` | Sinh ra các file định nghĩa agent trong repo. |
-| `--loop=<công cụ>` | Chọn nền tảng AI. Các giá trị Playwright hiện hỗ trợ gồm `claude`, `codex`, `copilot`, `opencode`, `vscode` (xem `npx playwright init-agents --help` cho danh sách của phiên bản bạn đang dùng). |
+| `--loop=<công cụ>` | Chọn nền tảng AI. Với Playwright 1.64, `npx playwright init-agents --help` liệt kê: `claude`, `codex`, `copilot`, `opencode`, `vscode`, `vscode-legacy` (danh sách có thể khác ở phiên bản bạn dùng). |
+| `--prompts` (tuỳ chọn) | Có sinh thêm các file prompt hay không. |
 
-Kết quả mong đợi: thư mục chứa mô tả ba vai trò: **planner** (khám phá ứng dụng và lập kế hoạch test), **generator** (biến kế hoạch thành test), **healer** (chạy và sửa test đỏ). Đây là chế độ nâng cao; quy tắc vẫn như trên: bạn duyệt kế hoạch, đọc code sinh ra, và đặc biệt cảnh giác với healer vì nó có xu hướng sửa test cho xanh bằng cách nới assertion.
+Kết quả mong đợi: với `--loop=claude`, lệnh in ra (đã chạy thật trên Playwright 1.64):
+
+```text
+ Using project "chromium" as a primary project
+ specs\README.md - directory for test plans
+ tests\seed.spec.ts - default environment seed file
+ .claudegents\playwright-test-generator.md - agent definition
+ .claudegents\playwright-test-healer.md - agent definition
+ .claudegents\playwright-test-planner.md - agent definition
+ .mcp.json - mcp configuration
+ Done.
+```
+
+(Mỗi dòng có thêm biểu tượng emoji ở đầu.) Nghĩa là: thư mục `specs/` chứa kế hoạch test, `tests/seed.spec.ts` là test "hạt giống" mô tả môi trường khởi đầu, ba file agent trong `.claude/agents/`, và `.mcp.json` khai báo máy chủ MCP tên `playwright-test` (khởi chạy bằng `npx playwright run-test-mcp-server`; trên Windows là `cmd /c npx playwright run-test-mcp-server`). Với `--loop=vscode`, các file nằm ở `.github/agents/*.agent.md` và `.vscode/mcp.json`. Ba file agent mô tả ba vai trò: **planner** (khám phá ứng dụng và lập kế hoạch test), **generator** (biến kế hoạch thành test), **healer** (chạy và sửa test đỏ). Đây là chế độ nâng cao; quy tắc vẫn như trên: bạn duyệt kế hoạch, đọc code sinh ra, và đặc biệt cảnh giác với healer vì nó có xu hướng sửa test cho xanh bằng cách nới assertion.
 
 ### Bước 8. Giữ an toàn: cái gì được và không được đưa cho AI
 Mục đích: tránh rò rỉ dữ liệu. Trước khi dán vào bất kỳ dịch vụ bên ngoài, tự hỏi:

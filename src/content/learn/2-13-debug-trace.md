@@ -79,9 +79,13 @@ Timeout:  2000ms
 Call log:
   - Expect "toHaveText" getByTestId('todo-count') with timeout 2000ms
   - waiting for getByTestId('todo-count')
-    ... × locator resolved to <p class="text-sm" data-testid="todo-count">Còn 1 việc</p>
+    19 × locator resolved to <p class="text-sm" data-testid="todo-count">Còn 1 việc</p>
        - unexpected value "Còn 1 việc"
+...
+    Error Context: test-results\...\error-context.md
 ```
+
+(Định dạng lấy từ lần chạy thật với Playwright 1.64; số `19 ×` là số lần Playwright thử lại trong thời gian chờ nên sẽ khác ở máy bạn. Dòng `Error Context` trỏ tới file `error-context.md` mô tả trang lúc lỗi.)
 
 Cách đọc thông báo:
 
@@ -128,16 +132,20 @@ npx playwright test debug-demo --debug
 
 | Phần | Ý nghĩa |
 |------|---------|
-| `--debug` | Tương đương đặt `PWDEBUG=1` và các tuỳ chọn `--headed`, `--workers=1`, `--timeout=0`; trình duyệt hiện lên và dừng ở lệnh đầu tiên |
+| `--debug` | Tương đương đặt `PWDEBUG=1` và các tuỳ chọn `--timeout=0`, `--max-failures=1`, `--headed`, `--workers=1` (theo `npx playwright test --help`); trình duyệt hiện lên và dừng ở lệnh đầu tiên |
 
 Kết quả mong đợi: một cửa sổ trình duyệt và cửa sổ **Playwright Inspector** hiện ra. Trong Inspector bạn thấy mã nguồn test với dòng đang dừng được tô sáng. Các nút chính:
 
 | Nút | Tác dụng |
 |-----|----------|
-| Resume (hoặc F8) | Chạy tiếp đến điểm dừng kế hoặc hết test |
+| Resume (F8) | Chạy tiếp đến điểm dừng kế hoặc hết test; khi đang chạy, nút này đổi thành Pause (cũng F8) |
 | Step over (F10) | Chạy đúng một lệnh rồi dừng |
 | Pick locator | Bấm vào một phần tử trên trang để Inspector gợi ý locator chuẩn |
-| Ô locator ở dưới | Gõ locator và xem phần tử nào được tô sáng trên trang |
+| Tab Locator | Gõ locator ("Type locator to inspect") và xem phần tử nào được tô sáng trên trang; có nút Copy |
+| Tab Log | Nhật ký các lệnh Playwright đã chạy |
+| Tab Aria | Gõ mẫu aria snapshot để so khớp |
+
+Tên nút và tab lấy từ mã nguồn giao diện Inspector của Playwright 1.64; bố cục có thể khác nhẹ ở phiên bản khác.
 
 Thử bấm Step over liên tục: mỗi lần bấm, bạn thấy một thao tác thật xảy ra trên trang lab (điền "Mua sữa", bấm Thêm...). Đến dòng `expect` bạn thấy chính xác trang đang hiện "Còn 1 việc". Đóng cửa sổ Inspector để dừng.
 
@@ -174,12 +182,13 @@ Kết quả mong đợi: một cửa sổ riêng mở ra. Bố cục thường g
 
 | Khu vực | Dùng để |
 |---------|---------|
-| Cột trái: danh sách test | Chạy một test (nút tam giác), lọc theo tên, trạng thái, project |
-| Nút "Watch" (hình mắt) | Tự chạy lại khi bạn lưu file test |
-| Dòng thời gian phía trên | Rê chuột để xem trang ở từng thời điểm |
-| Tab "Actions" | Danh sách các hành động; bấm một dòng để xem DOM trước và sau hành động |
-| Tab "Errors", "Console", "Network" | Thông báo lỗi, log trình duyệt, các request |
-| Pick locator | Bấm vào trang để lấy locator |
+| Mục "Tests" (cột trái) | Chạy một test (nút tam giác khi rê chuột), ô lọc "Filter (e.g. text, @tag)", lọc theo Status và Projects; nút Run all (F5), Stop (Shift + F5) |
+| Nút "Watch" (hình mắt) | Tự chạy lại khi bạn lưu file test; có nút "Watch all" ở đầu danh sách |
+| Nút "Toggle output" (Ctrl + `) | Xem output terminal của lần chạy |
+| Dòng thời gian phía trên | Rê chuột để xem trang ở từng thời điểm, kéo để chọn một khoảng |
+| Tab "Actions" | Danh sách các hành động; bấm một dòng để xem DOM tại hành động đó (có các chế độ Before, Action, After) |
+| Tab "Errors", "Console", "Network" (cùng "Locator", "Source", "Call", "Log", "Metadata", "Attachments") | Thông báo lỗi, log trình duyệt, các request, v.v. |
+| Pick locator | Bấm vào ảnh DOM để lấy locator |
 
 Thử: bấm chạy test ở bước 1, chọn bước `expect.toHaveText` ở tab Actions, bạn thấy DOM tại thời điểm đó với "Còn 1 việc". Sửa chuỗi kỳ vọng thành "Còn 1 việc" và lưu: nếu bật Watch, test tự chạy lại và xanh.
 
@@ -197,7 +206,7 @@ npx playwright test debug-demo --trace on
 |------|---------|
 | `--trace on` | Ghi trace cho mọi test của lần chạy này, ghi đè giá trị trong config |
 
-Kết quả mong đợi: thư mục `test-results/` có thư mục con tên theo test, được ghép từ tên file, tên test và tên project (ví dụ `debug-demo-ten-test-chromium/`), bên trong có `trace.zip`. Mở bằng:
+Khi test đỏ, terminal cũng in sẵn đường dẫn và lệnh mở (đã thấy ở bản chạy thật): `attachment #2: trace (application/zip)` kèm `npx playwright show-trace test-results\...	race.zip`. Kết quả mong đợi: thư mục `test-results/` có thư mục con tên theo test, được ghép từ tên file, tên test và tên project (ví dụ `debug-demo-ten-test-chromium/`), bên trong có `trace.zip`. Mở bằng:
 
 ```bash
 npx playwright show-trace test-results/<tên-thư-mục>/trace.zip
@@ -211,11 +220,13 @@ npx playwright show-trace test-results/<tên-thư-mục>/trace.zip
 Trong Trace Viewer, hãy tập thói quen đi theo thứ tự:
 
 1. Cột trái **Actions**: tìm bước màu đỏ (thất bại).
-2. Bấm vào bước đó; khung giữa hiện ảnh DOM, có chuyển giữa **Before** và **After**.
-3. Panel dưới: **Call** (thông số lệnh, thời gian), **Log** (từng lần thử), **Errors** (thông báo lỗi), **Console** (log trình duyệt), **Network** (request và phản hồi), **Source** (dòng code tương ứng).
-4. Dùng nút chọn locator trong viewer để thử locator trực tiếp trên ảnh DOM.
+2. Bấm vào bước đó; khung giữa hiện ảnh DOM, có thể chuyển giữa các chế độ **Before**, **Action** (làm nổi phần tử và điểm bấm) và **After**.
+3. Panel dưới: **Locator**, **Source** (dòng code tương ứng), **Call** (thông số lệnh, thời gian), **Log** (từng lần thử), **Errors** (thông báo lỗi), **Console** (log trình duyệt), **Network** (request và phản hồi), **Metadata** (trình duyệt, viewport, thời lượng), **Attachments** (ảnh đính kèm).
+4. Dùng nút **Pick locator** trong viewer để thử locator trực tiếp trên ảnh DOM, nút **Copy locator** để chép.
 
-Trace là một tệp zip, bạn có thể gửi cho đồng nghiệp hoặc tải từ artifact của CI về mở. Cũng có thể kéo thả tệp zip vào trang `trace.playwright.dev` (xử lý hoàn toàn trên trình duyệt của bạn, không tải lên máy chủ).
+Tên tab đối chiếu với tài liệu playwright.dev/docs/trace-viewer và mã nguồn Trace Viewer Playwright 1.64; vị trí các panel có thể khác theo kích thước cửa sổ (có nút "Dock to bottom"/"Dock to right").
+
+Cách khác: `npx playwright show-report`, mở test đỏ và bấm biểu tượng/liên kết trace trong báo cáo HTML. Trace là một tệp zip, bạn có thể gửi cho đồng nghiệp hoặc tải từ artifact của CI về mở. Cũng có thể kéo thả tệp zip vào trang `trace.playwright.dev` (xử lý hoàn toàn trên trình duyệt của bạn, không tải lên máy chủ).
 
 Nếu gặp lỗi: `Error: ENOENT ... trace.zip` do sai đường dẫn; mở thư mục `test-results` bằng trình quản lý tệp để sao chép đường dẫn chính xác.
 

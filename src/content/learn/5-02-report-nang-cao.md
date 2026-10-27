@@ -46,7 +46,7 @@ npx playwright test --reporter=line
 |------|---------|
 | `--reporter=line` | Ghi đè reporter trong config chỉ cho lần chạy này. `line` in một dòng cập nhật liên tục, ít rối hơn `list` khi có nhiều test. |
 
-Kết quả mong đợi: một dòng tiến độ rồi dòng tổng kết `12 passed (9.0s)`. Thử thay `line` bằng `dot` (mỗi test là một dấu chấm) và `list` (mỗi test một dòng) để so sánh.
+Kết quả mong đợi: các dòng tiến độ dạng `[1/12] [chromium] › tests\...` (khi chạy không phải terminal tương tác) rồi dòng tổng kết `12 passed (9.0s)`. Thử thay `line` bằng `dot` (mỗi test là một dấu chấm) và `list` (mỗi test một dòng) để so sánh.
 
 Nếu gặp lỗi `Cannot find module` với tên reporter: reporter bên thứ ba chưa được cài, hãy `npm i -D` gói tương ứng.
 
@@ -111,17 +111,17 @@ Mở `results/junit.xml`. Cấu trúc rút gọn:
 
 Công cụ CI như Jenkins, GitLab, Azure DevOps đọc file này để vẽ biểu đồ và danh sách lỗi. GitHub Actions không tự hiển thị JUnit, bạn dùng action của bên thứ ba hoặc tự tóm tắt như Bước 5.
 
-Mở `results/results.json`. Hai phần quan trọng:
+Mở `results/results.json` (các khoá `config`, `suites`, `errors`, `stats`, `specs[].tests[].results[]` và `duration`/`status` đã đối chiếu với file JSON thật do Playwright 1.64 sinh ra). Hai phần quan trọng:
 
 ```json
 {
   "config": { "...": "..." },
   "suites": [
-    { "title": "login.spec.ts", "specs": [
+    { "title": "login.spec.ts", "file": "login.spec.ts", "specs": [
       { "title": "đăng nhập hợp lệ", "ok": true, "tests": [
-        { "status": "expected", "results": [ { "status": "passed", "duration": 1180 } ] }
+        { "projectName": "chromium", "status": "expected", "results": [ { "status": "passed", "duration": 1180 } ] }
       ] }
-    ], "suites": [] }
+    ] }
   ],
   "stats": { "startTime": "2026-03-01T10:00:00.000Z", "duration": 9040, "expected": 11, "unexpected": 1, "flaky": 0, "skipped": 0 }
 }
@@ -257,12 +257,15 @@ Mục đích: biết Allure làm được gì khi nhóm cần lịch sử và ph
 npm i -D allure-playwright
 ```
 
-Thêm vào config: `["allure-playwright"]` trong mảng `reporter`. Chạy test, sẽ có thư mục `allure-results/`. Để dựng báo cáo cần công cụ Allure (có bản dòng lệnh); tham khảo hướng dẫn hiện hành của dự án Allure vì lệnh cài và tạo báo cáo thay đổi theo phiên bản, ví dụ với `allure-commandline`:
+Thêm vào config: `["allure-playwright"]` trong mảng `reporter` (hoặc chạy thử một lần: `npx playwright test --reporter=line,allure-playwright`). Chạy test, sẽ có thư mục `allure-results/` chứa các file `*-result.json` và ảnh đính kèm. Để dựng báo cáo cần công cụ Allure. Với Allure Report 3 (gói npm `allure`, không cần Java; đã chạy thử với allure 3.22 và allure-playwright 3.14):
 
 ```bash
-npx allure-commandline generate allure-results --clean -o allure-report
-npx allure-commandline open allure-report
+npm i -D allure
+npx allure generate ./allure-results
+npx allure open ./allure-report
 ```
+
+`generate` sinh thư mục `allure-report/` (có `index.html`); `open` mở máy chủ cục bộ và trình duyệt. Có thể thêm `--clean` để xoá báo cáo cũ và `-o <thư mục>` để chọn nơi xuất. Allure 2 (gói `allure-commandline`, cần Java) có lệnh tương tự (`allure generate allure-results --clean -o allure-report`) nhưng là một công cụ khác; xem tài liệu hiện hành tại allurereport.org vì lệnh có thể đổi theo phiên bản.
 
 Kết quả mong đợi: trình duyệt mở báo cáo có biểu đồ, nhóm lỗi theo nguyên nhân, các bước chi tiết. Allure mạnh ở lịch sử nhiều lần chạy (cần lưu thư mục `history`), nhưng đổi lại phải cài và bảo trì thêm. Với nhóm nhỏ, `html` của Playwright thường đủ.
 

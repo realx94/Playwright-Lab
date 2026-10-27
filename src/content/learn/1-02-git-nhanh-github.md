@@ -55,7 +55,7 @@ Mục đích: có một repo trống để thực hành.
 2. **Repository name**: `git-lab-practice`.
 3. **Description**: tuỳ chọn, ví dụ "Thực hành Git cho khoá Playwright".
 4. Chọn **Public** (ai cũng xem được) hoặc **Private** (chỉ bạn). Với bài tập, chọn Private cũng được.
-5. Tích **Add a README file**. Tuỳ chọn **Add .gitignore**: chọn mẫu **Node**.
+5. Tích thêm README (tuỳ chọn tên **Add a README file**) và chọn `.gitignore` mẫu **Node** nếu muốn. Tên các tuỳ chọn này có thể khác chút tuỳ giao diện hiện tại.
 6. Bấm **Create repository**.
 
 Kết quả mong đợi: trang repo mở ra, có file `README.md` và (nếu chọn) `.gitignore`. Đường dẫn dạng `github.com/<username>/git-lab-practice`.
@@ -111,12 +111,17 @@ ssh-add --apple-use-keychain ~/.ssh/id_ed25519
 **Windows (PowerShell chạy bằng Administrator, chỉ cần làm một lần):**
 
 ```powershell
-Get-Service ssh-agent | Set-Service -StartupType Manual
+Get-Service -Name ssh-agent | Set-Service -StartupType Manual
 Start-Service ssh-agent
+```
+
+Sau đó, trong một cửa sổ PowerShell **thường** (không Administrator), nạp khoá:
+
+```powershell
 ssh-add $env:USERPROFILE\.ssh\id_ed25519
 ```
 
-Lệnh đầu cho phép dịch vụ ssh-agent chạy; lệnh thứ hai khởi động nó; lệnh thứ ba nạp khoá. Kết quả: `Identity added: ...`. Nếu trong Git Bash, có thể dùng `eval "$(ssh-agent -s)"` rồi `ssh-add ~/.ssh/id_ed25519` như macOS.
+Lệnh đầu cho phép dịch vụ ssh-agent chạy; lệnh thứ hai khởi động nó; lệnh thứ ba nạp khoá. Kết quả: `Identity added: ...`. Nếu dùng Git Bash, chạy `eval "$(ssh-agent -s)"` rồi `ssh-add ~/.ssh/id_ed25519` (không cần cờ `--apple-use-keychain`, cờ này chỉ có trên macOS; nếu khoá không đặt passphrase thì trên macOS cũng có thể bỏ cờ này). Nếu Git vẫn hỏi passphrase liên tục trên Windows, có thể Git đang dùng `ssh.exe` đi kèm thay vì ssh của Windows; theo GitHub, chạy `git config --global core.sshCommand "C:/Windows/System32/OpenSSH/ssh.exe"` để dùng ssh của hệ điều hành.
 
 ### Bước 5. Sao chép khoá công khai
 Mục đích: lấy nội dung `.pub` để dán vào GitHub. Chú ý: chỉ sao chép file có đuôi `.pub`.
@@ -145,12 +150,12 @@ Dòng này bắt đầu bằng `ssh-ed25519` và kết thúc bằng comment emai
 Mục đích: GitHub nhận ra máy bạn.
 
 1. Trên GitHub, bấm avatar ở góc trên bên phải, chọn **Settings**.
-2. Ở thanh bên trái, chọn **SSH and GPG keys**.
-3. Bấm **New SSH key**.
+2. Ở thanh bên trái, trong mục **Access**, chọn **SSH and GPG keys**.
+3. Bấm **New SSH key** (hoặc **Add SSH key** nếu bạn chưa có khoá nào).
 4. **Title**: đặt tên dễ nhớ, ví dụ "Laptop Windows".
-5. **Key type**: để **Authentication Key**.
-6. **Key**: dán nội dung đã chép (Ctrl + V hoặc Command + V).
-7. Bấm **Add SSH key**; GitHub có thể hỏi lại mật khẩu.
+5. **Key type**: chọn loại khoá, để **Authentication Key** (dùng để đăng nhập; loại còn lại là khoá ký commit).
+6. **Key**: dán nội dung đã chép (Ctrl + V hoặc Command + V), không thêm dòng trống hay khoảng trắng thừa.
+7. Bấm **Add SSH key**; nếu GitHub yêu cầu xác nhận truy cập (sudo mode) thì nhập mật khẩu hoặc mã xác thực.
 
 Kết quả mong đợi: khoá hiện trong danh sách với dấu vân tay (fingerprint) SHA256.
 
@@ -175,13 +180,13 @@ ED25519 key fingerprint is SHA256:...
 Are you sure you want to continue connecting (yes/no/[fingerprint])?
 ```
 
-Gõ `yes` rồi Enter. Kết quả mong đợi:
+(Tuỳ phiên bản OpenSSH, dòng cuối có thể chỉ là `(yes/no)`.) Hãy so dấu vân tay hiện ra với danh sách chính thức GitHub công bố (docs.github.com, mục "GitHub's SSH key fingerprints"; với Ed25519 là `SHA256:+DiY3wvvV6TuJJhbpZisF/zLDA0zPMSvHdkr4UvCOqU`), khớp thì gõ `yes` rồi Enter. Kết quả mong đợi:
 
 ```text
 Hi ten-cua-ban! You've successfully authenticated, but GitHub does not provide shell access.
 ```
 
-Câu "does not provide shell access" là bình thường, không phải lỗi. Nếu thấy `Permission denied (publickey)`: khoá chưa được thêm đúng vào GitHub, hoặc agent chưa nạp khoá (quay lại Bước 4 và 6).
+Câu "does not provide shell access" là bình thường, không phải lỗi; lệnh này thoát với mã 1 và điều đó cũng là bình thường. Nếu thấy `Permission denied (publickey)`: khoá chưa được thêm đúng vào GitHub, hoặc agent chưa nạp khoá (quay lại Bước 4 và 6).
 
 ### Bước 8. Clone repo về máy
 Mục đích: tạo bản sao local từ GitHub. Trên trang repo, bấm nút xanh **Code**, chọn tab **SSH** và sao chép địa chỉ dạng `git@github.com:<username>/git-lab-practice.git`. Rồi chạy:
@@ -271,7 +276,7 @@ Terminal còn có thể in ra một đường dẫn tạo Pull Request.
 ### Bước 12. Tạo Pull Request trên GitHub
 Mục đích: đề nghị hợp nhất nhánh vào `main` và nhờ review.
 
-1. Mở trang repo trên GitHub. Bạn thấy băng vàng "feat/login-test had recent pushes" kèm nút **Compare & pull request**; bấm nút này. (Hoặc vào tab **Pull requests**, bấm **New pull request**, chọn base là `main`, compare là `feat/login-test`.)
+1. Mở trang repo trên GitHub. Bạn thường thấy băng vàng "feat/login-test had recent pushes" kèm nút **Compare & pull request** phía trên danh sách file; bấm nút này. (Băng vàng có thể biến mất sau một lúc; khi đó dùng cách sau.) Hoặc vào tab **Pull requests**, bấm **New pull request**, chọn base là `main`, compare là `feat/login-test`.)
 2. Kiểm tra dòng trên cùng: **base: main** và **compare: feat/login-test**. Nghĩa là "đưa thay đổi từ compare vào base".
 3. Đặt **tiêu đề** rõ ràng, ví dụ "feat: thêm test đăng nhập". Ở ô mô tả, viết bạn đã làm gì, cách kiểm tra.
 4. Bấm **Create pull request**.
@@ -283,8 +288,8 @@ Mục đích: hợp nhất nhánh vào `main`.
 
 1. Mở tab **Files changed** và tự đọc lại thay đổi. Rê chuột vào số dòng, bấm dấu **+** để để lại bình luận nếu cần.
 2. Quay lại tab **Conversation**. Nếu có kiểm tra tự động (CI), chờ dấu xanh.
-3. Bấm **Merge pull request**, rồi **Confirm merge**. Ba kiểu merge có thể chọn ở mũi tên cạnh nút: **Create a merge commit** (giữ toàn bộ lịch sử, mặc định), **Squash and merge** (gộp mọi commit thành một), **Rebase and merge** (xếp commit thẳng lên main).
-4. Bấm **Delete branch** để xoá nhánh trên GitHub (nhánh đã hợp nhất, không cần nữa).
+3. Cuộn xuống cuối PR, bấm **Merge pull request**, rồi **Confirm merge**. Ba kiểu merge có thể chọn ở menu thả xuống cạnh nút: **Create a merge commit** (giữ toàn bộ lịch sử, thường là mặc định), **Squash and merge** (gộp mọi commit thành một), **Rebase and merge** (xếp commit thẳng lên main). Với hai kiểu sau, nút xác nhận đổi tên tương ứng (**Confirm squash and merge**, **Confirm rebase and merge**). Kiểu nào khả dụng tuỳ cài đặt của repo.
+4. Sau khi merge, GitHub hiện nút xoá nhánh (thường tên **Delete branch**); bấm để xoá nhánh trên GitHub (nhánh đã hợp nhất, không cần nữa). Giao diện có thể khác chút.
 
 Kết quả mong đợi: PR chuyển sang màu tím với nhãn **Merged**; file `login.spec.ts` xuất hiện trên `main` ở GitHub.
 

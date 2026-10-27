@@ -207,7 +207,7 @@ npx playwright test
 
 Kết quả mong đợi: danh sách có tên kịch bản (ví dụ `Đăng nhập thành công`), cuối cùng `4 passed`. Thư mục sinh ra nên được đưa vào `.gitignore`.
 
-Nếu gặp lỗi `Missing step: ...`: câu trong `.feature` không khớp step nào; so từng chữ, đặc biệt dấu nháy và khoảng trắng. Nếu thấy `Duplicate step`: hai step cùng mẫu, gộp lại.
+Nếu `npx bddgen` báo `Missing step definitions: N` (kèm đoạn code gợi ý để dán vào file steps): câu trong `.feature` không khớp step nào; so từng chữ, đặc biệt dấu nháy và khoảng trắng. Nếu thấy `Multiple definitions matched scenario step`: hai step cùng khớp một câu, gộp lại.
 
 ## Demo code
 Ngoài thư viện BDD, hãy luôn biết viết cùng hành vi bằng Playwright thuần để so sánh chi phí. Cùng một kịch bản "khoá sau 5 lần sai":

@@ -33,7 +33,7 @@ Các reporter có mục đích khác nhau:
 
 | Reporter | Dành cho | Đặc điểm |
 |----------|----------|----------|
-| `list` | Người đọc ở terminal | In một dòng cho mỗi test; mặc định khi chạy local |
+| `list` | Người đọc ở terminal | In một dòng cho mỗi test; mặc định khi chạy local nếu config không khai báo `reporter` (file config do `npm init playwright` sinh ra khai báo `html`) |
 | `line` | Terminal gọn khi có nhiều test | Chỉ in lỗi và một dòng tiến độ |
 | `dot` | CI với log dài | Mỗi test một chấm |
 | `html` | Con người phân tích sâu | Trang web có ảnh, video, trace, step; mở bằng `show-report` |
@@ -121,12 +121,25 @@ npx playwright test evidence
 Kết quả mong đợi (rút gọn):
 
 ```text
-  x  1 [chromium] › tests/evidence.spec.ts:3:5 › BUG-02: hoàn thành việc thì bộ đếm phải giảm
+  x  1 [chromium] › tests\evidence.spec.ts:3:5 › BUG-02: hoàn thành việc thì bộ đếm phải giảm (2.4s)
+
+  1) [chromium] › tests\evidence.spec.ts:3:5 › BUG-02: hoàn thành việc thì bộ đếm phải giảm
+
+    Error: expect(locator).toHaveText(expected) failed
+
+    Locator:  getByTestId('todo-count')
     Expected: "Còn 0 việc"
     Received: "Còn 1 việc"
+    ...
+    attachment #1: screenshot (image/png) ──────────────
+    test-results\evidence-...-chromium	est-failed-1.png
+    attachment #2: video (video/webm) ──────────────────
+    test-results\evidence-...-chromiumideo.webm
 
   1 failed
 ```
+
+(Cấu trúc đối chiếu với lần chạy thật Playwright 1.64 trên một test tương tự; terminal tự in đường dẫn ảnh và video đính kèm.)
 
 Test đỏ là chủ đích: nó chứng tỏ ứng dụng có lỗi (xem BR của LAB-04 trong `docs/04-lab-catalog.md`).
 
@@ -143,7 +156,7 @@ Mở thư mục `test-results/` (cạnh `playwright.config.ts`). Bạn thấy m�
 | `trace.zip` | Trace, có khi dùng `--trace on` hoặc khi retry (xem bài 2.13) |
 | `error-context.md` | Bản mô tả trạng thái trang lúc lỗi, hữu ích để dán vào công cụ trợ giúp |
 
-Kết quả mong đợi: bạn có ít nhất ảnh và video của test đỏ. Thư mục `test-results/` bị xoá và tạo lại mỗi lần chạy; sao chép bằng chứng đi chỗ khác nếu muốn giữ.
+Kết quả mong đợi: bạn có ít nhất ảnh và video của test đỏ (đã kiểm tra thật: thư mục chỉ có `test-failed-1.png`, `video.webm`, `error-context.md`; không có `trace.zip` vì chưa retry). Thư mục `test-results/` bị xoá và tạo lại mỗi lần chạy; sao chép bằng chứng đi chỗ khác nếu muốn giữ.
 
 ### Bước 5. Mở báo cáo HTML
 
@@ -158,15 +171,15 @@ npx playwright show-report
 | `show-report` | Mở máy chủ cục bộ phục vụ thư mục `playwright-report/` và mở trình duyệt (mặc định `http://localhost:9323`) |
 | `--port 9400` (tuỳ chọn) | Đổi cổng nếu cổng 9323 đang bận |
 
-Kết quả mong đợi: trình duyệt hiện báo cáo. Trang đầu có các bộ lọc **All**, **Passed**, **Failed**, **Flaky**, **Skipped** và danh sách test. Bấm vào test đỏ, bạn thấy:
+Kết quả mong đợi: trình duyệt hiện báo cáo. Trang đầu có ô "Search tests", các bộ lọc **All**, **Passed**, **Failed**, **Flaky**, **Skipped** (kèm số lượng) và danh sách test. Bấm vào test đỏ, bạn thấy:
 
 1. Thông báo lỗi và đoạn code bị dừng.
 2. Danh sách các **step** (xem bài 2.11, `test.step`).
-3. Ảnh chụp, video, và trace (bấm hình trace để mở Trace Viewer ngay trong báo cáo).
+3. Ảnh chụp, video, và trace (nếu có trace, bấm hình trace/liên kết "View Trace" để mở Trace Viewer ngay trong báo cáo).
 
 Giữ cửa sổ terminal đang chạy `show-report` để xem; nhấn Ctrl+C để dừng máy chủ.
 
-Nếu gặp lỗi: `No report found` hoặc `Error: ... playwright-report` không tồn tại nghĩa là bạn chưa chạy test với reporter `html`; thêm `["html", { open: "never" }]` rồi chạy lại. Có thể chỉ rõ thư mục khác: `npx playwright show-report ten-thu-muc`.
+Nếu gặp lỗi: `No report found` hoặc `Error: ... playwright-report` không tồn tại nghĩa là bạn chưa chạy test với reporter `html`; thêm `["html", { open: "never" }]` rồi chạy lại. Có thể chỉ rõ thư mục khác: `npx playwright show-report ten-thu-muc`; lệnh này cũng nhận file `.zip` báo cáo tải từ artifact của CI (bên trong có `index.html` ở cấp cao nhất). Đổi cổng bằng `--port`, đổi host bằng `--host`.
 
 ### Bước 6. Chọn reporter ngay trên dòng lệnh
 

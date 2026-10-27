@@ -247,7 +247,7 @@ $env:TEST_ENV = "staging"; npx playwright test --list; Remove-Item Env:TEST_ENV
 
 Kết quả mong đợi: dòng log `baseURL` (nếu bạn còn thêm) in địa chỉ trong `.env.staging`. Chạy không đặt `TEST_ENV` thì dùng `.env.local`.
 
-Lưu ý: tuỳ phiên bản, dotenv có thể in một dòng thông tin mỗi lần nạp file; nếu thấy phiền, thêm `quiet: true` vào `dotenv.config({ ..., quiet: true })` (các bản dotenv mới hỗ trợ tuỳ chọn này).
+Lưu ý: tuỳ phiên bản, dotenv có thể in một dòng thông tin mỗi lần nạp file; nếu thấy phiền, thêm `quiet: true` vào `dotenv.config({ ..., quiet: true })` (đã kiểm tra với dotenv 17, bản này in dòng `injected env` mặc định).
 
 ### Bước 6. Cấu hình nhiều `projects`
 Mục đích: chạy cùng test trên desktop và điện thoại mà không viết thêm test.
@@ -325,7 +325,7 @@ Starter có sẵn `.github/workflows/e2e.yml`, trong đó có:
 | `${{ vars.BASE_URL }}` | Đọc **biến cấu hình** (Variables) của repo: giá trị không bí mật, hiển thị công khai trong log. |
 | `${{ secrets.TEN }}` | Đọc **bí mật** (Secrets): được che trong log. Dùng cho mật khẩu, token. |
 
-Cách đặt trên giao diện GitHub (giao diện có thể thay đổi nhẹ): vào repo, **Settings**, **Secrets and variables**, **Actions**; tab **Variables** để thêm `BASE_URL`, tab **Secrets** để thêm bí mật. Trong workflow thêm `STAGING_PASSWORD: ${{ secrets.STAGING_PASSWORD }}` vào khối `env`, rồi trong code đọc bằng `requireEnv("STAGING_PASSWORD")`.
+Cách đặt trên giao diện GitHub (giao diện có thể thay đổi nhẹ): vào repo, bấm tab **Settings** (nếu không thấy, mở menu **More** rồi chọn **Settings**), ở thanh bên trái mục **Security** mở **Secrets and variables**, chọn **Actions**; tab **Variables** có nút **New repository variable** để thêm `BASE_URL` (ô **Name**, **Value**, rồi **Add variable**), tab **Secrets** có nút **New repository secret** để thêm bí mật (ô **Name**, **Secret**, rồi **Add secret**). Trong workflow thêm `STAGING_PASSWORD: ${{ secrets.STAGING_PASSWORD }}` vào khối `env`, rồi trong code đọc bằng `requireEnv("STAGING_PASSWORD")`.
 
 Kết quả mong đợi: bước chạy test trên GitHub dùng địa chỉ bạn đặt trong Variables; mật khẩu hiện thành `***` nếu lỡ bị in ra log.
 

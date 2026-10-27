@@ -263,16 +263,16 @@ npx playwright test --list
 
 Giải thích: `--list` chỉ thu thập và in danh sách, không mở trình duyệt.
 
-Kết quả mong đợi (tên file và cột sẽ khác tuỳ dự án):
+Kết quả mong đợi (tên file và số dòng sẽ khác tuỳ dự án; đã chạy thật với Playwright 1.64):
 
 ```text
 Listing tests:
-  [chromium] › login.spec.ts:11:7 › LAB-01 Login › đăng nhập hợp lệ @smoke
-  [chromium] › login.spec.ts:18:7 › LAB-01 Login › mật khẩu 7 ký tự bị từ chối @regression @validation
+  [chromium] › login.spec.ts:3:7 › LAB-01 Login › đăng nhập hợp lệ
+  [chromium] › login.spec.ts:4:7 › LAB-01 Login › mật khẩu 7 ký tự bị từ chối
 Total: 2 tests in 1 file
 ```
 
-Cách đọc mỗi dòng: `[chromium]` là project, rồi tên file kèm số dòng và cột, rồi tên nhóm, rồi tên test, cuối cùng là các tag.
+Cách đọc mỗi dòng: `[chromium]` là project, rồi tên file kèm số dòng và cột, rồi tên nhóm, rồi tên test. Lưu ý: `--list` không in tag của test khai báo bằng `{ tag: ... }`; tag chỉ hiện ở dòng test khi chạy thật (ví dụ `... › đăng nhập hợp lệ @smoke`) và vẫn dùng để lọc với `-g`.
 
 ### Bước 7. Xem trình duyệt chạy: --headed
 
@@ -294,9 +294,9 @@ Mục đích: giao diện tương tác để chọn test, xem từng bước và
 npx playwright test --ui
 ```
 
-Giải thích: `--ui` mở một cửa sổ riêng gọi là **UI Mode**. Bên trái là danh sách test (bấm biểu tượng tam giác để chạy từng cái), bên phải là dòng thời gian và ảnh chụp trang sau mỗi bước.
+Giải thích: `--ui` mở một cửa sổ riêng gọi là **UI Mode**. Phần danh sách test (mục **Tests**) có ô lọc "Filter (e.g. text, @tag)", các bộ lọc theo trạng thái (Status) và project (Projects); nút **Run all** (phím F5), nút **Stop** (Shift + F5), biểu tượng con mắt **Watch** để tự chạy lại khi bạn lưu file, nút **Toggle output** (Ctrl + `) để xem output terminal. Phần còn lại là trình xem trace: dòng thời gian, danh sách **Actions** và ảnh chụp DOM của trang sau mỗi bước, cùng các tab Metadata, Locator, Source, Call, Log, Errors, Console, Network, Attachments (đối chiếu với tài liệu playwright.dev/docs/test-ui-mode và mã nguồn UI trong Playwright 1.64).
 
-Kết quả mong đợi: cửa sổ UI Mode hiện cây test như `login.spec.ts > LAB-01 Login > đăng nhập hợp lệ`. Bấm tam giác ở một test: các bước hiện ở cột giữa (`Navigate to "/lab/login"`, `Fill "user@lab.dev"`, ...). Bấm vào một bước, ảnh chụp trang tại thời điểm đó hiện ở bên phải. Nút "Watch" (biểu tượng con mắt) giúp tự chạy lại khi bạn lưu file.
+Kết quả mong đợi: cửa sổ UI Mode hiện cây test như `login.spec.ts > LAB-01 Login > đăng nhập hợp lệ`. Chạy một test (bấm tam giác khi rê chuột vào tên test): các bước hiện trong danh sách Actions (ví dụ lệnh `Navigate`, `Fill`, `Click`). Rê chuột hoặc bấm vào một bước, ảnh chụp trang tại thời điểm đó hiện ra. Vị trí và nhãn từng khu vực có thể khác nhẹ tuỳ phiên bản; nút Watch giúp tự chạy lại khi bạn lưu file.
 
 Nếu cửa sổ không mở được trong máy ảo hoặc server không có màn hình, thêm `--ui-host=0.0.0.0 --ui-port=8080` để mở bằng trình duyệt qua mạng (cần cẩn thận về bảo mật mạng).
 
@@ -308,7 +308,7 @@ Mục đích: dừng và đi từng bước khi cần tìm nguyên nhân.
 npx playwright test login -g "hợp lệ" --debug
 ```
 
-Giải thích: `--debug` mở trình duyệt có đầu cùng cửa sổ **Playwright Inspector**, chạy một worker, tắt timeout, và dừng ở dòng đầu tiên. Bạn dùng nút **Step over** (mũi tên cong) hoặc **Resume** (tam giác) để đi tiếp. (Bài 2.13 dạy sâu.)
+Giải thích: `--debug` mở trình duyệt có đầu cùng cửa sổ **Playwright Inspector**, chạy một worker, tắt timeout (`--timeout=0`), dừng sau lỗi đầu tiên (`--max-failures=1`) và dừng ở dòng đầu tiên. Bạn dùng nút **Step over** (phím F10) để chạy từng dòng hoặc **Resume** (phím F8) để chạy tiếp đến điểm dừng/hết test. (Bài 2.13 dạy sâu.)
 
 Kết quả mong đợi: hai cửa sổ hiện ra, Inspector tô sáng dòng `page.goto(...)`. Bấm Step over từng lần để xem trang thay đổi.
 
@@ -334,7 +334,7 @@ Mục đích: biết công cụ để xử lý các tình huống hằng ngày.
 | `npx playwright test login.spec.ts:18` | Chạy test bắt đầu ở dòng 18 | Chạy đúng một test |
 | `npx playwright test --workers=1` | Chạy lần lượt, không song song (`-j 1`) | Test phụ thuộc dữ liệu chung hoặc cần log dễ đọc |
 | `npx playwright test --retries=2` | Thử lại tối đa 2 lần khi test hỏng | CI, để nhận ra test chập chờn (bài 5.6) |
-| `npx playwright test --reporter=line` | Chọn kiểu báo cáo trên màn hình | `list` (mặc định), `line`, `dot`, `html` |
+| `npx playwright test --reporter=line` | Chọn kiểu báo cáo (ghi đè `reporter` trong config) | `list`, `line`, `dot`, `html`, `json`, `junit`, `github`, `blob`, `null`. Mặc định khi config không khai báo là `list` (`dot` trên CI); file config do `npm init playwright` sinh ra dùng `html` |
 | `npx playwright test --last-failed` | Chỉ chạy lại các test hỏng lần trước | Sau khi sửa lỗi |
 | `npx playwright test -x` | Dừng sau lỗi đầu tiên | Muốn thấy lỗi sớm |
 | `npx playwright test --repeat-each=5` | Chạy mỗi test 5 lần | Săn test chập chờn |
@@ -363,7 +363,7 @@ test.only("chạy riêng test này", async ({ page }) => {
 
 Giải thích: `test.skip` bỏ qua test và ghi nhận "skipped"; `test.fixme` giống skip nhưng mang nghĩa "việc cần sửa" để dễ tìm lại; `test.only` ép runner chỉ chạy các test đánh dấu `only`.
 
-Kết quả mong đợi khi chạy: dòng tổng có dạng `1 passed, 2 skipped` (mỗi `skip` và `fixme` tính là skipped). Cảnh báo quan trọng: **đừng commit `test.only`**, vì CI sẽ chỉ chạy một test và báo xanh giả. Để chặn, đặt `forbidOnly: !!process.env.CI` trong config (đã có sẵn ở starter repo): khi chạy trên CI mà còn `test.only`, Playwright báo lỗi và dừng.
+Kết quả mong đợi khi chạy: phần tổng kết có hai dòng, ví dụ `2 skipped` rồi `2 passed (2.3s)` (mỗi `skip` và `fixme` tính là skipped). Cảnh báo quan trọng: **đừng commit `test.only`**, vì CI sẽ chỉ chạy một test và báo xanh giả. Để chặn, đặt `forbidOnly: !!process.env.CI` trong config (đã có sẵn ở starter repo): khi chạy trên CI mà còn `test.only`, Playwright báo lỗi và dừng.
 
 ## Demo code
 

@@ -55,6 +55,8 @@ export interface StorageAdapter {
   saveExercise(a: ExerciseAttempt): Promise<void>;
   listExercises(): Promise<ExerciseAttempt[]>;
   addAsk(e: AskAiEntry): Promise<void>;
+  /** Xoá mọi lần hỏi của một thuật ngữ (Sổ tay của tôi). */
+  removeAsk(term: string): Promise<void>;
   listAsk(): Promise<AskAiEntry[]>;
   exportAll(): Promise<ExportData>;
   importAll(data: ExportData): Promise<void>;

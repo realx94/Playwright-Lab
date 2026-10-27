@@ -87,6 +87,10 @@ Một phần tử gồm ba phần: **thẻ** (`input`), **thuộc tính** dạng
 ### Vai trò và tên truy cập được
 Trình duyệt tự suy ra cho mỗi phần tử một **role** (vai trò: `button`, `textbox`, `checkbox`, `heading`...) và một **accessible name** (tên truy cập được: chữ trên nút, nội dung `label` của ô nhập...). Trình đọc màn hình dùng cặp role và name để mô tả trang cho người khiếm thị. Playwright dùng đúng cặp này cho `getByRole` (bài 2.5). Bạn sẽ xem cặp đó ngay bằng DevTools ở phần thực hành.
 
+```diagram
+dom-tree
+```
+
 ## Thực hành từng bước
 
 Tất cả các bước dưới đây dùng **LAB-01 Login** tại `/lab/login` và **LAB-02 Form đa dạng** tại `/lab/forms`. Giả sử site chạy ở `http://localhost:3000`.

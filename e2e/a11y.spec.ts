@@ -6,6 +6,8 @@ const PAGES = [
   "/",
   "/learn",
   "/learn/2-05-locator-huong-nguoi-dung",
+  "/learn/1-01-git-co-ban",
+  "/learn/5-01-ci-cd-github-actions",
   "/labs/login",
   "/labs",
   "/stats",

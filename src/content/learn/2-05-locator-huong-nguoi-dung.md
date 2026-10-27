@@ -64,6 +64,10 @@ Playwright khuyến nghị thử các cách theo thứ tự sau, dừng ở các
 | 6 | `getByTestId` | Không có cách nào hướng người dùng, hoặc cần mốc cố định | `getByTestId("dashboard")` |
 | 7 | `locator("css hoặc xpath")` | Phương án cuối | `locator("#email")` |
 
+```diagram
+locator-priority
+```
+
 ## Thực hành từng bước
 
 ### Bước 1. Mở codegen để Playwright gợi ý locator
@@ -76,7 +80,9 @@ npx playwright codegen http://localhost:3000/lab/login
 
 Giải thích: `codegen` mở một trình duyệt và một cửa sổ **Playwright Inspector** (thanh công cụ + khung code). Mọi thao tác trên trang được dịch thành code TypeScript, và địa chỉ là trang bắt đầu.
 
-Kết quả mong đợi: hai cửa sổ hiện ra. Cửa sổ trình duyệt có trang Login. Cửa sổ Inspector có khung code ở giữa, nút **Record** (chấm đỏ) đang bật, nút **Pick locator**, các nút Assert (đại ý: khẳng định hiển thị, chữ, giá trị) và danh sách chọn ngôn ngữ. Giao diện có thể thay đổi nhẹ giữa các phiên bản Playwright.
+Kết quả mong đợi: hai cửa sổ hiện ra. Cửa sổ trình duyệt có trang Login. Cửa sổ Inspector có thanh công cụ ở trên cùng gồm nút **Record** (đang bật, tức đang ghi), nút **Pick locator**, bốn nút Assert (**Assert visibility**, **Assert text**, **Assert value**, **Assert snapshot**), nút **Copy**, các nút Resume (F8) và Step over (F10) dùng khi chạy lại, danh sách **Target** (chọn ngôn ngữ sinh code, mặc định Test Runner/TypeScript, có thể đổi sang Python, Java, C#...) và nút **Clear** để xoá code đã ghi. Khung code ở giữa; bên dưới (hoặc bên cạnh) là các tab **Locator**, **Log**, **Aria**. Tên nút đối chiếu với mã nguồn Playwright 1.64 và tài liệu codegen; giao diện có thể thay đổi nhẹ giữa các phiên bản.
+
+Các cờ hữu ích của `codegen` (xem bằng `npx playwright codegen --help`): `-o file.spec.ts` lưu code ra file, `--target`, `--viewport-size="800,600"`, `--device="iPhone 13"`, `--color-scheme=dark`, `--save-storage=auth.json` và `--load-storage=auth.json` (lưu và nạp lại phiên đăng nhập), `--test-id-attribute=data-qa`.
 
 Nếu gặp lỗi: `Executable doesn't exist` nghĩa là chưa tải trình duyệt; chạy `npx playwright install` (bài 0.2).
 
@@ -91,7 +97,7 @@ Trong cửa sổ trình duyệt, lần lượt:
 3. Bấm checkbox **Ghi nhớ đăng nhập**.
 4. Bấm nút **Đăng nhập**.
 
-Kết quả mong đợi: khung code của Inspector hiện gần như sau (chi tiết có thể khác đôi chút):
+Kết quả mong đợi: khung code của Inspector hiện gần như sau (chi tiết có thể khác đôi chút; mẫu này do tác giả dựng theo cách codegen thường sinh, chưa ghi lại từ một phiên chạy codegen thật trên lab):
 
 ```ts
 import { test, expect } from '@playwright/test';
@@ -112,11 +118,11 @@ Cách đọc: mọi locator đều là `getByRole` kèm `name`. Codegen có th�
 
 Mục đích: xem Playwright gợi ý gì cho phần tử bạn chỉ định mà không cần thao tác lên trang.
 
-1. Trong Inspector, bấm nút **Pick locator** (biểu tượng con trỏ trong ô vuông).
+1. Trong Inspector, bấm nút **Pick locator** (biểu tượng kính ngắm/con trỏ; bấm lại để tắt). Có thể bấm cả khi đang Record.
 2. Di chuột lên trang: phần tử dưới con trỏ được tô viền; một chú thích hiện locator đề xuất.
 3. Bấm vào ô **Email**.
 
-Kết quả mong đợi: ô nhập locator của Inspector hiện `getByRole('textbox', { name: 'Email' })`. Bạn có thể sửa chuỗi này trong ô rồi quan sát: những phần tử khớp được tô sáng trên trang, kèm số lượng khớp (ví dụ `1 element`). Đây là nơi tốt nhất để thử một locator trước khi viết vào code. Hãy thử bấm Pick locator vào nút Reset: gợi ý sẽ là `getByTestId('reset-data')` hoặc `getByRole('button', { name: 'Reset dữ liệu lab' })`.
+Kết quả mong đợi: tab **Locator** của Inspector hiện `getByRole('textbox', { name: 'Email' })` (ô này có gợi ý "Type locator to inspect"). Bạn có thể sửa chuỗi trong ô rồi quan sát: những phần tử khớp được tô sáng trên trang, kèm số lượng khớp (ví dụ `1 element`). Đây là nơi tốt nhất để thử một locator trước khi viết vào code. Hãy thử bấm Pick locator vào nút Reset: gợi ý sẽ là `getByTestId('reset-data')` hoặc `getByRole('button', { name: 'Reset dữ liệu lab' })`.
 
 Đóng cả hai cửa sổ khi xong (không cần lưu).
 
